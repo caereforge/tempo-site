@@ -14,7 +14,29 @@ you'd reach for: SSH, dashboard, terminal command, Apple Shortcut.
 Local-first. LAN-reachable HTTP ingestion with per-provider tokens. No cloud,
 no account, no telemetry. Tempo shows and proposes; it never acts on its own.
 
-**€49 one-time, 15-day trial. No subscription.**
+## Why Tempo exists
+
+I've spent most of my career as a Unix sysadmin — the kind of work where you
+learn, over time, that the machine doesn't care how pretty your dashboard is.
+It cares whether you notice the thing that matters, in time.
+
+Eventually I came home from that and kept doing the same thing for myself.
+A homelab grew. Home Assistant, a UniFi stack, Uptime Kuma, Kopia backups,
+a couple of always-on services, GitHub Actions for side projects, the calendar
+and reminders that actually run my life. Seven browser tabs every morning,
+each speaking its own language, none of them talking to each other.
+
+Dashboards didn't solve it — dashboards ask you to look at them. What I wanted
+was the Unix instinct expressed through the Mac: the power of the terminal
+and the craft of native macOS design, in one surface. One timeline, everything
+that happened, in order, with the right action one click away. Local-first,
+because the data stays on my machines. LAN-reachable, because the services
+don't run on the Mac. Never acts on its own, because silent automations are
+how you lose trust in your own system.
+
+Tempo is that tool.
+
+Read the full story at [tempoapp.app/#story](https://tempoapp.app/#story).
 
 ## About this repository
 
