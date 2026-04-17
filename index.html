@@ -376,6 +376,30 @@ nav {
   background: var(--bg2);
 }
 
+/* ── Devlog ── */
+.devlog-wrap {
+  max-width: 760px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.devlog-list { display: flex; flex-direction: column; gap: 2px; }
+.dl-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.dl-date {
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 11px; font-weight: 600;
+  color: var(--text3);
+  white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  letter-spacing: .3px;
+}
+.dl-text { flex: 1; }
+.dl-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.dl-desc  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
 /* ── Footer ── */
 footer {
   margin-top: 80px;
@@ -408,6 +432,7 @@ footer {
   <div class="nav-links">
     <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="#roadmap">Roadmap</a>
+    <a class="nav-link" href="#devlog">Devlog</a>
   </div>
   <div class="nav-badge">Private Beta — Coming Soon</div>
 </nav>
@@ -661,6 +686,30 @@ footer {
   </div>
   <div class="roadmap-disclaimer">
     Roadmap is indicative. Priorities may shift based on beta feedback. Join the waitlist to have a say in what gets built first.
+  </div>
+</div>
+
+<!-- Devlog -->
+<div class="devlog-wrap" id="devlog">
+  <div class="section-title">Devlog</div>
+  <div class="devlog-list">
+
+    <div class="dl-item">
+      <div class="dl-date">2026-04-17</div>
+      <div class="dl-text">
+        <div class="dl-title">Public site live</div>
+        <div class="dl-desc">Landing online at tempoapp.app. Repository public, Cloudflare Pages deploy pipeline wired up. Tempo itself is in private development; this page is the public face — and the start of the visible trail.</div>
+      </div>
+    </div>
+
+    <div class="dl-item">
+      <div class="dl-date">2026-04-13</div>
+      <div class="dl-text">
+        <div class="dl-title">Domain registered</div>
+        <div class="dl-desc">tempoapp.app secured. Project name and identity locked in: <em>Tempo</em>, as in musical tempo — the rhythm of what's happening across your homelab.</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
