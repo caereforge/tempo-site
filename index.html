@@ -35,7 +35,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 40px;
+  padding: 16px 40px;
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -72,7 +72,7 @@ nav {
 
 /* Wordmark — prominent product name */
 .hero-wordmark {
-  font-size: clamp(52px, 10vw, 88px);
+  font-size: clamp(44px, 8vw, 72px);
   font-weight: 900;
   letter-spacing: -.05em;
   color: var(--text);
@@ -80,13 +80,22 @@ nav {
   line-height: 1;
 }
 .hero-wordmark-sub {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: clamp(16px, 1.8vw, 19px);
+  font-weight: 600;
   color: var(--text2);
-  letter-spacing: .4px;
-  text-transform: uppercase;
+  letter-spacing: -.01em;
   margin-bottom: 36px;
 }
+.secondary-cta {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  transition: color .15s;
+}
+.secondary-cta:hover { color: var(--text); }
 
 .hero h1 {
   font-size: clamp(30px, 5vw, 48px);
@@ -157,6 +166,11 @@ nav {
   transition: opacity .15s;
 }
 .embeddable-buttondown-form input[type="submit"]:hover { opacity: .85; }
+.embeddable-buttondown-form input[type="email"]:focus-visible,
+.embeddable-buttondown-form input[type="submit"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10,132,255,.35);
+}
 .embeddable-buttondown-form p { display: none; }
 .form-note {
   font-size: 12px;
@@ -313,7 +327,7 @@ nav {
   font-weight: 500;
   color: var(--text2);
   text-decoration: none;
-  padding: 5px 12px;
+  padding: 10px 12px;
   border-radius: 7px;
   transition: color .15s, background .15s;
 }
@@ -492,10 +506,11 @@ footer {
     </form>
   </div>
   <p class="form-note">Private beta · No spam · Unsubscribe anytime</p>
+  <a href="#demo" class="secondary-cta">See how it works ↓</a>
 </section>
 
 <!-- Demo -->
-<div class="demo-wrap">
+<div class="demo-wrap" id="demo">
   <div class="demo-frame">
     <video autoplay loop muted playsinline controls aria-label="Tempo demo: timeline with incoming homelab events and one-click actions" style="width:100%;display:block;border-radius:14px;">
       <source src="Demo.mp4" type="video/mp4">
@@ -593,7 +608,7 @@ footer {
   <div class="faq-list">
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         What is Tempo, exactly?
         <span class="faq-arrow">▼</span>
       </button>
@@ -603,7 +618,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How is this different from Home Assistant's own dashboard?
         <span class="faq-arrow">▼</span>
       </button>
@@ -613,7 +628,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How do my servers and HA reach Tempo?
         <span class="faq-arrow">▼</span>
       </button>
@@ -623,7 +638,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Can I customize what actions appear for each event?
         <span class="faq-arrow">▼</span>
       </button>
@@ -633,7 +648,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Why not just use n8n, Node-RED, or another automation tool?
         <span class="faq-arrow">▼</span>
       </button>
@@ -643,7 +658,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Is my data safe? Does Tempo send anything to the cloud?
         <span class="faq-arrow">▼</span>
       </button>
@@ -653,7 +668,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         How much will Tempo cost?
         <span class="faq-arrow">▼</span>
       </button>
@@ -663,7 +678,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Will it be on the App Store?
         <span class="faq-arrow">▼</span>
       </button>
@@ -673,7 +688,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Does it work with CalDAV calendars (Fastmail, Nextcloud, iCloud)?
         <span class="faq-arrow">▼</span>
       </button>
@@ -683,7 +698,7 @@ footer {
     </div>
 
     <div class="faq-item">
-      <button class="faq-q" onclick="toggleFaq(this)">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         When can I try it?
         <span class="faq-arrow">▼</span>
       </button>
@@ -736,6 +751,14 @@ footer {
   <div class="devlog-list">
 
     <div class="dl-item">
+      <div class="dl-date">2026-04-18</div>
+      <div class="dl-text">
+        <div class="dl-title">Accessibility pass &amp; hero refinement</div>
+        <div class="dl-desc">Landing brought up to WCAG AA: contrast raised on informative text, screen-reader-friendly form label, video controls, FAQ <code style="font-family:monospace;font-size:11px;color:var(--blue)">aria-expanded</code>, keyboard focus rings, 44px nav touch targets. Hero hierarchy refined along the way — smaller wordmark, a real positioning line in place of the mini-caption, and a "See how it works" path for visitors not ready for the waitlist.</div>
+      </div>
+    </div>
+
+    <div class="dl-item">
       <div class="dl-date">2026-04-17</div>
       <div class="dl-text">
         <div class="dl-title">Public site live</div>
@@ -768,6 +791,7 @@ function toggleFaq(btn) {
   const isOpen = btn.classList.contains('open');
   btn.classList.toggle('open', !isOpen);
   answer.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
 }
 </script>
 </body>
