@@ -1,0 +1,146 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+}
+
+const { title, description, pubDate, updatedDate, tags } = Astro.props;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+---
+<BaseLayout title={`${title} — Tempo`} description={description}>
+  <header class="post-header">
+    <nav class="post-nav">
+      <a href="/">← Tempo</a>
+      <a href="/blog/">Blog</a>
+    </nav>
+  </header>
+
+  <article class="post">
+    <h1 class="post-title">{title}</h1>
+    <p class="post-meta">
+      <time datetime={pubDate.toISOString()}>{fmt(pubDate)}</time>
+      {updatedDate && (
+        <>
+          {" · updated "}
+          <time datetime={updatedDate.toISOString()}>{fmt(updatedDate)}</time>
+        </>
+      )}
+      {tags && tags.length > 0 && (
+        <>
+          {" · "}
+          {tags.join(", ")}
+        </>
+      )}
+    </p>
+
+    <div class="post-body">
+      <slot />
+    </div>
+
+    <footer class="post-footer">
+      <a href="/blog/">← All posts</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 0;
+  }
+  .post-nav {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+  }
+  .post-nav a { color: var(--text2); }
+  .post-nav a:hover { color: var(--text); }
+
+  .post {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .post-title {
+    font-size: 2.25rem;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-meta {
+    color: var(--text2);
+    font-size: 0.875rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .post-body :global(h2) {
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .post-body :global(h3) {
+    font-size: 1.15rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .post-body :global(p),
+  .post-body :global(ul),
+  .post-body :global(ol),
+  .post-body :global(blockquote),
+  .post-body :global(pre) {
+    margin-bottom: 1.25rem;
+  }
+  .post-body :global(ul),
+  .post-body :global(ol) {
+    padding-left: 1.5rem;
+  }
+  .post-body :global(blockquote) {
+    border-left: 3px solid var(--border);
+    padding-left: 1rem;
+    color: var(--text2);
+  }
+  .post-body :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+  }
+  .post-body :global(pre) {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+  }
+  .post-body :global(pre code) {
+    background: transparent;
+    border: 0;
+    padding: 0;
+  }
+  .post-body :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.875rem;
+  }
+</style>
