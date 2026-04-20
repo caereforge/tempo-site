@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tempo — The macOS event hub for your homelab.</title>
 <meta name="description" content="Tempo brings every signal from your homelab — Home Assistant, monitoring, backups, deploys — into one native macOS timeline, alongside your calendar and tasks. Local-first, LAN-reachable, never sends to the cloud.">
+
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tempoapp.app/">
+<meta property="og:title" content="Tempo — The macOS event hub for your homelab.">
+<meta property="og:description" content="One native macOS timeline for everything that happens across your homelab — Home Assistant, monitoring, backups, deploys — alongside your calendar and tasks. Local-first, LAN-reachable.">
+<meta property="og:image" content="https://tempoapp.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tempoapp.app/og-image.png">
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -45,12 +61,16 @@ nav {
   z-index: 100;
 }
 .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 17px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -.3px;
 }
 .nav-logo span { color: var(--blue); }
+.nav-logo img { width: 26px; height: 26px; display: block; }
 .nav-badge {
   font-size: 11px;
   font-weight: 600;
@@ -68,6 +88,19 @@ nav {
   margin: 0 auto;
   padding: 72px 24px 56px;
   text-align: center;
+}
+
+/* Hero app icon — visual anchor above wordmark */
+.hero-app-icon {
+  width: clamp(110px, 14vw, 150px);
+  height: clamp(110px, 14vw, 150px);
+  display: block;
+  margin: 0 auto 20px;
+  border-radius: clamp(24px, 3vw, 34px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04),
+    0 18px 48px rgba(0,0,0,.55),
+    0 4px 14px rgba(0,0,0,.35);
 }
 
 /* Wordmark — prominent product name */
@@ -471,7 +504,7 @@ footer {
 
 <!-- Nav -->
 <nav>
-  <div class="nav-logo">Tempo<span>.</span></div>
+  <div class="nav-logo"><img src="/icons/favicon.svg" alt="" aria-hidden="true">Tempo<span>.</span></div>
   <div class="nav-links">
     <a class="nav-link" href="#story">Story</a>
     <a class="nav-link" href="#faq">FAQ</a>
@@ -484,6 +517,7 @@ footer {
 
 <!-- Hero -->
 <section class="hero">
+  <img src="/icons/tempo-icon-512.png" alt="Tempo app icon" class="hero-app-icon" width="512" height="512">
   <div class="hero-wordmark">Tempo</div>
   <div class="hero-wordmark-sub">the homelab event hub for macOS</div>
 
