@@ -55,7 +55,7 @@ One of the architectural choices I am most pleased with: every event in Tempo ca
 
 Many alerting tools collapse these into a single field. The result is the "everything looks like an alert" problem: a completed backup and a failed backup show up identically because the UI only knows "event exists." By keeping the dimensions separate, Tempo can show a successful Kopia snapshot with a calm green `ok` badge and a failed one with a loud red `error` badge — same underlying state, opposite severity. The feed becomes readable at a glance, which is the whole point.
 
-Severity is new in this cycle. Score authors can declare it explicitly in the payload, or rely on rules evaluated from metadata (a future iteration adds score-level severity rules). The color-only heuristic I briefly considered as a fallback was rejected: a red calendar event is not an error.
+Severity is new in this cycle. Score authors can declare it explicitly in the payload, or rely on declarative rules in the score that evaluate against metadata (`match: { exitCode: 0 } → severity: ok`), with the payload always winning when set. The color-only heuristic I briefly considered as a fallback was rejected: a red calendar event is not an error.
 
 ### Stateful entities
 
