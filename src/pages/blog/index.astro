@@ -60,6 +60,14 @@ const fmt = (d: Date) =>
     </main>
 
     <aside class="sidebar">
+      <section class="side-section contact">
+        <h3>✉️ Write to me</h3>
+        <p class="contact-body">
+          Thoughts, corrections, ideas for a score you'd like to see?
+        </p>
+        <a class="contact-link" href="mailto:blog@tempoapp.app">blog@tempoapp.app</a>
+      </section>
+
       {announcements.length > 0 && (
         <section class="side-section announcements">
           <h3>📢 Announcements</h3>
@@ -191,15 +199,32 @@ const fmt = (d: Date) =>
     font-weight: 600;
   }
 
-  .announcements {
+  .announcements,
+  .contact {
     padding: 1rem;
     border: 1px solid var(--border);
     border-radius: 8px;
     background: var(--bg2);
   }
-  .announcements h3 {
+  .announcements h3,
+  .contact h3 {
     margin-bottom: 0.75rem;
     color: var(--text);
+  }
+  .contact-body {
+    color: var(--text2);
+    font-size: 0.85rem;
+    line-height: 1.45;
+    margin-bottom: 0.6rem;
+  }
+  .contact-link {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 0.9rem;
+    word-break: break-all;
+  }
+  .contact-link:hover {
+    text-decoration: underline;
   }
 
   .side-list {
