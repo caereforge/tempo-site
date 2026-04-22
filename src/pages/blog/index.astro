@@ -2,9 +2,25 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
-const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+const ANNOUNCEMENT_TAG = "announcement";
+
+const allPosts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+const announcements = allPosts.filter((p) =>
+  (p.data.tags ?? []).includes(ANNOUNCEMENT_TAG),
+);
+
+// Tag cloud excludes the announcement tag itself — it already has its own section.
+const tagCounts = new Map<string, number>();
+for (const post of allPosts) {
+  for (const tag of post.data.tags ?? []) {
+    if (tag === ANNOUNCEMENT_TAG) continue;
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
@@ -21,26 +37,62 @@ const fmt = (d: Date) =>
     <p class="lede">Notes from building Tempo.</p>
   </header>
 
-  <main class="post-list">
-    {posts.length === 0 && <p class="empty">No posts yet. Soon.</p>}
-    {posts.map((post) => (
-      <article class="post-row">
-        <a class="post-link" href={`/blog/${post.id}/`}>
-          <h2>{post.data.title}</h2>
-          {post.data.description && <p class="post-desc">{post.data.description}</p>}
-          <p class="post-meta">
-            <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
-            {post.data.tags && post.data.tags.length > 0 && (
-              <>
-                {" · "}
-                {post.data.tags.join(", ")}
-              </>
-            )}
-          </p>
-        </a>
-      </article>
-    ))}
-  </main>
+  <div class="blog-grid">
+    <main class="post-list">
+      {allPosts.length === 0 && <p class="empty">No posts yet. Soon.</p>}
+      {allPosts.map((post) => (
+        <article class="post-row">
+          <a class="post-link" href={`/blog/${post.id}/`}>
+            <h2>{post.data.title}</h2>
+            {post.data.description && <p class="post-desc">{post.data.description}</p>}
+            <p class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+              {post.data.tags && post.data.tags.length > 0 && (
+                <>
+                  {" · "}
+                  {post.data.tags.join(", ")}
+                </>
+              )}
+            </p>
+          </a>
+        </article>
+      ))}
+    </main>
+
+    <aside class="sidebar">
+      {announcements.length > 0 && (
+        <section class="side-section announcements">
+          <h3>📢 Announcements</h3>
+          <ul class="side-list">
+            {announcements.map((post) => (
+              <li>
+                <a href={`/blog/${post.id}/`}>
+                  <span class="side-title">{post.data.title}</span>
+                  <time datetime={post.data.pubDate.toISOString()}>{fmt(post.data.pubDate)}</time>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {tags.length > 0 && (
+        <section class="side-section">
+          <h3>Tags</h3>
+          <ul class="tag-cloud">
+            {tags.map(([tag, count]) => (
+              <li>
+                <a href={`/blog/tags/${tag}/`}>
+                  {tag}
+                  <span class="tag-count">{count}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </aside>
+  </div>
 </BaseLayout>
 
 <style>
@@ -65,10 +117,19 @@ const fmt = (d: Date) =>
     color: var(--text2);
   }
 
-  .post-list {
-    max-width: var(--measure);
+  /* Two-column grid: main post list + sidebar. Falls back to single column
+     under ~900px so mobile readers don't scroll past the sidebar to find posts. */
+  .blog-grid {
+    max-width: calc(var(--measure) + 280px + 3rem);
     margin: 0 auto;
     padding: 1rem 1.25rem 4rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 3rem;
+  }
+
+  .post-list {
+    min-width: 0;
   }
   .empty {
     color: var(--text2);
@@ -108,5 +169,106 @@ const fmt = (d: Date) =>
   .post-meta {
     color: var(--text3);
     font-size: 0.85rem;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    font-size: 0.9rem;
+  }
+
+  .side-section {
+    margin-bottom: 2rem;
+  }
+  .side-section h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text2);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  .announcements {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg2);
+  }
+  .announcements h3 {
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  .side-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .side-list li + li {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .side-list a {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+  .side-list a:hover .side-title {
+    color: var(--blue);
+  }
+  .side-title {
+    display: block;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 0.2rem;
+    transition: color 120ms ease;
+  }
+  .side-list time {
+    color: var(--text3);
+    font-size: 0.8rem;
+  }
+
+  .tag-cloud {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tag-cloud a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: border-color 120ms ease, color 120ms ease;
+  }
+  .tag-cloud a:hover {
+    border-color: var(--blue);
+    color: var(--text);
+  }
+  .tag-count {
+    color: var(--text3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 900px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .sidebar {
+      position: static;
+      order: 2;
+    }
   }
 </style>
