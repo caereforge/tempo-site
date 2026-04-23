@@ -1,0 +1,63 @@
+{
+  "providerIdentifier": "com.proxmox.backup",
+  "displayName": "Proxmox Backup Server",
+  "color": "#E57000",
+  "severityRules": [
+    { "match": { "severity": "error" },   "severity": "critical" },
+    { "match": { "severity": "warning" }, "severity": "warning"  },
+    { "match": { "severity": "notice" },  "severity": "info"     },
+    { "match": { "severity": "info" },    "severity": "info"     }
+  ],
+  "defaultActions": [
+    {
+      "label": "Open PBS dashboard",
+      "systemIcon": "externaldrive.badge.timemachine",
+      "trigger": { "openURL": "https://${metadata.hostname}:8007/" }
+    },
+    {
+      "label": "Open datastore view",
+      "systemIcon": "internaldrive",
+      "trigger": { "openURL": "https://${metadata.hostname}:8007/#pbsDataStorePanel" }
+    },
+    {
+      "label": "Open running tasks",
+      "systemIcon": "clock.arrow.circlepath",
+      "trigger": { "openURL": "https://${metadata.hostname}:8007/#pbsRunningTasks" }
+    },
+    {
+      "label": "SSH to PBS",
+      "systemIcon": "terminal",
+      "trigger": { "openURL": "ssh://root@${metadata.hostname}" }
+    },
+    {
+      "label": "Ping PBS",
+      "systemIcon": "waveform.path.ecg",
+      "trigger": { "openTerminalWith": "ping -c 5 ${metadata.hostname}" }
+    },
+    {
+      "label": "Tail PBS task log (SSH)",
+      "systemIcon": "doc.text.below.ecg",
+      "trigger": { "openTerminalWith": "ssh root@${metadata.hostname} 'tail -200f /var/log/proxmox-backup/tasks/active'" }
+    },
+    {
+      "label": "Copy hostname",
+      "systemIcon": "doc.on.doc",
+      "trigger": { "copyToClipboard": "${metadata.hostname}" }
+    },
+    {
+      "label": "Copy message",
+      "systemIcon": "text.quote",
+      "trigger": { "copyToClipboard": "${metadata.message}" }
+    },
+    {
+      "label": "PBS docs",
+      "systemIcon": "book",
+      "trigger": { "openURL": "https://pbs.proxmox.com/docs/" }
+    },
+    {
+      "label": "Proxmox wiki",
+      "systemIcon": "books.vertical",
+      "trigger": { "openURL": "https://pve.proxmox.com/wiki/Main_Page" }
+    }
+  ]
+}
