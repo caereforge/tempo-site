@@ -1,0 +1,256 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Troubleshooting networking — Tempo"
+  description="When a score's install looks right but nothing lands in Tempo's feed, it's almost always a network problem between the source and the Mac. Five patterns that cover 95% of the cases."
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/scores">← Scores</a>
+    </nav>
+    <h1>Troubleshooting networking</h1>
+    <p class="lede">
+      Your score is installed. The source is configured. You trigger a test webhook — and Tempo's feed stays silent. This page is for that moment.
+    </p>
+    <p class="lede-secondary">
+      Tempo itself is rarely the problem at this point. The webhook is crossing from one box on your LAN to another, and something in between is quietly dropping it. Five patterns cover almost every case we've seen.
+    </p>
+  </header>
+
+  <main class="doc">
+
+    <section class="scenario">
+      <h2>1. Mac-local firewall denying inbound</h2>
+      <p>
+        The most common cause, and the hardest to spot — because the firewall doesn't warn you; it just silently drops the connection. If the source (NAS, Proxmox, HA) shows the webhook as <em>sent successfully</em> but Tempo never receives it, start here.
+      </p>
+      <p><strong>Diagnose:</strong> from the source, check that port <code>7776</code> on the Mac is actually reachable.</p>
+      <pre><code>curl -v http://your-mac.local:7776/health</code></pre>
+      <p>
+        A <code>200 OK</code> means you're in the clear — skip to scenario 2 or later. A timeout or "No route to host" means something is blocking the connection before it reaches Tempo.
+      </p>
+      <p><strong>Fix:</strong> check three things on the Mac, in order:</p>
+      <ul>
+        <li>
+          <strong>Apple Application Firewall</strong> — System Settings → Network → Firewall. If enabled, either turn it off for testing or add Tempo to the allow list (Options → "+" → Tempo.app → Allow incoming connections).
+        </li>
+        <li>
+          <strong>Little Snitch</strong> — outbound rules are the default surface, but Little Snitch also enforces <em>inbound</em> rules separately, and the default is deny. Open Little Snitch → Rules → filter by "Incoming Connections" → add an allow rule for Tempo on port 7776.
+        </li>
+        <li>
+          <strong>LuLu</strong> — same idea: it will silently drop inbound unless Tempo is allowed. Check the rule list for Tempo and add one if missing.
+        </li>
+      </ul>
+      <p class="tip">
+        Tempo's diagnostic bundle (<strong>Settings → Help → Export diagnostics</strong>) includes a <code>firewall.txt</code> that reports ALF state and detects Little Snitch / LuLu / Murus / Radio Silence / Hands Off. Attach it when asking for help.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>2. Source is on a different VLAN</h2>
+      <p>
+        Homelab networks usually segment trusted Macs from IoT, cameras, and servers. If your Mac is on VLAN 10 and Home Assistant is on VLAN 40, the firewall rule on your router is almost certainly default-deny between them.
+      </p>
+      <p><strong>Diagnose:</strong> from the source, try to reach the Mac by IP (not hostname, to rule out DNS):</p>
+      <pre><code>ping 192.168.10.20
+curl -v http://192.168.10.20:7776/health</code></pre>
+      <p>
+        If ping times out but the Mac is clearly up, the router is dropping the packets between VLANs.
+      </p>
+      <p><strong>Fix:</strong> add a rule in your router's firewall allowing the source VLAN to reach the Mac's IP on TCP port 7776. On UniFi: <em>Settings → Firewall & Security → Firewall Rules → Create New Rule</em>, action Allow, source IP/VLAN of the webhook emitter, destination IP of the Mac, destination port 7776. On pfSense: <em>Firewall → Rules → [source VLAN tab] → Add</em> with the same parameters.
+      </p>
+      <p class="tip">
+        Keep the rule narrow — specific source IP, specific destination IP, specific port. Tempo's ingestion is token-authenticated, so the firewall isn't your only defense, but a tight rule is good hygiene.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>3. Hostname doesn't resolve from the source</h2>
+      <p>
+        <code>your-mac.local</code> relies on mDNS, which typically doesn't propagate across VLANs or through some routers' split-horizon DNS. Your Synology or Proxmox may resolve <code>your-mac.local</code> locally to something wrong — or not at all.
+      </p>
+      <p><strong>Diagnose:</strong> from the source, check what hostname actually resolves to:</p>
+      <pre><code>dig +short your-mac.local
+getent hosts your-mac.local
+# or, universally:
+host your-mac.local</code></pre>
+      <p>
+        If nothing returns, or the IP returned is wrong, the source can't use the hostname.
+      </p>
+      <p><strong>Fix:</strong> use the Mac's LAN IP in the webhook URL instead of its hostname. Pair it with a DHCP reservation in your router so the Mac always gets the same IP — then the URL stays stable.
+      </p>
+      <p class="tip">
+        If your router supports <em>mDNS Reflector</em> / <em>Bonjour Relay</em> (UniFi does, most prosumer routers do), you can enable it to make <code>.local</code> work across VLANs. That's a convenience — the IP-based URL is the robust answer.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>4. AP / client isolation on the network</h2>
+      <p>
+        Guest WiFi networks and "IoT-safe" WiFi modes often enable <em>client isolation</em>, which prevents devices on the same network from talking to each other. The webhook emitter can reach the internet but not your Mac — even though they're on the same SSID.
+      </p>
+      <p><strong>Diagnose:</strong> try scenario 2's <code>ping</code> and <code>curl</code> from the source. If both fail <em>and</em> the source and Mac are on the same subnet (same VLAN, same SSID), isolation is the suspect.</p>
+      <p><strong>Fix:</strong> disable client isolation on the WiFi network where the source lives, or move the source to a network where it's off. On UniFi: <em>WiFi → [network] → Advanced → Isolate Client Devices</em>, turn off. On most consumer routers, look for "AP Isolation" or "Guest Network Isolation" in the wireless settings.
+      </p>
+      <p class="tip">
+        The right answer here is usually not to disable isolation network-wide but to use a dedicated "trusted device" VLAN/SSID for things that need to talk to each other (Mac, NAS, HA, monitoring). Add a firewall rule as in scenario 2 if they must cross VLANs.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>5. Double NAT or a CGNAT router in the path</h2>
+      <p>
+        Less common on a single-LAN homelab, but real when your ISP router has been chained behind a second router (typical with UniFi Dream Machines, Firewalla, or when the modem is in router mode). The source sees a NAT'd address of your Mac, not the Mac itself — and the reply path breaks.
+      </p>
+      <p><strong>Diagnose:</strong> from the Mac, check what inbound packets actually arrive on port 7776 when you trigger the webhook.</p>
+      <pre><code>sudo tcpdump -i any -A 'tcp port 7776'</code></pre>
+      <p>
+        If you see nothing at all, the packets aren't crossing the NAT boundary. If you see SYNs but no complete handshake, a firewall is blocking the reply direction (unlikely on a well-configured home router — more likely scenario 1 or 2).
+      </p>
+      <p><strong>Fix:</strong> either bridge the upstream router so you have a single NAT, or add an explicit port-forward on the upstream device pointing port 7776 at the Mac's IP on the inner network. The cleaner fix is always to eliminate the double NAT.
+      </p>
+      <p class="tip">
+        If you needed a port-forward to make this work, reconsider exposing Tempo to the broader network. Tempo's ingestion is designed to run on a trusted LAN segment; crossing into territory where you're punching holes in firewalls usually means the architecture is off, not the firewall.
+      </p>
+    </section>
+
+    <hr />
+
+    <section class="still-stuck">
+      <h2>Still stuck?</h2>
+      <p>
+        Open <strong>Settings → Help → Export diagnostics</strong> in Tempo, grab the resulting zip, and attach it to a question in the community. The bundle includes the firewall section from scenario 1, the full IngestionServer log, and the list of installed scores — enough context to narrow the problem in one reply instead of five.
+      </p>
+      <p>
+        Every shipping score's README also includes a <em>Troubleshooting</em> section with five commands that layer reachability, auth, payload, live logs, and history — run those first if the problem feels specific to one source rather than the network path.
+      </p>
+    </section>
+
+  </main>
+
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 1.5rem;
+  }
+  .page-nav {
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .page-nav a { color: var(--text2); }
+  .page-nav a:hover { color: var(--text); }
+
+  .page-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .lede {
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    max-width: 65ch;
+  }
+  .lede-secondary {
+    color: var(--text2);
+    font-size: 0.95rem;
+    max-width: 65ch;
+  }
+
+  .doc {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 1rem 1.25rem 4rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .scenario {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .scenario:first-of-type {
+    border-top: none;
+  }
+
+  .scenario h2 {
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+  .scenario p {
+    color: var(--text2);
+    margin-bottom: 0.85rem;
+    max-width: 65ch;
+  }
+  .scenario ul {
+    color: var(--text2);
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    max-width: 65ch;
+  }
+  .scenario li {
+    margin-bottom: 0.5rem;
+  }
+  .scenario strong {
+    color: var(--text);
+  }
+  .scenario em {
+    color: var(--text);
+  }
+  .scenario code {
+    background: var(--bg2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--text);
+  }
+  .scenario pre {
+    background: var(--bg2);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+    max-width: 65ch;
+  }
+  .scenario pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.9em;
+  }
+
+  .tip {
+    font-size: 0.9rem;
+    color: var(--text3);
+    border-left: 2px solid var(--border);
+    padding-left: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0 1.5rem;
+  }
+
+  .still-stuck h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+  .still-stuck p {
+    color: var(--text2);
+    margin-bottom: 0.85rem;
+    max-width: 65ch;
+  }
+  .still-stuck a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .still-stuck a:hover {
+    text-decoration: underline;
+  }
+</style>
