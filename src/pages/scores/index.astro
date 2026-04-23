@@ -21,6 +21,9 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     <p class="lede-secondary">
       Tempo v1 ships with seven scores built-in (Kopia, Home Assistant, Proxmox, UniFi, Uptime Kuma, Apple, generic webhook). The ones listed here are downloadable add-ons — starting with Synology, and growing over time.
     </p>
+    <p class="lede-secondary">
+      Score installed but nothing lands in the feed? See <a href="/scores/troubleshooting-networking">troubleshooting networking</a> — five patterns cover almost every case.
+    </p>
   </header>
 
   <main class="scores-list">
