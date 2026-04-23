@@ -1,0 +1,157 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.title.localeCompare(b.data.title),
+);
+---
+<BaseLayout
+  title="Scores — Tempo"
+  description="Preconfigured Tempo scores for your homelab — Synology, Proxmox, Uptime Kuma, and more."
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/">← Tempo</a>
+    </nav>
+    <h1>Scores</h1>
+    <p class="lede">
+      Small declarative files that teach Tempo how to read events from a specific source and which one-click actions to attach. Drop one into Tempo, and the source is wired up.
+    </p>
+    <p class="lede-secondary">
+      Tempo v1 ships with seven scores built-in (Kopia, Home Assistant, Proxmox, UniFi, Uptime Kuma, Apple, generic webhook). The ones listed here are downloadable add-ons — starting with Synology, and growing over time.
+    </p>
+  </header>
+
+  <main class="scores-list">
+    {allScores.length === 0 && <p class="empty">No scores yet. Soon.</p>}
+    {allScores.map((score) => (
+      <article class="score-row">
+        <a class="score-link" href={`/scores/${score.id}/`}>
+          <div class="score-swatch" style={`--swatch: ${score.data.color};`}></div>
+          <div class="score-body">
+            <div class="score-heading">
+              <h2>{score.data.title}</h2>
+              {!score.data.downloadable && (
+                <span class="badge badge-pending">Available with Tempo v1</span>
+              )}
+            </div>
+            <p class="score-desc">{score.data.description}</p>
+            <p class="score-meta">
+              <span>v{score.data.version}</span>
+              {score.data.compatibility && score.data.compatibility.length > 0 && (
+                <>
+                  {" · "}
+                  <span>{score.data.compatibility.join(" / ")}</span>
+                </>
+              )}
+            </p>
+          </div>
+        </a>
+      </article>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 1.5rem;
+  }
+  .page-nav {
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .page-nav a { color: var(--text2); }
+  .page-nav a:hover { color: var(--text); }
+
+  .page-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .lede {
+    color: var(--text2);
+    margin-bottom: 0.75rem;
+    max-width: 60ch;
+  }
+  .lede-secondary {
+    color: var(--text3);
+    font-size: 0.95rem;
+    max-width: 60ch;
+  }
+
+  .scores-list {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 1rem 1.25rem 4rem;
+  }
+  .empty {
+    color: var(--text2);
+    padding: 2rem 0;
+  }
+
+  .score-row {
+    border-bottom: 1px solid var(--border);
+  }
+  .score-row:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .score-link {
+    display: grid;
+    grid-template-columns: 8px 1fr;
+    gap: 1.25rem;
+    align-items: stretch;
+    padding: 1.5rem 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .score-link:hover h2 {
+    color: var(--blue);
+  }
+
+  .score-swatch {
+    background: var(--swatch, var(--border));
+    border-radius: 2px;
+    min-height: 100%;
+  }
+
+  .score-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .score-heading h2 {
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+    transition: color 120ms ease;
+  }
+  .score-desc {
+    color: var(--text2);
+    margin-bottom: 0.4rem;
+    max-width: 60ch;
+  }
+  .score-meta {
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    font-weight: 500;
+  }
+  .badge-pending {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+</style>

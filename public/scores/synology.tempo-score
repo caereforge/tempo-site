@@ -1,0 +1,57 @@
+{
+  "providerIdentifier": "com.synology",
+  "displayName": "Synology",
+  "color": "#0070D1",
+  "defaultActions": [
+    {
+      "label": "Open DSM",
+      "systemIcon": "externaldrive.connected.to.line.below",
+      "trigger": { "openURL": "https://${metadata.hostname}:5001/" }
+    },
+    {
+      "label": "Open Storage Manager",
+      "systemIcon": "internaldrive",
+      "trigger": { "openURL": "https://${metadata.hostname}:5001/?launchApp=SYNO.SDS.StorageManager.Application" }
+    },
+    {
+      "label": "Open Log Center",
+      "systemIcon": "doc.text.magnifyingglass",
+      "trigger": { "openURL": "https://${metadata.hostname}:5001/?launchApp=SYNO.SDS.LogCenter.Application" }
+    },
+    {
+      "label": "Open Security Advisor",
+      "systemIcon": "lock.shield",
+      "trigger": { "openURL": "https://${metadata.hostname}:5001/?launchApp=SYNO.SDS.SecurityScan.Instance" }
+    },
+    {
+      "label": "SSH to NAS",
+      "systemIcon": "terminal",
+      "trigger": { "openURL": "ssh://admin@${metadata.hostname}" }
+    },
+    {
+      "label": "Ping NAS",
+      "systemIcon": "network",
+      "trigger": { "openTerminalWith": "ping -c 5 ${metadata.hostname}" }
+    },
+    {
+      "label": "Copy hostname",
+      "systemIcon": "doc.on.doc",
+      "trigger": { "copyToClipboard": "${metadata.hostname}" }
+    },
+    {
+      "label": "Copy message",
+      "systemIcon": "text.quote",
+      "trigger": { "copyToClipboard": "${metadata.message}" }
+    },
+    {
+      "label": "DSM notifications docs",
+      "systemIcon": "book",
+      "trigger": { "openURL": "https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook" }
+    },
+    {
+      "label": "Synology Knowledge Center",
+      "systemIcon": "books.vertical",
+      "trigger": { "openURL": "https://kb.synology.com/" }
+    }
+  ]
+}

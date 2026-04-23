@@ -1,0 +1,253 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const scores = await getCollection("scores", ({ data }) => !data.draft);
+  return scores.map((score) => ({
+    params: { slug: score.id },
+    props: { score },
+  }));
+}
+
+const { score } = Astro.props;
+const { Content } = await render(score);
+---
+<BaseLayout
+  title={`${score.data.title} — Tempo score`}
+  description={score.data.description}
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/scores">← All scores</a>
+    </nav>
+
+    <div class="score-head">
+      <div class="score-swatch" style={`--swatch: ${score.data.color};`}></div>
+      <div class="score-head-body">
+        <h1>{score.data.title}</h1>
+        <p class="score-desc">{score.data.description}</p>
+        <p class="score-meta">
+          <span><code>{score.data.providerIdentifier}</code></span>
+          {" · "}
+          <span>v{score.data.version}</span>
+          {score.data.compatibility && score.data.compatibility.length > 0 && (
+            <>
+              {" · "}
+              <span>{score.data.compatibility.join(" / ")}</span>
+            </>
+          )}
+        </p>
+      </div>
+    </div>
+
+    <div class="download-box">
+      {score.data.downloadable ? (
+        <a class="download-btn" href={score.data.file} download>
+          <span class="btn-icon" aria-hidden="true">↓</span>
+          <span class="btn-text">
+            Download <code>{score.data.title.toLowerCase()}.tempo-score</code>
+          </span>
+        </a>
+      ) : (
+        <div class="download-pending">
+          <span class="btn-icon" aria-hidden="true">↓</span>
+          <div>
+            <span class="btn-text">Download coming with Tempo v1</span>
+            <p class="pending-note">
+              The score is ready. It will be downloadable the day Tempo v1 is released — because a <code>.tempo-score</code> file has nothing to install into until then.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  </header>
+
+  <article class="score-content">
+    <Content />
+  </article>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 1rem;
+  }
+  .page-nav {
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .page-nav a { color: var(--text2); }
+  .page-nav a:hover { color: var(--text); }
+
+  .score-head {
+    display: grid;
+    grid-template-columns: 8px 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .score-swatch {
+    background: var(--swatch, var(--border));
+    border-radius: 2px;
+  }
+  .score-head-body h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .score-desc {
+    color: var(--text2);
+    margin-bottom: 0.75rem;
+    max-width: 65ch;
+  }
+  .score-meta {
+    color: var(--text3);
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-meta code {
+    color: var(--text2);
+    background: var(--bg2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85em;
+  }
+
+  .download-box {
+    margin-bottom: 1rem;
+  }
+
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: filter 120ms ease;
+  }
+  .download-btn:hover {
+    filter: brightness(1.1);
+  }
+  .download-btn code {
+    font-family: inherit;
+    background: transparent;
+    padding: 0;
+  }
+  .btn-icon {
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+
+  .download-pending {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg2);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    color: var(--text2);
+  }
+  .download-pending .btn-text {
+    font-weight: 500;
+    color: var(--text);
+  }
+  .pending-note {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    color: var(--text3);
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+  .pending-note code {
+    background: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  .score-content {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 1rem 1.25rem 4rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .score-content :global(h2) {
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .score-content :global(h3) {
+    font-size: 1.05rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  .score-content :global(p) {
+    margin-bottom: 1rem;
+    color: var(--text2);
+  }
+  .score-content :global(ul),
+  .score-content :global(ol) {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    color: var(--text2);
+  }
+  .score-content :global(li) {
+    margin-bottom: 0.25rem;
+  }
+  .score-content :global(code) {
+    background: var(--bg2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--text);
+  }
+  .score-content :global(pre) {
+    background: var(--bg2);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border);
+  }
+  .score-content :global(pre code) {
+    background: transparent;
+    padding: 0;
+  }
+  .score-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+  .score-content :global(th),
+  .score-content :global(td) {
+    border: 1px solid var(--border);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+  .score-content :global(th) {
+    background: var(--bg2);
+    font-weight: 600;
+  }
+  .score-content :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+  .score-content :global(a) {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .score-content :global(a:hover) {
+    text-decoration: underline;
+  }
+</style>
