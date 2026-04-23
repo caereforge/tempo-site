@@ -105,6 +105,55 @@ Tempo's live feed should show a new alert within a second or two. If not:
 
 ---
 
+## Troubleshooting
+
+If the test notification doesn't land in Tempo's feed, run these five checks in order. Each narrows the problem to a specific layer (reachability, token, payload, process, history).
+
+**1. Is Tempo reachable from the NAS?** — SSH to the NAS and run:
+
+```sh
+curl -v http://your-mac.local:7776/health
+```
+
+A `200 OK` means reachability is fine. A timeout or "No route to host" is a network problem (firewall on the Mac, WiFi isolation, VPN routing) — nothing after this point will work until it's fixed.
+
+**2. Does the token work and does Tempo accept your payload shape?** — still on the NAS, send a synthetic event that mimics the DSM body template exactly:
+
+```sh
+curl -X POST http://your-mac.local:7776/events \
+  -H 'Content-Type: application/json' \
+  -H 'X-Tempo-Token: YOUR_TOKEN_HERE' \
+  -d '{"title":"synology probe","providerIdentifier":"com.synology","eventType":"alert","metadata":{"hostname":"nas.home.arpa","subject":"probe","message":"manual troubleshooting"}}'
+```
+
+A `200` or `202` with "synology probe" appearing in Tempo's feed means ingestion works end-to-end. A `401` means the token is wrong or not bound to `com.synology`; a `422` means the JSON is malformed (the real DSM webhook has the same bug, same fix).
+
+**3. Are the packets actually reaching the Mac?** — open Terminal on the Mac and watch inbound traffic:
+
+```sh
+sudo tcpdump -i any -A 'tcp port 7776 and src host your-nas.home.arpa'
+```
+
+Then send a test message from DSM. You should see HTTP POST traffic with the JSON body visible. If nothing appears, DSM is failing to reach the Mac even though step 1 succeeded — usually because DSM's webhook URL is typo'd or uses the wrong hostname.
+
+**4. What is Tempo doing right now?** — stream Tempo's live logs:
+
+```sh
+log stream --predicate 'subsystem == "app.tempoapp.Tempo"' --level debug
+```
+
+Useful to watch the ingestion decision in real time: token lookup, validation, DB write.
+
+**5. What did Tempo see historically?** — grep the rolling file log:
+
+```sh
+grep -h com.synology ~/Library/Application\ Support/Tempo/Logs/tempo-*.log | tail -50
+```
+
+Every Synology event Tempo has touched appears here with timestamp and outcome. This is also what `Settings → Help → Export diagnostics bundle` packages up — if you're asking for support, run step 5 first and attach the output.
+
+---
+
 ## References
 
 - [DSM Webhooks — Synology Knowledge Center](https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook)
