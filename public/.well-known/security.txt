@@ -1,0 +1,4 @@
+Contact: mailto:security@tempoapp.app
+Expires: 2027-04-26T00:00:00Z
+Preferred-Languages: en, it
+Canonical: https://tempoapp.app/.well-known/security.txt
