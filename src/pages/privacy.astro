@@ -1,0 +1,214 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lastUpdated = "April 2026";
+---
+<BaseLayout
+  title="Privacy Notice — Tempo"
+  description="How Tempo handles your data: locally, transparently, and with no cloud of ours.">
+  <main class="legal">
+    <p class="back"><a href="/">← tempoapp.app</a></p>
+
+    <h1>Privacy Notice</h1>
+    <p class="meta">Last updated: {lastUpdated}</p>
+
+    <p class="lede">
+      Short version: Tempo keeps your data on your Mac. We don't run a cloud for it.
+      Nothing about what you monitor, schedule, or automate leaves your device because of us.
+    </p>
+
+    <h2>What Tempo stores locally</h2>
+    <p>
+      Every event Tempo ingests — calendar entries, reminders, webhook alerts,
+      HomeKit signals, script results, whatever you connect — is stored in a
+      local SQLite database under <code>~/Library/Application Support/Tempo/</code>.
+      Attachments, configuration, tokens, scores, and logs live in the same
+      directory. This data never leaves your Mac through Tempo.
+    </p>
+    <p>
+      If you back up your Mac (Time Machine, Kopia, Arq, etc.) or keep that
+      folder on an external/cloud-synced drive, backups and sync follow whatever
+      service you chose. That is your decision and your trust relationship with
+      that service, not ours.
+    </p>
+
+    <h2>What Tempo sends to the network</h2>
+    <p>
+      Tempo is designed to sit on your LAN. The app itself makes these outbound
+      network calls, and no others:
+    </p>
+    <ul>
+      <li>
+        <strong>Update checks (Sparkle)</strong> — Tempo asks
+        <code>downloads.tempoapp.app</code> whether a newer version exists.
+        This request carries your current Tempo version and your IP address
+        (unavoidable for any HTTPS request). We don't correlate it with an
+        identity, we don't store it beyond Cloudflare's standard access logs,
+        and no other data is sent.
+      </li>
+      <li>
+        <strong>Opt-in telemetry</strong> — off by default. If you enable it
+        in Settings, Tempo may send anonymized usage counters (e.g. "Kopia
+        source used", "app started"). No event contents, no identifiers, no
+        IP beyond what the transport requires. You can turn it off at any
+        time; turning it off stops new data immediately.
+      </li>
+    </ul>
+    <p>
+      That's the full list. Tempo does not ship with third-party analytics,
+      crash reporting SDKs, ad networks, or tracking pixels.
+    </p>
+
+    <h2>What Tempo does not collect</h2>
+    <ul>
+      <li>Event contents (what your calendars, reminders, scripts, or webhooks say)</li>
+      <li>The list of sources you have connected</li>
+      <li>Your Mac's name, serial number, or device identifiers</li>
+      <li>Contacts, files, or other system data beyond what you explicitly grant via macOS permission dialogs (EventKit, HomeKit, Health, etc.)</li>
+      <li>Any form of behavioural profiling</li>
+    </ul>
+
+    <h2>macOS permissions</h2>
+    <p>
+      On first use of certain features, macOS will ask for permission: Calendar
+      and Reminders (EventKit), HomeKit, Focus, Health, and so on. Tempo reads
+      only the data you grant. You can revoke any permission in
+      <em>System Settings → Privacy & Security</em> at any time; Tempo handles
+      revocation gracefully and stops reading from that source.
+    </p>
+
+    <h2>Third parties that touch your data</h2>
+    <p>
+      Only two, and only indirectly:
+    </p>
+    <ul>
+      <li>
+        <strong>Cloudflare</strong> serves <code>tempoapp.app</code> (this site),
+        <code>downloads.tempoapp.app</code> (app downloads and update feed), and
+        any related subdomains. When your browser or Tempo connects to these,
+        Cloudflare sees the request — the same way it sees any of the millions
+        of sites it serves. Standard access logs, no custom logging we add.
+        Cloudflare may process these access logs in non-EU jurisdictions; such
+        transfers occur under Standard Contractual Clauses (SCCs) approved by
+        the European Commission.
+      </li>
+      <li>
+        <strong>Your chosen third-party sources.</strong> If you connect Tempo
+        to a Google Calendar, a Home Assistant webhook, or any other external
+        service, Tempo talks to that service on your behalf. Whatever those
+        services collect is between you and them.
+      </li>
+    </ul>
+
+    <h2>Your rights under GDPR and similar laws</h2>
+    <p>
+      Because Tempo stores data exclusively on your Mac, the usual rights
+      (access, rectification, erasure, portability, restriction) are satisfied
+      directly by you: the database is a file you own. To erase everything,
+      delete the <code>~/Library/Application Support/Tempo/</code> directory
+      and uninstall the app. We have nothing stored on our side to delete.
+    </p>
+    <p>
+      If you enabled opt-in telemetry, the counters we received are
+      non-identifiable by design. If you still want them removed, contact us
+      at <a href="mailto:privacy@tempoapp.app">privacy@tempoapp.app</a> and
+      we'll purge matching rows from the telemetry store.
+    </p>
+    <p>
+      EU/EEA residents have the right to lodge a complaint with their national
+      data protection authority if they believe their personal data is being
+      handled improperly. The Italian authority is the
+      <a href="https://www.garanteprivacy.it">Garante per la Protezione dei Dati Personali</a>.
+    </p>
+
+    <h2>Who is the data controller</h2>
+    <p>
+      The data controller for tempoapp.app and the Tempo application is
+      <strong>Caereforge</strong>, an independent software publisher based in
+      Italy, reachable at
+      <a href="mailto:privacy@tempoapp.app">privacy@tempoapp.app</a>.
+    </p>
+
+    <h2>Security</h2>
+    <p>
+      Tempo stores authentication tokens for external services (per-provider
+      ingestion tokens, OAuth tokens for calendar providers if added, etc.) in
+      the macOS Keychain — not in the app's preferences or database. If you
+      move your Tempo folder to another Mac, tokens do not travel with it; you
+      reconfigure them on the new machine.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      Tempo is a general-purpose macOS utility intended for adults. It does
+      not knowingly collect information from or target minors.
+    </p>
+
+    <h2>Changes to this notice</h2>
+    <p>
+      If this Privacy Notice changes in any substantive way, the updated date
+      at the top will change, and we'll note the change in the release notes
+      of the Tempo version that introduced the reason for the update.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      <a href="mailto:privacy@tempoapp.app">privacy@tempoapp.app</a>
+    </p>
+  </main>
+
+  <style>
+    .legal {
+      max-width: 720px;
+      margin: 48px auto;
+      padding: 0 24px 80px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .legal .back {
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .legal .back a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .legal h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .legal h2 {
+      font-size: 20px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .legal .meta {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 32px;
+    }
+    .legal .lede {
+      font-size: 17px;
+      color: var(--text);
+      padding: 16px 20px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 32px;
+    }
+    .legal ul { padding-left: 22px; }
+    .legal li { margin-bottom: 8px; }
+    .legal code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .legal a { color: var(--blue); }
+  </style>
+</BaseLayout>
