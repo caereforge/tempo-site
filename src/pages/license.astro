@@ -1,0 +1,183 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lastUpdated = "April 2026";
+---
+<BaseLayout
+  title="License & Disclaimer — Tempo"
+  description="Terms of use for Tempo: free to use, no warranty, you're responsible for what you automate.">
+  <main class="legal">
+    <p class="back"><a href="/">← tempoapp.app</a></p>
+
+    <h1>License &amp; Disclaimer</h1>
+    <p class="meta">Last updated: {lastUpdated}</p>
+
+    <p class="lede">
+      Tempo is provided free of charge. You can use it for personal or
+      commercial purposes. It comes with no warranty, and anything it does on
+      your behalf — including anything you configure it to automate — is your
+      responsibility.
+    </p>
+
+    <h2>License grant</h2>
+    <p>
+      You are granted a non-exclusive, non-transferable license to install and
+      use Tempo on Macs you control, for any lawful purpose, at no cost. You
+      may not redistribute, modify, reverse-engineer, or resell the Tempo
+      application binary except as permitted by applicable law. You may freely
+      write and share scores, configurations, and scripts that work with
+      Tempo.
+    </p>
+
+    <h2>No warranty</h2>
+    <p>
+      Tempo is provided <strong>"as is"</strong>, without warranty of any
+      kind, express or implied, including but not limited to the warranties of
+      merchantability, fitness for a particular purpose, and non-infringement.
+      The author makes no guarantees that Tempo will be uninterrupted,
+      error-free, or fit for your specific use case.
+    </p>
+
+    <h2>Limitation of liability</h2>
+    <p>
+      To the maximum extent permitted by applicable law, the author shall not
+      be liable for any indirect, incidental, special, consequential, or
+      punitive damages, or any loss of data, revenue, profits, or business
+      arising out of or in connection with your use of Tempo, even if advised
+      of the possibility of such damages. Use Tempo at your own risk.
+    </p>
+
+    <h2>Automation: you are the author</h2>
+    <p>
+      Tempo is built to execute automations — "scores" — that you author,
+      install, or enable within the application. Tempo does not create,
+      enable, or execute any score on your behalf. A fresh installation
+      contains zero active automations.
+    </p>
+    <p>
+      You are solely responsible for the scores you create, install, or run,
+      and for the actions they perform, including but not limited to:
+      opening URLs, running Terminal commands, invoking AppleScripts, posting
+      to third-party services, modifying system state, or interacting with
+      HomeKit accessories. Tempo maintains a local audit log of automatic
+      actions so you can review what happened and when.
+    </p>
+    <p>
+      Community-contributed scores — whether downloaded from the public Tempo
+      Scores catalog or dropped into your local Scores folder from any other
+      source — carry the same responsibility. The reviewed catalog includes a
+      security and sanity check by the Tempo team, but that review is not a
+      warranty. <strong>The functional responsibility of a score lies with
+      its author, and the decision to install any score lies with you.</strong>
+    </p>
+
+    <h2>Network ingestion</h2>
+    <p>
+      Tempo's ingestion server accepts events from other hosts on your local
+      network, protected by per-provider authentication tokens. You are
+      responsible for the security of your local network, for the sources you
+      authorize to send events, and for the secrets you configure. Tempo's
+      role is to receive and display what you've authorized; it cannot audit
+      the intent of the senders on your behalf.
+    </p>
+
+    <h2>Third-party software</h2>
+    <p>
+      Tempo uses and bundles third-party open source components (SwiftUI,
+      SQLite, Sparkle for updates, and others). These are used under their
+      respective licenses. Full attribution is available in the application's
+      <em>About → Acknowledgements</em> panel once shipped.
+    </p>
+
+    <h2>Trademarks</h2>
+    <p>
+      "Tempo" and the tempoapp.app domain are claimed by the project author.
+      You may refer to Tempo by name in blog posts, reviews, screenshots, and
+      other commentary. Do not use the name or visual identity to imply
+      endorsement of unrelated products or services.
+    </p>
+
+    <h2>Freeware status and future changes</h2>
+    <p>
+      Tempo is distributed free of charge during the current release cycle.
+      If a future major version introduces a paid tier, existing installs of
+      free versions will remain usable at no cost. Any change to licensing or
+      pricing will be announced on <a href="/">tempoapp.app</a> and in the
+      application's release notes, with adequate notice.
+    </p>
+
+    <h2>Jurisdiction</h2>
+    <p>
+      These terms are governed by the laws of Italy, without regard to
+      conflict-of-law principles. If any provision is found unenforceable in
+      your jurisdiction, the remaining provisions continue to apply.
+    </p>
+    <p>
+      If you are a consumer resident in the European Union, the United Kingdom,
+      or any other jurisdiction whose laws grant you mandatory consumer rights
+      that cannot be waived by contract, those rights remain in force and are
+      not affected by the choice of Italian law above. You may bring a claim
+      in the competent court of the country where you reside.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      <a href="mailto:hello@tempoapp.app">hello@tempoapp.app</a>
+    </p>
+  </main>
+
+  <style>
+    .legal {
+      max-width: 720px;
+      margin: 48px auto;
+      padding: 0 24px 80px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .legal .back {
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .legal .back a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .legal h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .legal h2 {
+      font-size: 20px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .legal .meta {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 32px;
+    }
+    .legal .lede {
+      font-size: 17px;
+      color: var(--text);
+      padding: 16px 20px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 32px;
+    }
+    .legal ul { padding-left: 22px; }
+    .legal li { margin-bottom: 8px; }
+    .legal code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .legal a { color: var(--blue); }
+  </style>
+</BaseLayout>
