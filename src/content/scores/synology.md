@@ -10,7 +10,7 @@ compatibility:
   - "DSM 7.1"
   - "DSM 7.2"
 pubDate: 2026-04-23
-downloadable: false
+downloadable: true
 ---
 
 Synology DSM 7 and later support **Custom Webhook** as a notification transport out of the box. This score gives Tempo a place to receive those notifications and attach 10 one-click actions on each event — open DSM, jump straight into Storage Manager or Log Center, SSH to the NAS, ping it, copy details for an incident ticket.
