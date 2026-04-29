@@ -1,0 +1,190 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Downloads — Tempo"
+  description="Everything you can download for Tempo — the app itself, scores, and utilities."
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/">← Tempo</a>
+    </nav>
+    <h1>Downloads</h1>
+    <p class="lede">
+      Tempo is the app, but it's not the whole story. Scores teach Tempo about
+      your sources; utilities fit alongside Tempo to fill workflow gaps. Pick
+      what you need.
+    </p>
+  </header>
+
+  <main class="cards">
+
+    <article class="card">
+      <h2>Tempo</h2>
+      <p class="card-desc">
+        A native macOS event hub. Aggregates events from every source in your
+        homelab — Kopia, UniFi, Home Assistant, Uptime Kuma, Proxmox, GitHub
+        Actions, your Calendar — into a single chronological timeline, with
+        action buttons that actually do something.
+      </p>
+      <p class="card-meta">
+        macOS 15+ · Signed + notarized DMG · No App Store
+      </p>
+      <p class="card-actions">
+        <a class="btn btn-primary" href="https://tempoapp.app/Tempo.dmg">Download DMG</a>
+        <a class="btn btn-secondary" href="/blog/">Read the blog</a>
+      </p>
+    </article>
+
+    <article class="card">
+      <h2>Scores</h2>
+      <p class="card-desc">
+        Small declarative JSON files that teach Tempo about a source — the
+        color, the severity rules, and the one-click actions to attach. Drop
+        one in, the source is wired up.
+      </p>
+      <p class="card-meta">
+        Tempo ships with a core set bundled in. The catalog below adds
+        downloadable extras for tools the bundle doesn't cover.
+      </p>
+      <p class="card-actions">
+        <a class="btn btn-primary" href="/scores/">Browse the catalog</a>
+        <a class="btn btn-secondary" href="https://github.com/caereforge/tempo-scores">Source on GitHub</a>
+      </p>
+    </article>
+
+    <article class="card">
+      <h2>Utilities</h2>
+      <p class="card-desc">
+        Shortcuts, scripts, and small helper tools that complement Tempo. They
+        don't define a Tempo source — they fit alongside, filling the workflow
+        gaps that the app itself doesn't try to solve.
+      </p>
+      <p class="card-meta">
+        First entry: a macOS Shortcut to copy <code>message://</code> deep
+        links from Apple Mail. More land as the catalog grows.
+      </p>
+      <p class="card-actions">
+        <a class="btn btn-primary" href="https://github.com/caereforge/tempo-utilities">Browse on GitHub</a>
+      </p>
+    </article>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>
+      Looking for documentation? See the <a href="/blog/">blog</a> for design
+      notes, dev logs, and walkthroughs.
+    </p>
+  </footer>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 1.5rem;
+  }
+  .page-nav {
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .page-nav a { color: var(--text2); }
+  .page-nav a:hover { color: var(--text); }
+
+  .page-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .lede {
+    color: var(--text2);
+    margin-bottom: 0.75rem;
+    max-width: 60ch;
+  }
+
+  .cards {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 1rem 1.25rem 4rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1.25rem;
+    background: var(--bg-elev, transparent);
+  }
+
+  .card h2 {
+    font-size: 1.4rem;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .card-desc {
+    color: var(--text2);
+    max-width: 60ch;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-meta {
+    color: var(--text3);
+    font-size: 0.9rem;
+    max-width: 60ch;
+    margin-bottom: 1rem;
+  }
+
+  .card-meta code {
+    background: var(--bg-elev, rgba(0,0,0,0.05));
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+
+  .card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: var(--bg);
+  }
+  .btn-primary:hover {
+    background: var(--blue-hover, var(--blue));
+    filter: brightness(1.05);
+  }
+
+  .btn-secondary {
+    border: 1px solid var(--border);
+    color: var(--text2);
+    background: transparent;
+  }
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: var(--text2);
+  }
+
+  .page-footer {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 0 1.25rem 4rem;
+    color: var(--text3);
+    font-size: 0.95rem;
+  }
+  .page-footer a { color: var(--blue); }
+</style>
