@@ -19,7 +19,7 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
       Small declarative files that teach Tempo how to read events from a specific source and which one-click actions to attach. Drop one into Tempo, and the source is wired up.
     </p>
     <p class="lede-secondary">
-      Tempo v1 ships with seven scores built-in (Kopia, Home Assistant, Proxmox, UniFi, Uptime Kuma, Apple, generic webhook). The ones listed here are downloadable add-ons — starting with Synology, and growing over time.
+      Tempo v1 ships with seven scores built-in: <strong>UniFi, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Synology</strong>, plus a generic adapter for shell scripts. Apple Calendar and Reminders are first-class sources too, surfaced via a dedicated EventKit integration. The ones listed here are <strong>downloadable add-ons</strong> — Proxmox, Pi-hole, Vaultwarden, Jellyfin, Hazel — with the catalog growing over time.
     </p>
     <p class="lede-secondary">
       Score installed but nothing lands in the feed? See <a href="/scores/troubleshooting-networking">troubleshooting networking</a> — five patterns cover almost every case.
