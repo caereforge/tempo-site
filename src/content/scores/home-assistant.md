@@ -126,23 +126,24 @@ action:
 
 ## How the score classifies events
 
-The bundled score's 13 severity rules run in order (first match wins). The columns below show which keys are matched, the badge severity assigned, and the title/subtitle the rule interpolates from your metadata.
+The bundled score runs **device_class-first**: matches on the stable `device_class` attribute that Home Assistant assigns to entities (e.g. `smoke`, `moisture`, `motion`, `tamper`) take priority over entity_id substring patterns. This is more robust because raw integration names like `binary_sensor.0x00158d0001abc_ias_zone` (Zigbee2MQTT) carry no semantic info — `device_class` is the signal that survives renames.
 
-| Match                                                | Severity   | Title template                                  |
-|------------------------------------------------------|------------|-------------------------------------------------|
-| `entity_id: binary_sensor.*_smoke*` + `state: on`    | `critical` | `Smoke detected in ${metadata.area}`            |
-| `entity_id: binary_sensor.*_smoke*` + `state: off`   | `ok`       | `Smoke cleared in ${metadata.area}`             |
-| `entity_id: binary_sensor.*_leak*`  + `state: on`    | `critical` | `Water leak in ${metadata.area}`                |
-| `entity_id: binary_sensor.*_leak*`  + `state: off`   | `ok`       | `Leak cleared in ${metadata.area}`              |
-| `entity_id: binary_sensor.*_water*` + `state: on`    | `critical` | `Water detected in ${metadata.area}`            |
-| `entity_id: binary_sensor.*_door*`  + `state: on`    | `info`     | `${metadata.friendly_name} opened`              |
-| `entity_id: binary_sensor.*_door*`  + `state: off`   | `info`     | `${metadata.friendly_name} closed`              |
-| `entity_id: binary_sensor.*_window*` + `state: on`   | `info`     | `${metadata.friendly_name} opened`              |
-| `entity_id: binary_sensor.*_window*` + `state: off`  | `info`     | `${metadata.friendly_name} closed`              |
-| `entity_id: binary_sensor.*_motion` + `state: on`    | `info`     | `Motion in ${metadata.area}`                    |
-| `device_class: battery` + `state: on`                | `warning`  | `Low battery: ${metadata.friendly_name}`        |
-| `entity_id: climate.*`                               | `info`     | `${metadata.friendly_name} → ${metadata.state}` |
-| `automation: *`                                      | `info`     | `Automation: ${metadata.automation}`            |
+Rules are evaluated in order, first match wins. Highlights:
+
+| Severity   | What triggers it |
+|------------|------------------|
+| `critical` | `device_class: smoke / carbon_monoxide / gas / moisture / safety` (state on); `alarm_control_panel.* state=triggered`; legacy entity_id glob (`*_smoke*`, `*_leak*`, `*_water*`) for users who haven't set device_class |
+| `warning`  | `device_class: tamper / problem` (state on); `device_class: battery` (low); `alarm_control_panel.* state=pending`; `event_type: homeassistant_stop` |
+| `info`     | Door/window/motion sensors; alarm panel armed/disarmed/arming transitions; locks (locked/unlocked); presence (`person.*` / `device_tracker.*` home/not_home); `homeassistant_start`; `device_class: update`; climate domain catch-all; `automation: *` |
+| `ok`       | Smoke cleared; moisture cleared (`state: off` for those classes) |
+
+For the full list (~30 rules with title/subtitle templates), open the score file in Tempo's Score Editor or read `~/Library/Application Support/Tempo/Scores/com.home-assistant.json`.
+
+### Why device_class beats entity_id matching
+
+Two of the most common HA installs (Zigbee2MQTT, ESPHome auto-discovery) name entities by hardware ID, not semantics. A smoke detector might be `binary_sensor.0x00158d0001abc_ias_zone` rather than `binary_sensor.kitchen_smoke`. The legacy entity_id glob rules catch the second pattern but miss the first. The `device_class: smoke` match catches **both**, because Home Assistant assigns `device_class` based on what the sensor reports, not how you named it.
+
+The legacy entity_id rules are kept as a fallback — for users who haven't set device_class on a custom integration, named their entities semantically, or are using older HA Core versions where some integrations didn't expose device_class.
 
 ### Match semantics
 
