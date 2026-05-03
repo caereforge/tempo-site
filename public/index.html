@@ -607,10 +607,10 @@ footer {
         Grafana webhook. No plugin SDK, no rebuild.
       </p>
       <p>
-        Each event carries its own action set. Build them visually in the
-        <span class="highlight">Action Builder</span> — buttons, terminal commands,
-        Apple Shortcuts, URL schemes. Use payload tokens like
-        <code style="font-family:monospace;font-size:11px;color:var(--blue)">{{host}}</code>
+        Each event carries its own action set, declared in a small JSON
+        <span class="highlight">score</span>. Drop one in or write your own —
+        Tempo reads the fields and builds the buttons. Use payload tokens like
+        <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>
         so each click already knows the context.
       </p>
     </div>
@@ -710,7 +710,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Yes — this is the core of Tempo. Every event type has its own action set, defined via the <strong style="color:var(--text)">Action Builder</strong>: a visual editor, no code required. Actions can open URLs, run terminal commands, execute scripts, or trigger Apple Shortcuts. Use payload tokens — <code style="font-family:monospace;font-size:11px;color:var(--blue)">{{host}}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">{{ip}}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">{{title}}</code> — so each button already knows the context.
+        Yes — this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger Apple Shortcut), and the labels. Tempo ships bundled scores for common sources (Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar &amp; Reminders) and you can drop in more from the public catalog or write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code> — so each button already knows the context. A visual score editor is on the V2 roadmap.
       </div>
     </div>
 
@@ -783,26 +783,26 @@ footer {
   <div class="roadmap-list">
 
     <div class="rm-item">
-      <div class="rm-status rm-now">Now</div>
+      <div class="rm-status rm-now">V1</div>
       <div class="rm-text">
-        <div class="rm-title">Private Beta</div>
-        <div class="rm-desc">Timeline UI (agenda + live feed), Apple Calendar &amp; Reminders, LAN-reachable IngestionServer with per-provider tokens, Action Builder, menubar widget. Daily / weekly / monthly views, per-source theming, severity levels.</div>
+        <div class="rm-title">Shipping soon</div>
+        <div class="rm-desc">Timeline UI (agenda + live feed), LAN-reachable IngestionServer with per-provider tokens, declarative score system with bundled scores for Home Assistant, Uptime Kuma, Kopia, UniFi, GitHub Actions, Synology, Apple Calendar &amp; Reminders, and a generic webhook adapter. Menubar widget, per-source theming, severity rules, hide/auto-dismiss policies. Backup to user-chosen path. Sparkle auto-update.</div>
       </div>
     </div>
 
     <div class="rm-item">
-      <div class="rm-status rm-next">Next — V1.0</div>
+      <div class="rm-status rm-next">V1.x</div>
       <div class="rm-text">
-        <div class="rm-title">Homelab modules</div>
-        <div class="rm-desc">First-party modules for Home Assistant, Uptime Kuma, Kopia, UniFi, GitHub Actions. System status footer (CPU, memory, network) with extensible providers. Generic webhook templates for everything else.</div>
+        <div class="rm-title">Post-launch additions</div>
+        <div class="rm-desc">In-app score browser (one-click install from the public catalog). Proxmox native adapter. Sound customization. Source liveness detection. Bug fixes and stability work informed by community feedback. Free, forever — for everyone who installed V1.</div>
       </div>
     </div>
 
     <div class="rm-item">
-      <div class="rm-status rm-later">Later — V1.1+</div>
+      <div class="rm-status rm-later">V2</div>
       <div class="rm-text">
-        <div class="rm-title">CLI, more integrations, AI assist</div>
-        <div class="rm-desc">CLI for scripting (push events, query, trigger actions). Google Calendar / Outlook OAuth. Bidirectional sync starting with Apple Reminders. AI Action Builder — describe what you want in plain English (BYO API key). Template gallery.</div>
+        <div class="rm-title">Future, paid trajectory</div>
+        <div class="rm-desc">Real automations (auto-firing rules with whitelist + audit log). Visual score editor. AI-assisted score authoring. CLI for scripting. Google Calendar / Outlook OAuth. CalDAV. Bidirectional sync starting with Apple Reminders. Considered as a paid one-time purchase; details and timing TBD based on V1 reception.</div>
       </div>
     </div>
 
