@@ -37,4 +37,4 @@ But the AI is not the architect. It's a tool that writes code and needs to be gu
 
 Oh, I almost forgot the name. "Tempo" brings to mind rhythm, the pulse of a piece of music. It's the music of my tech passion: the rhythm of all these tools talking to each other, of the little blinking lights, of the outputs, of the result I manage to put together and that makes me happy. And it's also a promise: your time — the time you get back when your homelab works alongside you instead of asking for your attention all day long.
 
-— Leo di Caereforge
+— caereforge
