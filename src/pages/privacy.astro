@@ -20,7 +20,7 @@ const lastUpdated = "April 2026";
     <h2>What Tempo stores locally</h2>
     <p>
       Every event Tempo ingests — calendar entries, reminders, webhook alerts,
-      HomeKit signals, script results, whatever you connect — is stored in a
+      script results, whatever you connect — is stored in a
       local SQLite database under <code>~/Library/Application Support/Tempo/</code>.
       Attachments, configuration, tokens, scores, and logs live in the same
       directory. This data never leaves your Mac through Tempo.
@@ -64,17 +64,21 @@ const lastUpdated = "April 2026";
       <li>Event contents (what your calendars, reminders, scripts, or webhooks say)</li>
       <li>The list of sources you have connected</li>
       <li>Your Mac's name, serial number, or device identifiers</li>
-      <li>Contacts, files, or other system data beyond what you explicitly grant via macOS permission dialogs (EventKit, HomeKit, Health, etc.)</li>
+      <li>Contacts, files, or other system data beyond what you explicitly grant via macOS permission dialogs (EventKit only in v1)</li>
       <li>Any form of behavioural profiling</li>
     </ul>
 
     <h2>macOS permissions</h2>
     <p>
       On first use of certain features, macOS will ask for permission: Calendar
-      and Reminders (EventKit), HomeKit, Focus, Health, and so on. Tempo reads
-      only the data you grant. You can revoke any permission in
+      and Reminders (EventKit) only. Tempo reads only the data you grant. You
+      can revoke any permission in
       <em>System Settings → Privacy & Security</em> at any time; Tempo handles
       revocation gracefully and stops reading from that source.
+    </p>
+    <p>
+      Other macOS integrations (HomeKit, Focus, Health) are reserved for
+      future versions of Tempo and are not requested in v1.
     </p>
 
     <h2>Third parties that touch your data</h2>

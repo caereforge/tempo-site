@@ -1,6 +1,9 @@
 # tempo-site
 
-Landing page for **Tempo** — the macOS event hub for homelabs.
+> *For tinkerers, from a Mac to a rack.*
+
+Landing page for **Tempo**. Every signal from every source on one
+Mac-native timeline. Yours to shape, ready to act.
 
 Live at **[tempoapp.app](https://tempoapp.app)**.
 
