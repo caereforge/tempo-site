@@ -33,4 +33,17 @@ const scores = defineCollection({
   }),
 });
 
-export const collections = { blog, scores };
+const userguide = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/userguide" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    chapter: z.number(),
+    order: z.number(),
+    draft: z.boolean().default(false),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = { blog, scores, userguide };
