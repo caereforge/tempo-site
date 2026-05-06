@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Docs — Tempo"
+  description="Integration guides and how-to documentation for Tempo: Home Assistant, score authoring, troubleshooting."
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/">← tempoapp.app</a>
+    </nav>
+    <h1>Documentation</h1>
+    <p class="lede">
+      Integration guides and how-tos. Each page is self-contained and
+      written for somebody who has Tempo running on their Mac and a
+      specific source they want to connect.
+    </p>
+  </header>
+
+  <main class="doc">
+
+    <section class="group">
+      <h2>Integration guides</h2>
+      <ul class="cards">
+        <li class="card">
+          <a href="/docs/home-assistant">
+            <h3>Home Assistant</h3>
+            <p>
+              Send any HA state change, automation completion, or system
+              event to Tempo. Five-minute setup, copy-paste cookbook for
+              safety sensors, doors, locks, alarm panels, climate, presence,
+              and automations.
+            </p>
+          </a>
+        </li>
+      </ul>
+      <p class="more-coming">
+        More integration guides land here as Tempo's source list grows —
+        Kopia, UniFi, Uptime Kuma, Synology, Pi-hole, Proxmox, GitHub
+        Actions and the rest already work today via the
+        <a href="/scores">bundled scores</a>; dedicated guides arrive in
+        the post-launch updates.
+      </p>
+    </section>
+
+    <section class="group">
+      <h2>Reference</h2>
+      <ul class="cards">
+        <li class="card">
+          <a href="/scores">
+            <h3>Scores catalogue</h3>
+            <p>
+              Browse the bundled and community scores — pre-configured
+              event recipes for common sources, double-click to install.
+            </p>
+          </a>
+        </li>
+        <li class="card">
+          <a href="/scores/troubleshooting-networking">
+            <h3>Troubleshooting networking</h3>
+            <p>
+              Five patterns that cover almost every "score installed but
+              nothing arrives in Tempo" situation: firewall, Little Snitch,
+              VLAN isolation, hostname resolution, port collision.
+            </p>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <style>
+    .page-header {
+      max-width: 760px;
+      margin: 48px auto 24px;
+      padding: 0 24px;
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+    .page-nav {
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .page-nav a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .page-header h1 {
+      font-size: 36px;
+      margin: 0 0 16px;
+      color: var(--text);
+    }
+    .lede {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+      padding: 16px 20px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .doc {
+      max-width: 760px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .doc .group {
+      margin-top: 48px;
+    }
+    .doc h2 {
+      font-size: 22px;
+      margin: 0 0 16px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .cards {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 720px) {
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg2);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover {
+      border-color: var(--blue);
+    }
+    .card a {
+      display: block;
+      padding: 16px 20px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: var(--text);
+    }
+    .card p {
+      margin: 0;
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .more-coming {
+      color: var(--text2);
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .more-coming a {
+      color: var(--blue);
+    }
+  </style>
+</BaseLayout>
