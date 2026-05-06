@@ -3,7 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 <BaseLayout
   title="Docs — Tempo"
-  description="Integration guides and how-to documentation for Tempo: Home Assistant, score authoring, troubleshooting."
+  description="Documentation for Tempo: per-source integration guides, reference pages, and the upcoming Tempo user guide."
 >
   <header class="page-header">
     <nav class="page-nav">
@@ -11,61 +11,82 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     </nav>
     <h1>Documentation</h1>
     <p class="lede">
-      Integration guides and how-tos. Each page is self-contained and
-      written for somebody who has Tempo running on their Mac and a
-      specific source they want to connect.
+      Tempo's docs split into three areas. Per-source integration guides
+      live on each score's own page in the catalogue, alongside the
+      download. Cross-source reference pages live here. A full Tempo user
+      guide will land here once v1 ships and the rough edges are polished.
     </p>
   </header>
 
   <main class="doc">
 
     <section class="group">
-      <h2>Integration guides</h2>
+      <h2>Per-source integration guides</h2>
+      <p>
+        For setting up a specific source — Home Assistant, Kopia, Uptime
+        Kuma, UniFi, GitHub Actions, Synology, Pi-hole, Proxmox, Hazel,
+        Jellyfin, Vaultwarden, and more — open the score's catalogue page.
+        Each one documents the source-side configuration, the payload
+        contract Tempo expects, and what the bundled severity rules and
+        actions look for.
+      </p>
       <ul class="cards">
         <li class="card">
-          <a href="/docs/home-assistant">
-            <h3>Home Assistant</h3>
+          <a href="/scores">
+            <h3>Browse the scores catalogue →</h3>
             <p>
-              Send any HA state change, automation completion, or system
-              event to Tempo. Five-minute setup, copy-paste cookbook for
-              safety sensors, doors, locks, alarm panels, climate, presence,
-              and automations.
+              Bundled and community scores. Double-click a
+              <code>.tempo-score</code> to install, or read the page for
+              the integration walkthrough.
             </p>
           </a>
         </li>
       </ul>
-      <p class="more-coming">
-        More integration guides land here as Tempo's source list grows —
-        Kopia, UniFi, Uptime Kuma, Synology, Pi-hole, Proxmox, GitHub
-        Actions and the rest already work today via the
-        <a href="/scores">bundled scores</a>; dedicated guides arrive in
-        the post-launch updates.
-      </p>
     </section>
 
     <section class="group">
       <h2>Reference</h2>
       <ul class="cards">
         <li class="card">
-          <a href="/scores">
-            <h3>Scores catalogue</h3>
-            <p>
-              Browse the bundled and community scores — pre-configured
-              event recipes for common sources, double-click to install.
-            </p>
-          </a>
-        </li>
-        <li class="card">
           <a href="/scores/troubleshooting-networking">
             <h3>Troubleshooting networking</h3>
             <p>
-              Five patterns that cover almost every "score installed but
-              nothing arrives in Tempo" situation: firewall, Little Snitch,
-              VLAN isolation, hostname resolution, port collision.
+              When the score is installed and the source is configured,
+              but events never reach Tempo. Five patterns that cover
+              almost every reported case: firewall, Little Snitch, VLAN
+              isolation, hostname resolution, port collision.
             </p>
           </a>
         </li>
       </ul>
+    </section>
+
+    <section class="group">
+      <h2>Tempo user guide</h2>
+      <div class="placeholder">
+        <p>
+          <strong>Coming with v1.</strong> The app's UI is in active polish
+          ahead of the first public release. Once the ship version is out
+          and stable, a proper user guide lands here — covering the
+          timeline, the panels, the score editor, the settings tabs, and
+          the keyboard shortcuts.
+        </p>
+        <p>
+          In the meantime, the homepage <a href="/#story">story</a> and
+          <a href="/#faq">FAQ</a> sections cover most of the questions
+          people ask before downloading.
+        </p>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2>Got stuck?</h2>
+      <p>
+        Email <a href="mailto:hello@tempoapp.app">hello@tempoapp.app</a>.
+        A community Discord and a public issue tracker open with the v1
+        release; both will be linked here and on the homepage when they
+        go live.
+      </p>
     </section>
 
   </main>
@@ -119,6 +140,12 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
     }
+    .doc p {
+      margin: 0 0 12px;
+    }
+    .doc a {
+      color: var(--blue);
+    }
     .cards {
       list-style: none;
       padding: 0;
@@ -126,11 +153,6 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       display: grid;
       grid-template-columns: 1fr;
       gap: 12px;
-    }
-    @media (min-width: 720px) {
-      .cards {
-        grid-template-columns: 1fr 1fr;
-      }
     }
     .card {
       border: 1px solid var(--border);
@@ -158,13 +180,32 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       font-size: 14px;
       line-height: 1.5;
     }
-    .more-coming {
+    .placeholder {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      background: var(--bg2);
       color: var(--text2);
-      font-size: 14px;
-      margin-top: 16px;
     }
-    .more-coming a {
+    .placeholder p {
+      margin: 0 0 12px;
+    }
+    .placeholder p:last-child {
+      margin-bottom: 0;
+    }
+    .placeholder strong {
+      color: var(--text);
+    }
+    .placeholder a {
       color: var(--blue);
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
     }
   </style>
 </BaseLayout>
