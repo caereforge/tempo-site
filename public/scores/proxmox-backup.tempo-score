@@ -2,6 +2,8 @@
   "providerIdentifier": "com.proxmox.backup",
   "displayName": "Proxmox Backup Server",
   "color": "#E57000",
+  "grouping": ["${metadata.hostname}/${metadata.severity}", "${metadata.hostname}"],
+  "groupingWindow": "1d",
   "severityRules": [
     { "match": { "severity": "error" },   "severity": "critical" },
     { "match": { "severity": "warning" }, "severity": "warning"  },

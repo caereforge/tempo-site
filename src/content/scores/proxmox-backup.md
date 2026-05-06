@@ -9,7 +9,7 @@ compatibility:
   - "PBS 3.2+"
   - "PBS 3.3"
 pubDate: 2026-04-23
-downloadable: false
+downloadable: true
 ---
 
 Proxmox Backup Server 3.2 added **webhook notification targets** as a first-class transport. This score gives Tempo a place to receive those notifications and attaches 10 one-click actions on each event — open the PBS UI, jump into datastores or the task list, SSH to the server, tail the task log remotely, copy details for an incident ticket.
