@@ -1,0 +1,606 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Home Assistant + Tempo — Tempo"
+  description="Send any Home Assistant state change, automation completion, or system event to Tempo and turn your HA dashboard from a snapshot into a timeline you can scroll back through."
+>
+  <header class="page-header">
+    <nav class="page-nav">
+      <a href="/">← tempoapp.app</a>
+    </nav>
+    <h1>Home Assistant</h1>
+    <p class="lede">
+      Your dashboard tells you what is happening <em>now</em>. Tempo tells you what has happened <em>since</em>. Connect Home Assistant to Tempo with a single <code>rest_command</code> and every state change you care about — smoke detectors, leak sensors, doors, locks, alarm panels, automations completing — lands in a chronological feed on your Mac. No cloud round-trip, no separate query tool, just scroll-back history of your house.
+    </p>
+    <p class="lede-secondary">
+      This page covers the five-minute setup, a copy-paste cookbook for the most common HA scenarios, and a short troubleshooting list. Tempo ships with a Home Assistant score (38 severity rules, 5 default actions, grouping by <code>entity_id</code>) so the events render with the right colour, label and buttons out of the box — you only have to send them.
+    </p>
+  </header>
+
+  <main class="doc">
+
+    <section class="scenario">
+      <h2>Why connect HA to Tempo</h2>
+      <p>
+        Home Assistant is excellent at <em>state at a glance</em>. The Lovelace dashboard, the Energy panel, the History view — they all answer the question <em>what is the state of my house right now</em>. What they don't do well is the question <em>did the smoke detector trip last night, and what time, and was it before or after the dishwasher cycle finished</em>.
+      </p>
+      <p>
+        Tempo is built for that second question. Every event you send arrives in a single chronological timeline on your Mac, grouped by entity, coloured by severity, ranked by recency. You can scroll back days, weeks, months. You can filter by source. You can click an event and jump straight to that entity's history page in HA. The two tools are complementary: HA is the brain that makes decisions, Tempo is the journal that remembers them.
+      </p>
+      <p>
+        Tempo runs on your Mac, on your LAN, with no cloud component. The HA → Tempo link is a single HTTP POST inside your network — no third-party broker, no telemetry, no account.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>1. Five-minute setup</h2>
+      <p>
+        You will: (1) create an ingestion token in Tempo, (2) add a single
+        <code>rest_command</code> to your HA configuration, (3) wire it into a
+        test automation. Total time on a working setup: well under five minutes.
+      </p>
+
+      <h3>Create the token in Tempo</h3>
+      <p>
+        Open Tempo → <em>Settings</em> → <em>Database / Ingestion</em> →
+        <em>Tokens</em>. Click <em>+ New token</em>, give it the name
+        <code>home-assistant</code> (anything works, but matching the provider
+        keeps the audit log readable), and bind it to provider
+        <code>com.home-assistant</code>. Copy the token value — Tempo only
+        shows it once at creation.
+      </p>
+      <p>
+        Optional: click <em>Save in Keychain</em> on the same row. The token
+        gets a Keychain entry tagged <em>Tempo: home-assistant</em> with iCloud
+        Keychain sync, so you can recover it later from any of your Macs
+        without rotating it.
+      </p>
+
+      <h3>Add the rest_command in HA</h3>
+      <p>
+        Edit your <code>configuration.yaml</code> (or a dedicated package) and
+        add the block below. Replace <code>your-mac.local</code> with the
+        actual hostname or LAN IP of the Mac running Tempo, and paste the
+        token where indicated.
+      </p>
+      <pre><code>{`rest_command:
+  tempo_ingest:
+    url: "http://your-mac.local:7776/ingest"
+    method: POST
+    headers:
+      X-Tempo-Token: "PASTE_TOKEN_HERE"
+      Content-Type: "application/json"
+    payload: >
+      {
+        "title":              {{ ((trigger.to_state.attributes.friendly_name | default(trigger.entity_id)) ~ ' — ' ~ trigger.to_state.state) | tojson }},
+        "providerIdentifier": "com.home-assistant",
+        "eventType":          "alert",
+        "externalID":         {{ trigger.entity_id | tojson }},
+        "metadata": {
+          "entity_id":     {{ trigger.entity_id | tojson }},
+          "state":         {{ trigger.to_state.state | tojson }},
+          "device_class":  {{ (trigger.to_state.attributes.device_class | default('')) | tojson }},
+          "friendly_name": {{ (trigger.to_state.attributes.friendly_name | default(trigger.entity_id)) | tojson }},
+          "area":          {{ (area_name(trigger.entity_id) | default('')) | tojson }},
+          "last_changed":  {{ trigger.to_state.last_changed | string | tojson }}
+        }
+      }`}</code></pre>
+      <p>
+        Reload <em>Developer Tools → YAML → All YAML configuration</em>, or
+        restart HA. The <code>tempo_ingest</code> service is now available to
+        every automation in the house.
+      </p>
+
+      <h3>Test from Developer Tools</h3>
+      <p>
+        Before wiring an automation, fire the service by hand to confirm the
+        round-trip works. <em>Developer Tools → Services</em>, pick
+        <code>rest_command.tempo_ingest</code>, and call it with no parameters
+        from the UI — the template uses <code>trigger</code>, which is
+        unbound here, so this manual call will fail safely. Instead, the
+        easiest first test is the curl command below run from any host on
+        your LAN:
+      </p>
+      <pre><code>{`curl -X POST http://your-mac.local:7776/ingest \\
+  -H "X-Tempo-Token: PASTE_TOKEN_HERE" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "title": "HA test event",
+    "providerIdentifier": "com.home-assistant",
+    "eventType": "alert",
+    "externalID": "test.tempo_setup",
+    "metadata": {
+      "entity_id": "test.tempo_setup",
+      "state": "on",
+      "friendly_name": "Tempo connectivity test",
+      "device_class": "smoke"
+    }
+  }'`}</code></pre>
+      <p>
+        You should see the event appear in Tempo's timeline within a second,
+        rendered as a critical "Smoke detected" event because the bundled
+        score matches <code>device_class: smoke</code> + <code>state: on</code>.
+        If nothing arrives, jump to <em>Troubleshooting</em> at the bottom of
+        this page.
+      </p>
+
+      <h3>Wire your first real automation</h3>
+      <p>
+        Below is the smallest possible HA automation that sends a real state
+        change to Tempo. It triggers on any change to a single entity and
+        forwards the new state.
+      </p>
+      <pre><code>{`alias: "Tempo: forward smoke detector"
+trigger:
+  - platform: state
+    entity_id: binary_sensor.kitchen_smoke
+action:
+  - service: rest_command.tempo_ingest
+mode: queued
+max: 25`}</code></pre>
+      <p>
+        Trigger it (press the test button on the detector, or change the
+        entity state from Developer Tools), and you'll see two events in
+        Tempo: one for the <code>on</code> transition, one for the
+        <code>off</code> transition when the alarm clears. Because the
+        bundled score groups by <code>entity_id</code>, the two events
+        collapse into a single thread in the feed — easier to read than 38
+        separate rows for a noisy sensor.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>2. Cookbook — common HA scenarios</h2>
+      <p>
+        These automations all use the <code>tempo_ingest</code>
+        <code>rest_command</code> from section 1. Drop them into your
+        automations file, change the <code>entity_id</code> values to match
+        your house, and you're done.
+      </p>
+
+      <h3>Safety sensors (smoke, CO, leak, gas)</h3>
+      <p>
+        The bundled score automatically marks these as <em>critical</em> on
+        <code>state: on</code> and as <em>ok</em> on <code>state: off</code>,
+        so you don't need conditional logic — forward every state change and
+        Tempo handles the colour and the label.
+      </p>
+      <pre><code>{`alias: "Tempo: safety sensors"
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.kitchen_smoke
+      - binary_sensor.basement_co
+      - binary_sensor.laundry_leak
+      - binary_sensor.boiler_gas
+action:
+  - service: rest_command.tempo_ingest
+mode: queued
+max: 25`}</code></pre>
+
+      <h3>Doors, windows, locks</h3>
+      <p>
+        Pure state forwarding works the same way. The score recognises
+        <code>binary_sensor.*_door*</code>,
+        <code>binary_sensor.*_window*</code>, and <code>lock.*</code>
+        patterns and renders them with neutral severity (informational,
+        not alarm) so the feed doesn't scream every time you walk through
+        the front door.
+      </p>
+      <pre><code>{`alias: "Tempo: openings"
+trigger:
+  - platform: state
+    entity_id:
+      - binary_sensor.front_door
+      - binary_sensor.bedroom_window
+      - lock.front_door
+action:
+  - service: rest_command.tempo_ingest
+mode: queued
+max: 25`}</code></pre>
+
+      <h3>Alarm panel</h3>
+      <p>
+        Same recipe — forward all states. The score recognises
+        <code>alarm_control_panel.*</code> with states
+        <code>triggered</code> (critical), <code>pending</code> (warning),
+        <code>armed_away/home/night</code>, <code>arming</code>,
+        <code>disarmed</code> (all info).
+      </p>
+      <pre><code>{`alias: "Tempo: alarm panel"
+trigger:
+  - platform: state
+    entity_id: alarm_control_panel.house
+action:
+  - service: rest_command.tempo_ingest
+mode: queued`}</code></pre>
+
+      <h3>Climate and thresholds</h3>
+      <p>
+        For continuous values (temperature, humidity, energy), forwarding
+        <em>every</em> state change would flood the feed. Use a numeric
+        threshold trigger instead, so Tempo only sees the events you
+        actually care about.
+      </p>
+      <pre><code>{`alias: "Tempo: server room overheating"
+trigger:
+  - platform: numeric_state
+    entity_id: sensor.server_room_temp
+    above: 32
+    for:
+      minutes: 5
+action:
+  - service: rest_command.tempo_ingest
+    data: {}
+mode: single`}</code></pre>
+      <p>
+        Note the <code>data: {}</code> — when the trigger isn't a state
+        platform, <code>trigger.to_state</code> may not be available. For
+        numeric triggers, replace the rest_command body with explicit
+        values. Quick variant:
+      </p>
+      <pre><code>{`# In configuration.yaml, alongside tempo_ingest:
+rest_command:
+  tempo_alert:
+    url: "http://your-mac.local:7776/ingest"
+    method: POST
+    headers:
+      X-Tempo-Token: "PASTE_TOKEN_HERE"
+      Content-Type: "application/json"
+    payload: >
+      {
+        "title":              {{ title | tojson }},
+        "providerIdentifier": "com.home-assistant",
+        "eventType":          "alert",
+        "externalID":         {{ entity_id | tojson }},
+        "metadata": {
+          "entity_id":     {{ entity_id | tojson }},
+          "state":         {{ state | tojson }},
+          "friendly_name": {{ (friendly_name | default(entity_id)) | tojson }}
+        }
+      }`}</code></pre>
+      <p>
+        Then call it from automations with explicit fields:
+      </p>
+      <pre><code>{`action:
+  - service: rest_command.tempo_alert
+    data:
+      title: "Server room hot: {{ states('sensor.server_room_temp') }}°C"
+      entity_id: "sensor.server_room_temp"
+      state: "warning"
+      friendly_name: "Server room temperature"`}</code></pre>
+
+      <h3>Person and presence</h3>
+      <p>
+        The score handles <code>person.*</code> and
+        <code>device_tracker.*</code> with two states, <code>home</code> and
+        <code>not_home</code>. Useful as an arrival/departure log.
+      </p>
+      <pre><code>{`alias: "Tempo: presence"
+trigger:
+  - platform: state
+    entity_id:
+      - person.alex
+      - person.sam
+action:
+  - service: rest_command.tempo_ingest
+mode: queued`}</code></pre>
+
+      <h3>Automation completed</h3>
+      <p>
+        Use this when you want a journal of <em>"the laundry-done routine
+        ran at 22:14"</em> rather than a state change. Add the rest_command
+        as the last action of any automation worth logging:
+      </p>
+      <pre><code>{`alias: "Laundry done routine"
+# ... your existing actions ...
+action:
+  # ... your real automation steps ...
+  - service: rest_command.tempo_alert
+    data:
+      title: "Laundry cycle finished"
+      entity_id: "automation.laundry_done"
+      state: "info"
+      friendly_name: "Laundry done routine"`}</code></pre>
+    </section>
+
+    <section class="scenario">
+      <h2>3. What the bundled score gives you</h2>
+      <p>
+        You don't have to design the rendering. The Home Assistant score
+        ships with Tempo and provides:
+      </p>
+      <ul>
+        <li>
+          <strong>38 severity rules</strong> covering smoke, CO, gas, leak,
+          tamper, alarm panels, doors, windows, locks, presence, motion,
+          batteries, climate, automations, and HA system start/stop events.
+          Each rule sets a severity colour and a short label
+          (<em>Smoke</em>, <em>Cleared</em>, <em>Triggered</em>,
+          <em>Armed away</em>, etc.) so the feed reads at a glance.
+        </li>
+        <li>
+          <strong>Grouping by <code>entity_id</code></strong> with a one-hour
+          window. Repeated state flips on the same sensor collapse into one
+          row in the feed; click to expand and see every transition with
+          timestamps.
+        </li>
+        <li>
+          <strong>Five default action buttons</strong> on every HA event:
+          <ul>
+            <li><em>Open dashboard</em> — jumps to <code>http://homeassistant.local:8123</code></li>
+            <li><em>Open entity history</em> — opens the HA history view filtered to that exact <code>entity_id</code></li>
+            <li><em>Open automations</em> — opens the HA automation editor</li>
+            <li><em>Copy entity ID</em> — clipboard, useful when writing a follow-up automation</li>
+            <li><em>HA docs</em> — opens the Home Assistant documentation site</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        If your HA instance is not at <code>homeassistant.local:8123</code>
+        — for example you reach it at <code>http://192.168.1.50:8123</code>
+        or via Nabu Casa Cloud — open Tempo's <em>Score Editor</em> and edit
+        the URL fields once. The change persists across updates and applies
+        to every HA event.
+      </p>
+    </section>
+
+    <section class="scenario">
+      <h2>4. Caveats and small print</h2>
+      <ul>
+        <li>
+          <strong>Always pipe through <code>tojson</code>.</strong> Every
+          interpolated value in the payload above ends with
+          <code>| tojson</code>. This is mandatory: HA's templating produces
+          raw strings, and a sensor name with a quote, a backslash, or a
+          control character will break the JSON without it. The
+          <code>tojson</code> filter is the official escape hatch — use it
+          on every value, even ones that "obviously can't contain quotes".
+          They can.
+        </li>
+        <li>
+          <strong>Optional attributes need
+          <code>default()</code>.</strong> Not every entity has
+          <code>device_class</code>, <code>friendly_name</code>, or an area.
+          Reading a missing attribute produces an undefined value that
+          <code>tojson</code> renders as <code>null</code> — usually fine
+          but occasionally surprising. Wrap optional reads in
+          <code>(value | default('')) | tojson</code> so missing fields land
+          as empty strings consistently.
+        </li>
+        <li>
+          <strong><code>trigger.to_state</code> is a state object, not a
+          string.</strong> Use <code>.state</code> for the value,
+          <code>.attributes.X</code> for attributes,
+          <code>.last_changed</code> for the timestamp. Do <em>not</em> use
+          <code>states('entity_id')</code> inside a state-trigger automation
+          — that returns the state at template-render time, which can race
+          with the trigger and give you the previous value.
+        </li>
+        <li>
+          <strong>Numeric and event triggers don't have
+          <code>trigger.to_state</code>.</strong> For these, use the
+          <code>tempo_alert</code> variant from section 2 with explicit
+          <code>data:</code> fields.
+        </li>
+        <li>
+          <strong>Tempo must be reachable from HA on the LAN.</strong> The
+          ingest server binds to all interfaces by default but listens on
+          port 7776. If HA runs on a different machine (almost always the
+          case), the Mac's firewall must allow inbound 7776, and any VLAN
+          isolation must let HA reach the Mac. See the linked
+          troubleshooting page below for the five most common network
+          gotchas.
+        </li>
+        <li>
+          <strong>One token per use case.</strong> If you also send Tempo
+          events from a Pi-hole, an Uptime Kuma, or a script, use a
+          separate token for each — the per-source audit log is then
+          legible and revoking one source doesn't break the others.
+        </li>
+      </ul>
+    </section>
+
+    <section class="scenario">
+      <h2>5. Troubleshooting</h2>
+      <p>
+        If the curl test in section 1 fails, the problem is almost certainly
+        on the network — the Mac's firewall, Little Snitch, or a router
+        rule. Tempo itself rarely fails silently at this stage. The
+        dedicated page covers the five patterns that account for nearly
+        every reported case:
+      </p>
+      <p>
+        <a href="/scores/troubleshooting-networking"><strong>Troubleshooting networking →</strong></a>
+      </p>
+      <p>
+        For HA-specific failures, check in this order:
+      </p>
+      <ol>
+        <li>
+          <strong>HA logs.</strong> <em>Settings → System → Logs</em> in HA.
+          A failed <code>rest_command</code> shows as an error with the
+          target URL and the response code. <code>401</code> means a wrong
+          or missing token. <code>403</code> means the token is bound to a
+          different provider, or the score channel is disabled in Tempo.
+          <code>404</code> means the URL path is wrong (it must be exactly
+          <code>/ingest</code>). Connection timeouts mean the Mac is not
+          reachable.
+        </li>
+        <li>
+          <strong>Token in Tempo.</strong> Settings → Database / Ingestion →
+          Tokens. Confirm the row exists and the binding shows
+          <code>com.home-assistant</code>. If you regenerated the token via
+          <em>Rotate</em>, the old value is invalid and must be replaced in
+          HA.
+        </li>
+        <li>
+          <strong>Payload sanity.</strong> If events arrive but render with
+          missing fields ("undefined" friendly name, no entity ID column,
+          etc.), inspect the raw payload Tempo received. Open the event in
+          Tempo, click <em>Inspect</em> (V1.1) or look at the audit log in
+          <code>~/Library/Application Support/Tempo/</code>. The most
+          common mistake is forgetting <code>| tojson</code> on a string
+          field that contained a quote or a newline.
+        </li>
+        <li>
+          <strong>Score not applying.</strong> If events arrive but render
+          flat (no severity colour, no "Smoke" label), verify the score is
+          installed and enabled in Tempo's <em>Score Editor</em>. The
+          providerIdentifier in your payload must be exactly
+          <code>com.home-assistant</code>; any other value bypasses the
+          score.
+        </li>
+      </ol>
+    </section>
+
+    <section class="scenario">
+      <h2>6. What HA does not yet do well, and Tempo does</h2>
+      <p>
+        Two things, mainly. First, <strong>cross-source correlation</strong>:
+        Tempo's feed mixes HA events with calendar entries, reminders,
+        backup outcomes (Kopia), router events (UniFi), uptime checks
+        (Kuma), CI builds (GitHub Actions), and anything else you forward
+        — same screen, same severity scale, same scroll. When you're
+        debugging a recurring 03:14 problem, seeing the HA leak alert
+        adjacent to the failed Time Machine backup adjacent to the router
+        reconnect <em>in a single column</em> shortens the
+        diagnosis dramatically.
+      </p>
+      <p>
+        Second, <strong>readable history without writing queries</strong>.
+        HA's history view is excellent inside one entity. Across entities,
+        across days, across types — it gets fiddly fast. Tempo is a
+        chronological journal first; you scroll back, you see what
+        happened, you don't write SQL.
+      </p>
+      <p>
+        Tempo doesn't replace HA. It sits next to it on the Mac you
+        already have open all day, and remembers the things HA does in the
+        order they happened. That's it. If you've ever found yourself
+        thinking <em>"I wish the dashboard had a notification log I could
+        scroll back six hours"</em> — that's exactly what Tempo is.
+      </p>
+    </section>
+
+    <section class="scenario footer-note">
+      <h2>Next steps</h2>
+      <ul>
+        <li><a href="/scores">Browse other ready-made scores</a> — Kopia, UniFi, Uptime Kuma, GitHub Actions, Synology, and more</li>
+        <li><a href="/scores/troubleshooting-networking">Troubleshooting networking</a> — when the curl test silently fails</li>
+        <li><a href="/downloads">Download Tempo</a> — signed and notarised DMG, freeware</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <style>
+    .page-header {
+      max-width: 760px;
+      margin: 48px auto 24px;
+      padding: 0 24px;
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+    .page-nav {
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .page-nav a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .page-header h1 {
+      font-size: 36px;
+      margin: 0 0 16px;
+      color: var(--text);
+    }
+    .lede {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+      padding: 16px 20px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .lede-secondary {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text2);
+      margin: 0 4px 24px;
+    }
+    .doc {
+      max-width: 760px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .doc .scenario {
+      margin-top: 48px;
+    }
+    .doc h2 {
+      font-size: 22px;
+      margin: 0 0 16px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .doc h3 {
+      font-size: 17px;
+      margin: 24px 0 8px;
+      color: var(--text);
+    }
+    .doc p {
+      margin: 0 0 12px;
+    }
+    .doc ul, .doc ol {
+      padding-left: 22px;
+      margin: 0 0 12px;
+    }
+    .doc li {
+      margin-bottom: 6px;
+    }
+    .doc li ul {
+      margin-top: 6px;
+    }
+    .doc code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .doc pre {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 8px 0 16px;
+    }
+    .doc pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.85em;
+      line-height: 1.55;
+    }
+    .doc a {
+      color: var(--blue);
+    }
+    .footer-note {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 64px;
+    }
+    .footer-note h2 {
+      border-bottom: none;
+      font-size: 18px;
+    }
+  </style>
+</BaseLayout>
