@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const lastUpdated = "April 2026";
+const lastUpdated = "May 2026";
 ---
 <BaseLayout
   title="Privacy Notice — Tempo"
@@ -46,17 +46,24 @@ const lastUpdated = "April 2026";
         identity, we don't store it beyond Cloudflare's standard access logs,
         and no other data is sent.
       </li>
-      <li>
-        <strong>Opt-in telemetry</strong> — off by default. If you enable it
-        in Settings, Tempo may send anonymized usage counters (e.g. "Kopia
-        source used", "app started"). No event contents, no identifiers, no
-        IP beyond what the transport requires. You can turn it off at any
-        time; turning it off stops new data immediately.
-      </li>
     </ul>
     <p>
-      That's the full list. Tempo does not ship with third-party analytics,
-      crash reporting SDKs, ad networks, or tracking pixels.
+      That's the full list. Tempo v1 does not ship with telemetry, third-party
+      analytics, crash reporting SDKs, ad networks, or tracking pixels. If
+      future versions introduce opt-in telemetry, it will be off by default,
+      announced in release notes, and described in detail here before activation.
+    </p>
+
+    <h2>Local audit log</h2>
+    <p>
+      Tempo writes a local audit log of automatic actions (auto-acknowledgement,
+      auto-dismissal, score installation, configuration restore, ingestion
+      drops). The log lives in the same
+      <code>~/Library/Application Support/Tempo/</code> directory and is never
+      transmitted. Its purpose is to give you a paper trail of what the app did
+      on your behalf — useful for diagnosing surprises and for the support
+      bundle export, which you can review and trim before sending if you ever
+      file a bug report.
     </p>
 
     <h2>What Tempo does not collect</h2>
@@ -129,8 +136,17 @@ const lastUpdated = "April 2026";
     <p>
       The data controller for tempoapp.app and the Tempo application is
       <strong>Caereforge</strong>, an independent software publisher based in
-      Italy, reachable at
+      Italy, currently operating as an individual author pending company
+      registration. Contact for any privacy matter:
       <a href="mailto:privacy@tempoapp.app">privacy@tempoapp.app</a>.
+    </p>
+    <p>
+      Postal correspondence: send a message to the privacy email above and we
+      will respond with a postal address suitable for formal communication, on
+      request. Because Tempo collects no personal data on our side, there is
+      no data subject access request to fulfil — your local
+      <code>~/Library/Application Support/Tempo/</code> folder <em>is</em> the
+      complete record.
     </p>
 
     <h2>Security</h2>

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const lastUpdated = "April 2026";
+const lastUpdated = "May 2026";
 ---
 <BaseLayout
   title="License & Disclaimer — Tempo"
@@ -83,10 +83,19 @@ const lastUpdated = "April 2026";
 
     <h2>Third-party software</h2>
     <p>
-      Tempo uses and bundles third-party open source components (SwiftUI,
-      SQLite, Sparkle for updates, and others). These are used under their
-      respective licenses. Full attribution is available in the application's
-      <em>About → Acknowledgements</em> panel once shipped.
+      Tempo uses and bundles third-party open source components, notably:
+    </p>
+    <ul>
+      <li><strong>Sparkle</strong> (MIT-licensed, <a href="https://sparkle-project.org">sparkle-project.org</a>) — auto-update framework</li>
+      <li><strong>GRDB.swift</strong> (MIT-licensed, <a href="https://github.com/groue/GRDB.swift">github.com/groue/GRDB.swift</a>) — SQLite wrapper</li>
+      <li><strong>SQLite</strong> (public domain, <a href="https://sqlite.org">sqlite.org</a>) — embedded database</li>
+      <li>Apple frameworks (SwiftUI, AppKit, Foundation, EventKit) — used under the macOS SDK license</li>
+    </ul>
+    <p>
+      Each component is used under its respective license, preserved within
+      the application bundle and reachable in this document. A consolidated
+      <em>About → Acknowledgements</em> panel inside the app is planned for a
+      future release.
     </p>
 
     <h2>Trademarks</h2>
@@ -115,6 +124,22 @@ const lastUpdated = "April 2026";
       Any change to licensing or pricing will be announced on
       <a href="/">tempoapp.app</a> and in the application's release notes,
       with adequate notice.
+    </p>
+
+    <h2>Termination</h2>
+    <p>
+      The license granted above remains in effect for as long as you comply
+      with these terms. If you materially breach the restrictions (for
+      example, by redistributing or reselling the application binary without
+      authorisation, or by reverse-engineering it outside of the limits
+      permitted by applicable law), the license terminates automatically and
+      you must cease using and distributing the affected copies. Termination
+      does not waive any other remedy available under law.
+    </p>
+    <p>
+      You may stop using Tempo at any time by quitting the application and
+      removing it from your Mac. There is nothing to cancel and no account to
+      close on our side.
     </p>
 
     <h2>Jurisdiction</h2>
