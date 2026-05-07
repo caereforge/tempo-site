@@ -136,6 +136,19 @@ const fmt = (d: Date) =>
     border-top: 1px solid var(--border);
     margin: 2rem 0;
   }
+  /* Inline images (screenshots, illustrations referenced from the
+     post markdown) cap to the article measure so a retina-resolution
+     PNG doesn't blow past the column width. `height: auto` preserves
+     the aspect ratio across the resize. The thin border + radius give
+     each figure a visible frame against the page background. */
+  .post-body :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
 
   .post-footer {
     margin-top: 3rem;
