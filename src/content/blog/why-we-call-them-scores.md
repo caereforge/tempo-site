@@ -11,13 +11,13 @@ The events that our servers and tools send across the network — to be understo
 
 That's why Tempo will ship with a set of preconfigured scores at launch — the same ones I use in my own infrastructure:
 
-- Kopia
-- Home Assistant
-- Proxmox
-- UniFi
-- Uptime Kuma
-- Apple (Calendar and Reminders)
-- A generic webhook score for custom scripts
+- 🟢 **Kopia** — when a backup finishes (ok or failed), one click jumps to the snapshot in KopiaUI.
+- 🔵 **Home Assistant** — every automation can land in Tempo with the buttons it deserves: Wake-on-LAN, scene re-fire, dashboard deep-link.
+- 🟠 **Proxmox** — VM backup outcomes, container restarts, anything the host emits via `pvesh` or the guest agent.
+- 🔵 **UniFi** — controller alarms in the timeline: a client roamed, an AP went silent, IPS flagged a packet — each becomes a row you can act on.
+- 🟡 **Uptime Kuma** — monitors flipping up or down, with one click to the monitor page.
+- ⚪ **Apple (Calendar and Reminders)** — the day's calendar entries and reminders alongside the homelab signal, never siloed off.
+- ⚙️ **A generic webhook score for custom scripts** — anything that can POST JSON: cron, Hazel, a Bash one-liner watching a sensor.
 
 Installing a score will be dead simple: download it, double-click it, the installer window opens, and the score is ready to go.
 
