@@ -26,9 +26,17 @@ jobs:
       - name: Build site
         run: npm run build
 
+      # Pre-install wrangler so the cloudflare/wrangler-action call below
+      # doesn't trip on a new npx interactive-confirm prompt every time
+      # Cloudflare bumps wrangler. Pin a known-good version to keep CI
+      # reproducible; bump in a single commit when we want a newer wrangler.
+      - name: Install Wrangler
+        run: npm install -g wrangler@4.86.0
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.86.0'
           command: pages deploy dist --project-name=tempo --branch=main
