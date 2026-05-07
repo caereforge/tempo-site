@@ -42,7 +42,17 @@ const { Content } = await render(score);
     </div>
 
     <div class="download-box">
-      {score.data.downloadable ? (
+      {score.data.builtIn ? (
+        <div class="download-builtin">
+          <span class="btn-icon" aria-hidden="true">★</span>
+          <div>
+            <span class="btn-text">Built into Tempo — no download needed</span>
+            <p class="pending-note">
+              This source ships with Tempo. The score is bundled with the app and registered automatically on first launch — there's no <code>.tempo-score</code> file to install. You can edit or override the bundled score from <strong>Settings → Score Editor</strong>.
+            </p>
+          </div>
+        </div>
+      ) : score.data.downloadable ? (
         <a class="download-btn" href={score.data.file} download>
           <span class="btn-icon" aria-hidden="true">↓</span>
           <span class="btn-text">
@@ -144,7 +154,8 @@ const { Content } = await render(score);
     font-weight: 600;
   }
 
-  .download-pending {
+  .download-pending,
+  .download-builtin {
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
@@ -154,7 +165,11 @@ const { Content } = await render(score);
     border-radius: 8px;
     color: var(--text2);
   }
-  .download-pending .btn-text {
+  .download-builtin {
+    border-style: solid;
+  }
+  .download-pending .btn-text,
+  .download-builtin .btn-text {
     font-weight: 500;
     color: var(--text);
   }

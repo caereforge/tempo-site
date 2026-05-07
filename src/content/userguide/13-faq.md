@@ -140,6 +140,10 @@ No. Tempo is native macOS, built on SwiftUI / EventKit / macOS-specific framewor
 
 For Linux, the closest analogue is something like [Glance](https://github.com/glanceapp/glance) or homer-style dashboards — different shape (web-based, server-side) but overlapping use case.
 
+### What if I need more help with a specific source?
+
+Each source — built-in or downloadable — has its own page in the [Scores catalog](/scores/) with setup, behaviour notes, default actions, and a source-specific FAQ. Start there if your question is about a particular source rather than Tempo as a whole.
+
 ---
 
 ## Customisation
