@@ -62,11 +62,11 @@ They're complementary — Tempo can be the human-facing surface in front of an n
 
 **Tempo v1 is free, forever.** No trial, no Free/Pro tiers, no subscription, no account required.
 
-A future v2 may be a paid one-time purchase. The path from V1-free to V2-paid is data-driven, not calendar-driven; we'll know more after V1 has been in the field for a while. See [the freeware announcement](https://tempoapp.app/blog/tempo-goes-freeware/) for the longer reasoning. [NEEDS REVIEW: confirm exact blog post URL]
+A future v2 may be a paid one-time purchase. The path from V1-free to V2-paid is data-driven, not calendar-driven; we'll know more after V1 has been in the field for a while. See [the freeware announcement](https://tempoapp.app/blog/tempo-goes-freeware/) for the longer reasoning.
 
 ### Will it be on the App Store?
 
-No — distributed as a signed and notarised DMG (Developer ID), with auto-update via Sparkle [V1.1+, NEEDS REVIEW: confirm Sparkle is V1 launch or V1.1].
+No — distributed as a signed and notarised DMG (Developer ID), with auto-update via Sparkle.
 
 The reasoning: outside the App Store sandbox so the LAN ingestion server, terminal commands, and the rest of Tempo's actions all work without restriction.
 
@@ -90,7 +90,7 @@ No account, no cloud sync, no third-party telemetry. Everything lives in a local
 
 The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet — it accepts only authenticated requests from per-provider tokens stored in the macOS Keychain.
 
-Optional TLS [NEEDS REVIEW: confirm whether TLS is V1 or V1.x]. Optional anonymous usage telemetry, opt-in only [NEEDS REVIEW: confirm telemetry exists in V1].
+Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN; TLS support is on the V2 roadmap.
 
 ### Where exactly does my data live?
 
@@ -227,7 +227,7 @@ A few common causes and fixes in [§12.5 — Performance with many sources](/doc
 ### How do I report a bug?
 
 - **Settings → Help → Export diagnostics bundle** for the supporting evidence
-- **Discord** at [tempoapp.app/community](https://tempoapp.app/community) for quick discussion [NEEDS REVIEW]
+- **Discord** at [tempoapp.app/community](https://tempoapp.app/community/) for quick discussion
 - **GitHub Issues** for tracked bugs
 
 A diagnostic bundle attached to your bug report makes triage 10x faster.

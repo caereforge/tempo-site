@@ -129,7 +129,7 @@ Every ingestion attempt — accepted or rejected — is logged via Apple's unifi
 
 Useful for diagnosing "why didn't my event arrive?" — see [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing).
 
-[NEEDS REVIEW: confirm whether Settings → Ingestion exposes the audit log directly via UI, or whether users only access via Console.app and the diagnostic export]
+In V1 the audit log is not exposed inside the Ingestion tab itself. To inspect it live, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. To share it with support, use **Help → Export diagnostics bundle…** — the bundle includes the last 24 hours of OSLog output (no token values, no payload contents).
 
 ---
 
@@ -179,15 +179,13 @@ Auto-ack rules automatically acknowledge events older than a configurable thresh
 
 Five rows, one per severity, each with a threshold picker:
 
-- **Info** — defaults to a few hours
-- **OK** — defaults to a few hours
-- **Warning** — defaults to a day or so
-- **Error** — defaults to **Never** (real incidents stay loud)
-- **Critical** — defaults to **Never**
+- **Info** — default **6 hours**
+- **OK** — default **6 hours**
+- **Warning** — default **24 hours** (one full day, covering an overnight cycle)
+- **Error** — default **Never** (real incidents stay loud until you acknowledge them)
+- **Critical** — default **Never**
 
-[NEEDS REVIEW: confirm exact default thresholds. Code has them parametric; check defaults]
-
-The threshold options are typically: 1h, 6h, 12h, 1d, 3d, 7d, Never.
+The threshold options on each picker are: **Never, 1h, 6h, 12h, 1 day, 3 days, 7 days**.
 
 #### Per-source overrides
 
@@ -256,11 +254,11 @@ Backup bundles are named `tempo-backup-YYYYMMDD-HHmmss.tempobackup` and pruned b
 
 The recommended destination is **iCloud Drive** — sync is transparent, backups land on every device that's signed into the same iCloud account. Local paths or mounted remote filesystems work too; Tempo just writes to the path you give it.
 
-[NEEDS REVIEW: confirm exact backup interval picker options — the code shows they exist but raw values not yet checked. Likely Off, Daily, Weekly, On-demand only]
+The interval picker offers: **Off, every 6 hours, every 12 hours, every 18 hours, every 24 hours, every 2 days, every 7 days, every 30 days**. There's also a **Backup now** button next to the schedule for on-demand snapshots that are independent of the cadence.
 
 #### Restore from backup
 
-[NEEDS REVIEW: confirm where the Restore button lives in V1 — likely a separate "Restore from backup…" button in the Database tab, opening a file picker for `.tempobackup` files. Covered in detail in §9.4]
+A **Restore from backup…** button lives in the Database tab next to the backup destination controls. It opens a file picker scoped to `.tempobackup` bundles, previews what's inside, and applies the bundle atomically with a relaunch. Detailed walkthrough in [§9.4 — Restore from a backup](/docs/09-backup-restore#94--restore-from-a-backup).
 
 ---
 
@@ -291,14 +289,16 @@ Attach it to a Discord support thread or a GitHub issue when reporting a problem
 
 After export, Tempo offers **Show in Finder** so you can locate the file before sending.
 
-### Other items
+### Where the rest of the support links live
 
-[NEEDS REVIEW: confirm whether Settings → Help also exposes:
-- "Open Documentation Online" → tempoapp.app/docs
-- "Download User Guide (PDF)" → versioned PDF download
-- "Check for Updates" (Sparkle V1.1+)
-- "About / Legal"
-The TODOLIST mentions all of these as planned. Verify what's actually wired in V1 launch.]
+The Settings → Help tab is intentionally narrow: badge legend + diagnostics export. Everything else lives in the **menubar** so it's reachable without opening Settings:
+
+- **Tempo → About Tempo** — version, build, credits
+- **Tempo → Check for Updates…** — Sparkle update check
+- **Help → Tempo Documentation** — opens [tempoapp.app/docs](https://tempoapp.app/docs/)
+- **Help → Community** — opens [tempoapp.app/community](https://tempoapp.app/community/) (Discord invite)
+- **Help → Privacy Notice** — opens [tempoapp.app/privacy](https://tempoapp.app/privacy)
+- **Help → License & Disclaimer** — opens [tempoapp.app/license](https://tempoapp.app/license)
 
 ---
 

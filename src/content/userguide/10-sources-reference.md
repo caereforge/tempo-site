@@ -18,7 +18,7 @@ The sources are presented in a stable order (calendar first, then generic webhoo
 
 ## 10.1 — Apple Calendar and Reminders
 
-**Provider identifier**: `com.apple.eventkit` [NEEDS REVIEW: confirm — likely `com.apple.calendar` and `com.apple.reminders` separately, or a single umbrella]
+**Provider identifiers**: `com.apple.calendar` for calendar events and `com.apple.reminders` for reminders, sharing an **Apple** umbrella in the source panel
 
 The Apple Calendar and Reminders source is **automatic**: it activates the moment you grant Calendar and Reminders permission on first launch. There's no token to set up, no webhook to configure, no upstream change.
 
@@ -148,6 +148,27 @@ Any payload whose `providerIdentifier` starts with `scripts.` (or matches the `l
 
 The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider — see [§11 — Score authoring](/docs/11-score-authoring).
 
+### What your card looks like without a score
+
+If you POST to `/ingest` with the bare minimum (`title` + `providerIdentifier`) and don't have a score for that provider — and your `providerIdentifier` doesn't fall under the bundled Scripts score's namespace conventions either — the event still lands in the timeline. Tempo doesn't require a score to ingest. But the card will look minimal:
+
+- **Title and timestamp**, the two values you actually sent
+- A **neutral grey dot** in the source panel — Tempo has no colour to associate with the source
+- Severity stays `info` (the default), so the badge is the small grey "Info" pill
+- **No subtitle, no headline, no per-event metric** — none of the rich rendering that bundled scores extract from `metadata`
+- **No actions** in the action panel beyond the universal Acknowledge / Dismiss
+- The **source name** in the panel is the raw `providerIdentifier` string (`com.example.my-tool` rather than a friendly label)
+
+The card is functional — you can still see *what* happened and *when* — but it's hard to scan at a glance, especially next to fully-scored sources whose cards carry severity colour, custom pills, and one-click actions.
+
+Three ways to make a custom source's card richer, in increasing order of effort:
+
+1. **Pass more fields in the payload.** Add `severity` (`"warning"`, `"error"`, `"critical"`) and a few `metadata.custom.<key>` values so Tempo has something to display in the card and the action panel's details list. Five more lines of JSON is often enough to lift the card from "blank" to "informative" — no score authoring required.
+2. **Adopt the bundled Scripts score's namespace.** Name your provider `scripts.<lang>.<name>` (or `local.<name>` / `lab.<host>.<name>` per the conventions above) and the Scripts score picks it up automatically: severity from `metadata.label`, source-panel grouping under a single **Scripts** parent row, a couple of generic actions. Zero authoring.
+3. **Author a dedicated score** for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct colour, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.
+
+A useful heuristic: if you'll see this source's events more than once a week, the dedicated score is worth writing. For one-off ad-hoc senders that fire occasionally, option 1 or 2 is enough indefinitely.
+
 ### `tempo_send.sh` helper
 
 For shell scripts in particular, Tempo ships a helper script (`tempo_send.sh`) that wraps the curl call. See §10.10 below.
@@ -215,9 +236,7 @@ Customise these via the Score Editor for per-repo SSH actions, dashboard URLs, e
 
 ### Stateless by design
 
-Each Kopia snapshot is a discrete event. The bundled score uses **no externalID** — every snapshot is a fresh row. The grouping templates (`${metadata.repo}/${metadata.path}` with no time cutoff) collapse history-of-one-target into a stack so a year of nightly Documents backups appears as one stack you can expand on demand.
-
-[NEEDS REVIEW: confirm exact bundled grouping template + window for Kopia score. Earlier reading suggested `1d` window but the seeder may differ.]
+Each Kopia snapshot is a discrete event. The bundled score uses **no externalID** — every snapshot is a fresh row. The bundled score doesn't declare a `grouping` block by default, so each snapshot lands on its own line; if you want history-of-one-target collapsed into a stack, add a grouping template like `${metadata.repo}/${metadata.path}` in the Score Editor (with whatever time window suits your cadence).
 
 ---
 
@@ -258,14 +277,14 @@ Severity is per-rule and customisable in the Score Editor.
 
 ### Default actions
 
-The UniFi score offers per-alarm actions:
+The bundled UniFi score offers:
 
-- **Open UniFi dashboard (cloud)** → opens [unifi.ui.com](https://unifi.ui.com)
-- **Open UniFi dashboard (local)** → opens `https://${metadata.controllerIP}:8443/` if the controller IP is in the payload
-- **Copy MAC** → copies `${metadata.clientMac}` to clipboard
-- **Ping client** → opens Terminal with `ping ${metadata.clientIP}`
-
-[NEEDS REVIEW: confirm exact default actions in the bundled UniFi score — list above is approximate]
+- **Open local controller (port 443)** → `https://${metadata.senderAddress}/network/default/dashboard`
+- **Open local controller (port 8443)** → `https://${metadata.senderAddress}:8443/manage/site/default/dashboard`
+- **Open client in controller (port 443)** → `https://${metadata.senderAddress}/network/default/clients/${metadata.deviceMac}`
+- **Open client in controller (port 8443)** → `https://${metadata.senderAddress}:8443/manage/site/default/clients/${metadata.deviceMac}`
+- **Open UniFi dashboard (cloud)** → opens [unifi.ui.com](https://unifi.ui.com/)
+- **SSH to controller** → `ssh://root@${metadata.senderAddress}` (requires that you've set up key-based SSH access to the controller)
 
 ### Multi-template grouping
 
@@ -283,7 +302,7 @@ So client-association events group by client+AP, device-status events group by A
 
 ## 10.5 — Home Assistant
 
-**Provider identifier**: `com.home-assistant` [NEEDS REVIEW: confirm — could also be `org.home-assistant` or `io.homeassistant` per the placeholder examples in editor]
+**Provider identifier**: `com.home-assistant`
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
 **Format**: JSON, Tempo's generic webhook shape
 
@@ -412,12 +431,11 @@ The relay is intentionally a separate concern (it sits on your LAN and handles H
 
 ### Setup
 
-[NEEDS REVIEW: confirm the canonical relay distribution in V1. The TODOLIST mentions "gh-relay/relay.py" — verify it ships in `/contrib/` or as a separate repo. The detailed setup probably belongs in a contrib README; this section can be a high-level overview.]
+The relay is a small companion process distributed alongside the public score catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Detailed setup (binary download, environment variables, HMAC secret handling) lives in the catalog's README — this section is the high-level outline.
 
 1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.github.actions`
-2. **Run the relay** on a host reachable from GitHub (typically a Cloudflare Tunnel exposing your Mac's port to the internet, or a small VPS). The relay binary/script lives in [`contrib/gh-relay/`](https://github.com/caereforge/tempo-scores/tree/main/contrib/gh-relay) [NEEDS REVIEW: confirm path]
-3. **Configure the relay** with: GitHub HMAC secret, Tempo token, Tempo endpoint
-4. **In your GitHub repo**: Settings → Webhooks → Add webhook → relay URL, content-type `application/json`, the HMAC secret you configured
+2. **Run the relay** on a host reachable from GitHub — typically a Cloudflare Tunnel exposing your Mac's port to the internet, or a small VPS. Configuration: GitHub HMAC secret, Tempo token, Tempo endpoint
+3. **In your GitHub repo**: Settings → Webhooks → Add webhook → relay URL, content-type `application/json`, the HMAC secret you configured
 
 ### What flows in
 
@@ -460,8 +478,6 @@ Synology DSM (the NAS operating system) supports webhook destinations via Notifi
    - HTTP method: POST
    - Headers: `X-Tempo-Token: <token>`
    - Body template: a JSON template DSM expands with placeholders like `@@SUBJECT@@` and `@@MESSAGE@@`. The exact template depends on DSM version — see the public score documentation at [tempoapp.app/scores/synology](https://tempoapp.app/scores/synology) for the current recommended template
-
-[NEEDS REVIEW: confirm the public score docs URL exists, or replace with the CONTRIBUTING.md / README in tempo-scores]
 
 4. **Save** and trigger a test notification
 
@@ -559,59 +575,62 @@ If you find yourself doing the same thing across several scripts (same kinds of 
 
 ## 10.10 — `tempo_send.sh` helper
 
-A wrapper script Tempo ships in `contrib/` that handles the curl boilerplate. Instead of writing the full `curl -X POST...` every time, you call `tempo_send.sh` with a few flags.
-
-[NEEDS REVIEW: confirm exact path of `tempo_send.sh` — likely `contrib/tempo_send.sh` or `/Applications/Tempo.app/Contents/Resources/tempo_send.sh`]
+A wrapper script that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. Distributed in the `contrib/` folder of the public score catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores).
 
 ### Installation
 
-Copy the script to a location in your `$PATH`:
+Download `tempo_send.sh` from the public catalog repo and put it on your `$PATH`:
 
 ```bash
-cp /Applications/Tempo.app/Contents/Resources/tempo_send.sh ~/.local/bin/tempo_send
+curl -fsSL https://raw.githubusercontent.com/caereforge/tempo-scores/main/contrib/tempo_send.sh \
+  -o ~/.local/bin/tempo_send
 chmod +x ~/.local/bin/tempo_send
 ```
 
 Set environment variables in your shell profile:
 
 ```bash
-export TEMPO_HOST="localhost"
-export TEMPO_PORT="7776"
+export TEMPO_HOST="localhost:7776"
 export TEMPO_TOKEN="<your-token>"
 ```
 
 ### Basic usage
 
+`tempo_send` takes the provider identifier and title as positional arguments, with options after:
+
 ```bash
-tempo_send \
-  --provider local.check_disk \
-  --title "check_disk · root volume 78%" \
-  --label Warning \
-  --host "$(hostname)" \
-  --custom usage_percent=78
+tempo_send local.check_disk "check_disk · root volume 78%" \
+  --severity warning \
+  --meta host="$(hostname)" \
+  --meta usage_percent=78
 ```
 
 The helper:
 
-- Reads `TEMPO_HOST` / `TEMPO_PORT` / `TEMPO_TOKEN` from environment
+- Reads `TEMPO_HOST` / `TEMPO_TOKEN` from environment (or `--host` / `--token` flags)
 - Builds the JSON payload from your flags
 - POSTs to `/ingest`
-- Returns 0 on success, non-zero on failure (with a descriptive stderr message)
+- Returns 0 on accept, 2 on usage error, 3 on missing token, 4 on network/HTTP error
 
 ### Available flags
 
-[NEEDS REVIEW: confirm exact flag list from the actual `tempo_send.sh` source. Likely flags include:
-- `--provider` — providerIdentifier (required)
-- `--title` — event title (required)
-- `--label` — sets `metadata.label`
-- `--severity` — sets `metadata.severity` directly
-- `--host` — sets `metadata.host`
-- `--exit-code` — sets `metadata.exit_code`
-- `--duration-ms` — sets `metadata.duration_ms`
-- `--custom KEY=VAL` — adds to `metadata.custom`
-- `--external-id` — sets externalID for stateful events
-- `--action LABEL=URL` — adds an action button
-]
+| Flag | Purpose |
+|---|---|
+| `--severity info\|warning\|error` | sets severity (default `info`); also drives default colour and event type |
+| `--event-type event\|task\|reminder\|alert` | overrides the severity-derived event type |
+| `--color #RRGGBB` | overrides the severity-derived colour |
+| `--external-id ID` | stable key for upserts (re-posts replace in place) |
+| `--grouping-key KEY` | UI-level grouping of repeated firings |
+| `--start ISO8601` | event start timestamp (defaults to server time) |
+| `--end ISO8601` | event end timestamp |
+| `--recurrence-rule RRULE` | iCal RRULE string (e.g. `FREQ=WEEKLY;BYDAY=MO`) |
+| `--meta KEY=VALUE` | repeatable; adds a metadata field |
+| `--terminal LABEL=COMMAND` | repeatable; adds an "open Terminal" action button |
+| `--url LABEL=URL` | repeatable; adds an "open URL" action button |
+| `--copy LABEL=TEXT` | repeatable; adds a "copy to clipboard" action button |
+| `--host HOST:PORT` | overrides `TEMPO_HOST` |
+| `--token TOKEN` | overrides `TEMPO_TOKEN` |
+| `--dry-run` | print the payload to stdout instead of POSTing |
 
 ### Example: cron job that reports backup results
 

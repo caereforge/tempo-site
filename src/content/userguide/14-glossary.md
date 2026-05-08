@@ -70,7 +70,7 @@ Stored locally in `~/Library/Application Support/Tempo/Logs/` and viewable via m
 
 ### Bundled score
 
-A [score](#score) that ships preconfigured with Tempo for a common source — Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar & Reminders. You don't need to write JSON to use a bundled source: just point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
+A [score](#score) that ships preconfigured with Tempo for a common source — Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar & Reminders. You don't need to write JSON to use a bundled source: just point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
 
 Bundled scores are editable. Your edits persist across app restarts and update checks. You can also reset a bundled score to its factory default at any time.
 
@@ -240,7 +240,7 @@ Configured in Settings → Maintenance → Auto-dismiss. Doesn't delete the even
 
 ### Provider
 
-The system or category an event came from — Kopia, UniFi, Home Assistant, a custom webhook. Identified by a string like `com.kopia` or `com.unifi`. One provider can host multiple [sources](#source) (e.g., several Kopia repositories all reporting under `com.kopia`).
+The system or category an event came from — Kopia, UniFi, Home Assistant, a custom webhook. Identified by a string like `com.kopia` or `com.ubiquiti.unifi.network`. One provider can host multiple [sources](#source) (e.g., several Kopia repositories all reporting under `com.kopia`). Some brand families act as umbrellas: `com.ubiquiti.unifi` covers `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` as siblings under a single **UniFi** parent row, leaving room for future Talk / Access / Connect / InnerSpace siblings.
 
 Each provider typically has one canonical [score](#score), though you can override or extend it.
 

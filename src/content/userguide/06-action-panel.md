@@ -57,9 +57,7 @@ Tempo hides a small set of internal keys (`badge`, `badgeHex`, `source`, `provid
 
 Long values (anything over ~200 characters — long notes, large embedded JSON, multi-URL fields) render as a **collapsible row** with a "Show more" toggle, so a single fat field can't blow up the panel.
 
-> 🛠 **Tip**: clicking inside a value selects it (text-selection enabled). Cmd-C copies. Useful for grabbing IPs, hostnames, or error strings to paste elsewhere.
-
-[NEEDS REVIEW: confirm whether double-click-to-copy or other one-click affordances exist — current code shows textSelection(.enabled) and copy button per-key may not exist]
+> 🛠 **Tip**: clicking inside a value selects it (text-selection enabled). `Cmd-C` copies. A dedicated copy-on-click affordance is on the V1.1+ roadmap (with an opt-in setting so you don't accidentally copy on every selection click).
 
 ### Bottom attention bar
 
@@ -69,6 +67,8 @@ A persistent footer pinned to the bottom of the panel holds two universal button
 - **Dismiss** — moves the event out of the active feed and into source history. Reversible via "Restore" (which appears in place of Acknowledge when the event is already dismissed)
 
 These two buttons apply to *any* event type — alerts, reminders, calendar events alike. They're the universal escape valves: you've seen this thing (Ack), or you've handled it and want it out of your way (Dismiss).
+
+> 💡 **Note**: acknowledging or dismissing a calendar event or a reminder is a *Tempo-side soft mark* — Tempo records you've seen it (or hidden it from the active feed), but never propagates back to Calendar.app or Reminders.app. The original calendar entry stays scheduled and the reminder stays pending in their respective apps. This is deliberate: Tempo isn't your calendar app and isn't your task manager, so it doesn't reach into them. To complete a reminder for real, use Reminders.app — or click the per-event **Mark complete** action in the panel above (when you grant Tempo Reminders write access, that path *does* propagate completion upstream).
 
 The yellow accent on Acknowledge isn't decorative — it's the colour Tempo uses globally for "user attention" affordances (filter banner, ack pills). Once you've internalised that, the Acknowledge button reads as "this is a user-attention action" rather than just "this is the primary button."
 

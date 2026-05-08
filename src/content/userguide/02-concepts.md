@@ -40,12 +40,12 @@ Events also have fields Tempo manages itself: severity, attention state, acknowl
 
 Tempo uses two related but distinct words: **source** and **provider**.
 
-A **provider** is a category of system — Kopia (backup), UniFi (network), Home Assistant (home automation), Uptime Kuma (monitoring), GitHub Actions (CI). Each provider has a unique identifier, conventionally in reverse-DNS form: `com.kopia`, `com.unifi`, `com.uptime-kuma`, `org.home-assistant`.
+A **provider** is a category of system — Kopia (backup), UniFi (network + cameras), Home Assistant (home automation), Uptime Kuma (monitoring), GitHub Actions (CI). Each provider has a unique identifier, conventionally in reverse-DNS form: `com.kopia`, `com.ubiquiti.unifi.network`, `com.uptime-kuma`, `org.home-assistant`. Some brand families act as umbrellas — `com.ubiquiti.unifi` rolls up Network and Protect (and, later, possibly Talk / Access / Connect / InnerSpace) as siblings under one parent row.
 
 A **source** is one specific instance of a provider. You might have:
 
 - Three Kopia repositories backing up different folders → three sources, all under provider `com.kopia`
-- One UniFi controller managing your network → one source under provider `com.unifi`
+- One UniFi controller and a Protect camera stack on the same hardware → two sources, one under `com.ubiquiti.unifi.network` and one under `com.ubiquiti.unifi.protect`, grouped under a single **UniFi** parent row
 - Two Home Assistant instances (main house + cottage) → two sources under provider `org.home-assistant`
 
 In the source panel (the leftmost column in Tempo), each source gets its own row. Click a source to filter the timeline to events from that source only.

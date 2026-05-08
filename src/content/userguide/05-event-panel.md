@@ -246,8 +246,10 @@ The event feed scrolls chronologically with **day separators** breaking the stre
 
 - **TODAY** for the current calendar day
 - **YESTERDAY** for the previous day
-- **Day-of-week name** ("Monday", "Tuesday", ...) for older days within the past week
-- **Date** ("12 April") for days older than a week [NEEDS REVIEW: confirm separator format for events older than 7 days — likely a longer date label]
+- **Weekday + month + day** ("MONDAY, APR 14") for any older day within the same year
+- **Weekday + month + day + year** ("MONDAY, APR 14, 2025") for days in a past year
+
+All labels are uppercased, with the weekday name always present so the rhythm of the week is visible at a glance even on dense feeds.
 
 Separators are sticky in the visible region — as you scroll, the current day's separator pins to the top of the feed so you always know which day's events you're looking at.
 

@@ -115,7 +115,7 @@ Fallback severity assigned to events when no `severityRules` rule matches. Objec
 }
 ```
 
-- **`severity`** (required) — one of `info`, `warning`, `error`, `critical` [NEEDS REVIEW: confirm whether `ok` is also accepted at the schema level — the runtime supports it, but the public catalog schema may restrict to the four listed]
+- **`severity`** (required) — one of `info`, `ok`, `warning`, `error`, `critical`
 - **`label`** (optional) — custom badge text. If omitted, the severity name uppercased
 
 ### `severityRules`
@@ -232,13 +232,9 @@ The rule array itself is logical **OR**: rule 2 fires if rule 1 didn't, etc. Fir
 
 ### Naming conditions
 
-Match against any key your payload sends. Tempo doesn't restrict the set of keys you can match on — if your payload has it, you can match it.
+Match keys reference top-level metadata fields by name — no prefix required. Whatever your payload puts in `metadata`, the rule's `match` object names it directly. For example, the bundled Kopia score uses `"match": { "outcome": "error" }` because the Kopia ingestion module emits an `outcome` field at the top of the metadata object; the rule names it as is.
 
-The reserved metadata keys (`severity`, `label`, `host`, `exit_code`, `duration_ms`, `command`, `run_id`, `source_file`, `trigger_reason`) are typed and validated at ingestion time. Match against them by name; the typed values become strings for matching purposes.
-
-For free-form keys, match against `metadata.custom.<key>` — note the path. Conditions in the score reference `match: { "custom.foo": "..." }` for fields under the custom bucket.
-
-[NEEDS REVIEW: confirm whether the score's match conditions reference top-level metadata keys or use the custom prefix explicitly. The bundled scores may use just the key name (without the `custom.` prefix) and the runtime walks both. Check.]
+Stringification is implicit: numbers, booleans and strings all collapse to their textual form, so a rule `{"exit_code": 0}` matches metadata values of `0`, `"0"`, or `0.0` interchangeably. Glob wildcards `*` and `?` are supported in string values (`{"key": "EVT_*_Connected"}` collapses a family of provider-specific event keys).
 
 ---
 
@@ -358,8 +354,6 @@ Use `.tempo-score` for distribution, `.json` for local editing in `~/Library/App
 ## 11.6 — `tempo-validate` CLI (V1.x)
 
 > 🚧 **V1.x roadmap**: a command-line tool `tempo-validate` will ship in `/contrib/` for offline score linting. Useful for CI pipelines that vet community contributions to the public catalog, or for local sanity-checks before installing a hand-edited score.
-
-[NEEDS REVIEW: confirm whether `tempo-validate` ships in V1 launch or is V1.1+. The TODOLIST has it as V1.1.]
 
 ### Expected behaviour
 

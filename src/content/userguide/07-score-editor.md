@@ -59,7 +59,7 @@ The payload didn't change. The score did.
 
 The Score Editor lives as one of the **tabs in the centre panel**, alongside Timeline (the default) and Search. Click the **Score Editor** tab to switch into it; click **Timeline** to switch back. The source panel on the left and the action panel on the right stay in place — the editor only takes over the centre column.
 
-A second entry point: when you double-click a `.tempo-score` file, Tempo opens a Score Review Sheet (a modal dialog) for one-click installation. That sheet is a different surface — it shows a preview of an incoming score before you install it. The Score Editor in this chapter is for editing scores you've already installed. [NEEDS REVIEW: confirm there isn't also a Manage Sources → Edit score path or a Settings tab for scores. Editor is at minimum reachable via the centre-panel tab.]
+A second entry point: when you double-click a `.tempo-score` file, Tempo opens a Score Review Sheet (a modal dialog) for one-click installation. That sheet is a different surface — it shows a preview of an incoming score before you install it. The Score Editor in this chapter is for editing scores you've already installed.
 
 The editor has three regions:
 
@@ -91,6 +91,8 @@ Edits don't apply to the live feed until you click **Save** in the top toolbar. 
 The chip bar at the top is your score selector. Each chip shows the provider's display name; click to switch. Edits to one score are scoped to that score — switching scores prompts you to save or discard if there are unsaved changes.
 
 The left of the chip bar has a **+ New** chip for creating a score from scratch (covered in [§11 — Score authoring](/docs/11-score-authoring)). The right end has the file-action icons: **Reveal in Finder**, **Duplicate**, **Delete** (only for user scores; bundled scores can be reset, not deleted).
+
+> ⚠️ **V1 sweet spot: ~15 scores**. The current chip-bar design works well up to roughly 15 active scores. Past that, scrolling the strip and switching between scores starts to feel sluggish — at 25–30 scores it becomes a real friction point. A redesigned picker (dropdown with search and category grouping) is on the **V1.x roadmap** and will lift this ceiling significantly. If you find yourself hitting that wall, two interim suggestions: **(a)** keep your active scores trimmed to what you actually edit, and **(b)** if you have a lot of variant-of-one-thing scores (eight different `scripts.*` providers, say), consider whether a single broader score with metadata-driven severity rules can cover them — fewer files, same coverage.
 
 ---
 
@@ -287,28 +289,15 @@ The Try panel on the right shows you a sample event from this provider and tells
 
 ## 7.6 — Default actions
 
-The default actions section [NEEDS REVIEW: confirm whether default actions are edited in the Score Editor or only via JSON in V1 — looks like JSON-only based on code; if so, this section needs to point users to chapter 11 instead] declares the action buttons that appear on every event from this provider.
+The default-actions block declares the buttons that appear on every event from this provider. **In V1, default actions are edited via the score JSON file, not from inside the Score Editor.** The editor preserves whatever default actions the score already declares — so when you save edits to severity rules, presentation, or grouping, the existing default-actions block carries through unchanged — but it doesn't expose a UI for adding, removing, or reordering them.
 
-### Action structure
+To author or change default actions, edit the score JSON directly (see [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference) and [§11 — Score authoring](/docs/11-score-authoring)). A visual editor for actions is on the V2 roadmap.
 
-Each default action has:
+### Order recap
 
-- **Label** — the button text ("Open dashboard", "SSH to AP")
-- **System icon** — an SF Symbol name (`lock`, `network`, `terminal`, `doc.on.clipboard`)
-- **Trigger** — one of the three V1 triggers (covered in [§2.4 — Actions](/docs/02-concepts#24--actions) and [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference))
-  - `openURL` — opens any URL macOS knows how to handle
-  - `openTerminalWith` — runs a command in Terminal
-  - `copyToClipboard` — copies a string
-
-Each trigger value can use `${metadata.xxx}` interpolation, resolved at click time.
-
-### Order
-
-Score-declared default actions render first in the action panel, in the order declared. Per-event actions (sent in the payload itself by the upstream tool) render after. If a per-event action has the same label as a default, the per-event version wins.
+Score-declared default actions render first in the action panel, in the order declared in the JSON. Per-event actions (sent in the payload itself by the upstream tool) render after. If a per-event action has the same label as a default, the per-event version wins.
 
 The convention: defaults are stable across events of the same provider (build muscle memory — "the SSH button is always there for UniFi"); per-event actions are exceptional ("this particular alert needs a special URL because it's about a specific incident").
-
-[NEEDS REVIEW: confirm V1 ships a UI for editing defaultActions in the Score Editor. If editor is JSON-only for actions, this section should redirect users to chapter 11.]
 
 ---
 

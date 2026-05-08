@@ -23,7 +23,7 @@ Tempo is distributed as a signed and notarised disk image. Download it from:
 - [downloads.tempoapp.app](https://downloads.tempoapp.app) — always the latest release
 - [tempoapp.app/changelog](https://tempoapp.app/changelog) — versioned download links if you want a specific release
 
-The DMG is around **[NEEDS REVIEW: confirm DMG size — likely 30-60 MB]** depending on the release. Verify the SHA-256 checksum against the value published on the changelog page if you'd like an extra integrity check; this is optional but recommended for tools that talk to the rest of your homelab.
+The DMG is around **7 MB** depending on the release. Verify the SHA-256 checksum against the value published on the changelog page if you'd like an extra integrity check; this is optional but recommended for tools that talk to the rest of your homelab.
 
 ### Drag to Applications
 
@@ -45,8 +45,6 @@ Click **Open**. If macOS refuses to open the app entirely (some browsers strip t
 
 > ⚠️ **Warning**: if a dialog says the app is "damaged and can't be opened", the most common cause is a corrupted download. Re-download the DMG from `downloads.tempoapp.app` rather than trying to bypass the warning. The signature check is what tells you the file you have is the file we shipped.
 
-[NEEDS REVIEW: confirm exact text of any custom Gatekeeper messages we surface — none in V1?]
-
 ---
 
 ## 3.2 — First launch and permissions
@@ -67,7 +65,7 @@ Behind the scenes, Tempo also starts its **ingestion server** on first launch. T
 
 You won't see anything in the UI to indicate this — it just runs. To verify it's working, open **Settings → Ingestion**: you'll see the listen address, the active tokens, and a copy-to-clipboard button for each token.
 
-> 💡 **Note**: the ingestion server is what lets external sources (Home Assistant, Uptime Kuma, Kopia, GitHub Actions, custom scripts) send events to Tempo via HTTP POST. If you don't plan to use any of those, it costs nothing to leave running — no events arrive, no resources consumed beyond a kilobyte of memory. If you want to disable it entirely, see [§8.2 — Ingestion and tokens](/docs/08-settings-reference#82-ingestion-and-tokens).
+> 💡 **Note**: the ingestion server is what lets external sources (Home Assistant, Uptime Kuma, Kopia, GitHub Actions, custom scripts) send events to Tempo via HTTP POST. It's on by default because Tempo without external sources is essentially a viewer for your day's calendar and reminders — useful, but a fraction of the product. Leaving the server running costs ~a kilobyte of memory and one TCP listen socket; the moment you decide to wire up your first source it just works without revisiting Settings. If you genuinely won't use external sources, you can disable it in [§8.2 — Ingestion and tokens](/docs/08-settings-reference#82-ingestion-and-tokens).
 
 ### macOS firewall
 
@@ -125,13 +123,11 @@ The source panel lists every source Tempo knows about. Each row shows:
   - **Colour** — the maximum severity of currently outstanding events from that source (red = error/critical, yellow = warning, green = ok/info, no fill = empty)
   - **Number** — the count of actionable (non-acked, non-dismissed) events
   - **Bolt** ⚡ — appears when the source is currently "live" (emitting events recently); fades when it's been silent past a configurable threshold
-- An **info button** (ⓘ) on the far right that opens a menu — Show only this source / Hide / Change colour / Show history
+- An **info button** (ⓘ) on the far right that opens a menu — Show only this source / Add to filter / Show all sources / Hide from timeline / Show history
 
-Clicking the source name (not the info button) filters the timeline to events from that source only, and turns on a yellow filter banner across the top of the event panel. Click the source again to clear the filter.
+Filtering the timeline to one or more sources happens through the info menu (ⓘ) — click it on a source row, then **Show only this source** (or **Add to filter** to combine multiple). A yellow filter banner appears across the top of the event panel listing the active filter; click the banner to clear. The source row itself is not a click target — that's a deliberate choice to keep clicking on the row from feeling like a state change you didn't plan for.
 
-[NEEDS REVIEW: confirm the colour dot is also the click target for re-filtering, or only the row?]
-
-A button at the top of the source panel switches the panel into **Manage Sources** mode — a different view where you can add new sources, reorder existing ones, and change source-level settings. The button label adapts to your current source count: "Get started — add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
+A button at the bottom of the source panel switches the panel into **Manage Sources** mode — a different view where you can add new sources, reorder existing ones, and change source-level settings. The button label adapts to your current source count: "Get started — add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
 
 ### Event panel (centre)
 
@@ -154,7 +150,7 @@ The right column shows context for whatever's currently selected in the event pa
 
 Clicking an action button resolves any `${...}` placeholders in the trigger and dispatches the action — opens a URL, runs a Terminal command, or copies a string to your clipboard. The event stays selected so you can fire multiple actions in sequence.
 
-> 🛠 **Tip**: double-click a metadata row in the action panel to copy its value to the clipboard. Useful for things like IP addresses or hostnames you want to paste into another tool. [NEEDS REVIEW: confirm double-click-to-copy behaviour — may instead be single click on the value]
+> 🛠 **Tip**: metadata values in the action panel are selectable text — click and drag to highlight a value, then `Cmd-C` to copy. A dedicated copy-on-click affordance is on the V1.1+ roadmap (with an opt-in setting so you don't accidentally copy on every selection click).
 
 ---
 
@@ -219,7 +215,7 @@ The single most common failure mode for first-time setup is the request never re
 - **The token is wrong**. Tokens are case-sensitive and have no whitespace tolerance — copy via the clipboard icon in **Settings → Ingestion**, not by hand
 - **The upstream tool wasn't restarted** after you changed its webhook config. Most tools (Kopia, Kuma) hot-reload; some (custom scripts using a daemon) don't
 
-Tempo's audit log records every payload that hits the ingestion endpoint, accepted or rejected, with the reason for rejection. To open it: **Settings → Help → Open Audit Log** — or via macOS Console.app, filter by subsystem `app.tempo.tempo`. [NEEDS REVIEW: confirm exact menu path and Console subsystem string]
+Tempo's audit log records every payload that hits the ingestion endpoint, accepted or rejected, with the reason for rejection. To inspect it, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. For sharing with support, use **Settings → Help → Export diagnostics bundle…** — it includes the last 24 hours of OSLog output (no token values, no event payloads).
 
 ---
 

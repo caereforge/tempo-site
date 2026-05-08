@@ -200,12 +200,15 @@ The 84-day heatmap window means anything beyond that isn't visualised anyway, so
 
 ### Vacuum the database
 
-[NEEDS REVIEW: confirm whether V1 exposes a manual "Vacuum database" button. Likely yes given the Database tab, but verify location.]
+If retention has deleted a lot of rows, the database file may have empty space. Tempo runs `VACUUM INTO` automatically every time it produces a backup snapshot, so an easy way to reclaim space is to trigger an on-demand backup from **Settings → Maintenance → Database → Backup now**, then keep using Tempo as normal.
 
-If retention has deleted a lot of rows, the database file may have empty space. A `VACUUM` reclaims it:
+For a direct vacuum on the live database, quit Tempo and run:
 
-- Settings → Maintenance → Database → **Vacuum now** (if exposed)
-- Or: quit Tempo, run `sqlite3 ~/Library/Application\ Support/Tempo/Tempo.sqlite 'VACUUM;'` in Terminal
+```bash
+sqlite3 ~/Library/Application\ Support/Tempo/Tempo.sqlite 'VACUUM;'
+```
+
+V1 does not expose a manual "Vacuum now" button in the UI; it's a candidate for a future release.
 
 ### When all of the above isn't enough
 
@@ -322,14 +325,14 @@ You're back to "first launch — grant calendar permission" state. Use this only
 
 If you've worked through this chapter and the problem persists, the project's support channels are:
 
-- **Discord** — invite link at [tempoapp.app/community](https://tempoapp.app/community) [NEEDS REVIEW: confirm exact community URL]
+- **Discord** — invite link at [tempoapp.app/community](https://tempoapp.app/community/)
 - **GitHub Issues** — [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues) for site/docs issues, public repo for the app to come post-V2
-- **Email** — `support@caereforge.com` [NEEDS REVIEW: confirm support email exists or substitute the right address]
+- **Email** — `support@tempoapp.app`
 
 When asking for help, include:
 
 - Your macOS version (System Settings → General → About)
-- Your Tempo version (menubar Tempo → About) [NEEDS REVIEW: confirm About menu entry location]
+- Your Tempo version (menubar Tempo → About Tempo)
 - The diagnostic bundle (Settings → Help → Export diagnostics)
 - A description of what you expected vs what happened
 
