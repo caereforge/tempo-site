@@ -1,0 +1,297 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const chapters = await getCollection("userguide", ({ data }) => !data.draft);
+  return chapters.map((chapter) => ({
+    params: { slug: chapter.id },
+    props: { chapter, allChapters: chapters },
+  }));
+}
+
+const { chapter, allChapters } = Astro.props;
+const { Content } = await render(chapter);
+
+const sidebar = allChapters
+  .slice()
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((c) => ({
+    slug: c.id,
+    title: c.data.title,
+    chapter: c.data.chapter,
+    isCurrent: c.id === chapter.id,
+  }));
+
+const currentIndex = sidebar.findIndex((c) => c.isCurrent);
+const prev = currentIndex > 0 ? sidebar[currentIndex - 1] : null;
+const next = currentIndex < sidebar.length - 1 ? sidebar[currentIndex + 1] : null;
+---
+<BaseLayout
+  title={`${chapter.data.title} — Tempo user guide`}
+  description={chapter.data.description}
+>
+  <div class="docs-layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a class="back" href="/docs">← Documentation</a>
+        <ol class="chapter-list">
+          {sidebar.map((c) => (
+            <li class={c.isCurrent ? "is-current" : ""}>
+              <a href={`/docs/${c.slug}`}>
+                <span class="num">{String(c.chapter).padStart(2, "0")}</span>
+                <span class="title">{c.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </aside>
+
+    <main class="doc">
+      <header class="page-header">
+        <p class="eyebrow">Tempo user guide · Chapter {chapter.data.chapter}</p>
+      </header>
+
+      <article class="prose">
+        <Content />
+      </article>
+
+      <nav class="page-pager">
+        {prev ? (
+          <a class="pager-link prev" href={`/docs/${prev.slug}`}>
+            <span class="pager-dir">← Previous</span>
+            <span class="pager-title">{prev.title}</span>
+          </a>
+        ) : <span />}
+        {next ? (
+          <a class="pager-link next" href={`/docs/${next.slug}`}>
+            <span class="pager-dir">Next →</span>
+            <span class="pager-title">{next.title}</span>
+          </a>
+        ) : <span />}
+      </nav>
+    </main>
+  </div>
+
+  <style>
+    .docs-layout {
+      max-width: 1100px;
+      margin: 32px auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 48px;
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+
+    @media (max-width: 820px) {
+      .docs-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      align-self: start;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+    }
+
+    .sidebar-nav {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .back {
+      display: inline-block;
+      color: var(--blue);
+      text-decoration: none;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    .chapter-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .chapter-list li {
+      margin: 0;
+    }
+
+    .chapter-list a {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 6px;
+      align-items: baseline;
+      padding: 6px 8px;
+      margin: 0 -8px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text2);
+      transition: background 0.12s ease, color 0.12s ease;
+    }
+    .chapter-list a:hover {
+      background: var(--bg2);
+      color: var(--text);
+    }
+    .chapter-list li.is-current a {
+      background: var(--bg2);
+      color: var(--text);
+      font-weight: 600;
+    }
+    .chapter-list .num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text3, #999);
+    }
+    .chapter-list li.is-current .num {
+      color: var(--blue);
+    }
+
+    .doc {
+      min-width: 0;
+    }
+
+    .page-header {
+      margin-bottom: 16px;
+    }
+    .eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text3, var(--text2));
+      margin: 0;
+    }
+
+    .prose {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .prose :global(h1) {
+      font-size: 32px;
+      margin: 0 0 24px;
+      line-height: 1.2;
+    }
+    .prose :global(h2) {
+      font-size: 22px;
+      margin-top: 40px;
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prose :global(h3) {
+      font-size: 17px;
+      margin-top: 28px;
+      margin-bottom: 10px;
+    }
+    .prose :global(p) {
+      margin: 0 0 14px;
+    }
+    .prose :global(a) {
+      color: var(--blue);
+    }
+    .prose :global(ul),
+    .prose :global(ol) {
+      margin: 0 0 14px;
+      padding-left: 24px;
+    }
+    .prose :global(li) {
+      margin-bottom: 6px;
+    }
+    .prose :global(blockquote) {
+      margin: 14px 0;
+      padding: 12px 16px;
+      border-left: 3px solid var(--blue);
+      background: var(--bg2);
+      color: var(--text);
+      border-radius: 0 6px 6px 0;
+    }
+    .prose :global(blockquote p:last-child) {
+      margin-bottom: 0;
+    }
+    .prose :global(code) {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .prose :global(pre) {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      margin: 0 0 14px;
+    }
+    .prose :global(pre code) {
+      padding: 0;
+      background: transparent;
+    }
+    .prose :global(hr) {
+      border: 0;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .prose :global(table) {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+    .prose :global(th),
+    .prose :global(td) {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .prose :global(th) {
+      background: var(--bg2);
+      font-weight: 600;
+    }
+
+    .page-pager {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .pager-link {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: border-color 0.12s ease;
+    }
+    .pager-link.next {
+      text-align: right;
+    }
+    .pager-link:hover {
+      border-color: var(--blue);
+    }
+    .pager-dir {
+      font-size: 12px;
+      color: var(--text2);
+    }
+    .pager-title {
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 500;
+    }
+  </style>
+</BaseLayout>

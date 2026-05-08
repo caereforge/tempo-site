@@ -1,5 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const guideChapters = (await getCollection("userguide", ({ data }) => !data.draft))
+  .slice()
+  .sort((a, b) => a.data.order - b.data.order);
 ---
 <BaseLayout
   title="Docs — Tempo"
@@ -24,8 +29,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <h2>Per-source integration guides</h2>
       <p>
         For setting up a specific source — Home Assistant, Kopia, Uptime
-        Kuma, UniFi, GitHub Actions, Synology, Pi-hole, Proxmox, Hazel,
-        Jellyfin, Vaultwarden, and more — open the score's catalogue page.
+        Kuma, UniFi (Network and Protect), GitHub Actions, Synology,
+        Pi-hole, Proxmox, Hazel, Jellyfin, Vaultwarden, and more — open
+        the score's catalogue page.
         Each one documents the source-side configuration, the payload
         contract Tempo expects, and what the bundled severity rules and
         actions look for.
@@ -63,20 +69,23 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
     <section class="group">
       <h2>Tempo user guide</h2>
-      <div class="placeholder">
-        <p>
-          <strong>Coming with v1.</strong> The app's UI is in active polish
-          ahead of the first public release. Once the ship version is out
-          and stable, a proper user guide lands here — covering the
-          timeline, the panels, the score editor, the settings tabs, and
-          the keyboard shortcuts.
-        </p>
-        <p>
-          In the meantime, the homepage <a href="/#story">story</a> and
-          <a href="/#faq">FAQ</a> sections cover most of the questions
-          people ask before downloading.
-        </p>
-      </div>
+      <p>
+        The full guide covers Tempo end-to-end — what it is, how to set it
+        up, every panel and setting, the Score Editor, troubleshooting, and
+        a glossary. Start with chapter 1 if you're new, or jump straight
+        to the chapter you need.
+      </p>
+      <ol class="chapter-list">
+        {guideChapters.map((c) => (
+          <li>
+            <a href={`/docs/${c.id}`}>
+              <span class="num">{String(c.data.chapter).padStart(2, "0")}</span>
+              <span class="title">{c.data.title}</span>
+              <span class="desc">{c.data.description}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </section>
 
     <section class="group">
@@ -180,24 +189,51 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       font-size: 14px;
       line-height: 1.5;
     }
-    .placeholder {
-      border: 1px dashed var(--border);
+    .chapter-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .chapter-list li {
+      margin: 0;
+    }
+    .chapter-list a {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      grid-template-rows: auto auto;
+      column-gap: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 16px 20px;
       background: var(--bg2);
-      color: var(--text2);
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.15s ease;
     }
-    .placeholder p {
-      margin: 0 0 12px;
+    .chapter-list a:hover {
+      border-color: var(--blue);
     }
-    .placeholder p:last-child {
-      margin-bottom: 0;
+    .chapter-list .num {
+      grid-row: 1 / span 2;
+      align-self: start;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text3, var(--text2));
+      padding-top: 2px;
     }
-    .placeholder strong {
+    .chapter-list .title {
+      font-size: 16px;
+      font-weight: 600;
       color: var(--text);
     }
-    .placeholder a {
-      color: var(--blue);
+    .chapter-list .desc {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.45;
+      margin-top: 2px;
     }
     code {
       font-family: var(--font-mono);
