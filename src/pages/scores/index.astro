@@ -56,6 +56,22 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
       </article>
     ))}
   </main>
+
+  <footer class="contribute-callout">
+    <h2>Contribute your own</h2>
+    <p>
+      Got a tool that should be in the catalog? Scores are JSON files — open a
+      pull request at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a>
+      and follow the <a href="https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md">CONTRIBUTING guide</a>.
+      The review rubric is public so you can self-check before submitting.
+    </p>
+    <p>
+      Not ready for a PR? Discuss the score idea first in the
+      <a href="https://github.com/caereforge/tempo-scores/discussions">GitHub Discussions</a>
+      or the <a href="/community">Tempo Discord</a>. Both threads stay searchable
+      so later contributors can build on your work.
+    </p>
+  </footer>
 </BaseLayout>
 
 <style>
