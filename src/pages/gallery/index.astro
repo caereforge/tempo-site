@@ -530,18 +530,21 @@ const allShots: Shot[] = [
     height: auto;
     display: block;
   }
-  /* Historical heatmap: box stays 16:10 like scenario thumbs, but the
-     image inside is capped + centered so it doesn't fill the frame —
-     keeps visual weight balanced with the rest of the gallery. */
+  /* Historical heatmap: box + image scaled to ~50% of scenario-card
+     dimensions, framed with padding. Sits left-aligned in its grid cell
+     with the caption to the right (vertically centered next to it). */
+  .heatmap-card.hist {
+    max-width: 220px;
+  }
   .heatmap-card.hist .shot-thumb {
     aspect-ratio: 16 / 10;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.25rem;
+    padding: 0.75rem;
   }
   .heatmap-card.hist .shot-thumb img {
-    max-width: 300px;
+    max-width: 150px;
     height: auto;
   }
   .heatmap-card.daily-full h3 {
