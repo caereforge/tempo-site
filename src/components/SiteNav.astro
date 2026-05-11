@@ -21,24 +21,16 @@ const links: { href: string; label: string }[] = [
 <header class="site-nav">
   <div class="site-nav-inner">
     <a class="site-nav-logo" href="/" aria-label="Tempo home">Tempo</a>
-
-    <details class="site-nav-menu">
-      <summary aria-label="Open menu">
-        <span class="hamburger" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
-      </summary>
-      <nav class="site-nav-links" aria-label="Primary">
-        {links.map((link) => (
-          <a
-            href={link.href}
-            class:list={["site-nav-link", { active: isActive(link.href) }]}
-          >
-            {link.label}
-          </a>
-        ))}
-      </nav>
-    </details>
+    <nav class="site-nav-links" aria-label="Primary">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={["site-nav-link", { active: isActive(link.href) }]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
   </div>
 </header>
 
@@ -60,7 +52,7 @@ const links: { href: string; label: string }[] = [
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .site-nav-logo {
@@ -70,42 +62,19 @@ const links: { href: string; label: string }[] = [
     letter-spacing: -0.005em;
     color: var(--text);
     text-decoration: none;
+    flex-shrink: 0;
   }
   .site-nav-logo:hover { color: var(--text); text-decoration: none; }
 
-  /* Details container — no native disclosure triangle */
-  .site-nav-menu {
-    position: relative;
-  }
-  .site-nav-menu summary {
-    list-style: none;
-    cursor: pointer;
-    display: none; /* hidden on desktop; revealed under breakpoint */
-    padding: 0.35rem 0.5rem;
-    border-radius: 6px;
-    color: var(--text2);
-    transition: color 120ms ease, background 120ms ease;
-  }
-  .site-nav-menu summary::-webkit-details-marker { display: none; }
-  .site-nav-menu summary:hover { color: var(--text); background: var(--bg2); }
-
-  .hamburger {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 4px;
-    width: 18px;
-  }
-  .hamburger span {
-    display: block;
-    height: 1.5px;
-    background: currentColor;
-    border-radius: 1px;
-  }
-
+  /* Plain inline nav — always visible on desktop. On narrow viewports,
+     links wrap onto multiple rows rather than collapsing into a
+     hamburger. JS-free, ships without a toggle component for V1. */
   .site-nav-links {
     display: flex;
     gap: 1.25rem;
     align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .site-nav-link {
@@ -113,30 +82,22 @@ const links: { href: string; label: string }[] = [
     font-size: 0.9rem;
     text-decoration: none;
     transition: color 120ms ease;
+    white-space: nowrap;
   }
   .site-nav-link:hover { color: var(--text); text-decoration: none; }
   .site-nav-link.active { color: var(--text); font-weight: 500; }
 
-  /* Mobile: <details> drives a dropdown; desktop keeps links inline regardless of open state */
+  /* Narrow viewports: tighter gaps so 8 items fit without overflow,
+     and let the nav block wrap below the logo if needed. */
   @media (max-width: 720px) {
-    .site-nav-menu summary { display: inline-flex; align-items: center; }
-
-    .site-nav-menu:not([open]) .site-nav-links {
-      display: none;
-    }
-    .site-nav-menu[open] .site-nav-links {
-      position: absolute;
-      top: calc(100% + 0.5rem);
-      right: 0;
+    .site-nav-inner {
       flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-      padding: 0.85rem 1rem;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      min-width: 160px;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+    .site-nav-links {
+      justify-content: center;
+      gap: 1rem;
     }
   }
 </style>
