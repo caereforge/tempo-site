@@ -1,13 +1,15 @@
 ---
 import "../styles/global.css";
+import SiteNav from "../components/SiteNav.astro";
 
 interface Props {
   title: string;
   description?: string;
   canonical?: string;
+  hideNav?: boolean;
 }
 
-const { title, description, canonical } = Astro.props;
+const { title, description, canonical, hideNav = false } = Astro.props;
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).toString();
 ---
 <!DOCTYPE html>
