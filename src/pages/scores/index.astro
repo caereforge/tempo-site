@@ -11,9 +11,6 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
   description="Preconfigured Tempo scores for your homelab — Synology, Proxmox, Uptime Kuma, and more."
 >
   <header class="page-header">
-    <nav class="page-nav">
-      <a href="/">← Tempo</a>
-    </nav>
     <h1>Scores</h1>
     <p class="lede">
       Small declarative files that teach Tempo how to read events from a specific source and which one-click actions to attach. Drop one into Tempo, and the source is wired up.
