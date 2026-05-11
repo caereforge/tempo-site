@@ -100,30 +100,46 @@ them appear together as a single **Hazel** row in Tempo's source panel,
 distinguished only by event title (the rule name). That works well for
 one or two rules; it gets crowded once you have a dozen.
 
-The score also recognises **sub-source** provider identifiers of the form
-`com.noodlesoft.hazel.<suffix>`. The shell template above shows several
-commented examples — uncomment one to make a specific rule emit under
-its own sub-source. The same five default actions still apply, because
-the score is configured against the parent prefix.
+Tempo also recognises **sub-source** provider identifiers of the form
+`com.noodlesoft.hazel.<suffix>`. Each sub-source appears as a child row
+visually nested under the **Hazel** parent — same pattern as Apple
+Calendar/Reminders under Apple, or UniFi Network/Protect under UniFi.
+The shell template above shows several commented examples — uncomment
+one to make a specific rule emit under its own sub-source.
 
-The naming convention is yours — pick whatever helps you recognise the
-rule at a glance. The list below is a starting palette, not a fixed
-taxonomy:
+### Bundled sub-scores
 
-- `com.noodlesoft.hazel.scanner` — output of a multifunction scanner
-- `com.noodlesoft.hazel.mail` — files exported from a Mail rule, carrier emails parsed by Hazel
-- `com.noodlesoft.hazel.keepa` — Keepa price-drop alert emails forwarded into a folder
+Tempo ships two sub-scores out of the box that override the parent's
+file-pattern actions with semantically appropriate ones — install them
+and Hazel rules POSTing under those sub-sources get the right buttons
+without any score authoring:
+
+- **`com.noodlesoft.hazel.mail`** — when Hazel hands off an email
+  (carrier delivery notification, parsed receipt, third-party alert
+  forwarded into a folder), actions are *Open in Mail*, *Open link*,
+  *Copy sender*, *Copy rule name*. The metadata Hazel sends should
+  include `sender`, `messageID`, and ideally a primary `url` from the
+  email body.
+- **`com.noodlesoft.hazel.keepa`** — for the Keepa price-drop-alert
+  pattern. Actions are *Open on Amazon*, *Open in Mail*, *Copy product
+  URL*, *Copy product name*. Metadata should include `product`,
+  `productURL`, and `messageID`.
+
+Both seed automatically on first launch — no separate install step.
+
+### Custom sub-sources
+
+You can also pick your own suffix for any rule that doesn't fit the
+bundled scenarios. The sub-source row appears with the suffix as label;
+without a dedicated sub-score, it falls back to the parent Hazel
+score's five default actions (Open file / Open destination folder /
+Open source folder / Copy file path / Copy rule name).
+
+Naming convention is yours — a few examples:
+
 - `com.noodlesoft.hazel.photos` — `~/Pictures` import / organisation rules
 - `com.noodlesoft.hazel.downloads` — `~/Downloads` cleanup / triage rules
 - `com.noodlesoft.hazel.<anything>` — your own categories
-
-> The umbrella grouping in the sidebar (sub-sources rendered visually
-> nested under a single **Hazel** parent row) is part of the Tempo
-> roadmap. Until it ships, each `com.noodlesoft.hazel.<suffix>`
-> sub-source renders as its own top-level row in the source panel —
-> distinct and labelled by the suffix, but flat. The pattern is still
-> useful today for filtering and recognition; the visual nesting will
-> arrive in a future Tempo release without requiring any score edits.
 
 ## Actions provided
 
