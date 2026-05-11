@@ -448,10 +448,15 @@ const allShots: Shot[] = [
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
+  /* Settings grid — 4 across so settings shots stay visually smaller
+     than the wide Tempo timeline screenshots in the scenario sections.
+     Settings PNGs are near-square (~1488×1624) vs timeline shots wide
+     (~3872×2388); a 2-col layout was making settings appear "larger"
+     because of vertical bulk. 4-col solves that without cropping. */
   .settings-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
   }
   .scenario-card {
     margin: 0;
