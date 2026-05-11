@@ -383,5 +383,42 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       display: block;
       margin-bottom: 0.15rem;
     }
+    /* Utilities box — secondary callout near the bottom, slightly
+       different visual register from the yellow opening callout. Uses
+       the bg2 panel pattern (same as the homepage card style) so it
+       reads as "another thing exists" rather than the urgent yellow
+       meta-note vibe up top. */
+    .utilities-box {
+      margin-top: 40px;
+      padding: 1.25rem 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .utilities-box h3 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      color: var(--text);
+    }
+    .utilities-box p {
+      color: var(--text2);
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0 0 8px;
+    }
+    .utilities-box p.utilities-link {
+      color: var(--text3);
+      font-size: 13px;
+      margin: 0;
+    }
+    .utilities-box code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .utilities-box a { color: var(--blue); }
   </style>
 </BaseLayout>
