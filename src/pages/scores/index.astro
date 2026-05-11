@@ -103,6 +103,25 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     max-width: 60ch;
   }
 
+  .contribute-callout {
+    max-width: var(--measure);
+    margin: 3rem auto 0;
+    padding: 2rem 1.25rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .contribute-callout h2 {
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.75rem 0;
+  }
+  .contribute-callout p {
+    color: var(--text2);
+    max-width: 60ch;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.55;
+  }
+  .contribute-callout a { color: var(--blue); }
+
   .scores-list {
     max-width: var(--measure);
     margin: 0 auto;
