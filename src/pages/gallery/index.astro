@@ -162,6 +162,30 @@ const allShots: Shot[] = [
     </p>
   </section>
 
+  <section class="scenario-section" aria-labelledby="patterns-over-time">
+    <header class="scenario-header">
+      <span class="scenario-chip">Patterns over time</span>
+      <h2 id="patterns-over-time">Two heatmaps, two time scales</h2>
+      <p class="scenario-intro">
+        Tempo has two distinct heatmaps. Both surface insights on the
+        activity Tempo ingests at a glance, each with a different time scale.
+      </p>
+    </header>
+    <div class="heatmap-list">
+      {heatmapShots.map((s) => (
+        <figure class="heatmap-card">
+          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
+            <img src={`/gallery/${s.id}.png`} alt={s.title} loading="lazy" />
+          </a>
+          <figcaption>
+            <h3>{s.title}</h3>
+            <p>{s.caption}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
   <section class="scenario-section" aria-labelledby="make-it-yours">
     <header class="scenario-header">
       <span class="scenario-chip">Make it yours</span>
