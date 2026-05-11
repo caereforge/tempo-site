@@ -93,6 +93,38 @@ Sort photos by date — IMG_4521.HEIC
 
 with metadata carrying the file path, rule name, source folder, and destination folder. The five default actions interpolate those values: clicking *Open file* runs `open file:///Users/.../IMG_4521.HEIC`; *Open destination folder* runs `open file:///Users/.../Sorted/2026-04`; etc.
 
+## Umbrella source and sub-sources
+
+By default every Hazel rule POSTs under `com.noodlesoft.hazel`, so all of
+them appear together as a single **Hazel** row in Tempo's source panel,
+distinguished only by event title (the rule name). That works well for
+one or two rules; it gets crowded once you have a dozen.
+
+The score also recognises **sub-source** provider identifiers of the form
+`com.noodlesoft.hazel.<suffix>`. The shell template above shows several
+commented examples — uncomment one to make a specific rule emit under
+its own sub-source. The same five default actions still apply, because
+the score is configured against the parent prefix.
+
+The naming convention is yours — pick whatever helps you recognise the
+rule at a glance. The list below is a starting palette, not a fixed
+taxonomy:
+
+- `com.noodlesoft.hazel.scanner` — output of a multifunction scanner
+- `com.noodlesoft.hazel.mail` — files exported from a Mail rule, carrier emails parsed by Hazel
+- `com.noodlesoft.hazel.keepa` — Keepa price-drop alert emails forwarded into a folder
+- `com.noodlesoft.hazel.photos` — `~/Pictures` import / organisation rules
+- `com.noodlesoft.hazel.downloads` — `~/Downloads` cleanup / triage rules
+- `com.noodlesoft.hazel.<anything>` — your own categories
+
+> The umbrella grouping in the sidebar (sub-sources rendered visually
+> nested under a single **Hazel** parent row) is part of the Tempo
+> roadmap. Until it ships, each `com.noodlesoft.hazel.<suffix>`
+> sub-source renders as its own top-level row in the source panel —
+> distinct and labelled by the suffix, but flat. The pattern is still
+> useful today for filtering and recognition; the visual nesting will
+> arrive in a future Tempo release without requiring any score edits.
+
 ## Actions provided
 
 - **Open file** — opens the matched file in the default app for its type
