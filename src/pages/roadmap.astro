@@ -199,6 +199,22 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </p>
       <ul class="items">
         <li>
+          <strong>Personal tag per source</strong> — a per-source tag
+          (or two, or three) you define in the Score Editor, built from
+          event metadata via template. Renders as a badge on the event
+          card and becomes a new axis for sort, filter, and search
+          alongside severity and date. Free-form: you pick whatever
+          labels work for your stack.
+        </li>
+        <li>
+          <strong>Source view groups</strong> — named groups of sources
+          you create in Settings ("Work", "Lab", "Media", whatever
+          you need). Pick one from the top-bar selector and the timeline
+          narrows to just those sources; "All sources" stays the default
+          and the fallback. Sources can belong to more than one group —
+          these are convenience views, not partitions.
+        </li>
+        <li>
           <strong>External archive</strong> — per-source archive file with
           a schema that adapts to the payload, so events can be retained
           indefinitely outside the working DB without losing structure.
