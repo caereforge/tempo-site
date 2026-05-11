@@ -475,13 +475,16 @@ const allShots: Shot[] = [
     line-height: 1.55;
   }
 
-  /* Callout — Hazel "via artificio" note after WFH cards */
+  /* Callout — Hazel "via artificio" note after WFH cards.
+     Obsidian-style rounded pill, parallel to the customize-note above.
+     Blue-tinted instead of yellow because this is narrative context,
+     not the meta-emphasis of the customize note. */
   .callout {
     margin-top: 2rem;
-    padding: 1.25rem 1.5rem;
-    border-left: 3px solid var(--blue);
-    background: var(--bg2);
-    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(10, 132, 255, 0.08);
+    border: 1px solid rgba(10, 132, 255, 0.32);
   }
   .callout p {
     color: var(--text2);
