@@ -28,12 +28,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         action buttons that actually do something.
       </p>
       <p class="card-meta">
-        macOS 15+ · Signed + notarized DMG · No App Store
+        macOS 15+ · Signed + notarized DMG · No App Store · Auto-updates via Sparkle
       </p>
       <p class="card-actions">
         <a class="btn btn-primary" href="https://tempoapp.app/Tempo.dmg">Download DMG</a>
         <a class="btn btn-secondary" href="/blog/">Read the blog</a>
       </p>
+
+      <details class="install-alt">
+        <summary>Or install via Homebrew</summary>
+        <pre><code>brew tap caereforge/tap
+brew install --cask tempo</code></pre>
+        <p class="install-alt-note">
+          Same signed + notarized DMG, distributed through a public Homebrew
+          tap. Updates flow through Sparkle as usual; <code>brew upgrade --cask tempo</code>
+          works too if you prefer the Homebrew flow. Tap source:
+          <a href="https://github.com/caereforge/homebrew-tap">github.com/caereforge/homebrew-tap</a>.
+        </p>
+      </details>
     </article>
 
     <article class="card">
@@ -149,6 +161,53 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+
+  .install-alt {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  .install-alt summary {
+    color: var(--text2);
+    cursor: pointer;
+    user-select: none;
+    padding: 0.25rem 0;
+  }
+  .install-alt summary:hover { color: var(--text); }
+  .install-alt[open] summary {
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .install-alt pre {
+    background: var(--bg-elev, rgba(0,0,0,0.04));
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    margin: 0 0 0.75rem 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .install-alt pre code {
+    background: transparent;
+    padding: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .install-alt-note {
+    color: var(--text3);
+    max-width: 60ch;
+    margin: 0;
+    font-size: 0.88rem;
+  }
+  .install-alt-note code {
+    background: var(--bg-elev, rgba(0,0,0,0.05));
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.95em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .install-alt-note a { color: var(--blue); }
 
   .btn {
     display: inline-block;

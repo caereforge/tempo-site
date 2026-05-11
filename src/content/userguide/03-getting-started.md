@@ -45,6 +45,45 @@ Click **Open**. If macOS refuses to open the app entirely (some browsers strip t
 
 > ⚠️ **Warning**: if a dialog says the app is "damaged and can't be opened", the most common cause is a corrupted download. Re-download the DMG from `downloads.tempoapp.app` rather than trying to bypass the warning. The signature check is what tells you the file you have is the file we shipped.
 
+### Alternative: install via Homebrew
+
+If you manage your Mac stack with Homebrew, you can install Tempo through a public Caereforge tap instead of downloading the DMG manually:
+
+```bash
+brew tap caereforge/tap
+brew install --cask tempo
+```
+
+The cask fetches the exact same signed and notarised DMG from `downloads.tempoapp.app`, verifies its SHA-256, and installs `Tempo.app` into `/Applications` — identical end state to the manual flow above. Drag-to-Applications is handled for you, and the first-open Gatekeeper checks still apply on the next launch.
+
+**Updating**:
+
+Tempo auto-updates via Sparkle by default — same as the DMG flow. New releases are delivered in-app through **Tempo → Check for Updates…** or automatically at the configured interval. If you'd rather drive updates through Homebrew, both options work:
+
+```bash
+brew upgrade --cask tempo
+```
+
+…fetches the latest cask version and replaces `Tempo.app`. There's no conflict between Sparkle and `brew upgrade` — both point at the same DMG on `downloads.tempoapp.app`. Pick whichever flow fits your routine.
+
+> 💡 **Note**: `brew livecheck` reads Tempo's Sparkle appcast directly, so the cask catches up automatically with each release. You don't need to wait for a separate `brew update` cadence — `brew upgrade --cask tempo` always reflects what's live.
+
+**Uninstalling**:
+
+```bash
+brew uninstall --cask tempo
+```
+
+…removes `Tempo.app` only. To also clear preferences, scores, the local event database, and caches in one step, add `--zap`:
+
+```bash
+brew uninstall --cask --zap tempo
+```
+
+The `--zap` flag wipes `~/Library/Application Support/Tempo` (database, scores, configuration), preferences, caches, and saved application state. This is the cleanest reset, equivalent to a fresh install on the next `brew install`.
+
+The tap source is public at [github.com/caereforge/homebrew-tap](https://github.com/caereforge/homebrew-tap) — open an issue there if the cask metadata needs adjusting (description, version, dependencies). For Tempo itself, the usual channels apply: GitHub issues, Discord, or `support@tempoapp.app`.
+
 ---
 
 ## 3.2 — First launch and permissions
