@@ -37,6 +37,7 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).toStri
   <meta name="twitter:image" content="https://tempoapp.app/og-image.png" />
 </head>
 <body>
+  {!hideNav && <SiteNav />}
   <slot />
 </body>
 </html>
