@@ -171,18 +171,25 @@ const allShots: Shot[] = [
         activity Tempo ingests at a glance, each with a different time scale.
       </p>
     </header>
-    <div class="heatmap-list">
-      {heatmapShots.map((s) => (
-        <figure class="heatmap-card">
-          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
-            <img src={`/gallery/${s.id}.png`} alt={s.title} loading="lazy" />
-          </a>
-          <figcaption>
-            <h3>{s.title}</h3>
-            <p>{s.caption}</p>
-          </figcaption>
-        </figure>
-      ))}
+    <div class="heatmap-grid">
+      <figure class="heatmap-card hist">
+        <a href="#heatmap-historical" class="shot-thumb" aria-label="Open Historical heatmap fullscreen">
+          <img src="/gallery/heatmap-historical.png" alt="Historical heatmap" loading="lazy" />
+        </a>
+      </figure>
+      <div class="heatmap-caption">
+        <h3>Historical heatmap</h3>
+        <p>Sits at the bottom of the source panel. Shows an 84-day window — useful for spotting patterns and busy days at a glance.</p>
+      </div>
+      <figure class="heatmap-card daily-full">
+        <a href="#heatmap-daily" class="shot-thumb" aria-label="Open Daily heatmap fullscreen">
+          <img src="/gallery/heatmap-daily.png" alt="Daily heatmap" loading="lazy" />
+        </a>
+        <figcaption>
+          <h3>Daily heatmap</h3>
+          <p>Doubles as a day picker and divider. Shows the highest-severity event for each hour of the day, so nothing critical gets buried when the feed runs long.</p>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
