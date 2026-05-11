@@ -64,13 +64,13 @@ const settingsShots: Shot[] = [
 const homelabScenarios: Shot[] = [
   {
     id: "homelab-kuma-down",
-    title: "Uptime Kuma — host down",
-    caption: "Kuma POSTs the down notification, Tempo highlights it in red. Action panel offers SSH into the host and Slack post to #ops in one click.",
+    title: "Uptime Kuma — host recovered",
+    caption: "Kuma POSTs the recovery as soon as the monitor goes back up, Tempo flags it green. Action panel offers Open in Kuma to inspect the dashboard, ping the host, and copy the monitor URL.",
   },
   {
     id: "homelab-unifi-connect",
-    title: "UniFi — new client connected",
-    caption: "Your network controller pushes a client-connect event. Action panel opens the UniFi dashboard or pings the device. Tempo keeps the history if you want to scroll back later.",
+    title: "UniFi — device flapping, stacked",
+    caption: "When a device disconnects and reconnects repeatedly, Tempo collapses the noise into a single stack on the timeline — count visible at a glance, full sequence one click away. Same row stays under the UniFi parent in the source panel.",
   },
   {
     id: "homelab-kopia-complete",
