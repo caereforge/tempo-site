@@ -36,13 +36,15 @@ From the **source** machine (the one trying to send to Tempo):
 3. If hostname doesn't resolve, use the LAN IP directly
 ```
 
+> 🛠 **Tip**: before walking through the scenarios below, sanity-check that Tempo is actually listening. From the Mac itself: `curl http://localhost:7776/ingest -I` should reply with an HTTP response (not "connection refused"). If it refuses, Tempo isn't running, the port is wrong, or the Mac was asleep when the source posted. Open **Settings → Ingestion** to confirm port and that the server is up.
+
 ### The five scenarios that cover most cases
 
 1. **Mac-local firewall denying inbound** — macOS Application Firewall, Little Snitch (incoming rules are separate from outgoing), LuLu. Allow Tempo
 2. **Source is on a different VLAN** — your router's firewall is default-deny between VLANs. Add an allow rule for source VLAN → Mac IP, port 7776
 3. **Hostname doesn't resolve from the source** — mDNS (`.local`) doesn't propagate across VLANs or through some routers. Use the Mac's LAN IP directly; pair with DHCP reservation
 4. **AP / client isolation** — guest WiFi or "IoT-safe" mode prevents same-network devices from talking. Disable isolation or move source to a trusted SSID/VLAN
-5. **Tempo isn't actually listening** — Mac is asleep, Tempo isn't running, or the port is wrong. Open Settings → Ingestion to confirm port and that the server is up
+5. **Double NAT or a CGNAT router in the path** — your ISP-provided router does NAT *and* your own router does NAT, or the ISP uses carrier-grade NAT. The source can't reach the Mac's LAN because it's on a different translated network. Bridge the ISP router, or move the source onto the same NAT layer as the Mac
 
 ### Diagnostic bundle
 
