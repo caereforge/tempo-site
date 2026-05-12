@@ -1,0 +1,453 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+// Each scenario: id (for lightbox anchor + filename slug), title, caption.
+// Screenshots live in /public/gallery/<id>.png — placeholders until captured.
+type Scenario = { id: string; title: string; caption: string };
+
+const heroShots: Scenario[] = [
+  {
+    id: "hero-timeline",
+    title: "The timeline",
+    caption: "Every signal, on one chronological feed. Calendar entries, webhook alerts, monitoring events, your own scripts — all in the order they happened.",
+  },
+  {
+    id: "hero-action-panel",
+    title: "Actions in context",
+    caption: "Each event carries its next move. Open a URL, run a command, copy a value — one click from the row, no app-switching.",
+  },
+  {
+    id: "hero-score-editor",
+    title: "The Score Editor",
+    caption: "Teach Tempo how to read a new source. Severity rules, color, grouping, custom labels — all declarative, no code.",
+  },
+];
+
+const homelabScenarios: Scenario[] = [
+  {
+    id: "homelab-kuma-down",
+    title: "Uptime Kuma — host down",
+    caption: "Kuma POSTs the down notification, Tempo highlights it in red. Action panel offers SSH into the host and Slack post to #ops in one click.",
+  },
+  {
+    id: "homelab-unifi-connect",
+    title: "UniFi — new client connected",
+    caption: "Your network controller pushes a client-connect event. Action panel opens the UniFi dashboard or pings the device. Tempo keeps the history if you want to scroll back later.",
+  },
+  {
+    id: "homelab-kopia-complete",
+    title: "Kopia — backup complete",
+    caption: "Snapshot finished, size and duration in the row. Action to open the repository in Finder or copy the snapshot ID for scripting.",
+  },
+  {
+    id: "homelab-ha-scene",
+    title: "Home Assistant — automation finished",
+    caption: "HA fires a webhook when a scene runs. Tempo records it next to today's other events; action button triggers the inverse scene if you change your mind.",
+  },
+];
+
+const wfhScenarios: Scenario[] = [
+  {
+    id: "wfh-meeting-cross-source",
+    title: "Meeting starting — Calendar + Home Assistant + Slack + Plex",
+    caption: "Calendar event arrives in the timeline. Action buttons trigger a Home Assistant focus scene, mute Slack for an hour, and pause Plex in the living room. Three apps, one click each, no automation behind your back — you decide.",
+  },
+  {
+    id: "wfh-scan-from-mfp",
+    title: "Scan from the multifunction printer",
+    caption: "Hazel watches the scanner folder. New PDF lands, Hazel POSTs to Tempo with the filename. Actions: open in Preview, move to the tax folder, email to the bookkeeper.",
+  },
+  {
+    id: "wfh-delivery",
+    title: "Delivery — out for arrival",
+    caption: "Carrier email arrives. A Mail rule + Hazel script extracts the tracking URL and POSTs to Tempo. Action opens tracking, or drops a reminder to bring the package in.",
+  },
+  {
+    id: "wfh-keepa-pricedrop",
+    title: "Keepa — price drop on a watched product",
+    caption: "Keepa sends its free email alert when a wishlist item drops below your threshold. A Mail rule forwards it to Tempo via Hazel. Action panel opens the Amazon page so you can pull the trigger or pass.",
+  },
+];
+---
+<BaseLayout
+  title="Gallery — Tempo"
+  description="What Tempo looks like, and a few examples of what people use it for — homelab monitoring, work-from-home triage, and the in-between."
+>
+  <header class="gallery-header">
+    <h1>Gallery</h1>
+    <p class="lede">
+      This is what Tempo looks like, and a handful of examples of what people
+      do with it. Aesthetics first — because on the Mac that matters — then
+      scenarios grouped by environment.
+    </p>
+  </header>
+
+  <section class="hero-shots">
+    {heroShots.map((shot) => (
+      <figure class="hero-card">
+        <a href={`#${shot.id}`} class="shot-thumb" aria-label={`Open ${shot.title} fullscreen`}>
+          <div class="shot-placeholder">
+            <span class="shot-placeholder-label">Screenshot: {shot.title}</span>
+          </div>
+        </a>
+        <figcaption>
+          <h3>{shot.title}</h3>
+          <p>{shot.caption}</p>
+        </figcaption>
+      </figure>
+    ))}
+  </section>
+
+  <section class="disclaimer">
+    <p>
+      Below, examples grouped by environment. <strong>Not buckets</strong> — your
+      timeline can mix any of these. Tempo accepts every source you point at it;
+      what you see here is just a tasting menu.
+    </p>
+  </section>
+
+  <section class="scenario-section" aria-labelledby="for-homelab">
+    <header class="scenario-header">
+      <span class="scenario-chip">For homelab</span>
+      <h2 id="for-homelab">Webhooks, monitoring, infrastructure</h2>
+      <p class="scenario-intro">
+        Tempo aggregates the signals your homelab already emits — Uptime Kuma,
+        UniFi Network and Protect, Kopia, Pi-hole, Proxmox, Home Assistant,
+        GitHub Actions, your own scripts. Everything lands on one Mac-native
+        timeline, with the next move one click from the row. No new
+        dashboards, no log-in-and-poll. Apple Calendar and Reminders also
+        flow in — handy when your laptop reboot lands between two host-down
+        alerts.
+      </p>
+    </header>
+    <div class="scenario-grid">
+      {homelabScenarios.map((s) => (
+        <figure class="scenario-card">
+          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
+            <div class="shot-placeholder">
+              <span class="shot-placeholder-label">Screenshot: {s.title}</span>
+            </div>
+          </a>
+          <figcaption>
+            <h3>{s.title}</h3>
+            <p>{s.caption}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="scenario-section" aria-labelledby="for-wfh">
+    <header class="scenario-header">
+      <span class="scenario-chip">For home office</span>
+      <h2 id="for-wfh">Meetings, errands, the desk you actually sit at</h2>
+      <p class="scenario-intro">
+        Work-from-home has its own rhythm — meetings that need focus, a
+        printer-scanner you wish would tell you when it's done, deliveries
+        that interrupt the day, small purchases you've been waiting on. Many
+        of the tools involved don't speak webhooks natively, so Tempo gets
+        them through small bridges — Hazel rules, Mail rules, Apple
+        Shortcuts. The same timeline, just wired to a different stack.
+      </p>
+    </header>
+    <div class="scenario-grid">
+      {wfhScenarios.map((s) => (
+        <figure class="scenario-card">
+          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
+            <div class="shot-placeholder">
+              <span class="shot-placeholder-label">Screenshot: {s.title}</span>
+            </div>
+          </a>
+          <figcaption>
+            <h3>{s.title}</h3>
+            <p>{s.caption}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="scenario-section coming">
+    <header class="scenario-header">
+      <span class="scenario-chip muted">More coming</span>
+      <h2>For knowledge workers, for multimedia creators</h2>
+      <p class="scenario-intro">
+        Notes, drafts, editorial deadlines on one side; OBS scene changes,
+        Frame.io reviews, render queues on the other. We'll add both
+        environments here in the weeks after launch. If your stack doesn't
+        fit any of these labels, that's fine too — point it at Tempo and
+        it'll find a row.
+      </p>
+    </header>
+  </section>
+
+  <footer class="gallery-footer">
+    <p>
+      Ready to try it on your own stack? <a href="/downloads">Download Tempo</a>
+      — or read the <a href="/docs/">docs</a> first to see what a score looks
+      like.
+    </p>
+  </footer>
+
+  <!-- Lightbox overlays. CSS-only :target pattern, no JS. -->
+  {[...heroShots, ...homelabScenarios, ...wfhScenarios].map((s) => (
+    <div id={s.id} class="lightbox" role="dialog" aria-modal="true" aria-label={s.title}>
+      <a href="#_" class="lightbox-bg" aria-label="Close"></a>
+      <div class="lightbox-frame">
+        <div class="shot-placeholder lightbox-img">
+          <span class="shot-placeholder-label">Screenshot: {s.title}</span>
+        </div>
+        <a href="#_" class="lightbox-close" aria-label="Close">×</a>
+      </div>
+    </div>
+  ))}
+</BaseLayout>
+
+<style>
+  /* Layout — wider than the article measure to host 3-up hero and 2×2 scenario grids */
+  .gallery-header,
+  .hero-shots,
+  .disclaimer,
+  .scenario-section,
+  .gallery-footer {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .gallery-header {
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+  }
+  .gallery-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .gallery-header .lede {
+    color: var(--text2);
+    max-width: 60ch;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Hero shots — 3 across on desktop, stacked on mobile */
+  .hero-shots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+  }
+  .hero-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .hero-card h3 {
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    margin-bottom: 0.25rem;
+  }
+  .hero-card p {
+    color: var(--text2);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  /* Disclaimer — italic-ish callout band */
+  .disclaimer {
+    padding-top: 1rem;
+    padding-bottom: 2.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .disclaimer p {
+    color: var(--text2);
+    max-width: 60ch;
+    font-size: 0.95rem;
+  }
+  .disclaimer strong { color: var(--text); }
+
+  /* Scenario sections */
+  .scenario-section {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .scenario-section.coming {
+    opacity: 0.7;
+  }
+  .scenario-header {
+    margin-bottom: 1.75rem;
+  }
+  .scenario-chip {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+  .scenario-chip.muted {
+    color: var(--text3);
+  }
+  .scenario-header h2 {
+    font-size: 1.5rem;
+    letter-spacing: -0.015em;
+    margin-bottom: 0.5rem;
+  }
+  .scenario-intro {
+    color: var(--text2);
+    max-width: 60ch;
+    line-height: 1.6;
+  }
+
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .scenario-card {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .scenario-card h3 {
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    margin-bottom: 0.25rem;
+  }
+  .scenario-card p {
+    color: var(--text2);
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+
+  /* Shot thumbnails — link to lightbox via :target */
+  .shot-thumb {
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    transition: border-color 120ms ease, transform 120ms ease;
+    cursor: zoom-in;
+  }
+  .shot-thumb:hover {
+    border-color: var(--text3);
+    text-decoration: none;
+  }
+  .shot-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* Placeholder block — replaced by <img> when screenshots are wired in */
+  .shot-placeholder {
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, var(--bg2), var(--bg));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text3);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 1rem;
+    text-align: center;
+  }
+  .shot-placeholder-label {
+    display: inline-block;
+    max-width: 90%;
+  }
+
+  /* Lightbox overlay — CSS-only :target pattern */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 8, 10, 0.94);
+    z-index: 100;
+    padding: 2rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox:target {
+    display: flex;
+  }
+  .lightbox-bg {
+    position: absolute;
+    inset: 0;
+    cursor: default;
+  }
+  .lightbox-frame {
+    position: relative;
+    max-width: min(1200px, 95vw);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .lightbox-img {
+    position: relative;
+    max-width: 100%;
+    max-height: 90vh;
+    aspect-ratio: auto;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  /* If a real <img> replaces the placeholder, use these sizing rules */
+  .lightbox-frame img {
+    display: block;
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: -0.5rem;
+    right: 0;
+    transform: translate(50%, -100%);
+    color: var(--text);
+    font-size: 1.75rem;
+    line-height: 1;
+    text-decoration: none;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    background: rgba(20, 20, 22, 0.9);
+    border: 1px solid var(--border);
+    z-index: 2;
+  }
+  .lightbox-close:hover {
+    color: var(--text);
+    background: var(--bg2);
+    text-decoration: none;
+  }
+
+  /* Footer */
+  .gallery-footer {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 0.95rem;
+  }
+  .gallery-footer a { color: var(--blue); }
+
+  /* Responsive */
+  @media (max-width: 820px) {
+    .hero-shots {
+      grid-template-columns: 1fr;
+    }
+    .scenario-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
