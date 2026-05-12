@@ -3,7 +3,7 @@ title: "Tempo v1 is here. Every signal, one timeline."
 description: "Tempo v1 ships today as freeware. A native macOS event hub that puts every webhook, every backup, every monitor, and every calendar entry on one chronological timeline. Local-first, LAN-reachable, never acts on its own."
 pubDate: 2026-05-14
 tags: ["announcement", "release", "launch"]
-draft: true
+draft: false
 ---
 
 After months of solo work, **Tempo v1 is live**. Signed, notarized, Sparkle-ready, on the Downloads page.
