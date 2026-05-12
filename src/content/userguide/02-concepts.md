@@ -90,7 +90,7 @@ When a Kopia event arrives at Tempo, this score:
 2. Looks at the payload's `outcome` field and assigns severity + a custom label accordingly
 3. Builds the action button "Open repo" using the `repoUrl` from the payload
 
-Scores live as files in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads automatically when files change. You can edit a bundled score (Tempo ships with seven), drop in a community score from the [public catalog](https://github.com/caereforge/tempo-scores), or write your own from scratch.
+Scores live as files in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads automatically when files change. You can edit a bundled score (Tempo ships with nine: UniFi Network, UniFi Protect, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Scripts, Synology, Hazel-via-Mail), drop in a community score from the [public catalog](https://github.com/caereforge/tempo-scores), or write your own from scratch. Apple Calendar and Reminders are separate: they ride on a built-in EventKit provider, not on a score JSON file.
 
 The score system is **the canonical configuration surface** between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source — different colours, different labels, different action buttons — the answer is almost always "edit the score."
 
