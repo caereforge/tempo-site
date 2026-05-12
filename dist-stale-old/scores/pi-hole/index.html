@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Pi-hole — Tempo score</title><meta name="description" content="Pi-hole health and configuration changes in Tempo's timeline. Poll-driven from cron, native API, no plugins."><link rel="canonical" href="https://tempoapp.app/scores/pi-hole/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Pi-hole — Tempo score"><meta property="og:description" content="Pi-hole health and configuration changes in Tempo's timeline. Poll-driven from cron, native API, no plugins."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/scores/pi-hole/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+.page-header[data-astro-cid-b7omy7qc]{max-width:var(--measure);margin:0 auto;padding:2rem 1.25rem 1rem}.page-nav[data-astro-cid-b7omy7qc]{font-size:.875rem;margin-bottom:2rem}.page-nav[data-astro-cid-b7omy7qc] a[data-astro-cid-b7omy7qc]{color:var(--text2)}.page-nav[data-astro-cid-b7omy7qc] a[data-astro-cid-b7omy7qc]:hover{color:var(--text)}.score-head[data-astro-cid-b7omy7qc]{display:grid;grid-template-columns:8px 1fr;gap:1.25rem;margin-bottom:2rem}.score-swatch[data-astro-cid-b7omy7qc]{background:var(--swatch, var(--border));border-radius:2px}.score-head-body[data-astro-cid-b7omy7qc] h1[data-astro-cid-b7omy7qc]{font-size:2rem;letter-spacing:-.02em;margin-bottom:.5rem}.score-desc[data-astro-cid-b7omy7qc]{color:var(--text2);margin-bottom:.75rem;max-width:65ch}.score-meta[data-astro-cid-b7omy7qc]{color:var(--text3);font-size:.85rem;font-variant-numeric:tabular-nums}.score-meta[data-astro-cid-b7omy7qc] code[data-astro-cid-b7omy7qc]{color:var(--text2);background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.85em}.download-box[data-astro-cid-b7omy7qc]{margin-bottom:1rem}.download-btn[data-astro-cid-b7omy7qc]{display:inline-flex;align-items:center;gap:.75rem;padding:.75rem 1.25rem;background:var(--blue);color:#fff;text-decoration:none;border-radius:8px;font-size:1rem;font-weight:500;transition:filter .12s ease}.download-btn[data-astro-cid-b7omy7qc]:hover{filter:brightness(1.1)}.download-btn[data-astro-cid-b7omy7qc] code[data-astro-cid-b7omy7qc]{font-family:inherit;background:transparent;padding:0}.btn-icon[data-astro-cid-b7omy7qc]{font-size:1.1em;font-weight:600}.download-pending[data-astro-cid-b7omy7qc],.download-builtin[data-astro-cid-b7omy7qc]{display:flex;align-items:flex-start;gap:.75rem;padding:1rem 1.25rem;background:var(--bg2);border:1px dashed var(--border);border-radius:8px;color:var(--text2)}.download-builtin[data-astro-cid-b7omy7qc]{border-style:solid}.download-pending[data-astro-cid-b7omy7qc] .btn-text[data-astro-cid-b7omy7qc],.download-builtin[data-astro-cid-b7omy7qc] .btn-text[data-astro-cid-b7omy7qc]{font-weight:500;color:var(--text)}.pending-note[data-astro-cid-b7omy7qc]{margin-top:.35rem;font-size:.875rem;color:var(--text3);line-height:1.5;max-width:60ch}.pending-note[data-astro-cid-b7omy7qc] code[data-astro-cid-b7omy7qc]{background:var(--bg);padding:.05rem .35rem;border-radius:3px;font-size:.9em}.score-content[data-astro-cid-b7omy7qc]{max-width:var(--measure);margin:0 auto;padding:1rem 1.25rem 4rem;color:var(--text);line-height:1.7}.score-content[data-astro-cid-b7omy7qc] h2{font-size:1.35rem;letter-spacing:-.01em;margin-top:2.5rem;margin-bottom:.75rem}.score-content[data-astro-cid-b7omy7qc] h3{font-size:1.05rem;margin-top:2rem;margin-bottom:.5rem}.score-content[data-astro-cid-b7omy7qc] p{margin-bottom:1rem;color:var(--text2)}.score-content[data-astro-cid-b7omy7qc] ul,.score-content[data-astro-cid-b7omy7qc] ol{margin-bottom:1rem;padding-left:1.5rem;color:var(--text2)}.score-content[data-astro-cid-b7omy7qc] li{margin-bottom:.25rem}.score-content[data-astro-cid-b7omy7qc] code{background:var(--bg2);padding:.1rem .4rem;border-radius:4px;font-size:.9em;color:var(--text)}.score-content[data-astro-cid-b7omy7qc] pre{background:var(--bg2);padding:1rem;border-radius:8px;overflow-x:auto;margin-bottom:1rem;border:1px solid var(--border)}.score-content[data-astro-cid-b7omy7qc] pre code{background:transparent;padding:0}.score-content[data-astro-cid-b7omy7qc] table{width:100%;border-collapse:collapse;margin-bottom:1rem;font-size:.9rem}.score-content[data-astro-cid-b7omy7qc] th,.score-content[data-astro-cid-b7omy7qc] td{border:1px solid var(--border);padding:.5rem .75rem;text-align:left}.score-content[data-astro-cid-b7omy7qc] th{background:var(--bg2);font-weight:600}.score-content[data-astro-cid-b7omy7qc] hr{border:none;border-top:1px solid var(--border);margin:2rem 0}.score-content[data-astro-cid-b7omy7qc] a{color:var(--blue);text-decoration:none}.score-content[data-astro-cid-b7omy7qc] a:hover{text-decoration:underline}
+</style></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <header class="page-header" data-astro-cid-b7omy7qc> <nav class="page-nav" data-astro-cid-b7omy7qc> <a href="/scores" data-astro-cid-b7omy7qc>← All scores</a> </nav> <div class="score-head" data-astro-cid-b7omy7qc> <div class="score-swatch" style="--swatch: #A52B2B;" data-astro-cid-b7omy7qc></div> <div class="score-head-body" data-astro-cid-b7omy7qc> <h1 data-astro-cid-b7omy7qc>Pi-hole</h1> <p class="score-desc" data-astro-cid-b7omy7qc>Pi-hole health and configuration changes in Tempo&#39;s timeline. Poll-driven from cron, native API, no plugins.</p> <p class="score-meta" data-astro-cid-b7omy7qc> <span data-astro-cid-b7omy7qc><code data-astro-cid-b7omy7qc>net.pi-hole.pi-hole</code></span>  ·  <span data-astro-cid-b7omy7qc>v1.0.0</span>  · <span data-astro-cid-b7omy7qc>Pi-hole v6 (FTL HTTP API) / v5 with adjustments</span>  </p> </div> </div> <div class="download-box" data-astro-cid-b7omy7qc> <a class="download-btn" href="/scores/pi-hole.tempo-score" download data-astro-cid-b7omy7qc> <span class="btn-icon" aria-hidden="true" data-astro-cid-b7omy7qc>↓</span> <span class="btn-text" data-astro-cid-b7omy7qc>
+Download <code data-astro-cid-b7omy7qc>pi-hole.tempo-score</code> </span> </a> </div> </header> <article class="score-content" data-astro-cid-b7omy7qc> <p>Surface Pi-hole health and configuration changes in Tempo’s timeline with five default actions (open admin, open query log, open settings, copy server URL, copy domain).</p>
+<p>Pi-hole has no native push webhook out of the box, so this integration is <strong>poll-driven</strong>: a small bash script runs on cron, checks Pi-hole’s state via its HTTP API, and POSTs an event to Tempo when something interesting changes.</p>
+<p>Tested with Pi-hole <strong>v6</strong> (FTL HTTP API). v5 with the legacy PHP API also works with minor URL adjustments — see the v5 note at the bottom.</p>
+<hr>
+<h2 id="install">Install</h2>
+<ol>
+<li>Download <code>pi-hole.tempo-score</code> from the button above.</li>
+<li>Double-click it. Tempo opens a review sheet — click <strong>Install</strong>. The score lands in <code>~/Library/Application Support/Tempo/Scores/</code>.</li>
+<li>In Tempo <strong>Settings → Ingestion</strong>, add a token named <code>pi-hole</code> bound to <code>net.pi-hole.pi-hole</code>. Copy the token.</li>
+<li>Note your Tempo endpoint: <code>http://&#x3C;your-mac-hostname>:7776/ingest</code> (or <code>127.0.0.1</code> if Tempo is loopback-only).</li>
+<li>Install the polling script (below).</li>
+</ol>
+<h2 id="polling-script">Polling script</h2>
+<p>Save as <code>pihole-tempo.sh</code>, edit the four config values, run on cron every 5–10 minutes. The script tracks state across runs so it only POSTs to Tempo when something <strong>changes</strong> (no spam).</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#768390">#!/usr/bin/env bash</span></span>
+<span class="line"><span style="color:#768390"># pihole-tempo.sh — emit Pi-hole state changes to Tempo</span></span>
+<span class="line"><span style="color:#6CB6FF">set</span><span style="color:#6CB6FF"> -euo</span><span style="color:#96D0FF"> pipefail</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#768390"># ── Config ────────────────────────────────────────────────────────────────</span></span>
+<span class="line"><span style="color:#ADBAC7">PIHOLE_URL</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"http://pi.hole"</span><span style="color:#768390">        # base URL of your Pi-hole</span></span>
+<span class="line"><span style="color:#ADBAC7">PIHOLE_PASS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"your-admin-password"</span><span style="color:#768390">  # admin password (v6) or API token</span></span>
+<span class="line"><span style="color:#ADBAC7">TEMPO_URL</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"http://your-mac.local:7776/ingest"</span></span>
+<span class="line"><span style="color:#ADBAC7">TEMPO_TOKEN</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"paste-tempo-token-here"</span></span>
+<span class="line"><span style="color:#ADBAC7">STATE_DIR</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"${</span><span style="color:#ADBAC7">HOME</span><span style="color:#96D0FF">}/.local/state/pihole-tempo"</span></span>
+<span class="line"><span style="color:#768390"># ──────────────────────────────────────────────────────────────────────────</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F69D50">mkdir</span><span style="color:#6CB6FF"> -p</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$STATE_DIR</span><span style="color:#96D0FF">"</span></span>
+<span class="line"><span style="color:#ADBAC7">LAST_FILE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"${</span><span style="color:#ADBAC7">STATE_DIR</span><span style="color:#96D0FF">}/last_status"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#768390"># Auth (Pi-hole v6 — single-shot session)</span></span>
+<span class="line"><span style="color:#ADBAC7">SID</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(</span><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -s</span><span style="color:#6CB6FF"> -X</span><span style="color:#96D0FF"> POST</span><span style="color:#6CB6FF"> -H</span><span style="color:#96D0FF"> "Content-Type: application/json"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">    -d</span><span style="color:#96D0FF"> "{</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">password</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">:</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">${</span><span style="color:#ADBAC7">PIHOLE_PASS</span><span style="color:#96D0FF">}</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">}"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#96D0FF">    "${</span><span style="color:#ADBAC7">PIHOLE_URL</span><span style="color:#96D0FF">}/api/auth"</span><span style="color:#F47067"> |</span><span style="color:#F69D50"> jq</span><span style="color:#6CB6FF"> -r</span><span style="color:#96D0FF"> '.session.sid // empty'</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F47067">if</span><span style="color:#ADBAC7"> [ </span><span style="color:#F47067">-z</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$SID</span><span style="color:#96D0FF">"</span><span style="color:#ADBAC7"> ]; </span><span style="color:#F47067">then</span></span>
+<span class="line"><span style="color:#ADBAC7">    STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"unreachable"</span></span>
+<span class="line"><span style="color:#F47067">else</span></span>
+<span class="line"><span style="color:#ADBAC7">    BLOCKING</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(</span><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -s</span><span style="color:#6CB6FF"> -H</span><span style="color:#96D0FF"> "X-FTL-SID: </span><span style="color:#ADBAC7">$SID</span><span style="color:#96D0FF">"</span><span style="color:#96D0FF"> "${</span><span style="color:#ADBAC7">PIHOLE_URL</span><span style="color:#96D0FF">}/api/dns/blocking"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#F47067">               |</span><span style="color:#F69D50"> jq</span><span style="color:#6CB6FF"> -r</span><span style="color:#96D0FF"> '.blocking // "unknown"'</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#F47067">    case</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$BLOCKING</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> in</span></span>
+<span class="line"><span style="color:#96D0FF">        enabled</span><span style="color:#F47067">)</span><span style="color:#ADBAC7">   STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"up"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#96D0FF">        disabled</span><span style="color:#F47067">)</span><span style="color:#ADBAC7">  STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"disabled"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#F47067">        *)</span><span style="color:#ADBAC7">         STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"unreachable"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#F47067">    esac</span></span>
+<span class="line"><span style="color:#F47067">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ADBAC7">LAST</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$( [ </span><span style="color:#F47067">-f</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$LAST_FILE</span><span style="color:#96D0FF">"</span><span style="color:#ADBAC7"> ] &#x26;&#x26; </span><span style="color:#F69D50">cat</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$LAST_FILE</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> ||</span><span style="color:#6CB6FF"> echo</span><span style="color:#96D0FF"> ""</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#6CB6FF">echo</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$STATUS</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> ></span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$LAST_FILE</span><span style="color:#96D0FF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#768390"># Only emit on transitions</span></span>
+<span class="line"><span style="color:#F47067">if</span><span style="color:#ADBAC7"> [ </span><span style="color:#96D0FF">"</span><span style="color:#ADBAC7">$STATUS</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> =</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$LAST</span><span style="color:#96D0FF">"</span><span style="color:#ADBAC7"> ]; </span><span style="color:#F47067">then</span><span style="color:#6CB6FF"> exit</span><span style="color:#6CB6FF"> 0</span><span style="color:#ADBAC7">; </span><span style="color:#F47067">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F47067">case</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$STATUS</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> in</span></span>
+<span class="line"><span style="color:#96D0FF">    up</span><span style="color:#F47067">)</span><span style="color:#ADBAC7">          ACTION</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"blocking_enabled"</span><span style="color:#ADBAC7">;  TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"Pi-hole — blocking enabled"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#96D0FF">    disabled</span><span style="color:#F47067">)</span><span style="color:#ADBAC7">    ACTION</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"blocking_disabled"</span><span style="color:#ADBAC7">; TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"Pi-hole — blocking disabled"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#96D0FF">    unreachable</span><span style="color:#F47067">)</span><span style="color:#ADBAC7"> ACTION</span><span style="color:#F47067">=</span><span style="color:#96D0FF">""</span><span style="color:#ADBAC7">;                  TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"Pi-hole unreachable"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#F47067">esac</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -sS</span><span style="color:#6CB6FF"> -X</span><span style="color:#96D0FF"> POST</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">    -H</span><span style="color:#96D0FF"> "X-Tempo-Token: ${</span><span style="color:#ADBAC7">TEMPO_TOKEN</span><span style="color:#96D0FF">}"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">    -H</span><span style="color:#96D0FF"> "Content-Type: application/json"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">    -d</span><span style="color:#96D0FF"> "{</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">providerIdentifier</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">net.pi-hole.pi-hole</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">title</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">${</span><span style="color:#ADBAC7">TITLE</span><span style="color:#96D0FF">}</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">startDate</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">$(</span><span style="color:#F69D50">date</span><span style="color:#6CB6FF"> -u</span><span style="color:#96D0FF"> +%Y-%m-%dT%H:%M:%SZ)</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">eventType</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">alert</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">metadata</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: {</span></span>
+<span class="line"><span style="color:#F47067">        \"</span><span style="color:#96D0FF">Status</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">${</span><span style="color:#ADBAC7">STATUS</span><span style="color:#96D0FF">}</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">        \"</span><span style="color:#96D0FF">Action</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">${</span><span style="color:#ADBAC7">ACTION</span><span style="color:#96D0FF">}</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">        \"</span><span style="color:#96D0FF">ServerUrl</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">${</span><span style="color:#ADBAC7">PIHOLE_URL</span><span style="color:#96D0FF">}</span><span style="color:#F47067">\"</span></span>
+<span class="line"><span style="color:#96D0FF">      }</span></span>
+<span class="line"><span style="color:#96D0FF">    }"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#96D0FF">    "${</span><span style="color:#ADBAC7">TEMPO_URL</span><span style="color:#96D0FF">}"</span><span style="color:#F47067"> ></span><span style="color:#96D0FF">/dev/null</span></span></code></pre>
+<h2 id="schedule">Schedule</h2>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#F69D50">crontab</span><span style="color:#6CB6FF"> -e</span></span>
+<span class="line"><span style="color:#768390"># Run every 5 minutes</span></span>
+<span class="line"><span style="color:#F47067">*</span><span style="color:#ADBAC7">/5 </span><span style="color:#F47067">*</span><span style="color:#F47067"> *</span><span style="color:#F47067"> *</span><span style="color:#F47067"> *</span><span style="color:#ADBAC7"> /path/to/pihole-tempo.sh </span><span style="color:#F47067">>></span><span style="color:#ADBAC7"> /tmp/pihole-tempo.log </span><span style="color:#F47067">2>&#x26;1</span></span></code></pre>
+<h2 id="verify">Verify</h2>
+<p>Disable Pi-hole blocking from the admin UI for 30s, then run the script manually. You should see a <code>Pi-hole — blocking disabled</code> event in Tempo within a couple of seconds, marked <strong>warning</strong>.</p>
+<h2 id="severity-rules">Severity rules</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Match</th><th>Severity</th><th>Badge</th></tr></thead><tbody><tr><td><code>Status: down</code></td><td><code>critical</code></td><td>Down</td></tr><tr><td><code>Status: unreachable</code></td><td><code>critical</code></td><td>Unreachable</td></tr><tr><td><code>Status: high_load</code></td><td><code>warning</code></td><td>High load</td></tr><tr><td><code>Status: disabled</code></td><td><code>warning</code></td><td>Disabled</td></tr><tr><td><code>Action: blocking_disabled</code></td><td><code>warning</code></td><td>Blocking off</td></tr><tr><td><code>Action: update_available</code></td><td><code>info</code></td><td>Update</td></tr><tr><td><code>Action: gravity_update</code></td><td><code>info</code></td><td>Gravity</td></tr><tr><td><code>Action: blocking_enabled</code></td><td><code>info</code></td><td>Blocking on</td></tr><tr><td><em>(default)</em></td><td><code>info</code></td><td>Info</td></tr></tbody></table>
+<h2 id="required-metadata-fields">Required <code>metadata</code> fields</h2>
+<ul>
+<li><strong><code>ServerUrl</code></strong> — base URL of the Pi-hole. Used by every action.</li>
+<li><strong><code>Status</code></strong> or <strong><code>Action</code></strong> — drives severity. At least one should be present.</li>
+<li><strong><code>Domain</code></strong> — only when the event is about a specific domain (e.g. unblock action). Used by the “Copy domain” action; optional otherwise.</li>
+</ul>
+<h2 id="pi-hole-v5-note">Pi-hole v5 note</h2>
+<p>For v5, replace the auth/blocking calls with the legacy PHP API:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#768390"># v5 auth: API token (web admin → Settings → API → "Show API token")</span></span>
+<span class="line"><span style="color:#ADBAC7">PIHOLE_TOKEN</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"your-api-token-here"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ADBAC7">BLOCKING</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(</span><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -s</span><span style="color:#96D0FF"> "${</span><span style="color:#ADBAC7">PIHOLE_URL</span><span style="color:#96D0FF">}/admin/api.php?status&#x26;auth=${</span><span style="color:#ADBAC7">PIHOLE_TOKEN</span><span style="color:#96D0FF">}"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#F47067">           |</span><span style="color:#F69D50"> jq</span><span style="color:#6CB6FF"> -r</span><span style="color:#96D0FF"> '.status // "unknown"'</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#F47067">case</span><span style="color:#96D0FF"> "</span><span style="color:#ADBAC7">$BLOCKING</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> in</span></span>
+<span class="line"><span style="color:#96D0FF">    enabled</span><span style="color:#F47067">)</span><span style="color:#ADBAC7">  STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"up"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#96D0FF">    disabled</span><span style="color:#F47067">)</span><span style="color:#ADBAC7"> STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"disabled"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#F47067">    *)</span><span style="color:#ADBAC7">        STATUS</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"unreachable"</span><span style="color:#ADBAC7"> ;;</span></span>
+<span class="line"><span style="color:#F47067">esac</span></span></code></pre>
+<p>The rest of the script is identical.</p>
+<h2 id="sample-event-payload">Sample event payload</h2>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"net.pi-hole.pi-hole"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "title"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Pi-hole — blocking disabled"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "startDate"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"2026-04-29T10:00:00Z"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "eventType"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"alert"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "metadata"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "Status"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"disabled"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "Action"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"blocking_disabled"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "ServerUrl"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"http://pi.hole"</span></span>
+<span class="line"><span style="color:#ADBAC7">  }</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>The polling script is intentionally minimal — track only Status and Action transitions. Extend it as you wish (gravity update detection, <code>/api/info</code> for version/update checks) using the same <code>metadata</code> keys.</li>
+<li>The catalog score uses only <code>openURL</code> and <code>copyToClipboard</code>. Terminal-based actions (e.g. <code>pihole disable 30m</code>) require a <strong>local drop-in</strong> score — explicitly trusted by you.</li>
+<li>For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own <code>ServerUrl</code> and <code>PIHOLE_PASS</code> — Tempo lists them as the same source but each event carries its own URL.</li>
+</ul> </article>  </body></html> 

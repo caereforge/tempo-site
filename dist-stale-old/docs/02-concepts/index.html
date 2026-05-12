@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Concepts — Tempo user guide</title><meta name="description" content="The atomic unit Tempo deals with is the **event**."><link rel="canonical" href="https://tempoapp.app/docs/02-concepts/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Concepts — Tempo user guide"><meta property="og:description" content="The atomic unit Tempo deals with is the **event**."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/docs/02-concepts/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DrUdJ2yv.css"></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <div class="docs-layout" data-astro-cid-uadgga6g> <aside class="sidebar" data-astro-cid-uadgga6g> <nav class="sidebar-nav" data-astro-cid-uadgga6g> <a class="back" href="/docs" data-astro-cid-uadgga6g>← Documentation</a> <ol class="chapter-list" data-astro-cid-uadgga6g> <li class data-astro-cid-uadgga6g> <a href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>01</span> <span class="title" data-astro-cid-uadgga6g>Introduction</span> </a> </li><li class="is-current" data-astro-cid-uadgga6g> <a href="/docs/02-concepts" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>02</span> <span class="title" data-astro-cid-uadgga6g>Concepts</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>03</span> <span class="title" data-astro-cid-uadgga6g>Getting started</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/04-source-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>04</span> <span class="title" data-astro-cid-uadgga6g>Source panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/05-event-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>05</span> <span class="title" data-astro-cid-uadgga6g>Event panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>06</span> <span class="title" data-astro-cid-uadgga6g>Action panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/07-score-editor" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>07</span> <span class="title" data-astro-cid-uadgga6g>Score Editor</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>08</span> <span class="title" data-astro-cid-uadgga6g>Settings reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>09</span> <span class="title" data-astro-cid-uadgga6g>Backup and restore</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>10</span> <span class="title" data-astro-cid-uadgga6g>Sources reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>11</span> <span class="title" data-astro-cid-uadgga6g>Score authoring</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>12</span> <span class="title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>13</span> <span class="title" data-astro-cid-uadgga6g>FAQ</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/14-glossary" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>14</span> <span class="title" data-astro-cid-uadgga6g>Glossary</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/15-appendix" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>15</span> <span class="title" data-astro-cid-uadgga6g>Appendix</span> </a> </li> </ol> </nav> </aside> <main class="doc" data-astro-cid-uadgga6g> <header class="page-header" data-astro-cid-uadgga6g> <p class="eyebrow" data-astro-cid-uadgga6g>Tempo user guide · Chapter 2</p> </header> <article class="prose" data-astro-cid-uadgga6g> <h1 id="2--concepts">2 — Concepts</h1>
+<blockquote>
+<p>If you came in from chapter 1 and the words <em>score</em>, <em>severity</em>, <em>stack</em> feel abstract, this chapter is for you. We define the small vocabulary Tempo uses, explain how the parts connect, and hand you the mental model that makes the rest of the guide make sense.</p>
+<p>If you’d rather start hands-on and pick up the concepts as you go, skip to <a href="/docs/03-getting-started">chapter 3 — Getting started</a>. You can always come back. Each concept here links to the chapter that goes deeper.</p>
+</blockquote>
+<hr>
+<h2 id="21--events">2.1 — Events</h2>
+<p>The atomic unit Tempo deals with is the <strong>event</strong>.</p>
+<p>An event is a thing that happened, captured at a point in time, with enough metadata for Tempo to display it and offer you something useful to do about it. A backup that completed is an event. A monitor that fired an alert is an event. A reminder that came due is an event. A script that printed “done” is an event.</p>
+<p>Every event has a small set of mandatory fields:</p>
+<ul>
+<li><strong>Title</strong> — the human-readable label that shows in the timeline</li>
+<li><strong>Timestamp</strong> — when the event happened (or, for stateful events, when the underlying state changed)</li>
+<li><strong>Provider identifier</strong> — which system the event came from, like <code>com.kopia</code> or <code>com.unifi</code></li>
+<li><strong>Event type</strong> — one of <code>alert</code>, <code>event</code>, <code>task</code>, <code>reminder</code>. Affects rendering and a couple of UI behaviours</li>
+<li><strong>Payload metadata</strong> — a flexible dict of fields the upstream tool sent: hostname, file size, IP address, status code, whatever</li>
+</ul>
+<p>Events also have fields Tempo manages itself: severity, attention state, acknowledgment timestamps, ID. You don’t usually think about these.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: an event isn’t the same thing as the underlying thing-that-happened. If your Kopia backup runs every night, the backup itself is a process; the event is the <em>record</em> of that process completing (or failing) that Kopia sends to Tempo. Events are records, not the things themselves.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/05-event-panel">chapter 5 — Event panel</a> covers how events render in the UI; <a href="/docs/14-glossary#event">glossary entry for event</a> is the quick reference.</p>
+<hr>
+<h2 id="22--sources-and-providers">2.2 — Sources and providers</h2>
+<p>Tempo uses two related but distinct words: <strong>source</strong> and <strong>provider</strong>.</p>
+<p>A <strong>provider</strong> is a category of system — Kopia (backup), UniFi (network + cameras), Home Assistant (home automation), Uptime Kuma (monitoring), GitHub Actions (CI). Each provider has a unique identifier, conventionally in reverse-DNS form: <code>com.kopia</code>, <code>com.ubiquiti.unifi.network</code>, <code>com.uptime-kuma</code>, <code>org.home-assistant</code>. Some brand families act as umbrellas — <code>com.ubiquiti.unifi</code> rolls up Network and Protect (and, later, possibly Talk / Access / Connect / InnerSpace) as siblings under one parent row.</p>
+<p>A <strong>source</strong> is one specific instance of a provider. You might have:</p>
+<ul>
+<li>Three Kopia repositories backing up different folders → three sources, all under provider <code>com.kopia</code></li>
+<li>One UniFi controller and a Protect camera stack on the same hardware → two sources, one under <code>com.ubiquiti.unifi.network</code> and one under <code>com.ubiquiti.unifi.protect</code>, grouped under a single <strong>UniFi</strong> parent row</li>
+<li>Two Home Assistant instances (main house + cottage) → two sources under provider <code>org.home-assistant</code></li>
+</ul>
+<p>In the source panel (the leftmost column in Tempo), each source gets its own row. Click a source to filter the timeline to events from that source only.</p>
+<p>The provider/source distinction matters because:</p>
+<ol>
+<li>The <strong>score</strong> (see §2.3) is defined per <em>provider</em>, not per source. All your Kopia repos use the same Kopia score — same display logic, same actions, same severity rules</li>
+<li><strong>Sources can be hidden, soloed, or coloured individually</strong>. You might mute one noisy Kopia repo while keeping the other two visible</li>
+<li>Source-level customisation (custom display name, custom colour, per-source auto-dismiss) lives at the source level</li>
+</ol>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: if you have a vendor that sells multiple distinct products, the convention is one provider with a <code>sourceGroup</code> metadata field distinguishing products, rather than one provider per product. For example, Synology has DSM (NAS), Surveillance Station, and various others — all under provider <code>com.synology</code> with <code>sourceGroup: "DSM"</code>, <code>sourceGroup: "SurveillanceStation"</code>, etc.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/04-source-panel">chapter 4 — Source panel</a> covers the UI; <a href="/docs/14-glossary#provider">glossary entries for source and provider</a> are the quick reference.</p>
+<hr>
+<h2 id="23--scores">2.3 — Scores</h2>
+<p>The word <strong>score</strong> is borrowed from music. A musical score tells the orchestra what notes to play, when, and how loud. A Tempo score tells Tempo what an event from a provider should look like, what severity to assign, and what actions to offer when you click on it.</p>
+<p>Concretely, a score is a small JSON file. Here’s a simplified slice of the Kopia score:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"com.kopia"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "displayName"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Kopia"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "color"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"#30D158"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severityRules"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7"> },   </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7">,   </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Backup Failed"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#ADBAC7">    { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7"> }, </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Backup Warning"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#ADBAC7">    { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ok"</span><span style="color:#ADBAC7"> },      </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ok"</span><span style="color:#ADBAC7">,      </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Backup OK"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ],</span></span>
+<span class="line"><span style="color:#8DDB8C">  "defaultActions"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    { </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Open repo"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openURL"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.repoUrl}"</span><span style="color:#ADBAC7"> } }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ]</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p>When a Kopia event arrives at Tempo, this score:</p>
+<ol>
+<li>Tags it with the colour <code>#30D158</code> (green) for the source badge</li>
+<li>Looks at the payload’s <code>outcome</code> field and assigns severity + a custom label accordingly</li>
+<li>Builds the action button “Open repo” using the <code>repoUrl</code> from the payload</li>
+</ol>
+<p>Scores live as files in <code>~/Library/Application Support/Tempo/Scores/</code>. Tempo loads them at launch and reloads automatically when files change. You can edit a bundled score (Tempo ships with seven), drop in a community score from the <a href="https://github.com/caereforge/tempo-scores">public catalog</a>, or write your own from scratch.</p>
+<p>The score system is <strong>the canonical configuration surface</strong> between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source — different colours, different labels, different action buttons — the answer is almost always “edit the score.”</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: scores are the V1 way to customise Tempo. We ship a <a href="/docs/07-score-editor">Score Editor UI</a> (chapter 7) for hands-on editing without touching JSON directly. A visual score builder is on the V2 roadmap; until then, the editor + manual JSON cover all use cases.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/07-score-editor">chapter 7 — Score Editor</a> for hands-on editing; <a href="/docs/11-score-authoring">chapter 11 — Score authoring</a> for the full JSON reference; <a href="/docs/14-glossary#score">glossary entry for score</a>.</p>
+<hr>
+<h2 id="24--actions">2.4 — Actions</h2>
+<p>Every event in Tempo can carry a set of <strong>actions</strong> — buttons that do something useful when clicked. The action set is declared in the source’s score; click an event in the timeline and the action panel on the right shows the buttons.</p>
+<p>In v1, three action trigger types are supported:</p>
+<ul>
+<li><strong>Open URL</strong> (<code>openURL</code>) — opens any URL the user’s Mac knows how to handle. Examples: <code>https://...</code> (browser), <code>ssh://admin@10.0.1.42</code> (Terminal SSH), <code>vnc://server.local</code> (Screen Sharing), <code>obsidian://open?vault=...</code> (Obsidian deep link), or any custom app URL scheme</li>
+<li><strong>Open Terminal with command</strong> (<code>openTerminalWith</code>) — opens Terminal.app and runs the specified command</li>
+<li><strong>Copy to clipboard</strong> (<code>copyToClipboard</code>) — copies a string to the system clipboard</li>
+</ul>
+<p>Each trigger can use <strong>interpolation</strong> to pull values from the event payload at click time. Syntax: <code>${metadata.host}</code> for a payload field, <code>${title}</code> for the event’s title, <code>${startDate}</code> for its timestamp.</p>
+<p>A typical UniFi event might offer these actions:</p>
+<ul>
+<li><strong>Open dashboard</strong> → <code>openURL: https://${metadata.controllerIP}:8443/</code></li>
+<li><strong>SSH to AP</strong> → <code>openURL: ssh://admin@${metadata.deviceIP}</code></li>
+<li><strong>Copy MAC</strong> → <code>copyToClipboard: ${metadata.clientMac}</code></li>
+<li><strong>Ping client</strong> → <code>openTerminalWith: ping ${metadata.clientIP}</code></li>
+</ul>
+<p>Click any one and Tempo resolves the interpolation, then dispatches the action. Total time from “I see the event” to “I’m acting on it”: about a second.</p>
+<p>Actions in v1 are <strong>always user-triggered</strong>. Tempo never fires an action on its own. v2 will extend this with auto-firing rules (the user defines conditions, Tempo runs the action automatically), but v1 keeps the human in the loop.</p>
+<blockquote>
+<p>🛑 <strong>Critical</strong>: actions you write yourself can do anything those three trigger types can do. <code>openTerminalWith</code> runs a shell command — be careful with payload-interpolated content from untrusted sources, since a compromised upstream tool could craft a payload that injects a malicious command. Treat payloads from your LAN as you treat any LAN-reachable input: verify the source, use per-provider tokens, audit unexpected events.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/06-action-panel">chapter 6 — Action panel</a> for UI; <a href="/docs/11-score-authoring#114-action-triggers-reference">chapter 11.4 — Action triggers reference</a> for trigger syntax.</p>
+<hr>
+<h2 id="25--severity-state-acknowledgment-dismissal">2.5 — Severity, state, acknowledgment, dismissal</h2>
+<p>These four words together describe how Tempo characterises and manages events through their lifecycle.</p>
+<h3 id="severity">Severity</h3>
+<p>Every event gets a <strong>severity</strong> label. The five values, from quietest to loudest:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Severity</th><th>Meaning</th><th>Default colour</th></tr></thead><tbody><tr><td><code>info</code></td><td>Informational, no action needed</td><td>green / neutral</td></tr><tr><td><code>ok</code></td><td>Positive outcome (a backup succeeded, a probe is up)</td><td>green</td></tr><tr><td><code>warning</code></td><td>Something you should look at, not urgent</td><td>yellow</td></tr><tr><td><code>error</code></td><td>Something failed, attention needed</td><td>red</td></tr><tr><td><code>critical</code></td><td>Urgent, immediate action recommended</td><td>red</td></tr></tbody></table>
+<p>Severity is <strong>assigned by the score</strong>, not by the upstream tool directly. The same Kopia “outcome=error” payload can be severity <code>error</code> in one user’s score and severity <code>critical</code> in another’s, depending on how that user calibrated their thresholds.</p>
+<h3 id="state-firing--resolved">State (firing / resolved)</h3>
+<p>Some sources report <strong>stateful</strong> conditions — Uptime Kuma monitors that go down then come back up, Home Assistant alarm sensors that trip then clear. For these, Tempo tracks whether the condition is currently <em>firing</em> (active problem) or <em>resolved</em> (cleared).</p>
+<p>State is shown in colour and meta-text on the card. A monitor that’s currently down shows in red with “DOWN” meta-text; once it’s back up, the same row updates to green with “UP” or “RESOLVED.”</p>
+<p>For stateful behaviour to work, the upstream source must send updates with a stable <code>externalID</code> (so Tempo recognises updates as belonging to the same condition). The bundled scores for Uptime Kuma and Home Assistant handle this for you.</p>
+<h3 id="acknowledgment">Acknowledgment</h3>
+<p>When an event is shown in the feed, you can <strong>acknowledge</strong> (“ack”) it: a user action meaning “I’ve seen this, I’m leaving it in the feed for now.” The card stays visible but its appearance softens — the title becomes lighter, the severity meta-text gets an outlined “Acked” pill — so it stops competing for your attention.</p>
+<p>Ack is reversible. Click the same button again to unack. Or use multi-select to ack many at once.</p>
+<h3 id="dismissal">Dismissal</h3>
+<p><strong>Dismissing</strong> removes the event from the active feed entirely. The event isn’t deleted from the database — you can still find it via source history — but it stops appearing in the main timeline.</p>
+<p>Dismissing is the right move for events you’ve handled and don’t want cluttering your view. Acking is the right move for events you’ve <em>seen</em> but want to leave visible (perhaps because the underlying condition isn’t resolved yet). Both can be reversed.</p>
+<p>You can also configure <strong>per-source auto-dismiss</strong>: events from a chosen source automatically dismiss after a configurable time window. Useful for noisy informational sources where each event is fine but you don’t want them lingering.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: ack and dismiss are user-side state. They don’t write back to the source app — Tempo doesn’t tell Kopia “the user has seen this backup result” or tell Kuma “the user has acknowledged this monitor outage.” They only affect Tempo’s local view.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/05-event-panel#53-acknowledged-events">chapter 5.3 — Acknowledged events</a>; <a href="/docs/08-settings-reference#84-maintenance">chapter 8.4 — Maintenance settings</a> for auto-dismiss; <a href="/docs/14-glossary#severity">glossary entries</a>.</p>
+<hr>
+<h2 id="26--stack-and-grouping">2.6 — Stack and grouping</h2>
+<p>Some sources are chatty. A Uptime Kuma monitor that’s down doesn’t send one alert and stop — it re-notifies every 60 seconds. A Home Assistant alarm in a fault loop can send 30 events in five minutes. A Hazel rule processing a folder full of files generates a stream of “moved” events.</p>
+<p>Without help, these would flood the feed with near-duplicate cards.</p>
+<p>Tempo’s answer is <strong>stacking</strong>: a cluster of related events shown as a single card with a count badge instead of N separate cards. Click a stack to expand it; the dismiss-all footer at the bottom lets you clear the whole cluster in one action.</p>
+<p>Stacking is driven by the score — each score declares two things:</p>
+<ol>
+<li><strong>What “related” means</strong> — a <code>grouping</code> template (or a list of fallback templates), like <code>${metadata.monitorID}</code> for Uptime Kuma or <code>[${metadata.clientMac}, ${metadata.deviceMac}]</code> for UniFi. Events with the same resolved value get clustered</li>
+<li><strong>A grouping window</strong> — a <code>groupingWindow</code> like <code>1h</code> or <code>6h</code> or <code>1d</code> defines how long a stack stays “open” to absorb new events. After the window closes, the next matching event starts a fresh stack</li>
+</ol>
+<p>A simplified Kopia grouping config:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"grouping"</span><span style="color:#ADBAC7">: [</span><span style="color:#96D0FF">"${metadata.repo}/${metadata.path}"</span><span style="color:#ADBAC7">, </span><span style="color:#96D0FF">"${metadata.path}"</span><span style="color:#ADBAC7">],</span></span>
+<span class="line"><span style="color:#96D0FF">"groupingWindow"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"1d"</span></span></code></pre>
+<p>This says: events get clustered by <code>repo/path</code> (e.g., <code>prod-backup/Documents</code>); if that path is missing from the payload, fall back to grouping by <code>path</code> alone; new events are absorbed into the stack for one day.</p>
+<p>The result: instead of seven separate cards for seven Kopia runs of the same path in one day, you see one stack with the count “7” and the latest run on top.</p>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: stacking is per-source by design. Events from different sources never cluster together, even if their grouping keys happen to collide. This keeps source identity preserved in the feed.</p>
+</blockquote>
+<blockquote>
+<p>💡 <strong>Note</strong>: grouping is configured per-score, in the Score Editor’s Stack grouping section. If you find a source generates too many cards, check whether its score declares grouping. If it doesn’t, you can add one — or pick a smaller grouping window if it does and you want stacks to close more aggressively.</p>
+</blockquote>
+<p><strong>Where to learn more</strong>: <a href="/docs/05-event-panel#54-stacked-events">chapter 5.4 — Stacked events</a> for UI; <a href="/docs/07-score-editor#75-stack-grouping">chapter 7.5 — Stack grouping</a> for editor.</p>
+<hr>
+<h2 id="where-to-go-from-here">Where to go from here</h2>
+<p>If the concepts feel solid:</p>
+<ul>
+<li>Hands-on: <a href="/docs/03-getting-started">chapter 3 — Getting started</a></li>
+<li>Customisation: <a href="/docs/07-score-editor">chapter 7 — Score Editor</a></li>
+<li>Adding a source you don’t have bundled: <a href="/docs/10-sources-reference">chapter 10 — Sources reference</a></li>
+</ul>
+<p>If a concept didn’t quite land, the <a href="/docs/14-glossary">glossary</a> has tighter one-paragraph definitions for each term used here. Open it in a separate tab and use it as a quick lookup while you read the rest of the guide.</p> </article> <nav class="page-pager" data-astro-cid-uadgga6g> <a class="pager-link prev" href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>← Previous</span> <span class="pager-title" data-astro-cid-uadgga6g>Introduction</span> </a> <a class="pager-link next" href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>Next →</span> <span class="pager-title" data-astro-cid-uadgga6g>Getting started</span> </a> </nav> </main> </div>   </body></html>

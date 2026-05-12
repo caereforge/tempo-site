@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Score Editor — Tempo user guide</title><meta name="description" content="The Score Editor is where you teach Tempo about a source."><link rel="canonical" href="https://tempoapp.app/docs/07-score-editor/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Score Editor — Tempo user guide"><meta property="og:description" content="The Score Editor is where you teach Tempo about a source."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/docs/07-score-editor/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DrUdJ2yv.css"></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <div class="docs-layout" data-astro-cid-uadgga6g> <aside class="sidebar" data-astro-cid-uadgga6g> <nav class="sidebar-nav" data-astro-cid-uadgga6g> <a class="back" href="/docs" data-astro-cid-uadgga6g>← Documentation</a> <ol class="chapter-list" data-astro-cid-uadgga6g> <li class data-astro-cid-uadgga6g> <a href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>01</span> <span class="title" data-astro-cid-uadgga6g>Introduction</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/02-concepts" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>02</span> <span class="title" data-astro-cid-uadgga6g>Concepts</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>03</span> <span class="title" data-astro-cid-uadgga6g>Getting started</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/04-source-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>04</span> <span class="title" data-astro-cid-uadgga6g>Source panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/05-event-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>05</span> <span class="title" data-astro-cid-uadgga6g>Event panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>06</span> <span class="title" data-astro-cid-uadgga6g>Action panel</span> </a> </li><li class="is-current" data-astro-cid-uadgga6g> <a href="/docs/07-score-editor" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>07</span> <span class="title" data-astro-cid-uadgga6g>Score Editor</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>08</span> <span class="title" data-astro-cid-uadgga6g>Settings reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>09</span> <span class="title" data-astro-cid-uadgga6g>Backup and restore</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>10</span> <span class="title" data-astro-cid-uadgga6g>Sources reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>11</span> <span class="title" data-astro-cid-uadgga6g>Score authoring</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>12</span> <span class="title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>13</span> <span class="title" data-astro-cid-uadgga6g>FAQ</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/14-glossary" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>14</span> <span class="title" data-astro-cid-uadgga6g>Glossary</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/15-appendix" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>15</span> <span class="title" data-astro-cid-uadgga6g>Appendix</span> </a> </li> </ol> </nav> </aside> <main class="doc" data-astro-cid-uadgga6g> <header class="page-header" data-astro-cid-uadgga6g> <p class="eyebrow" data-astro-cid-uadgga6g>Tempo user guide · Chapter 7</p> </header> <article class="prose" data-astro-cid-uadgga6g> <h1 id="7--score-editor">7 — Score Editor</h1>
+<p>The Score Editor is where you teach Tempo about a source. Open it once and you can decide, in five minutes, what every event from a given provider should look like — its colour, its severity, the headline metric it surfaces, the actions it offers, and how it groups with related events. Save, and the changes apply to the next event that arrives. No restart, no re-deploy, no JSON file you forgot to format.</p>
+<p>This chapter walks the editor section by section. It assumes you’ve read <a href="/docs/02-concepts#23--scores">§2.3 — Scores</a> for the conceptual framing.</p>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: the editor is the <em>hands-on</em> surface. Underneath, every score is a JSON file you can also edit by hand or contribute back to the public catalog. The editor is built so you don’t <em>have</em> to touch JSON; the JSON is there if you want it. See <a href="/docs/11-score-authoring">§11 — Score authoring</a> for the deeper dive.</p>
+</blockquote>
+<hr>
+<h2 id="71--what-a-score-does-for-you">7.1 — What a score does for you</h2>
+<p>Without a score, an event from your homelab is raw payload: a JSON blob with whatever fields the upstream tool decided to send. Tempo can still display it (title + timestamp + provider + raw metadata), but it won’t know what the event <em>means</em>. Severity is unset. There’s no headline metric. There are no useful actions. Repeated events from the same source don’t stack. Cards look bland because the score system is the layer that <em>interprets</em> payloads.</p>
+<p>A score answers, for one provider:</p>
+<ul>
+<li><strong>What’s the severity of this event?</strong> — by matching against payload fields and assigning info / ok / warning / error / critical</li>
+<li><strong>What should the card show?</strong> — a custom title (using payload fields), a custom subtitle, a headline metric, a colour</li>
+<li><strong>What buttons should the action panel offer?</strong> — and what URLs/commands should those buttons invoke (using payload fields again)</li>
+<li><strong>Should this event stack with related ones?</strong> — and if so, what defines “related,” and how long does a stack stay open?</li>
+<li><strong>What’s the source’s overall identity?</strong> — its display name, its colour, its icon</li>
+</ul>
+<p>The editor is one form for all of these.</p>
+<h3 id="before--after">Before / after</h3>
+<p>A Kopia backup payload arrives:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "title"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"snapshot completed"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"com.kopia"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "metadata"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ok"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "target"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"/Users/leo/Documents"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "delta"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"+147KB"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "duration"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"1.2s"</span></span>
+<span class="line"><span style="color:#ADBAC7">  }</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p><strong>Without a score</strong> — Tempo shows: a card titled “snapshot completed,” no severity, no headline. The actions list is empty.</p>
+<p><strong>With the bundled Kopia score</strong> — Tempo shows: a green card with the title <code>Documents backed up (+147KB)</code>, severity <code>OK</code>, headline metric <code>+147KB</code>, subtitle <code>1.2s · /Users/leo/Documents</code>. The action panel offers: “Open repo,” “Show snapshot list,” “Copy snapshot ID.”</p>
+<p>The payload didn’t change. The score did.</p>
+<hr>
+<h2 id="72--editor-overview">7.2 — Editor overview</h2>
+<p>The Score Editor lives as one of the <strong>tabs in the centre panel</strong>, alongside Timeline (the default) and Search. Click the <strong>Score Editor</strong> tab to switch into it; click <strong>Timeline</strong> to switch back. The source panel on the left and the action panel on the right stay in place — the editor only takes over the centre column.</p>
+<p>A second entry point: when you double-click a <code>.tempo-score</code> file, Tempo opens a Score Review Sheet (a modal dialog) for one-click installation. That sheet is a different surface — it shows a preview of an incoming score before you install it. The Score Editor in this chapter is for editing scores you’ve already installed.</p>
+<p>The editor has three regions:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│  [Score chip bar — pick which score to edit]        │</span></span>
+<span class="line"><span>├──────────────────────────────────────┬──────────────┤</span></span>
+<span class="line"><span>│                                      │              │</span></span>
+<span class="line"><span>│  Editor (scrollable)                  │  Try panel  │</span></span>
+<span class="line"><span>│  - Header                            │              │</span></span>
+<span class="line"><span>│  - Severity rules                    │  (preview    │</span></span>
+<span class="line"><span>│  - Default                           │   on recent  │</span></span>
+<span class="line"><span>│  - Stack grouping                    │   events)    │</span></span>
+<span class="line"><span>│  - Aliases (Kopia only)              │              │</span></span>
+<span class="line"><span>│                                      │              │</span></span>
+<span class="line"><span>└──────────────────────────────────────┴──────────────┘</span></span></code></pre>
+<ul>
+<li><strong>Score chip bar</strong> at the top — every score Tempo knows about, click one to load it</li>
+<li><strong>Editor pane</strong> on the left — scrollable, sectioned (Header, Severity rules, Default, Stack grouping, Aliases when applicable)</li>
+<li><strong>Try panel</strong> on the right — picks a recent event from this provider and shows you what the current draft would render for it. Live preview as you edit</li>
+</ul>
+<p>Edits don’t apply to the live feed until you click <strong>Save</strong> in the top toolbar. <strong>Discard</strong> reverts the draft to whatever’s currently saved.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: edits persist across app restarts and across Tempo updates. The bundled scores can be reset to their factory defaults via <strong>Reset to bundled defaults</strong> in the toolbar (covered in §7.8). Tempo also keeps the last-saved version in case you want to roll back.</p>
+</blockquote>
+<h3 id="the-score-chip-bar">The score chip bar</h3>
+<p>The chip bar at the top is your score selector. Each chip shows the provider’s display name; click to switch. Edits to one score are scoped to that score — switching scores prompts you to save or discard if there are unsaved changes.</p>
+<p>The left of the chip bar has a <strong>+ New</strong> chip for creating a score from scratch (covered in <a href="/docs/11-score-authoring">§11 — Score authoring</a>). The right end has the file-action icons: <strong>Reveal in Finder</strong>, <strong>Duplicate</strong>, <strong>Delete</strong> (only for user scores; bundled scores can be reset, not deleted).</p>
+<blockquote>
+<p>⚠️ <strong>V1 sweet spot: ~15 scores</strong>. The current chip-bar design works well up to roughly 15 active scores. Past that, scrolling the strip and switching between scores starts to feel sluggish — at 25–30 scores it becomes a real friction point. A redesigned picker (dropdown with search and category grouping) is on the <strong>V1.x roadmap</strong> and will lift this ceiling significantly. If you find yourself hitting that wall, two interim suggestions: <strong>(a)</strong> keep your active scores trimmed to what you actually edit, and <strong>(b)</strong> if you have a lot of variant-of-one-thing scores (eight different <code>scripts.*</code> providers, say), consider whether a single broader score with metadata-driven severity rules can cover them — fewer files, same coverage.</p>
+</blockquote>
+<hr>
+<h2 id="73--severity-rules">7.3 — Severity rules</h2>
+<p>The Severity rules section is the heart of a score. It’s where you decide what each kind of event from this provider gets tagged with.</p>
+<h3 id="how-rules-work">How rules work</h3>
+<p>Rules evaluate <strong>top-to-bottom; first match wins</strong>. Each rule has:</p>
+<ul>
+<li>A <strong>severity</strong> — one of info, ok, warning, error, critical</li>
+<li>A <strong>badge label</strong> (optional) — the custom text on the severity pill (“Backup OK,” “Connection failed”). Defaults to the severity name uppercased</li>
+<li>A <strong>pill colour</strong> (optional) — overrides the default severity colour. Useful for “this is a warning, but not the kind that should look red-adjacent” cases (a Sky decoder disconnecting at night is a warning by the rules, but you want it grey-pill rather than yellow because it’s expected)</li>
+<li>A <strong>set of conditions</strong> under “When all of these match” — payload field checks. Every condition must match for the rule to fire (logical AND across conditions; logical OR across rules — the next rule fires if this one didn’t)</li>
+<li>A <strong>presentation block</strong> (optional) — title and subtitle templates that override the event’s defaults when this rule fires</li>
+</ul>
+<h3 id="the-condition-row">The condition row</h3>
+<p>Each condition is a key/value pair:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[metadata key] = [value (supports * and ?)]</span></span></code></pre>
+<ul>
+<li><strong>Key</strong> is the name of a payload field, like <code>outcome</code>, <code>severity</code>, <code>alarmKey</code>, <code>host</code></li>
+<li><strong>Value</strong> is what to match — exact string, or a shell-style wildcard pattern. <code>error</code> matches the literal string <code>error</code>. <code>STA_*</code> matches anything starting with <code>STA_</code>. <code>*FAILURE</code> matches anything ending with <code>FAILURE</code>. <code>?</code> matches a single character</li>
+</ul>
+<p>Tempo also flags conditions whose <strong>key was never seen in recent events</strong> from this provider — a small orange warning triangle next to the row, with a tooltip: <em>“Key ‘X’ was not observed in recent events from this provider — the rule may never fire.”</em> This catches typos before they bite (was it <code>outcome</code> or <code>result</code>?).</p>
+<h3 id="rule-order-and-the-first-match-wins-model">Rule order and the “first match wins” model</h3>
+<p>Rules are evaluated in display order. Use the up/down arrows on each rule to move it; rules that need to take precedence (more specific patterns) should be above rules they’re a special case of (more general patterns).</p>
+<p>Common ordering pattern:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#1  CRITICAL  outcome=error AND severity=critical</span></span>
+<span class="line"><span>#2  ERROR     outcome=error</span></span>
+<span class="line"><span>#3  WARNING   outcome=warning</span></span>
+<span class="line"><span>#4  OK        outcome=ok</span></span></code></pre>
+<p>Without #1, an event with <code>outcome=error AND severity=critical</code> would match #2 and stop, never reaching the more-specific case. Putting #1 first ensures the special case is handled.</p>
+<h3 id="adding-moving-removing-rules">Adding, moving, removing rules</h3>
+<ul>
+<li><strong>Add rule</strong> at the bottom of the list creates a new empty rule with severity <code>info</code>, no conditions, no label. Fill it in</li>
+<li><strong>Up/down arrows</strong> on each rule move it in the list (greyed when at the boundary)</li>
+<li><strong>Trash icon</strong> removes a rule. No undo; if you remove the wrong one, <strong>Discard</strong> in the toolbar reverts the whole draft</li>
+</ul>
+<h3 id="the-available-keys-strip">The Available keys strip</h3>
+<p>Above the rule list, the editor shows a horizontal strip of <strong>chips</strong>, each labelled with a metadata key Tempo has actually seen in recent events from this provider:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[host] [outcome] [target] [delta] [duration] [snapshotID] · sampled from the last 10 events</span></span></code></pre>
+<p>Click any chip to copy <code>${metadata.&#x3C;key>}</code> to your clipboard, ready to paste into a title template or an action trigger. The strip is purely informational — it doesn’t constrain what keys you can reference (you can type any key into a rule), it just shows you what’s available.</p>
+<p>If a provider has never sent an event, the strip is empty: send an event (real traffic, or via the demo scripts under <code>demo/</code>) and the strip populates.</p>
+<h3 id="presentation-block">Presentation block</h3>
+<p>Each rule can override the event’s title and subtitle when it matches. Both fields support <code>${metadata.xxx}</code> interpolation:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Title:    ${metadata.target} backed up (${metadata.delta})</span></span>
+<span class="line"><span>Subtitle: ${metadata.duration} · ${metadata.repoSize}</span></span></code></pre>
+<p>The placeholder text in these fields adapts to the provider — Kopia gets Kopia-shaped examples, UniFi gets UniFi-shaped examples, etc. — so you have a starting point that’s actually relevant.</p>
+<p>If a referenced field is missing from the payload, Tempo substitutes a placeholder rather than failing. You’ll see the literal <code>${metadata.target}</code> in the rendered card; that’s a cue to either fix the upstream payload or change the template to reference a field that’s actually present.</p>
+<h3 id="the-sender-severity-wins-toggle">The “Sender severity wins” toggle</h3>
+<p>Above the rule list, in the Header section, there’s a toggle: <strong>“Sender severity wins”</strong>.</p>
+<ul>
+<li><strong>On</strong> (default) — if the payload includes an explicit non-<code>info</code> severity field, that severity short-circuits the rules below. Useful when the upstream tool already classifies events well</li>
+<li><strong>Off</strong> — the score’s rules always run, regardless of what the payload says</li>
+</ul>
+<p>Turn it off when you have a sender that over-declares severity (every event arrives with <code>severity=critical</code> even though they’re mostly informational). Your rules then become authoritative.</p>
+<hr>
+<h2 id="74--presentation-and-custom-labels">7.4 — Presentation and custom labels</h2>
+<p>The presentation aspects of a score are split between the rule’s per-match presentation block (covered above) and the score-wide defaults in the Header section.</p>
+<p>The Header section gives the score’s overall identity:</p>
+<ul>
+<li><strong>Provider identifier</strong> — read-only display of the score’s provider ID (<code>com.kopia</code>, <code>com.unifi</code>, etc.)</li>
+<li><strong>Display name</strong> — the human-readable name shown on source rows (“Kopia,” “UniFi”)</li>
+<li><strong>Colour</strong> — the source colour, picked via the macOS colour picker or typed as <code>#RRGGBB</code> hex</li>
+</ul>
+<p>The colour appears on source rows, on event-card stripes, and on heatmap segments (when the heatmap is set to source-colouring mode).</p>
+<h3 id="custom-badge-labels">Custom badge labels</h3>
+<p>For each severity rule, the <strong>badge label</strong> field replaces the universal severity label on the card’s severity pill. So instead of every backup-related severity reading <code>OK</code>, <code>WARNING</code>, <code>ERROR</code>, you can have:</p>
+<ul>
+<li><code>BACKUP OK · +147KB</code></li>
+<li><code>WARN: 3 SKIPPED FILES</code></li>
+<li><code>BACKUP FAILED</code></li>
+</ul>
+<p>The pill colour stays driven by severity (so a yellow pill labelled “WARN: 3 SKIPPED FILES” still reads as a warning at a glance), but the <em>language</em> communicates context.</p>
+<p>You can use <code>${metadata.xxx}</code> interpolation in badge labels too, so a single rule can produce different labels depending on the payload:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>label: BACKUP OK · ${metadata.delta}</span></span></code></pre>
+<p>→ renders as <code>BACKUP OK · +147KB</code>, <code>BACKUP OK · +2.3MB</code>, etc., depending on the actual event.</p>
+<h3 id="custom-pill-colour-override">Custom pill colour override</h3>
+<p>The <strong>pill colour</strong> field on each rule overrides the default severity colour for that pill. Default behaviour: warning pills are yellow, error pills are red, etc. The override lets you pick any hex colour.</p>
+<p>Use case: an event that’s <em>technically</em> a warning by your rules but you don’t want it shouting yellow because it’s expected. A Sky decoder going <code>Disconnected</code> at 03:00 every night is one of those — the rule fires, the severity is <code>warning</code>, but you want the pill grey or blue so it doesn’t visually compete with actual warnings.</p>
+<p>The override is per-rule. Different severities of the same kind of event can have different colours.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: keep colour overrides used sparingly. The whole point of universal severity colours is that “yellow = warning” reads at a glance across all your sources. Override when there’s a real semantic reason (the event is genuinely <em>less</em> alarming than its severity suggests), not as decoration.</p>
+</blockquote>
+<hr>
+<h2 id="75--stack-grouping">7.5 — Stack grouping</h2>
+<p>The Stack grouping section configures whether and how related events from this provider collapse into stacks (see <a href="/docs/05-event-panel#54-stacked-events">§5.4 — Stacked events</a>).</p>
+<h3 id="the-toggle">The toggle</h3>
+<p><strong>Stack repeated events</strong> is a single toggle at the top of the section:</p>
+<ul>
+<li><strong>Off</strong> — every event from this provider renders as its own card, regardless of similarity</li>
+<li><strong>On</strong> — events sharing a resolved grouping key collapse into stacks</li>
+</ul>
+<p>Turning the toggle on reveals the grouping editor below. Turning it off clears any grouping templates and the time window.</p>
+<h3 id="grouping-key-templates">Grouping key templates</h3>
+<p>Each grouping template is a string with <code>${metadata.xxx}</code> placeholders. When an event arrives, Tempo:</p>
+<ol>
+<li>Walks the templates from top to bottom</li>
+<li>Picks the first one that <strong>fully resolves</strong> (every referenced metadata field is present in the payload)</li>
+<li>Uses the resolved string as the event’s “stack identity”</li>
+</ol>
+<p>Events with the same stack identity, within the time window, become a stack.</p>
+<h3 id="why-a-fallback-chain">Why a fallback chain</h3>
+<p>Some sources emit different event shapes from the same provider — a UniFi controller sends both client-association events (with <code>clientMac</code> and <code>deviceMac</code>) and device-status events (with only <code>deviceMac</code>). A single template <code>${metadata.clientMac}</code> would fail to resolve for device-status events; a single template <code>${metadata.deviceMac}</code> would conflate every event from the same AP regardless of client.</p>
+<p>The fallback chain solves this:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>${metadata.clientMac}/${metadata.deviceMac}</span></span>
+<span class="line"><span>${metadata.deviceMac}</span></span></code></pre>
+<p>→ Client-association events resolve to <code>aa:bb:cc/11:22:33</code> (template 1).
+→ Device-status events resolve to <code>11:22:33</code> (template 2, since template 1 has a missing <code>clientMac</code> field).</p>
+<p>You get correct grouping for both event shapes without writing code.</p>
+<h3 id="add--remove-templates">Add / remove templates</h3>
+<ul>
+<li><strong>Add fallback template</strong> at the bottom adds a new empty template row</li>
+<li><strong>Minus icon</strong> on each row removes that template</li>
+</ul>
+<p>A score with no templates has stacking off (the toggle reflects this). A score with at least one template has stacking on.</p>
+<h3 id="time-window">Time window</h3>
+<p>The time window controls how aggressively stacks close:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Window</th><th>Use case</th></tr></thead><tbody><tr><td><strong>No cutoff (always stack)</strong></td><td>History-of-one-target style — Kopia’s “all backups of /Users/leo/Documents stack forever”. Useful when each event represents a discrete run of something that happens infrequently</td></tr><tr><td><strong>15 min, 30 min, 1 hour</strong></td><td>Live monitoring — Uptime Kuma flapping, UniFi reconnects. Stacks close fast so a fresh problem starts a fresh stack</td></tr><tr><td><strong>6 hours, 1 day</strong></td><td>Cron-job style — backups, scheduled tasks. Stacks span a single “session” of activity</td></tr><tr><td><strong>1 week</strong></td><td>Weekly maintenance, logrotate, periodic cleanups</td></tr></tbody></table>
+<p>Pick the smallest window that still feels right for the source. Smaller = more responsive (a new spike of activity is a new stack), bigger = quieter feed (related events keep clustering).</p>
+<h3 id="try-the-grouping-in-the-side-panel">Try the grouping in the side panel</h3>
+<p>The Try panel on the right shows you a sample event from this provider and tells you what stack identity it would resolve to under the current draft. Useful when you’re editing templates and want to confirm the resolution actually matches what you expected.</p>
+<hr>
+<h2 id="76--default-actions">7.6 — Default actions</h2>
+<p>The default-actions block declares the buttons that appear on every event from this provider. <strong>In V1, default actions are edited via the score JSON file, not from inside the Score Editor.</strong> The editor preserves whatever default actions the score already declares — so when you save edits to severity rules, presentation, or grouping, the existing default-actions block carries through unchanged — but it doesn’t expose a UI for adding, removing, or reordering them.</p>
+<p>To author or change default actions, edit the score JSON directly (see <a href="/docs/11-score-authoring#114-action-triggers-reference">§11.4 — Action triggers reference</a> and <a href="/docs/11-score-authoring">§11 — Score authoring</a>). A visual editor for actions is on the V2 roadmap.</p>
+<h3 id="order-recap">Order recap</h3>
+<p>Score-declared default actions render first in the action panel, in the order declared in the JSON. Per-event actions (sent in the payload itself by the upstream tool) render after. If a per-event action has the same label as a default, the per-event version wins.</p>
+<p>The convention: defaults are stable across events of the same provider (build muscle memory — “the SSH button is always there for UniFi”); per-event actions are exceptional (“this particular alert needs a special URL because it’s about a specific incident”).</p>
+<hr>
+<h2 id="77--available-keys-strip">7.7 — Available keys strip</h2>
+<p>The Available keys strip is a small but high-leverage feature: it shows you which metadata keys this provider actually emits, sampled from the last 10 events.</p>
+<h3 id="where-it-appears">Where it appears</h3>
+<p>Above the Severity rules section, and again on relevant condition rows when you’re typing a key.</p>
+<h3 id="what-it-tells-you">What it tells you</h3>
+<p>Each chip is a metadata key seen in real recent events:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[host] [outcome] [target] [delta] [duration] [snapshotID]</span></span></code></pre>
+<p>Chips reflect <em>observed</em> keys, not theoretical ones. If your Kopia config doesn’t emit <code>delta</code>, you won’t see it. If your custom webhook adds <code>correlation_id</code>, you will.</p>
+<h3 id="how-to-use-it">How to use it</h3>
+<ul>
+<li><strong>Click a chip</strong> to copy <code>${metadata.&#x3C;key>}</code> to your clipboard. Paste into title templates, subtitle templates, action trigger values, grouping templates — anywhere <code>${metadata.xxx}</code> is valid</li>
+<li><strong>Glance at it</strong> before adding a condition. If you’re about to write a condition on <code>outcome</code> but the strip shows <code>result</code> instead, you’ve caught a typo before it bites</li>
+</ul>
+<p>The strip is also a hint for the <strong>completeness</strong> of your score. If your rules reference 4 keys and the strip shows 12 keys, you might be ignoring useful payload information that could feed into custom labels or action triggers.</p>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: send a real event (not just a synthetic test) before authoring rules. The strip needs real traffic to populate. The bundled scores were authored with real traffic from each provider during V1 development.</p>
+</blockquote>
+<hr>
+<h2 id="78--persistence-and-reset-to-defaults">7.8 — Persistence and reset to defaults</h2>
+<p>Score edits persist across app restarts and Tempo updates. Tempo writes the saved score to <code>~/Library/Application Support/Tempo/Scores/&#x3C;provider>.json</code>; the bundled defaults live inside the app bundle and are written to the user-scores directory on first launch (with a version marker so the seeder knows they came from the bundle).</p>
+<h3 id="when-you-save">When you save</h3>
+<p>Click <strong>Save</strong> in the toolbar. The draft is written to disk, the file watcher picks it up, and the next event from this provider runs through the new score. The Try panel updates immediately so you can confirm the result before traffic arrives.</p>
+<h3 id="discard">Discard</h3>
+<p>Click <strong>Discard</strong> in the toolbar to revert the draft to whatever’s currently saved. Useful when you’ve gone down a wrong path and want to start from the last good state.</p>
+<h3 id="reset-to-bundled-defaults">Reset to bundled defaults</h3>
+<p>For bundled scores (those Tempo ships with), the toolbar also offers <strong>Reset to bundled defaults</strong>. This:</p>
+<ol>
+<li>Discards the current draft (if any)</li>
+<li>Replaces the saved file with the version that ships in the app bundle</li>
+<li>Refreshes the editor to show the new state</li>
+</ol>
+<p>Use this when:</p>
+<ul>
+<li>You’ve edited a bundled score and want to undo your changes wholesale</li>
+<li>An app update introduced improvements to a bundled score and you want them</li>
+<li>You’re debugging and want to confirm the bundled behaviour as a baseline</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>Warning</strong>: Reset is destructive. Your customisations are gone after a reset. There’s no per-edit undo — only “revert all” via Reset.</p>
+</blockquote>
+<p>For user-authored scores (those you created from scratch), Reset isn’t available — there’s no “factory default” to reset to. Use the chip bar’s <strong>Duplicate</strong> if you want to keep the current version as a backup before experimenting.</p>
+<h3 id="file-system-access">File-system access</h3>
+<p>You can also work on score files outside the editor:</p>
+<ul>
+<li><strong>Reveal in Finder</strong> in the chip bar opens <code>~/Library/Application Support/Tempo/Scores/</code> with the score selected</li>
+<li>Open the file in any text editor — it’s plain JSON</li>
+<li>Save changes; Tempo’s file watcher reloads automatically</li>
+</ul>
+<p>If your hand edits produce invalid JSON, Tempo logs a parse error to OSLog and falls back to the previous valid version. The audit log captures the error. See <a href="/docs/12-troubleshooting#123-a-score-isnt-appearing">§12.3 — A score isn’t appearing</a>.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: hand-editing is fully supported, not a workaround. The editor and the JSON file are two surfaces over the same underlying data; whichever you prefer for a given task is the right one. Some users do conditions in the editor and presentation in the JSON; that’s fine.</p>
+</blockquote>
+<hr>
+<h2 id="a-worked-tour-customising-the-kopia-score">A worked tour: customising the Kopia score</h2>
+<p>A short walk through the editor, end-to-end, using Kopia as the example.</p>
+<ol>
+<li><strong>Open the editor</strong>: click the <strong>Score Editor</strong> tab at the top of the centre panel, then pick <strong>Kopia</strong> from the chip bar</li>
+<li><strong>Set the colour</strong>: Click the colour picker in the Header, pick a green that matches your aesthetic, or paste <code>#30D158</code> (the bundled default)</li>
+<li><strong>Inspect the rules</strong>: the Kopia bundled score has rules for <code>outcome=error</code>, <code>outcome=warning</code>, <code>outcome=ok</code>. Click the Available keys strip to see what other metadata Kopia is emitting (<code>target</code>, <code>delta</code>, <code>duration</code>, <code>repoSize</code>)</li>
+<li><strong>Add a custom label</strong>: click into the <code>outcome=ok</code> rule’s “badge label” field, type <code>Backup OK · ${metadata.delta}</code>. Save. The next ok event will render with <code>BACKUP OK · +147KB</code> on its severity pill</li>
+<li><strong>Tighten grouping</strong>: scroll to Stack grouping. The bundled template is <code>${metadata.repo}/${metadata.target}</code> with a <code>1d</code> window. If you’d rather have one stack per repo regardless of target, add a fallback <code>${metadata.repo}</code> and bump the window to <code>1w</code></li>
+<li><strong>Confirm in the Try panel</strong>: the right-side panel shows a recent Kopia event with the new draft applied. If it looks right, save. If not, tweak and re-check</li>
+</ol>
+<p>The whole loop took five minutes. No restart, no JSON, no documentation cross-reference.</p>
+<hr>
+<h2 id="where-to-go-from-here">Where to go from here</h2>
+<ul>
+<li><strong>Writing a brand-new score from scratch</strong> → <a href="/docs/11-score-authoring">§11 — Score authoring</a></li>
+<li><strong>The JSON schema underneath the editor</strong> → <a href="/docs/11-score-authoring#111-json-schema-overview">§11.1 — JSON schema overview</a></li>
+<li><strong>The action triggers reference</strong> → <a href="/docs/11-score-authoring#114-action-triggers-reference">§11.4 — Action triggers reference</a></li>
+<li><strong>Troubleshooting a score that isn’t behaving</strong> → <a href="/docs/12-troubleshooting#123-a-score-isnt-appearing">§12.3 — A score isn’t appearing</a></li>
+<li><strong>Sharing or installing community scores</strong> → the public catalog at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a></li>
+</ul> </article> <nav class="page-pager" data-astro-cid-uadgga6g> <a class="pager-link prev" href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>← Previous</span> <span class="pager-title" data-astro-cid-uadgga6g>Action panel</span> </a> <a class="pager-link next" href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>Next →</span> <span class="pager-title" data-astro-cid-uadgga6g>Settings reference</span> </a> </nav> </main> </div>   </body></html>

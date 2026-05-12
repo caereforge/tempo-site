@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sources reference — Tempo user guide</title><meta name="description" content="This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline."><link rel="canonical" href="https://tempoapp.app/docs/10-sources-reference/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Sources reference — Tempo user guide"><meta property="og:description" content="This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/docs/10-sources-reference/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DrUdJ2yv.css"></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <div class="docs-layout" data-astro-cid-uadgga6g> <aside class="sidebar" data-astro-cid-uadgga6g> <nav class="sidebar-nav" data-astro-cid-uadgga6g> <a class="back" href="/docs" data-astro-cid-uadgga6g>← Documentation</a> <ol class="chapter-list" data-astro-cid-uadgga6g> <li class data-astro-cid-uadgga6g> <a href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>01</span> <span class="title" data-astro-cid-uadgga6g>Introduction</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/02-concepts" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>02</span> <span class="title" data-astro-cid-uadgga6g>Concepts</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>03</span> <span class="title" data-astro-cid-uadgga6g>Getting started</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/04-source-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>04</span> <span class="title" data-astro-cid-uadgga6g>Source panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/05-event-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>05</span> <span class="title" data-astro-cid-uadgga6g>Event panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>06</span> <span class="title" data-astro-cid-uadgga6g>Action panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/07-score-editor" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>07</span> <span class="title" data-astro-cid-uadgga6g>Score Editor</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>08</span> <span class="title" data-astro-cid-uadgga6g>Settings reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>09</span> <span class="title" data-astro-cid-uadgga6g>Backup and restore</span> </a> </li><li class="is-current" data-astro-cid-uadgga6g> <a href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>10</span> <span class="title" data-astro-cid-uadgga6g>Sources reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>11</span> <span class="title" data-astro-cid-uadgga6g>Score authoring</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>12</span> <span class="title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>13</span> <span class="title" data-astro-cid-uadgga6g>FAQ</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/14-glossary" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>14</span> <span class="title" data-astro-cid-uadgga6g>Glossary</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/15-appendix" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>15</span> <span class="title" data-astro-cid-uadgga6g>Appendix</span> </a> </li> </ol> </nav> </aside> <main class="doc" data-astro-cid-uadgga6g> <header class="page-header" data-astro-cid-uadgga6g> <p class="eyebrow" data-astro-cid-uadgga6g>Tempo user guide · Chapter 10</p> </header> <article class="prose" data-astro-cid-uadgga6g> <h1 id="10--sources-reference">10 — Sources reference</h1>
+<p>This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline.</p>
+<p>The sources are presented in a stable order (calendar first, then generic webhook, then alphabetised among bundled providers). Read straight through if you’re new to Tempo; jump directly to the source you’re connecting if you’re not.</p>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: every native (non-Apple Calendar) source uses the same plumbing — Tempo’s HTTP ingestion server on port <code>7776</code>, a per-provider token, a JSON or plain-text payload. The differences are which endpoint to hit and what fields the bundled score knows about. If you’re comfortable with the generic webhook in §10.2, the native modules are mostly minor variations on the same shape.</p>
+</blockquote>
+<hr>
+<h2 id="101--apple-calendar-and-reminders">10.1 — Apple Calendar and Reminders</h2>
+<p><strong>Provider identifiers</strong>: <code>com.apple.calendar</code> for calendar events and <code>com.apple.reminders</code> for reminders, sharing an <strong>Apple</strong> umbrella in the source panel</p>
+<p>The Apple Calendar and Reminders source is <strong>automatic</strong>: it activates the moment you grant Calendar and Reminders permission on first launch. There’s no token to set up, no webhook to configure, no upstream change.</p>
+<h3 id="what-flows-in">What flows in</h3>
+<ul>
+<li><strong>Calendar events</strong> from every macOS calendar account you’ve enabled in Calendar.app — iCloud, Google (via macOS Internet Accounts), Exchange, CalDAV servers, local calendars</li>
+<li><strong>Reminders</strong> from every list you’ve enabled — iCloud Reminders, Exchange, CardDAV-style reminders</li>
+</ul>
+<p>Each entry shows in the timeline as a compact row (no severity, no stripe, no headline metric — agenda items, not alerts). The provider icon is a calendar; the source colour is the calendar’s native colour from Calendar.app.</p>
+<h3 id="setup">Setup</h3>
+<ol>
+<li><strong>Grant permission</strong>. Tempo prompts you on first launch. If you declined and want to re-enable: System Settings → Privacy &#x26; Security → Calendar (and Reminders); tick Tempo</li>
+<li><strong>Pick which calendars to show</strong>. Settings → Agenda offers a per-calendar checkbox. Untick noisy or irrelevant calendars (shared work calendars you don’t action, family calendars)</li>
+<li><strong>Pick which reminder lists to show</strong>. Same panel, separate list</li>
+</ol>
+<p>That’s it. No tokens, no webhooks, no upstream config.</p>
+<h3 id="what-works">What works</h3>
+<ul>
+<li><strong>Reading</strong> calendar events and reminders into the timeline — yes, in real time via EventKit notifications</li>
+<li><strong>Marking a reminder as completed</strong> from the action panel — yes. This is the one canonical exception to “Tempo never writes back to source apps.” When you tick the Complete button on a reminder card, Tempo tells EventKit to mark the reminder done in Reminders.app</li>
+</ul>
+<h3 id="what-doesnt-work">What doesn’t work</h3>
+<ul>
+<li><strong>Editing calendar events from Tempo</strong> — no. Calendar.app is the editor; Tempo just displays</li>
+<li><strong>Creating new calendar events or reminders</strong> — no</li>
+<li><strong>Editing reminder titles, due dates, list memberships</strong> — no, only the completion toggle is exposed</li>
+</ul>
+<h3 id="latency-and-caveats">Latency and caveats</h3>
+<p>EventKit is notification-driven. Most state changes propagate to Tempo within a second:</p>
+<ul>
+<li>A reminder you complete in Reminders.app → ticked in Tempo within 1-2 seconds</li>
+<li>A calendar event you edit in Calendar.app → updated in Tempo within 1-2 seconds</li>
+</ul>
+<p>Slower paths:</p>
+<ul>
+<li><strong>iCloud-synced changes from another device</strong> — depends on iCloud’s batch interval (typically 10-30 seconds, occasionally longer)</li>
+<li><strong>Google Calendar via macOS Internet Accounts</strong> — Google’s push-vs-poll behaviour determines latency. Often 1-5 minutes to fan out</li>
+<li><strong>CalDAV servers</strong> — varies by server; macOS polls, so latency depends on the configured poll interval (typically 15 minutes)</li>
+</ul>
+<p>For more on troubleshooting calendar sync issues, see <a href="/docs/12-troubleshooting#122-apple-calendar-sync-issues">§12.2 — Apple Calendar sync issues</a>.</p>
+<h3 id="task-managers-via-ical-subscription">Task managers via iCal subscription</h3>
+<p>If you use a third-party task manager (Todoist, OmniFocus, Things, TickTick, anything that supports iCal export), the recommended pattern for V1 is:</p>
+<ol>
+<li><strong>Generate an iCal subscription URL</strong> in your task manager — most expose this as “Calendar feed” or “Sync to calendar” or similar</li>
+<li><strong>Subscribe to the URL in macOS Calendar.app</strong> — File → New Calendar Subscription → paste the URL, set a refresh interval (Calendar.app typically supports as fast as 5 minutes)</li>
+<li><strong>Tick the subscribed calendar</strong> in Tempo Settings → Agenda</li>
+</ol>
+<p>Your task-manager items now appear in the Tempo timeline alongside everything else.</p>
+<p>The intrinsic limits of this pattern:</p>
+<ul>
+<li><strong>Read-only</strong>. Tempo can show the items but can’t mark them done in your task manager. Marking complete in Tempo only marks complete in macOS Reminders, which doesn’t sync back to your task manager via iCal</li>
+<li><strong>Refresh latency</strong>. Tempo sees what Calendar.app sees, which is what the iCal subscription has fetched on its last refresh. Sub-minute responsiveness isn’t possible on this path</li>
+<li><strong>Subscription cap</strong>. Calendar.app has its own performance characteristics for many subscribed calendars; if you have 10+ task-manager subscriptions, latency and battery cost compound</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Note</strong>: native API integration with a specific task manager — actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state — is on the V1.x+ roadmap as a candidate Tempo IAP unlock (see <code>project_tempo_iap_brainstorm_2026_04_25.md</code>). For V1, iCal subscription is the sanctioned bridge.</p>
+</blockquote>
+<hr>
+<h2 id="102--generic-webhook">10.2 — Generic webhook</h2>
+<p><strong>Provider identifier</strong>: anything you choose, conventionally:</p>
+<ul>
+<li><code>local.&#x3C;name></code> for senders running on the Mac that hosts Tempo (<code>local.check_disk</code>, <code>local.backup_notify</code>)</li>
+<li><code>lab.&#x3C;host>.&#x3C;name></code> for senders on other hosts (<code>lab.nas01.smart_check</code>, <code>lab.pi4.temp_monitor</code>)</li>
+<li>Custom reverse-DNS for everything else (<code>com.example.my-tool</code>)</li>
+</ul>
+<p>The generic webhook is Tempo’s universal entry point. Anything that can POST JSON can send events: shell scripts, Python scripts, Node-RED flows, n8n actions, Apple Shortcuts, Ruby daemons, Go binaries, CI jobs.</p>
+<h3 id="endpoint">Endpoint</h3>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST http://&#x3C;your-mac>:7776/ingest</span></span>
+<span class="line"><span>Content-Type: application/json</span></span>
+<span class="line"><span>X-Tempo-Token: &#x3C;token></span></span></code></pre>
+<p>(<code>X-Tempo-Token</code> and <code>Authorization: Bearer &#x3C;token></code> are both accepted; some senders like UniFi can only set <code>Authorization</code>, hence the alias.)</p>
+<h3 id="minimum-payload">Minimum payload</h3>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "title"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Disk 92% full on homeserver"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"local.check_disk"</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p>Only <code>title</code> and <code>providerIdentifier</code> are required. Everything else is optional and adds context.</p>
+<h3 id="full-payload-reference">Full payload reference</h3>
+<p>See the canonical reference at <a href="https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md"><code>docs/webhook-reference.md</code></a> — covers every supported field, bounds, type rules, the reserved metadata keys (<code>severity</code>, <code>label</code>, <code>host</code>, <code>exit_code</code>, <code>duration_ms</code>, <code>command</code>, <code>run_id</code>, <code>source_file</code>, <code>trigger_reason</code>), and the <code>metadata.custom</code> sandbox for free-form fields.</p>
+<p>A few highlights worth knowing:</p>
+<ul>
+<li><strong>Title</strong>: 1-200 chars, plain text. Don’t include HTML or Markdown</li>
+<li><strong>eventType</strong>: <code>event</code>, <code>task</code>, <code>reminder</code>, <code>alert</code>. Defaults to <code>alert</code></li>
+<li><strong>externalID</strong>: stable key — repeated POSTs with the same <code>externalID</code> UPSERT the existing row in place rather than creating a duplicate. Use this for stateful sources (a single monitor that flips down/up over time)</li>
+<li><strong>metadata</strong>: a structured payload. Reserved keys are typed and validated; everything else goes in <code>metadata.custom</code></li>
+<li><strong>actions</strong>: up to 8 buttons per event, each with a label, an SF Symbol icon, and a trigger (<code>openURL</code>, <code>openTerminalWith</code>, <code>copyToClipboard</code>)</li>
+</ul>
+<h3 id="what-tempo-rejects">What Tempo rejects</h3>
+<ul>
+<li>Payload larger than 64 KiB → <code>413</code></li>
+<li>Unknown top-level fields, unknown metadata keys, unknown action trigger types → <code>400</code></li>
+<li>URL action with a non-whitelisted scheme (<code>file://</code>, <code>javascript:</code>, etc.) → <code>400</code></li>
+<li>Token mismatch (token bound to provider X, payload says provider Y) → <code>403</code></li>
+<li>Rate limit exceeded (600 requests / 10 min per token, 3000 / 10 min per IP) → <code>429</code></li>
+</ul>
+<h3 id="what-you-get-back">What you get back</h3>
+<ul>
+<li><code>202 Accepted</code> with the generated event ID on success</li>
+<li>A descriptive 4xx error explaining what was wrong on failure</li>
+</ul>
+<h3 id="the-bundled-scripts-score">The bundled Scripts score</h3>
+<p>Any payload whose <code>providerIdentifier</code> starts with <code>scripts.</code> (or matches the <code>local.*</code> / <code>lab.*</code> namespace conventions) is rendered through the bundled <strong>Scripts score</strong>, which:</p>
+<ul>
+<li>Maps <code>metadata.label</code> to a severity (<code>OK</code> → ok green, <code>Warning</code> → warning yellow, <code>Error</code> → error red, <code>Critical</code> → error red)</li>
+<li>Surfaces a small set of generic actions (SSH to source host, copy host, copy title)</li>
+<li>Groups scripts under a “Scripts” parent row in the source panel (so 20 different <code>scripts.*</code> providers don’t take 20 sidebar rows)</li>
+</ul>
+<p>The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider — see <a href="/docs/11-score-authoring">§11 — Score authoring</a>.</p>
+<h3 id="what-your-card-looks-like-without-a-score">What your card looks like without a score</h3>
+<p>If you POST to <code>/ingest</code> with the bare minimum (<code>title</code> + <code>providerIdentifier</code>) and don’t have a score for that provider — and your <code>providerIdentifier</code> doesn’t fall under the bundled Scripts score’s namespace conventions either — the event still lands in the timeline. Tempo doesn’t require a score to ingest. But the card will look minimal:</p>
+<ul>
+<li><strong>Title and timestamp</strong>, the two values you actually sent</li>
+<li>A <strong>neutral grey dot</strong> in the source panel — Tempo has no colour to associate with the source</li>
+<li>Severity stays <code>info</code> (the default), so the badge is the small grey “Info” pill</li>
+<li><strong>No subtitle, no headline, no per-event metric</strong> — none of the rich rendering that bundled scores extract from <code>metadata</code></li>
+<li><strong>No actions</strong> in the action panel beyond the universal Acknowledge / Dismiss</li>
+<li>The <strong>source name</strong> in the panel is the raw <code>providerIdentifier</code> string (<code>com.example.my-tool</code> rather than a friendly label)</li>
+</ul>
+<p>The card is functional — you can still see <em>what</em> happened and <em>when</em> — but it’s hard to scan at a glance, especially next to fully-scored sources whose cards carry severity colour, custom pills, and one-click actions.</p>
+<p>Three ways to make a custom source’s card richer, in increasing order of effort:</p>
+<ol>
+<li><strong>Pass more fields in the payload.</strong> Add <code>severity</code> (<code>"warning"</code>, <code>"error"</code>, <code>"critical"</code>) and a few <code>metadata.custom.&#x3C;key></code> values so Tempo has something to display in the card and the action panel’s details list. Five more lines of JSON is often enough to lift the card from “blank” to “informative” — no score authoring required.</li>
+<li><strong>Adopt the bundled Scripts score’s namespace.</strong> Name your provider <code>scripts.&#x3C;lang>.&#x3C;name></code> (or <code>local.&#x3C;name></code> / <code>lab.&#x3C;host>.&#x3C;name></code> per the conventions above) and the Scripts score picks it up automatically: severity from <code>metadata.label</code>, source-panel grouping under a single <strong>Scripts</strong> parent row, a couple of generic actions. Zero authoring.</li>
+<li><strong>Author a dedicated score</strong> for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct colour, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.</li>
+</ol>
+<p>A useful heuristic: if you’ll see this source’s events more than once a week, the dedicated score is worth writing. For one-off ad-hoc senders that fire occasionally, option 1 or 2 is enough indefinitely.</p>
+<h3 id="tempo_sendsh-helper"><code>tempo_send.sh</code> helper</h3>
+<p>For shell scripts in particular, Tempo ships a helper script (<code>tempo_send.sh</code>) that wraps the curl call. See §10.10 below.</p>
+<hr>
+<h2 id="103--kopia">10.3 — Kopia</h2>
+<p><strong>Provider identifier</strong>: <code>com.kopia</code>
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/kopia</code>
+<strong>Format</strong>: plain text (Kopia’s notification template)</p>
+<h3 id="what-it-does">What it does</h3>
+<p>Kopia is a backup tool that runs snapshots on a schedule (typically via cron, launchd, or its own scheduler). After each snapshot, Kopia can fire a webhook with the result. Tempo’s Kopia module parses the plain-text body, extracts the relevant fields, and produces a card per snapshot.</p>
+<h3 id="setup-1">Setup</h3>
+<ol>
+<li><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.kopia</code></li>
+<li><strong>Configure Kopia’s notification</strong>. Where exactly depends on how you run Kopia:
+<ul>
+<li><strong>KopiaUI</strong> — Preferences → Notifications → add a webhook with URL <code>http://localhost:7776/kopia</code> (or your Mac’s LAN IP if Kopia runs on a different host), method <code>POST</code>, format <code>Plain Text</code>, header <code>X-Tempo-Token: &#x3C;token></code></li>
+<li><strong>kopia CLI</strong> — set <code>kopia notification webhook ...</code> per the Kopia docs, same fields</li>
+</ul>
+</li>
+<li><strong>Trigger a snapshot</strong> to verify. The first event should appear in Tempo within a second of the snapshot completing</li>
+</ol>
+<h3 id="payload-shape">Payload shape</h3>
+<p>Kopia’s plain-text format is <code>Key: Value</code> lines — Tempo parses them into metadata:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>status: success</span></span>
+<span class="line"><span>repository: pcloud</span></span>
+<span class="line"><span>path: /Users/leo/Documents</span></span>
+<span class="line"><span>size: 1.2 GB (+147 KB)</span></span>
+<span class="line"><span>duration: 1.2s</span></span></code></pre>
+<p>The bundled score reads:</p>
+<ul>
+<li><strong><code>status</code></strong> → severity (success → ok, error/failed → error, warning → warning)</li>
+<li><strong><code>repository</code></strong> → source group label (lets you tell <code>Kopia — pCloud</code> from <code>Kopia — Backblaze</code>)</li>
+<li><strong><code>path</code></strong> → tail used for the title (<code>Kopia — Documents</code>); <code>aliases</code> in the score can map the full path to a friendlier display name</li>
+<li><strong><code>size</code></strong> → headline metric, with a “no change” detection that softens the severity when the snapshot uploaded zero bytes</li>
+</ul>
+<h3 id="per-path-aliases">Per-path aliases</h3>
+<p>The Kopia score has an <strong>Aliases</strong> section in the editor (Score Editor → Aliases) that lets you map a snapshot path to a friendlier label:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/Users/leo/Documents → Documents</span></span>
+<span class="line"><span>/Users/leo/Code/projects → Projects</span></span>
+<span class="line"><span>/Volumes/External/Photos → Photos</span></span></code></pre>
+<p>The card title shows the alias; the action triggers (<code>kopia snapshot list ${metadata.path}</code>) keep using the real path.</p>
+<h3 id="default-actions">Default actions</h3>
+<p>The bundled Kopia score offers (per snapshot event):</p>
+<ul>
+<li><strong>Run snapshot now</strong> → <code>kopia snapshot create ${metadata.path}</code> in Terminal</li>
+<li><strong>List snapshots</strong> → <code>kopia snapshot list ${metadata.path}</code> in Terminal</li>
+<li><strong>Kopia docs</strong> → opens <a href="https://kopia.io/docs/">kopia.io/docs/</a></li>
+</ul>
+<p>Customise these via the Score Editor for per-repo SSH actions, dashboard URLs, etc.</p>
+<h3 id="stateless-by-design">Stateless by design</h3>
+<p>Each Kopia snapshot is a discrete event. The bundled score uses <strong>no externalID</strong> — every snapshot is a fresh row. The bundled score doesn’t declare a <code>grouping</code> block by default, so each snapshot lands on its own line; if you want history-of-one-target collapsed into a stack, add a grouping template like <code>${metadata.repo}/${metadata.path}</code> in the Score Editor (with whatever time window suits your cadence).</p>
+<hr>
+<h2 id="104--unifi">10.4 — UniFi</h2>
+<p><strong>Provider identifier</strong>: <code>com.ubiquiti.unifi</code>
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/ingest/unifi</code>
+<strong>Format</strong>: UniFi’s native alarm JSON (Default Content)</p>
+<h3 id="what-it-does-1">What it does</h3>
+<p>UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhooks for events on the network: device disconnects, association failures, firmware updates, port changes, security events. Tempo’s UniFi module parses the alarm JSON (which varies in shape across firmware versions — Tempo handles both flat and wrapped forms), maps it to severity via the bundled UniFi score, and renders it as a card.</p>
+<h3 id="setup-2">Setup</h3>
+<ol>
+<li><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.ubiquiti.unifi</code></li>
+<li><strong>In your UniFi controller</strong>:
+<ul>
+<li>Open <strong>Settings → System → Alerts</strong> (or <strong>Notifications</strong>, depending on UniFi version)</li>
+<li>Add a new alarm/webhook destination</li>
+<li><strong>Delivery URL</strong>: <code>http://&#x3C;your-mac>:7776/ingest/unifi</code></li>
+<li><strong>Delivery method</strong>: POST</li>
+<li><strong>Authentication</strong>: None (UniFi can’t set arbitrary headers in some firmware, so Tempo accepts the token via <code>Authorization: Bearer &#x3C;token></code>)</li>
+<li><strong>Add Header</strong>: <code>Authorization: Bearer &#x3C;token></code> (or <code>X-Tempo-Token: &#x3C;token></code> if your firmware supports it)</li>
+<li><strong>Content</strong>: Default Content (let UniFi send its native shape)</li>
+</ul>
+</li>
+<li><strong>Save</strong> and trigger a test alarm — the controller’s UI usually has a “Send test” button next to the webhook destination</li>
+</ol>
+<h3 id="what-unifi-events-look-like-in-tempo">What UniFi events look like in Tempo</h3>
+<p>The bundled UniFi score includes ~40 rules covering the alarm types most homelabs see. Common ones:</p>
+<ul>
+<li><strong>STA_ASSOC_FAILURE</strong> — wireless client failed to associate. Severity: warning</li>
+<li><strong>STA_AUTH_FAILURE</strong> — wireless authentication failure (wrong WPA password, certificate issue). Severity: warning</li>
+<li><strong>WAN_DISCONNECTED</strong> — uplink lost. Severity: critical</li>
+<li><strong>DEVICE_OFFLINE</strong> — managed device (AP, switch) went offline. Severity: error</li>
+<li><strong>EVT_AD_LOGIN</strong> — admin login to the controller. Severity: info</li>
+</ul>
+<p>Severity is per-rule and customisable in the Score Editor.</p>
+<h3 id="default-actions-1">Default actions</h3>
+<p>The bundled UniFi score offers:</p>
+<ul>
+<li><strong>Open local controller (port 443)</strong> → <code>https://${metadata.senderAddress}/network/default/dashboard</code></li>
+<li><strong>Open local controller (port 8443)</strong> → <code>https://${metadata.senderAddress}:8443/manage/site/default/dashboard</code></li>
+<li><strong>Open client in controller (port 443)</strong> → <code>https://${metadata.senderAddress}/network/default/clients/${metadata.deviceMac}</code></li>
+<li><strong>Open client in controller (port 8443)</strong> → <code>https://${metadata.senderAddress}:8443/manage/site/default/clients/${metadata.deviceMac}</code></li>
+<li><strong>Open UniFi dashboard (cloud)</strong> → opens <a href="https://unifi.ui.com/">unifi.ui.com</a></li>
+<li><strong>SSH to controller</strong> → <code>ssh://root@${metadata.senderAddress}</code> (requires that you’ve set up key-based SSH access to the controller)</li>
+</ul>
+<h3 id="multi-template-grouping">Multi-template grouping</h3>
+<p>UniFi alarms come in different shapes (some have <code>clientMac</code> and <code>deviceMac</code>, some only <code>deviceMac</code>). The bundled score uses a fallback chain:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>${metadata.clientMac}/${metadata.deviceMac}</span></span>
+<span class="line"><span>${metadata.deviceMac}</span></span>
+<span class="line"><span>${metadata.alarmKey}</span></span></code></pre>
+<p>So client-association events group by client+AP, device-status events group by AP alone, and miscellaneous alarms group by key.</p>
+<hr>
+<h2 id="105--home-assistant">10.5 — Home Assistant</h2>
+<p><strong>Provider identifier</strong>: <code>com.home-assistant</code>
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/ingest</code>
+<strong>Format</strong>: JSON, Tempo’s generic webhook shape</p>
+<h3 id="what-it-does-2">What it does</h3>
+<p>Home Assistant has a built-in <code>notify.webhook</code> integration (or you can use a <code>rest</code> action in YAML). Either way, HA can fire a webhook to Tempo whenever an automation triggers, an alarm panel arms/disarms, a door sensor opens, a smoke detector trips, a script runs, or any other event your automations express.</p>
+<h3 id="setup-3">Setup</h3>
+<ol>
+<li><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.home-assistant</code></li>
+<li><strong>In Home Assistant’s <code>configuration.yaml</code></strong> (or via the UI under Settings → Devices &#x26; Services → Add Integration → Webhook), define a <code>rest</code> action template:</li>
+</ol>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#8DDB8C">rest_command</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">  tempo_alert</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">    url</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"http://&#x3C;your-mac>:7776/ingest"</span></span>
+<span class="line"><span style="color:#8DDB8C">    method</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">POST</span></span>
+<span class="line"><span style="color:#8DDB8C">    content_type</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"application/json"</span></span>
+<span class="line"><span style="color:#8DDB8C">    headers</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">      X-Tempo-Token</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"&#x3C;your-token>"</span></span>
+<span class="line"><span style="color:#8DDB8C">    payload</span><span style="color:#ADBAC7">: </span><span style="color:#F47067">>-</span></span>
+<span class="line"><span style="color:#96D0FF">      {</span></span>
+<span class="line"><span style="color:#96D0FF">        "title": "{{ title }}",</span></span>
+<span class="line"><span style="color:#96D0FF">        "eventType": "alert",</span></span>
+<span class="line"><span style="color:#96D0FF">        "providerIdentifier": "com.home-assistant",</span></span>
+<span class="line"><span style="color:#96D0FF">        "metadata": {{ metadata | tojson }}</span></span>
+<span class="line"><span style="color:#96D0FF">      }</span></span></code></pre>
+<ol start="3">
+<li><strong>Call the action from automations</strong>:</li>
+</ol>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#8DDB8C">automation</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#ADBAC7">  - </span><span style="color:#8DDB8C">alias</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Smoke detector tripped"</span></span>
+<span class="line"><span style="color:#8DDB8C">    trigger</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">      platform</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">state</span></span>
+<span class="line"><span style="color:#8DDB8C">      entity_id</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">binary_sensor.kitchen_smoke</span></span>
+<span class="line"><span style="color:#8DDB8C">      to</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"on"</span></span>
+<span class="line"><span style="color:#8DDB8C">    action</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">      service</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">rest_command.tempo_alert</span></span>
+<span class="line"><span style="color:#8DDB8C">      data</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">        title</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Smoke detected in kitchen"</span></span>
+<span class="line"><span style="color:#8DDB8C">        metadata</span><span style="color:#ADBAC7">:</span></span>
+<span class="line"><span style="color:#8DDB8C">          device_class</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"smoke"</span></span>
+<span class="line"><span style="color:#8DDB8C">          area</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"kitchen"</span></span>
+<span class="line"><span style="color:#8DDB8C">          entity_id</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"binary_sensor.kitchen_smoke"</span></span></code></pre>
+<ol start="4">
+<li><strong>Trigger the automation</strong> to verify</li>
+</ol>
+<h3 id="what-flows-in-1">What flows in</h3>
+<p>The bundled Home Assistant score has rules for common patterns:</p>
+<ul>
+<li><code>event_type=homeassistant_start</code> → severity <code>info</code>, label “HA started”</li>
+<li><code>event_type=homeassistant_stop</code> → severity <code>warning</code>, label “HA stopped”</li>
+<li><code>device_class=smoke</code> → severity <code>critical</code>, label “SMOKE”</li>
+<li><code>device_class=motion</code> → severity <code>info</code>, label varies by entity</li>
+<li><code>state</code> transitions on alarm panels (<code>disarmed</code>, <code>armed_home</code>, <code>armed_away</code>, <code>triggered</code>)</li>
+</ul>
+<p>The full rule list is visible in the Score Editor; ~30 rules covering the most common HA automation patterns.</p>
+<h3 id="default-actions-2">Default actions</h3>
+<ul>
+<li><strong>Open dashboard</strong> → <code>http://homeassistant.local:8123</code></li>
+<li><strong>Open entity history</strong> → <code>http://homeassistant.local:8123/history?entity_id=${metadata.entity_id}</code></li>
+<li><strong>Open automations</strong> → <code>http://homeassistant.local:8123/config/automation/dashboard</code></li>
+</ul>
+<p>If your HA isn’t at <code>homeassistant.local</code>, edit the actions in the Score Editor to point at your actual hostname or IP.</p>
+<hr>
+<h2 id="106--uptime-kuma">10.6 — Uptime Kuma</h2>
+<p><strong>Provider identifier</strong>: <code>com.uptime-kuma</code>
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/uptime-kuma</code>
+<strong>Format</strong>: JSON, Uptime Kuma’s webhook payload</p>
+<h3 id="what-it-does-3">What it does</h3>
+<p>Uptime Kuma is a self-hosted uptime monitor. Each “monitor” (an HTTP probe, a port check, a ping target) transitions between <strong>DOWN / UP / PENDING / MAINTENANCE</strong> states over time. Kuma fires a webhook on every state transition.</p>
+<p>Tempo’s Uptime Kuma module emits a <strong>stable externalID</strong> per monitor (<code>kuma:&#x3C;monitor-id-or-slug></code>), which means repeated state transitions update the same row in place — the timeline shows one card per monitor that flips colour as the monitor’s state changes, not a new card every 60 seconds when the monitor re-notifies.</p>
+<h3 id="setup-4">Setup</h3>
+<ol>
+<li><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.uptime-kuma</code></li>
+<li><strong>In Uptime Kuma</strong>:
+<ul>
+<li>Settings → Notifications → Setup Notification → choose Webhook</li>
+<li><strong>Post URL</strong>: <code>http://&#x3C;your-mac>:7776/uptime-kuma</code></li>
+<li><strong>Request Body</strong>: Application/JSON</li>
+<li><strong>Additional Headers</strong>: <code>X-Tempo-Token: &#x3C;token></code></li>
+<li>Save and test</li>
+</ul>
+</li>
+<li><strong>Apply the notification to your monitors</strong>. Kuma defaults to “every monitor uses every notification”; you can opt into per-monitor notifications if you want only specific monitors to flow into Tempo</li>
+</ol>
+<h3 id="what-it-looks-like-in-tempo">What it looks like in Tempo</h3>
+<ul>
+<li><strong>Monitor goes DOWN</strong> → red card with the monitor name, severity <code>error</code> or <code>critical</code> (configurable in the score), state <code>firing</code></li>
+<li><strong>Monitor comes back UP</strong> → the same card updates: severity drops to <code>ok</code>, a “Resolved” pill appears, the colour goes green</li>
+<li><strong>Repeated DOWN re-notifies</strong> → no new cards. Same card, same row, severity stays where it was</li>
+</ul>
+<p>This is the canonical example of <strong>stateful</strong> event handling in Tempo.</p>
+<h3 id="default-actions-3">Default actions</h3>
+<ul>
+<li><strong>Open Uptime Kuma dashboard</strong> → <code>${metadata.statusPageURL}</code> if present, else a default</li>
+<li><strong>Probe URL</strong> → <code>openURL: ${metadata.url}</code> (if the monitor target is HTTP-shaped)</li>
+<li><strong>Uptime Kuma docs</strong> → opens <a href="https://github.com/louislam/uptime-kuma/wiki">github.com/louislam/uptime-kuma/wiki</a></li>
+</ul>
+<hr>
+<h2 id="107--github-actions">10.7 — GitHub Actions</h2>
+<p><strong>Provider identifier</strong>: <code>com.github.actions</code>
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/ingest</code>
+<strong>Format</strong>: JSON, Tempo’s generic webhook shape (GitHub doesn’t natively send Tempo-shape events, so a small relay sits in between)</p>
+<h3 id="what-it-does-4">What it does</h3>
+<p>GitHub doesn’t send arbitrary webhooks the way Home Assistant does. Tempo integrates via:</p>
+<ul>
+<li><strong>A GitHub webhook</strong> pointing at your relay</li>
+<li><strong>A small relay process</strong> that translates GitHub’s webhook events into Tempo’s payload shape and forwards to <code>7776/ingest</code></li>
+</ul>
+<p>The relay is intentionally a separate concern (it sits on your LAN and handles HMAC verification, payload translation, etc.). For local development, the relay typically runs on the same Mac as Tempo.</p>
+<h3 id="setup-5">Setup</h3>
+<p>The relay is a small companion process distributed alongside the public score catalog at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a>. Detailed setup (binary download, environment variables, HMAC secret handling) lives in the catalog’s README — this section is the high-level outline.</p>
+<ol>
+<li><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.github.actions</code></li>
+<li><strong>Run the relay</strong> on a host reachable from GitHub — typically a Cloudflare Tunnel exposing your Mac’s port to the internet, or a small VPS. Configuration: GitHub HMAC secret, Tempo token, Tempo endpoint</li>
+<li><strong>In your GitHub repo</strong>: Settings → Webhooks → Add webhook → relay URL, content-type <code>application/json</code>, the HMAC secret you configured</li>
+</ol>
+<h3 id="what-flows-in-2">What flows in</h3>
+<p>The bundled GitHub Actions score has rules for:</p>
+<ul>
+<li><strong>Workflow runs</strong>: <code>workflow_run.conclusion=success</code> → ok, <code>failure</code> → error, <code>cancelled</code> → warning</li>
+<li><strong>Pull requests</strong>: opened, closed, merged</li>
+<li><strong>Issues</strong>: opened, closed, commented</li>
+<li><strong>Pushes</strong>: branch updates with commit summaries</li>
+</ul>
+<h3 id="default-actions-4">Default actions</h3>
+<ul>
+<li><strong>Open repo Actions</strong> → <code>https://github.com/${metadata.repo}/actions</code></li>
+<li><strong>Open run</strong> → <code>https://github.com/${metadata.repo}/actions/runs/${metadata.run_id}</code></li>
+<li><strong>Clone repo</strong> → <code>git clone https://github.com/${metadata.repo}.git</code> in Terminal</li>
+<li><strong>GitHub Actions docs</strong> → opens <a href="https://docs.github.com/actions">docs.github.com/actions</a></li>
+</ul>
+<h3 id="multi-template-grouping-1">Multi-template grouping</h3>
+<p>GitHub events come in different shapes (issues, PRs, workflow runs each have different metadata). Bundled grouping uses a fallback chain so each event type clusters meaningfully — issues by issue number, PRs by PR number, workflow runs by workflow name + branch.</p>
+<hr>
+<h2 id="108--synology">10.8 — Synology</h2>
+<p><strong>Provider identifier</strong>: <code>com.synology</code> (umbrella; sub-products distinguished via <code>metadata.sourceGroup</code> like <code>DSM</code>, <code>SurveillanceStation</code>)
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/ingest</code>
+<strong>Format</strong>: JSON, Tempo’s generic webhook shape</p>
+<h3 id="what-it-does-5">What it does</h3>
+<p>Synology DSM (the NAS operating system) supports webhook destinations via Notification Settings. Pointing it at Tempo gives you cards for: SMART warnings, RAID degradation, login attempts, package updates, scheduled task results, Surveillance Station alerts.</p>
+<h3 id="setup-6">Setup</h3>
+<ol>
+<li>
+<p><strong>Create a token</strong> in Tempo Settings → Ingestion. Bind it to provider <code>com.synology</code></p>
+</li>
+<li>
+<p><strong>In DSM</strong>: Control Panel → Notification → Push Service → Webhook (or “Custom webhook” depending on DSM version)</p>
+</li>
+<li>
+<p><strong>Configure</strong>:</p>
+<ul>
+<li>URL: <code>http://&#x3C;your-mac>:7776/ingest</code></li>
+<li>HTTP method: POST</li>
+<li>Headers: <code>X-Tempo-Token: &#x3C;token></code></li>
+<li>Body template: a JSON template DSM expands with placeholders like <code>@@SUBJECT@@</code> and <code>@@MESSAGE@@</code>. The exact template depends on DSM version — see the public score documentation at <a href="https://tempoapp.app/scores/synology">tempoapp.app/scores/synology</a> for the current recommended template</li>
+</ul>
+</li>
+<li>
+<p><strong>Save</strong> and trigger a test notification</p>
+</li>
+</ol>
+<h3 id="common-alerts">Common alerts</h3>
+<ul>
+<li><strong>System health</strong>: SMART warnings, RAID degraded, fan failure</li>
+<li><strong>Storage</strong>: volume full, snapshot failures</li>
+<li><strong>Authentication</strong>: failed logins, 2FA changes</li>
+<li><strong>Packages</strong>: updates available, package crashed</li>
+<li><strong>Scheduled tasks</strong>: backup completed/failed, hyper backup result</li>
+</ul>
+<p>The bundled score maps each to severity and offers a default action set: open DSM, open the relevant control panel page, copy the hostname.</p>
+<h3 id="multiple-synology-products">Multiple Synology products</h3>
+<p>If you have DSM + Surveillance Station + Photos + Drive — they all live under <code>com.synology</code> as the provider, but <code>metadata.sourceGroup</code> differentiates them. The source panel groups them under one Synology row with sub-rows per product.</p>
+<hr>
+<h2 id="109--shell-scripts-scriptsshell">10.9 — Shell scripts (<code>scripts.shell</code>)</h2>
+<p><strong>Provider identifier</strong>: <code>scripts.shell</code> (or <code>scripts.&#x3C;language></code> like <code>scripts.python</code>, <code>scripts.ruby</code>)
+<strong>Endpoint</strong>: <code>POST http://&#x3C;your-mac>:7776/ingest</code></p>
+<p>The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarises something. Anything that produces a result-per-run.</p>
+<p>The bundled Scripts score (covered in §10.2) provides a sensible default: maps <code>metadata.label</code> to severity, surfaces generic actions, groups all <code>scripts.*</code> providers under one Scripts row in the source panel.</p>
+<h3 id="naming-convention">Naming convention</h3>
+<ul>
+<li><code>scripts.shell</code> — generic shell script senders</li>
+<li><code>scripts.python</code> — Python script senders</li>
+<li><code>scripts.ruby</code>, <code>scripts.go</code>, etc. — language-specific</li>
+<li><code>local.&#x3C;name></code> — for senders running on the same Mac as Tempo (preferred for clarity)</li>
+<li><code>lab.&#x3C;host>.&#x3C;name></code> — for senders on other LAN hosts</li>
+</ul>
+<h3 id="title-convention">Title convention</h3>
+<p>Per the documented convention (memory: <code>feedback_user_script_title_convention.md</code>):</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;script_name> &#x3C;metric_or_outcome></span></span></code></pre>
+<p>Examples:</p>
+<ul>
+<li><code>check_disk · 78% / 92% / 100%</code> — disk usage probe with three filesystems</li>
+<li><code>ssl_cert · expires in 12 days</code> — certificate expiry check</li>
+<li><code>backup_notify · OK +1.2GB</code> — backup wrapper</li>
+</ul>
+<p>The severity goes in <code>metadata.label</code> or <code>metadata.severity</code>, <strong>not</strong> in the title. The title is for <em>what happened</em>; the severity field is for <em>how bad</em>.</p>
+<h3 id="quick-example">Quick example</h3>
+<p>A shell script that checks disk usage and reports to Tempo:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#768390">#!/bin/bash</span></span>
+<span class="line"><span style="color:#ADBAC7">USAGE</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(</span><span style="color:#F69D50">df</span><span style="color:#6CB6FF"> -h</span><span style="color:#96D0FF"> /</span><span style="color:#F47067"> |</span><span style="color:#F69D50"> awk</span><span style="color:#96D0FF"> 'NR==2 {print $5}'</span><span style="color:#F47067"> |</span><span style="color:#F69D50"> tr</span><span style="color:#6CB6FF"> -d</span><span style="color:#96D0FF"> '%'</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F47067">if</span><span style="color:#ADBAC7"> [[ $USAGE </span><span style="color:#F47067">-ge</span><span style="color:#6CB6FF"> 90</span><span style="color:#ADBAC7"> ]]; </span><span style="color:#F47067">then</span></span>
+<span class="line"><span style="color:#ADBAC7">    LABEL</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"Critical"</span></span>
+<span class="line"><span style="color:#ADBAC7">    TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"check_disk · root volume ${</span><span style="color:#ADBAC7">USAGE</span><span style="color:#96D0FF">}%"</span></span>
+<span class="line"><span style="color:#F47067">elif</span><span style="color:#ADBAC7"> [[ $USAGE </span><span style="color:#F47067">-ge</span><span style="color:#6CB6FF"> 75</span><span style="color:#ADBAC7"> ]]; </span><span style="color:#F47067">then</span></span>
+<span class="line"><span style="color:#ADBAC7">    LABEL</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"Warning"</span></span>
+<span class="line"><span style="color:#ADBAC7">    TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"check_disk · root volume ${</span><span style="color:#ADBAC7">USAGE</span><span style="color:#96D0FF">}%"</span></span>
+<span class="line"><span style="color:#F47067">else</span></span>
+<span class="line"><span style="color:#ADBAC7">    LABEL</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"OK"</span></span>
+<span class="line"><span style="color:#ADBAC7">    TITLE</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"check_disk · root volume ${</span><span style="color:#ADBAC7">USAGE</span><span style="color:#96D0FF">}%"</span></span>
+<span class="line"><span style="color:#F47067">fi</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -s</span><span style="color:#6CB6FF"> -X</span><span style="color:#96D0FF"> POST</span><span style="color:#96D0FF"> http://localhost:7776/ingest</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  -H</span><span style="color:#96D0FF"> "Content-Type: application/json"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  -H</span><span style="color:#96D0FF"> "X-Tempo-Token: </span><span style="color:#ADBAC7">$TEMPO_TOKEN</span><span style="color:#96D0FF">"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  -d</span><span style="color:#96D0FF"> "{</span></span>
+<span class="line"><span style="color:#F47067">    \"</span><span style="color:#96D0FF">title</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#ADBAC7">$TITLE</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">    \"</span><span style="color:#96D0FF">providerIdentifier</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">local.check_disk</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">    \"</span><span style="color:#96D0FF">metadata</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: {</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">label</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#ADBAC7">$LABEL</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">host</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#F47067">\"</span><span style="color:#96D0FF">$(</span><span style="color:#F69D50">hostname</span><span style="color:#96D0FF">)</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">,</span></span>
+<span class="line"><span style="color:#F47067">      \"</span><span style="color:#96D0FF">custom</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: {</span></span>
+<span class="line"><span style="color:#F47067">        \"</span><span style="color:#96D0FF">usage_percent</span><span style="color:#F47067">\"</span><span style="color:#96D0FF">: </span><span style="color:#ADBAC7">$USAGE</span></span>
+<span class="line"><span style="color:#96D0FF">      }</span></span>
+<span class="line"><span style="color:#96D0FF">    }</span></span>
+<span class="line"><span style="color:#96D0FF">  }"</span></span></code></pre>
+<p>Schedule this in <code>crontab</code> or <code>launchd</code>; results land in Tempo automatically.</p>
+<h3 id="when-to-write-a-dedicated-score">When to write a dedicated score</h3>
+<p>If you find yourself doing the same thing across several scripts (same kinds of severity rules, same kinds of actions), it’s worth writing a dedicated score for the shared pattern. See <a href="/docs/11-score-authoring">§11 — Score authoring</a>.</p>
+<hr>
+<h2 id="1010--tempo_sendsh-helper">10.10 — <code>tempo_send.sh</code> helper</h2>
+<p>A wrapper script that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. Distributed in the <code>contrib/</code> folder of the public score catalog at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a>.</p>
+<h3 id="installation">Installation</h3>
+<p>Download <code>tempo_send.sh</code> from the public catalog repo and put it on your <code>$PATH</code>:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#F69D50">curl</span><span style="color:#6CB6FF"> -fsSL</span><span style="color:#96D0FF"> https://raw.githubusercontent.com/caereforge/tempo-scores/main/contrib/tempo_send.sh</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  -o</span><span style="color:#96D0FF"> ~/.local/bin/tempo_send</span></span>
+<span class="line"><span style="color:#F69D50">chmod</span><span style="color:#96D0FF"> +x</span><span style="color:#96D0FF"> ~/.local/bin/tempo_send</span></span></code></pre>
+<p>Set environment variables in your shell profile:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#F47067">export</span><span style="color:#ADBAC7"> TEMPO_HOST</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"localhost:7776"</span></span>
+<span class="line"><span style="color:#F47067">export</span><span style="color:#ADBAC7"> TEMPO_TOKEN</span><span style="color:#F47067">=</span><span style="color:#96D0FF">"&#x3C;your-token>"</span></span></code></pre>
+<h3 id="basic-usage">Basic usage</h3>
+<p><code>tempo_send</code> takes the provider identifier and title as positional arguments, with options after:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#F69D50">tempo_send</span><span style="color:#96D0FF"> local.check_disk</span><span style="color:#96D0FF"> "check_disk · root volume 78%"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  --severity</span><span style="color:#96D0FF"> warning</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  --meta</span><span style="color:#96D0FF"> host="$(</span><span style="color:#F69D50">hostname</span><span style="color:#96D0FF">)"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">  --meta</span><span style="color:#96D0FF"> usage_percent=</span><span style="color:#6CB6FF">78</span></span></code></pre>
+<p>The helper:</p>
+<ul>
+<li>Reads <code>TEMPO_HOST</code> / <code>TEMPO_TOKEN</code> from environment (or <code>--host</code> / <code>--token</code> flags)</li>
+<li>Builds the JSON payload from your flags</li>
+<li>POSTs to <code>/ingest</code></li>
+<li>Returns 0 on accept, 2 on usage error, 3 on missing token, 4 on network/HTTP error</li>
+</ul>
+<h3 id="available-flags">Available flags</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Flag</th><th>Purpose</th></tr></thead><tbody><tr><td><code>--severity info|warning|error</code></td><td>sets severity (default <code>info</code>); also drives default colour and event type</td></tr><tr><td><code>--event-type event|task|reminder|alert</code></td><td>overrides the severity-derived event type</td></tr><tr><td><code>--color #RRGGBB</code></td><td>overrides the severity-derived colour</td></tr><tr><td><code>--external-id ID</code></td><td>stable key for upserts (re-posts replace in place)</td></tr><tr><td><code>--grouping-key KEY</code></td><td>UI-level grouping of repeated firings</td></tr><tr><td><code>--start ISO8601</code></td><td>event start timestamp (defaults to server time)</td></tr><tr><td><code>--end ISO8601</code></td><td>event end timestamp</td></tr><tr><td><code>--recurrence-rule RRULE</code></td><td>iCal RRULE string (e.g. <code>FREQ=WEEKLY;BYDAY=MO</code>)</td></tr><tr><td><code>--meta KEY=VALUE</code></td><td>repeatable; adds a metadata field</td></tr><tr><td><code>--terminal LABEL=COMMAND</code></td><td>repeatable; adds an “open Terminal” action button</td></tr><tr><td><code>--url LABEL=URL</code></td><td>repeatable; adds an “open URL” action button</td></tr><tr><td><code>--copy LABEL=TEXT</code></td><td>repeatable; adds a “copy to clipboard” action button</td></tr><tr><td><code>--host HOST:PORT</code></td><td>overrides <code>TEMPO_HOST</code></td></tr><tr><td><code>--token TOKEN</code></td><td>overrides <code>TEMPO_TOKEN</code></td></tr><tr><td><code>--dry-run</code></td><td>print the payload to stdout instead of POSTing</td></tr></tbody></table>
+<h3 id="example-cron-job-that-reports-backup-results">Example: cron job that reports backup results</h3>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#768390">#!/bin/bash</span></span>
+<span class="line"><span style="color:#768390"># /usr/local/bin/nightly_backup_with_tempo.sh</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ADBAC7">START</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(</span><span style="color:#F69D50">date</span><span style="color:#96D0FF"> +%s</span><span style="color:#ADBAC7">)</span></span>
+<span class="line"><span style="color:#F47067">if</span><span style="color:#F69D50"> rsync</span><span style="color:#6CB6FF"> -az</span><span style="color:#96D0FF"> ~/Documents</span><span style="color:#96D0FF"> user@nas.local:/backups/laptop/</span><span style="color:#ADBAC7">; </span><span style="color:#F47067">then</span></span>
+<span class="line"><span style="color:#ADBAC7">    DURATION</span><span style="color:#F47067">=</span><span style="color:#ADBAC7">$(( </span><span style="color:#F69D50">$(date</span><span style="color:#96D0FF"> +%s</span><span style="color:#ADBAC7">) - START ))</span></span>
+<span class="line"><span style="color:#F69D50">    tempo_send</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --provider</span><span style="color:#96D0FF"> local.nightly_backup</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --title</span><span style="color:#96D0FF"> "nightly_backup · OK in ${</span><span style="color:#ADBAC7">DURATION</span><span style="color:#96D0FF">}s"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --label</span><span style="color:#96D0FF"> OK</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --host</span><span style="color:#96D0FF"> "$(</span><span style="color:#F69D50">hostname</span><span style="color:#96D0FF">)"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --duration-ms</span><span style="color:#ADBAC7"> $((</span><span style="color:#F69D50">DURATION</span><span style="color:#6CB6FF"> *</span><span style="color:#6CB6FF"> 1000</span><span style="color:#ADBAC7">))</span></span>
+<span class="line"><span style="color:#F47067">else</span></span>
+<span class="line"><span style="color:#F69D50">    tempo_send</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --provider</span><span style="color:#96D0FF"> local.nightly_backup</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --title</span><span style="color:#96D0FF"> "nightly_backup · failed"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --label</span><span style="color:#96D0FF"> Error</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --host</span><span style="color:#96D0FF"> "$(</span><span style="color:#F69D50">hostname</span><span style="color:#96D0FF">)"</span><span style="color:#F47067"> \</span></span>
+<span class="line"><span style="color:#6CB6FF">      --exit-code</span><span style="color:#6CB6FF"> $?</span></span>
+<span class="line"><span style="color:#F47067">fi</span></span></code></pre>
+<p>Schedule with launchd or cron; the helper handles the rest.</p>
+<hr>
+<h2 id="where-to-go-from-here">Where to go from here</h2>
+<ul>
+<li><strong>Writing a custom score for a source not bundled</strong> → <a href="/docs/11-score-authoring">§11 — Score authoring</a></li>
+<li><strong>Customising one of the bundled scores</strong> → <a href="/docs/07-score-editor">§7 — Score Editor</a></li>
+<li><strong>The full webhook payload reference</strong> → <a href="https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md"><code>docs/webhook-reference.md</code></a></li>
+<li><strong>Troubleshooting “my events aren’t arriving”</strong> → <a href="/docs/12-troubleshooting#121-networking-lan-ingestion">§12.1 — Networking</a> and <a href="/docs/12-troubleshooting#123-a-score-isnt-appearing">§12.3 — A score isn’t appearing</a></li>
+<li><strong>The community score catalog</strong> → <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a> — Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more</li>
+</ul> </article> <nav class="page-pager" data-astro-cid-uadgga6g> <a class="pager-link prev" href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>← Previous</span> <span class="pager-title" data-astro-cid-uadgga6g>Backup and restore</span> </a> <a class="pager-link next" href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>Next →</span> <span class="pager-title" data-astro-cid-uadgga6g>Score authoring</span> </a> </nav> </main> </div>   </body></html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tempo — For tinkerers, from a Mac to a rack.</title>
+<meta name="description" content="Every signal from every source — Home Assistant, Kuma, Kopia, GitHub — on one Mac-native timeline. Yours to shape. Local-first, never to the cloud.">
+
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tempoapp.app/">
+<meta property="og:title" content="Tempo — For tinkerers, from a Mac to a rack.">
+<meta property="og:description" content="Every signal from every source on one Mac-native timeline — Home Assistant, Uptime Kuma, Kopia backups, GitHub deploys. Yours to shape, ready to act. Local-first, LAN-reachable.">
+<meta property="og:image" content="https://tempoapp.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://tempoapp.app/og-image.png">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:      #0d0d0f;
+  --bg2:     #141416;
+  --border:  #242428;
+  --text:    #f2f2f7;
+  --text2:   #8e8e93;
+  --text3:   #48484a;
+  --blue:    #0a84ff;
+  --green:   #30d158;
+  --red:     #ff453a;
+  --orange:  #ff9f0a;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Nav ── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: rgba(13,13,15,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav-logo .wordmark { height: 26px; width: auto; display: block; }
+.nav-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: .2px;
+}
+
+/* ── Hero ── */
+.hero {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 72px 24px 56px;
+  text-align: center;
+}
+
+/* Hero app icon — visual anchor above wordmark */
+.hero-app-icon {
+  width: clamp(110px, 14vw, 150px);
+  height: clamp(110px, 14vw, 150px);
+  display: block;
+  margin: 0 auto 20px;
+  border-radius: clamp(24px, 3vw, 34px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04),
+    0 18px 48px rgba(0,0,0,.55),
+    0 4px 14px rgba(0,0,0,.35);
+}
+
+/* Wordmark — prominent product name */
+.hero-wordmark {
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+}
+.hero-wordmark svg {
+  height: clamp(60px, 10vw, 100px);
+  width: auto;
+  display: block;
+}
+.hero-wordmark-sub {
+  font-size: clamp(16px, 1.8vw, 19px);
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: -.01em;
+  margin-bottom: 36px;
+}
+.secondary-cta {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  transition: color .15s;
+}
+.secondary-cta:hover { color: var(--text); }
+
+.hero h1 {
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--blue);
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 18px);
+  color: var(--text2);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 40px;
+}
+
+/* ── Waitlist form ── */
+.waitlist-wrap {
+  max-width: 440px;
+  margin: 0 auto 12px;
+}
+.embeddable-buttondown-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.embeddable-buttondown-form input[type="email"] {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.embeddable-buttondown-form input[type="email"]:focus { border-color: var(--blue); }
+.embeddable-buttondown-form input[type="email"]::placeholder { color: var(--text3); }
+.embeddable-buttondown-form input[type="submit"] {
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: none;
+  background: var(--blue);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s;
+}
+.embeddable-buttondown-form input[type="submit"]:hover { opacity: .85; }
+.embeddable-buttondown-form input[type="email"]:focus-visible,
+.embeddable-buttondown-form input[type="submit"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(10,132,255,.35);
+}
+.embeddable-buttondown-form p { display: none; }
+.form-note {
+  font-size: 12px;
+  color: var(--text2);
+  text-align: center;
+}
+
+/* ── Demo GIF ── */
+.demo-wrap {
+  max-width: 920px;
+  margin: 64px auto 0;
+  padding: 0 24px;
+}
+.demo-frame {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 32px 80px rgba(0,0,0,.7),
+    0 8px 24px rgba(0,0,0,.4);
+  background: #1c1c1e;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.demo-frame img {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+}
+
+/* ── Section title ── */
+.section-title {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: var(--text2);
+  margin-bottom: 20px;
+}
+
+/* ── Features ── */
+.features-wrap {
+  max-width: 900px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+.feat {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 20px;
+}
+.feat-icon { font-size: 20px; margin-bottom: 12px; }
+.feat-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.feat-body  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* ── Extensibility section ── */
+.extend-wrap {
+  max-width: 900px;
+  margin: 56px auto 0;
+  padding: 0 24px;
+}
+.extend-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+.extend-text h2 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.extend-text p {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.65;
+}
+.extend-text p + p { margin-top: 10px; }
+.extend-text .highlight { color: var(--blue); font-weight: 600; }
+.extend-code {
+  background: #0d0d0f;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text2);
+  overflow: hidden;
+}
+.ec-comment { color: var(--text3); }
+.ec-key     { color: #ff9f0a; }
+.ec-val     { color: #30d158; }
+.ec-label   { color: var(--blue); }
+
+/* ── Sources strip ── */
+.sources-strip {
+  max-width: 760px;
+  margin: 64px auto 0;
+  padding: 0 24px;
+  text-align: center;
+}
+.sources-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.src-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 20px;
+}
+.src-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.src-chip.any {
+  color: var(--text3);
+  border-style: dashed;
+}
+
+/* ── Nav links ── */
+.nav-links {
+  display: flex;
+  gap: 4px;
+}
+.nav-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 7px;
+  transition: color .15s, background .15s;
+}
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,.06); }
+
+/* ── FAQ ── */
+.faq-wrap {
+  max-width: 760px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.faq-list { display: flex; flex-direction: column; gap: 2px; }
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.faq-q {
+  width: 100%; text-align: left;
+  padding: 16px 20px;
+  background: var(--bg2);
+  border: none; cursor: pointer;
+  font-size: 14px; font-weight: 600; color: var(--text);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 12px; transition: background .15s;
+  font-family: inherit;
+}
+.faq-q:hover { background: rgba(255,255,255,.05); }
+.faq-q .faq-arrow { color: var(--text3); font-size: 12px; flex-shrink: 0; transition: transform .2s; }
+.faq-q.open .faq-arrow { transform: rotate(180deg); }
+.faq-a {
+  display: none;
+  padding: 0 20px 16px;
+  background: var(--bg2);
+  font-size: 13px; color: var(--text2); line-height: 1.65;
+}
+.faq-a.open { display: block; }
+.faq-a a { color: var(--blue); text-decoration: none; }
+.faq-a a:hover { text-decoration: underline; }
+
+/* ── Roadmap ── */
+.roadmap-wrap {
+  max-width: 760px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.roadmap-list { display: flex; flex-direction: column; gap: 2px; }
+.rm-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.rm-status {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; padding: 3px 9px; border-radius: 8px;
+  white-space: nowrap; flex-shrink: 0; margin-top: 1px;
+}
+.rm-now    { background: rgba(10,132,255,.15); color: var(--blue); }
+.rm-next   { background: rgba(255,159,10,.12); color: var(--orange); }
+.rm-later  { background: rgba(255,255,255,.06); color: var(--text3); }
+.rm-text { flex: 1; }
+.rm-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.rm-desc  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.roadmap-disclaimer {
+  margin-top: 16px;
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+  padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg2);
+}
+
+/* ── Devlog ── */
+.devlog-wrap {
+  max-width: 760px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.devlog-list { display: flex; flex-direction: column; gap: 2px; }
+.dl-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.dl-date {
+  font-family: 'SF Mono', 'Menlo', 'Monaco', monospace;
+  font-size: 11px; font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+  letter-spacing: .3px;
+}
+.dl-text { flex: 1; }
+.dl-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.dl-desc  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* ── Story ── */
+.story-wrap {
+  max-width: 680px;
+  margin: 80px auto 0;
+  padding: 0 24px;
+}
+.story-prose {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--text2);
+}
+.story-prose p { margin: 0 0 18px; }
+.story-prose p:last-child { margin-bottom: 0; }
+.story-prose strong { color: var(--text); font-weight: 600; }
+
+/* ── Footer ── */
+footer {
+  margin-top: 80px;
+  padding: 28px 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-left  { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.footer-left strong { color: var(--text); font-weight: 600; }
+.footer-left a { color: var(--blue); text-decoration: none; }
+.footer-left a:hover { text-decoration: underline; }
+.footer-right { font-size: 12px; color: var(--text2); }
+
+@media (max-width: 680px) {
+  nav { padding: 16px 20px; }
+  .hero { padding: 48px 20px 40px; }
+  .embeddable-buttondown-form { flex-direction: column; }
+  .extend-box { grid-template-columns: 1fr; gap: 24px; padding: 24px 20px; }
+  footer { justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-frame video { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="/" aria-label="Tempo home"><svg class="wordmark" viewBox="0 0 321 135.6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g transform="translate(4, 102.4) scale(1,-1)" fill="currentColor">
+      <path d="M24 0V60.2H2.5V70H56.3V60.2H34.8V0Z"/>
+      <path d="M30.2 -1.4Q22.7 -1.4 17.1 1.75Q11.5 4.9 8.35 10.65Q5.2 16.4 5.2 24V25.2Q5.2 32.9 8.3 38.65Q11.4 44.4 16.95 47.55Q22.5 50.7 29.8 50.7Q36.9 50.7 42.25 47.55Q47.6 44.4 50.6 38.8Q53.6 33.2 53.6 25.7V21.8H15.7Q15.9 15.3 20.05 11.45Q24.2 7.6 30.4 7.6Q36.2 7.6 39.15 10.2Q42.1 12.8 43.7 16.2L52.2 11.8Q50.8 9 48.15 5.9Q45.5 2.8 41.2 0.7Q36.9 -1.4 30.2 -1.4ZM15.8 29.7H43.1Q42.7 35.3 39.1 38.45Q35.5 41.6 29.7 41.6Q23.9 41.6 20.25 38.45Q16.6 35.3 15.8 29.7Z" transform="translate(55.3, 0)"/>
+      <path d="M7.6 0V49.3H17.7V43.5H19.3Q20.7 46.1 23.8 48.1Q26.9 50.1 32.2 50.1Q37.7 50.1 41.05 47.85Q44.4 45.6 46.1 42.1H47.7Q49.4 45.5 52.65 47.8Q55.9 50.1 61.9 50.1Q66.7 50.1 70.4 48.15Q74.1 46.2 76.3 42.35Q78.5 38.5 78.5 32.8V0H68.2V32Q68.2 36.5 65.75 38.95Q63.3 41.4 58.8 41.4Q54 41.4 51.1 38.3Q48.2 35.2 48.2 29.4V0H37.9V32Q37.9 36.5 35.45 38.95Q33 41.4 28.5 41.4Q23.7 41.4 20.8 38.3Q17.9 35.2 17.9 29.4V0Z" transform="translate(110.2, 0)"/>
+      <path d="M7.6 -20V49.3H17.7V42.2H19.3Q21.2 45.5 25.05 48.1Q28.9 50.7 36.1 50.7Q42.3 50.7 47.45 47.7Q52.6 44.7 55.75 39.05Q58.9 33.4 58.9 25.4V23.9Q58.9 15.9 55.8 10.25Q52.7 4.6 47.5 1.6Q42.3 -1.4 36.1 -1.4Q31.3 -1.4 28 -0.2Q24.7 1 22.7 2.85Q20.7 4.7 19.5 6.7H17.9V-20ZM33.1 7.6Q39.9 7.6 44.2 11.9Q48.5 16.2 48.5 24.2V25.1Q48.5 33 44.15 37.3Q39.8 41.6 33.1 41.6Q26.5 41.6 22.15 37.3Q17.8 33 17.8 25.1V24.2Q17.8 16.2 22.15 11.9Q26.5 7.6 33.1 7.6Z" transform="translate(192.4, 0)"/>
+    </g>
+    <circle cx="289" cy="75.1" r="28" fill="#D4795F"/>
+    <circle cx="289" cy="75.1" r="15.12" fill="#9B2D1E"/>
+  </svg></a>
+  <div class="nav-links">
+    <a class="nav-link" href="#story">Story</a>
+    <a class="nav-link" href="#faq">FAQ</a>
+    <a class="nav-link" href="#roadmap">Roadmap</a>
+    <a class="nav-link" href="#devlog">Devlog</a>
+    <a class="nav-link" href="/downloads/">Downloads</a>
+    <a class="nav-link" href="/docs/">Docs</a>
+    <a class="nav-link" href="/blog/">Blog</a>
+  </div>
+  <div class="nav-badge">Private Beta — Coming Soon</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <img src="/icons/tempo-icon-512.png" alt="Tempo app icon" class="hero-app-icon" width="512" height="512">
+  <div class="hero-wordmark"><svg viewBox="0 0 321 135.6" xmlns="http://www.w3.org/2000/svg" aria-label="Tempo">
+    <g transform="translate(4, 102.4) scale(1,-1)" fill="currentColor">
+      <path d="M24 0V60.2H2.5V70H56.3V60.2H34.8V0Z"/>
+      <path d="M30.2 -1.4Q22.7 -1.4 17.1 1.75Q11.5 4.9 8.35 10.65Q5.2 16.4 5.2 24V25.2Q5.2 32.9 8.3 38.65Q11.4 44.4 16.95 47.55Q22.5 50.7 29.8 50.7Q36.9 50.7 42.25 47.55Q47.6 44.4 50.6 38.8Q53.6 33.2 53.6 25.7V21.8H15.7Q15.9 15.3 20.05 11.45Q24.2 7.6 30.4 7.6Q36.2 7.6 39.15 10.2Q42.1 12.8 43.7 16.2L52.2 11.8Q50.8 9 48.15 5.9Q45.5 2.8 41.2 0.7Q36.9 -1.4 30.2 -1.4ZM15.8 29.7H43.1Q42.7 35.3 39.1 38.45Q35.5 41.6 29.7 41.6Q23.9 41.6 20.25 38.45Q16.6 35.3 15.8 29.7Z" transform="translate(55.3, 0)"/>
+      <path d="M7.6 0V49.3H17.7V43.5H19.3Q20.7 46.1 23.8 48.1Q26.9 50.1 32.2 50.1Q37.7 50.1 41.05 47.85Q44.4 45.6 46.1 42.1H47.7Q49.4 45.5 52.65 47.8Q55.9 50.1 61.9 50.1Q66.7 50.1 70.4 48.15Q74.1 46.2 76.3 42.35Q78.5 38.5 78.5 32.8V0H68.2V32Q68.2 36.5 65.75 38.95Q63.3 41.4 58.8 41.4Q54 41.4 51.1 38.3Q48.2 35.2 48.2 29.4V0H37.9V32Q37.9 36.5 35.45 38.95Q33 41.4 28.5 41.4Q23.7 41.4 20.8 38.3Q17.9 35.2 17.9 29.4V0Z" transform="translate(110.2, 0)"/>
+      <path d="M7.6 -20V49.3H17.7V42.2H19.3Q21.2 45.5 25.05 48.1Q28.9 50.7 36.1 50.7Q42.3 50.7 47.45 47.7Q52.6 44.7 55.75 39.05Q58.9 33.4 58.9 25.4V23.9Q58.9 15.9 55.8 10.25Q52.7 4.6 47.5 1.6Q42.3 -1.4 36.1 -1.4Q31.3 -1.4 28 -0.2Q24.7 1 22.7 2.85Q20.7 4.7 19.5 6.7H17.9V-20ZM33.1 7.6Q39.9 7.6 44.2 11.9Q48.5 16.2 48.5 24.2V25.1Q48.5 33 44.15 37.3Q39.8 41.6 33.1 41.6Q26.5 41.6 22.15 37.3Q17.8 33 17.8 25.1V24.2Q17.8 16.2 22.15 11.9Q26.5 7.6 33.1 7.6Z" transform="translate(192.4, 0)"/>
+    </g>
+    <circle cx="289" cy="75.1" r="28" fill="#D4795F"/>
+    <circle cx="289" cy="75.1" r="15.12" fill="#9B2D1E"/>
+  </svg></div>
+  <div class="hero-wordmark-sub">For tinkerers, from a Mac to a rack.</div>
+
+  <h1>Every signal from every source on one Mac-native timeline.<br><em>Yours to shape. Ready to act.</em></h1>
+  <p class="hero-sub">
+    One Mac-native timeline for everything your stack does. If it can POST, Tempo can hear it —
+    from rack-side monitoring to Mac-side automations, from third-party services to your own scripts.
+    Every event arrives in context, with the next move one click away. You stay the conductor;
+    Tempo holds the score — and never acts on its own. Local-first, no cloud, no telemetry.
+  </p>
+
+  <div class="waitlist-wrap">
+    <form
+      action="https://buttondown.com/api/emails/embed-subscribe/Tempoapp"
+      method="post"
+      class="embeddable-buttondown-form"
+    >
+      <label for="bd-email" class="sr-only">Enter your email</label>
+      <input type="email" name="email" id="bd-email" placeholder="you@example.com" />
+      <input type="submit" value="Join waitlist" />
+      <p><a href="https://buttondown.com/refer/Tempoapp" target="_blank">Powered by Buttondown.</a></p>
+    </form>
+  </div>
+  <p class="form-note">Private beta · No spam · Unsubscribe anytime</p>
+  <a href="#demo" class="secondary-cta">See how it works ↓</a>
+</section>
+
+<!-- Demo -->
+<div class="demo-wrap" id="demo">
+  <div class="demo-frame">
+    <video preload="metadata" poster="/demo-poster.jpg" controls playsinline aria-label="Tempo demo: timeline with incoming homelab events and one-click actions" style="width:100%;display:block;border-radius:14px;">
+      <source src="/Demo.mp4" type="video/mp4">
+    </video>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="features-wrap">
+  <div class="section-title" style="margin-top:0; padding-top:0">What Tempo does</div>
+  <div class="features">
+    <div class="feat">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Every signal, one feed</div>
+      <div class="feat-body">Homelab monitoring, backups, deploys, network and file events, Mac-side automations, your own scripts — and Apple Calendar and Reminders. One chronological timeline, no dashboard juggling.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">↗</div>
+      <div class="feat-title">Actions, ready to go</div>
+      <div class="feat-body">SSH to a flagged host, open a HA dashboard, restart a container, ack an incident — every event ships with the buttons you'd reach for.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Local-first, LAN-reachable</div>
+      <div class="feat-body">Local SQLite. No account, no cloud, no telemetry. The HTTP ingestion endpoint binds your LAN with per-provider tokens — your NAS, HA, and monitoring stack post directly.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Extensibility -->
+<div class="extend-wrap">
+  <div class="extend-box">
+    <div class="extend-text">
+      <h2>If it speaks HTTP,<br>it works with Tempo.</h2>
+      <p>
+        Modules ship for the usual homelab stack. Anything else just <span class="highlight">POSTs JSON</span>
+        to Tempo's LAN endpoint — Home Assistant automation, n8n flow, bash one-liner with curl,
+        Grafana webhook. No plugin SDK, no rebuild.
+      </p>
+      <p>
+        Each event carries its own action set, declared in a small JSON
+        <span class="highlight">score</span>. Drop one in or write your own —
+        Tempo reads the fields and builds the buttons. Use payload tokens like
+        <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>
+        so each click already knows the context.
+      </p>
+    </div>
+    <div class="extend-code">
+<span class="ec-comment">// curl from anything on your LAN</span>
+<span class="ec-comment">// → it shows up in the timeline</span>
+
+{
+  <span class="ec-key">"title"</span>: <span class="ec-val">"web-01 DOWN"</span>,
+  <span class="ec-key">"eventType"</span>: <span class="ec-val">"alert"</span>,
+  <span class="ec-key">"providerIdentifier"</span>: <span class="ec-val">"com.uptime-kuma"</span>,
+  <span class="ec-key">"metadata"</span>: { <span class="ec-key">"host"</span>: <span class="ec-val">"web-01"</span>, <span class="ec-key">"ip"</span>: <span class="ec-val">"10.0.1.42"</span> },
+  <span class="ec-key">"actions"</span>: [
+    { <span class="ec-key">"label"</span>: <span class="ec-val">"SSH"</span>,  <span class="ec-key">"trigger"</span>: <span class="ec-label">"openURL"</span> },
+    { <span class="ec-key">"label"</span>: <span class="ec-val">"Ping"</span>, <span class="ec-key">"trigger"</span>: <span class="ec-label">"terminal"</span> }
+  ]
+}
+    </div>
+  </div>
+</div>
+
+<!-- Sources -->
+<div class="sources-strip">
+  <div class="section-title">Works with your tools</div>
+  <div class="sources-list">
+    <div class="src-chip"><div class="src-dot" style="background:#0a84ff"></div>Apple Calendar</div>
+    <div class="src-chip"><div class="src-dot" style="background:#34c759"></div>Apple Reminders</div>
+    <div class="src-chip"><div class="src-dot" style="background:#41bdf5"></div>Home Assistant</div>
+    <div class="src-chip"><div class="src-dot" style="background:#5cdd8b"></div>Uptime Kuma</div>
+    <div class="src-chip"><div class="src-dot" style="background:#ff9f0a"></div>Kopia</div>
+    <div class="src-chip"><div class="src-dot" style="background:#0559c9"></div>UniFi</div>
+    <div class="src-chip"><div class="src-dot" style="background:#bf5af2"></div>GitHub Actions</div>
+    <div class="src-chip any">+ any tool with webhooks</div>
+  </div>
+</div>
+
+<!-- Story -->
+<div class="story-wrap" id="story">
+  <div class="section-title">Why Tempo exists</div>
+  <div class="story-prose">
+    <p>I've spent most of my career as a Unix sysadmin — the kind of work where you learn, over time, that the machine doesn't care how pretty your dashboard is. It cares whether you notice the thing that matters, in time.</p>
+    <p>Eventually I came home from that and kept doing the same thing for myself. A homelab grew. Home Assistant, a UniFi stack, Uptime Kuma, Kopia backups, a couple of always-on services, GitHub Actions for side projects, the calendar and reminders that actually run my life. Seven browser tabs every morning, each speaking its own language, none of them talking to each other.</p>
+    <p>Dashboards didn't solve it — dashboards ask you to look at them. What I wanted was the Unix instinct expressed through the Mac: <strong>the power of the terminal and the craft of native macOS design</strong>, in one surface. One timeline, everything that happened, in order, with the right action one click away. Local-first, because the data stays on my machines. LAN-reachable, because the services don't run on the Mac. Never acts on its own, because silent automations are how you lose trust in your own system.</p>
+    <p><em>You stay the conductor. Tempo is the score.</em></p>
+    <p>Tempo is that tool.</p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-wrap" id="faq">
+  <div class="section-title">Q &amp; A</div>
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Why is it called Tempo?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Two senses, both intentional. <em>Tempo</em> is the musical term for the pace of a piece — which is what your homelab has, whether you notice it or not: a pulse of events across machines, some steady, some spiking. And a conductor doesn't play the instruments. They give the ensemble a shared sense of time, and they decide when something needs attention. That's the posture Tempo is built around: you stay the conductor. Tempo is the score in front of you.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        What is Tempo, exactly?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        A native macOS app that pulls every signal from your homelab — Home Assistant, Uptime Kuma, Kopia, UniFi, CI/CD, custom scripts — into one chronological timeline, alongside your calendar and tasks. Each event ships with the actions you'd reach for: SSH, dashboard, terminal command, Apple Shortcut. One place to see what's going on across machines. Tempo shows and proposes; it never acts on its own.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        How is this different from Home Assistant's own dashboard?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        HA is great inside its own world. But your homelab isn't only HA — it's also your NAS backups, monitoring stack, GitHub Actions, network gear, and the calendar/tasks on your Mac. Tempo isn't trying to replace any of those dashboards; it sits on top, surfaces the events that need your attention, and gives you one place to act on them.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        How do my servers and HA reach Tempo?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Tempo runs an HTTP ingestion server on your Mac, reachable from your local network. Each provider (HA, Uptime Kuma, Kopia, your bash script) gets its own token; every remote ingestion is logged. Optional TLS. The endpoint is LAN-only by default — it never exposes your data to the internet. Anything that can <code style="font-family:monospace;font-size:11px;color:var(--blue)">curl</code> can post to Tempo.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Can I customize what actions appear for each event?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Yes — this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger Apple Shortcut), and the labels. Tempo ships bundled scores for common sources (Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar &amp; Reminders) and you can drop in more from the public catalog or write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code> — so each button already knows the context. A visual score editor is on the V2 roadmap.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Why not just use n8n, Node-RED, or another automation tool?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Those automate server-side workflows. Tempo centralizes <em>visibility and decision</em> on your Mac. It reads your local calendar, tasks, and reminders (things server-side tools can't touch), puts them alongside infra signals, and lets <em>you</em> decide what to do. They're complementary — Tempo can be the human-facing surface in front of an n8n flow.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Is my data safe? Does Tempo send anything to the cloud?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        No account, no cloud sync, no third-party telemetry. Everything lives in a local SQLite database on your Mac. The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet — it accepts only signed requests from per-provider tokens stored in the macOS Keychain. Optional TLS. Optional anonymous usage telemetry, opt-in only.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        How much will Tempo cost?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        <strong style="color:var(--text)">Tempo v1 is free, forever.</strong> No trial, no Free/Pro tiers, no subscription, no account required. A future v2 may be a paid one-time purchase — details are in the <a href="/blog/tempo-goes-freeware/" style="color:var(--blue)">freeware announcement</a>.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Will it be on the App Store?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        No — distributed as a signed and notarized DMG (Developer ID), with auto-update via Sparkle. Outside the App Store sandbox so the LAN ingestion server, terminal commands, and AppleScript hooks all work without restrictions.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        Does it work with CalDAV calendars (Fastmail, Nextcloud, iCloud)?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Yes. Tempo reads from Apple Calendar via EventKit, which natively syncs CalDAV accounts. If a calendar shows up in the Apple Calendar app, it shows up in Tempo.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        When can I try it?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        Private beta is coming. Join the waitlist above for early access — beta testers also get input on which integrations land first.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Roadmap -->
+<div class="roadmap-wrap" id="roadmap">
+  <div class="section-title">Roadmap</div>
+  <div class="roadmap-list">
+
+    <div class="rm-item">
+      <div class="rm-status rm-now">V1</div>
+      <div class="rm-text">
+        <div class="rm-title">Shipping soon</div>
+        <div class="rm-desc">Timeline UI (agenda + live feed), LAN-reachable IngestionServer with per-provider tokens, declarative score system with bundled scores for Home Assistant, Uptime Kuma, Kopia, UniFi, GitHub Actions, Synology, Apple Calendar &amp; Reminders, and a generic webhook adapter. Menubar widget, per-source theming, severity rules, hide/auto-dismiss policies. Backup to user-chosen path. Sparkle auto-update.</div>
+      </div>
+    </div>
+
+    <div class="rm-item">
+      <div class="rm-status rm-next">V1.x</div>
+      <div class="rm-text">
+        <div class="rm-title">Post-launch additions</div>
+        <div class="rm-desc">In-app score browser (one-click install from the public catalog). Proxmox native adapter. Sound customization. Source liveness detection. Bug fixes and stability work informed by community feedback. Free, forever — for everyone who installed V1.</div>
+      </div>
+    </div>
+
+    <div class="rm-item">
+      <div class="rm-status rm-later">V2</div>
+      <div class="rm-text">
+        <div class="rm-title">Future, paid trajectory</div>
+        <div class="rm-desc">Real automations (auto-firing rules with whitelist + audit log). Visual score editor. AI-assisted score authoring. CLI for scripting. Google Calendar / Outlook OAuth. CalDAV. Bidirectional sync starting with Apple Reminders. Considered as a paid one-time purchase; details and timing TBD based on V1 reception.</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="roadmap-disclaimer">
+    Roadmap is indicative. Priorities may shift based on beta feedback. Join the waitlist to have a say in what gets built first.
+  </div>
+</div>
+
+<!-- Devlog -->
+<div class="devlog-wrap" id="devlog">
+  <div class="section-title">Devlog</div>
+  <div class="devlog-list">
+
+    <div class="dl-item">
+      <div class="dl-date">2026-04-18</div>
+      <div class="dl-text">
+        <div class="dl-title">Accessibility pass &amp; hero refinement</div>
+        <div class="dl-desc">Landing brought up to WCAG AA: contrast raised on informative text, screen-reader-friendly form label, video controls, FAQ <code style="font-family:monospace;font-size:11px;color:var(--blue)">aria-expanded</code>, keyboard focus rings, 44px nav touch targets. Hero hierarchy refined along the way — smaller wordmark, a real positioning line in place of the mini-caption, and a "See how it works" path for visitors not ready for the waitlist.</div>
+      </div>
+    </div>
+
+    <div class="dl-item">
+      <div class="dl-date">2026-04-17</div>
+      <div class="dl-text">
+        <div class="dl-title">Public site live</div>
+        <div class="dl-desc">Landing online at tempoapp.app. Repository public, Cloudflare Pages deploy pipeline wired up. Tempo itself is in private development; this page is the public face — and the start of the visible trail.</div>
+      </div>
+    </div>
+
+    <div class="dl-item">
+      <div class="dl-date">2026-04-13</div>
+      <div class="dl-text">
+        <div class="dl-title">Domain registered</div>
+        <div class="dl-desc">tempoapp.app secured. Project name and identity locked in: <em>Tempo</em>, as in musical tempo — the rhythm of what's happening across your homelab.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-left">
+    <strong>Tempo</strong> for macOS &nbsp;·&nbsp; tempoapp.app &nbsp;·&nbsp; Free, forever<br>
+    <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+    <a href="/license">License &amp; Disclaimer</a> &nbsp;·&nbsp;
+    <a href="/docs">Docs</a> &nbsp;·&nbsp;
+    <a href="mailto:hello@tempoapp.app">hello@tempoapp.app</a>
+  </div>
+  <div class="footer-right">Built by one person, for people who run too many things.</div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  answer.classList.toggle('open', !isOpen);
+  btn.setAttribute('aria-expanded', String(!isOpen));
+}
+</script>
+</body>
+</html>

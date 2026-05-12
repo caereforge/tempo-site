@@ -1,0 +1,424 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Score authoring — Tempo user guide</title><meta name="description" content="This chapter is the developer reference for writing Tempo scores from scratch."><link rel="canonical" href="https://tempoapp.app/docs/11-score-authoring/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Score authoring — Tempo user guide"><meta property="og:description" content="This chapter is the developer reference for writing Tempo scores from scratch."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/docs/11-score-authoring/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DrUdJ2yv.css"></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <div class="docs-layout" data-astro-cid-uadgga6g> <aside class="sidebar" data-astro-cid-uadgga6g> <nav class="sidebar-nav" data-astro-cid-uadgga6g> <a class="back" href="/docs" data-astro-cid-uadgga6g>← Documentation</a> <ol class="chapter-list" data-astro-cid-uadgga6g> <li class data-astro-cid-uadgga6g> <a href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>01</span> <span class="title" data-astro-cid-uadgga6g>Introduction</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/02-concepts" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>02</span> <span class="title" data-astro-cid-uadgga6g>Concepts</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>03</span> <span class="title" data-astro-cid-uadgga6g>Getting started</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/04-source-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>04</span> <span class="title" data-astro-cid-uadgga6g>Source panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/05-event-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>05</span> <span class="title" data-astro-cid-uadgga6g>Event panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>06</span> <span class="title" data-astro-cid-uadgga6g>Action panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/07-score-editor" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>07</span> <span class="title" data-astro-cid-uadgga6g>Score Editor</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>08</span> <span class="title" data-astro-cid-uadgga6g>Settings reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>09</span> <span class="title" data-astro-cid-uadgga6g>Backup and restore</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>10</span> <span class="title" data-astro-cid-uadgga6g>Sources reference</span> </a> </li><li class="is-current" data-astro-cid-uadgga6g> <a href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>11</span> <span class="title" data-astro-cid-uadgga6g>Score authoring</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>12</span> <span class="title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>13</span> <span class="title" data-astro-cid-uadgga6g>FAQ</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/14-glossary" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>14</span> <span class="title" data-astro-cid-uadgga6g>Glossary</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/15-appendix" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>15</span> <span class="title" data-astro-cid-uadgga6g>Appendix</span> </a> </li> </ol> </nav> </aside> <main class="doc" data-astro-cid-uadgga6g> <header class="page-header" data-astro-cid-uadgga6g> <p class="eyebrow" data-astro-cid-uadgga6g>Tempo user guide · Chapter 11</p> </header> <article class="prose" data-astro-cid-uadgga6g> <h1 id="11--score-authoring">11 — Score authoring</h1>
+<p>This chapter is the developer reference for writing Tempo scores from scratch. It assumes you’ve read <a href="/docs/02-concepts#23--scores">§2.3 — Scores</a> and <a href="/docs/07-score-editor">§7 — Score Editor</a>. The Score Editor covers most use cases without you ever opening a JSON file; this chapter is for the cases where you want to author a score the editor can’t fully express, or you want to share a score with the community via the public catalog.</p>
+<p>The canonical machine-readable schema lives at <a href="https://github.com/caereforge/tempo-scores/blob/main/schema/score.schema.json"><code>schema/score.schema.json</code></a> in the public catalog repo. This chapter is the prose narration of that schema, plus the unwritten rules of “what makes a good score.”</p>
+<hr>
+<h2 id="111--json-schema-overview">11.1 — JSON schema overview</h2>
+<p>A score is a single JSON object. The minimum viable score:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"com.example.my-tool"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "displayName"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"My Tool"</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p>That’s a valid score. It does almost nothing — every event from <code>com.example.my-tool</code> would render with the default Tempo styling, no severity logic, no custom actions — but it’s enough to show “My Tool” in the source panel and to load without errors.</p>
+<p>A score with all the bells:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"com.example.my-tool"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "displayName"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"My Tool"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "color"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"#8E8E93"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severityDefault"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"info"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Info"</span></span>
+<span class="line"><span style="color:#ADBAC7">  },</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severityRules"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"status"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Failed"</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"status"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Warn"</span></span>
+<span class="line"><span style="color:#ADBAC7">    }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ],</span></span>
+<span class="line"><span style="color:#8DDB8C">  "grouping"</span><span style="color:#ADBAC7">: [</span><span style="color:#96D0FF">"${metadata.host}/${metadata.run_id}"</span><span style="color:#ADBAC7">],</span></span>
+<span class="line"><span style="color:#8DDB8C">  "groupingWindow"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"6h"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "defaultActions"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Open dashboard"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"globe"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openURL"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"https://example.com/dashboard"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Copy host"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"doc.on.clipboard"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"copyToClipboard"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.host}"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">    }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ]</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p>Every top-level field other than <code>providerIdentifier</code> and <code>displayName</code> is optional. Tempo applies sensible defaults when a field is missing.</p>
+<h3 id="where-score-files-live">Where score files live</h3>
+<p>User-installed scores live in <code>~/Library/Application Support/Tempo/Scores/</code>. Tempo loads them at launch and reloads when files change. The file name should match <code>&#x3C;providerIdentifier>.json</code> — Tempo doesn’t enforce this strictly, but the convention makes the directory navigable and the score-vs-provider relationship clear at a glance.</p>
+<p>Bundled scores ship with the app in <code>Tempo.app/Contents/Resources/</code> and are seeded into the user-scores directory on first launch (with a version marker so the seeder doesn’t overwrite user edits).</p>
+<hr>
+<h2 id="112--field-reference">11.2 — Field reference</h2>
+<h3 id="provideridentifier-required"><code>providerIdentifier</code> (required)</h3>
+<p>A stable, namespaced identifier for the source. Pattern: <code>^[a-z0-9]+([._-][a-z0-9]+)*$</code>, minimum length 3.</p>
+<p><strong>Conventions</strong>:</p>
+<ul>
+<li><strong>Reverse-DNS</strong> for vendors and well-known tools — <code>com.kopia</code>, <code>com.ubiquiti.unifi</code>, <code>org.home-assistant</code>, <code>io.uptimekuma</code></li>
+<li><strong><code>scripts.&#x3C;language>.&#x3C;name></code></strong> for shell/Python/Ruby scripts — <code>scripts.shell.check_disk</code>, <code>scripts.python.log_scan</code></li>
+<li><strong><code>local.&#x3C;name></code></strong> for senders running on the same Mac as Tempo — <code>local.check_disk</code>, <code>local.backup_notify</code></li>
+<li><strong><code>lab.&#x3C;host>.&#x3C;name></code></strong> for senders on other LAN hosts — <code>lab.nas01.smart_check</code></li>
+</ul>
+<p>The identifier is the <strong>machine identity</strong> of the sender. It’s used for token binding (a token bound to <code>com.kopia</code> rejects events declaring <code>com.example</code>), for upsert deduplication, and for prefix-walking score resolution (a score for <code>scripts</code> covers every <code>scripts.*.*</code>).</p>
+<h3 id="displayname-required"><code>displayName</code> (required)</h3>
+<p>Human-readable label shown in the source panel. Free text, minimum 1 character.</p>
+<p>If you don’t want to set this in the score, the user can override it in their local install via Manage Sources → rename source. The score’s <code>displayName</code> is the default.</p>
+<h3 id="color"><code>color</code></h3>
+<p>Accent colour for the source, as <code>#RRGGBB</code> hex. Pattern enforced.</p>
+<p>If omitted, Tempo uses a neutral gray (<code>#8E8E93</code> is a common fallback). Strongly recommended to set this — distinct colours are how the source panel stays scannable.</p>
+<h3 id="severitydefault"><code>severityDefault</code></h3>
+<p>Fallback severity assigned to events when no <code>severityRules</code> rule matches. Object with two fields:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"info"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Info"</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<ul>
+<li><strong><code>severity</code></strong> (required) — one of <code>info</code>, <code>ok</code>, <code>warning</code>, <code>error</code>, <code>critical</code></li>
+<li><strong><code>label</code></strong> (optional) — custom badge text. If omitted, the severity name uppercased</li>
+</ul>
+<h3 id="severityrules"><code>severityRules</code></h3>
+<p>An ordered array of rules. Each rule has:</p>
+<ul>
+<li><strong><code>match</code></strong> (required) — an object of key/value conditions. All conditions must match (logical AND). Values support glob-style wildcards (<code>*</code>, <code>?</code>)</li>
+<li><strong><code>severity</code></strong> (required) — the severity to assign when this rule matches</li>
+<li><strong><code>label</code></strong> (optional) — custom badge text for this rule</li>
+</ul>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"severityRules"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">  { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7"> }, </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Failed"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#ADBAC7">  { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7"> }, </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Warn"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#ADBAC7">  { </span><span style="color:#8DDB8C">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ok"</span><span style="color:#ADBAC7"> }, </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"info"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"OK"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">]</span></span></code></pre>
+<p>Evaluation: top-to-bottom, first match wins. Order matters — put more specific rules above more general ones.</p>
+<blockquote>
+<p>💡 <strong>Note</strong>: the runtime also supports a richer rule shape with <code>color</code> overrides and presentation templates (<code>titleTemplate</code>, <code>subtitleTemplate</code>). The public catalog schema is intentionally narrower — those features are local-only and don’t ship in catalog scores. Use the Score Editor for the richer shape; manage your own scores in <code>~/Library/Application Support/Tempo/Scores/</code> for distribution.</p>
+</blockquote>
+<h3 id="grouping-and-groupingwindow"><code>grouping</code> and <code>groupingWindow</code></h3>
+<p>Stack grouping configuration. See <a href="/docs/02-concepts#26--stack-and-grouping">§2.6 — Stack and grouping</a> and <a href="/docs/07-score-editor#75-stack-grouping">§7.5 — Stack grouping</a>.</p>
+<ul>
+<li><strong><code>grouping</code></strong> — array of templates, with <code>${metadata.xxx}</code> placeholders. Tempo picks the first one that fully resolves</li>
+<li><strong><code>groupingWindow</code></strong> — duration string: <code>15m</code>, <code>30m</code>, <code>1h</code>, <code>6h</code>, <code>1d</code>, <code>1w</code>, or empty (no cutoff)</li>
+</ul>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"grouping"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#96D0FF">  "${metadata.repo}/${metadata.path}"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#96D0FF">  "${metadata.repo}"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#96D0FF">  "${metadata.host}"</span></span>
+<span class="line"><span style="color:#ADBAC7">],</span></span>
+<span class="line"><span style="color:#96D0FF">"groupingWindow"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"1d"</span></span></code></pre>
+<p>Omit both for no grouping (every event renders as its own card).</p>
+<h3 id="defaultactions"><code>defaultActions</code></h3>
+<p>Array of action buttons that appear on every event from this provider. Each action has:</p>
+<ul>
+<li><strong><code>label</code></strong> (required, ≥1 char) — button text</li>
+<li><strong><code>systemIcon</code></strong> (required, ≥1 char) — SF Symbol name</li>
+<li><strong><code>trigger</code></strong> (required) — an object with one of three shapes (covered in §11.4)</li>
+</ul>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"defaultActions"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">  {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Open dashboard"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"globe"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openURL"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"https://example.com/"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">  }</span></span>
+<span class="line"><span style="color:#ADBAC7">]</span></span></code></pre>
+<p>Per-event actions sent in the payload itself are <em>appended</em> after the default actions, and override defaults of the same label.</p>
+<hr>
+<h2 id="113--severity-rule-syntax">11.3 — Severity rule syntax</h2>
+<h3 id="match-conditions">Match conditions</h3>
+<p>A <code>match</code> object is a flat key/value map. Each key is a metadata field name; each value is a pattern to match.</p>
+<h4 id="exact-match">Exact match</h4>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p>Matches when <code>metadata.outcome == "error"</code> exactly. Case-sensitive.</p>
+<h4 id="wildcards">Wildcards</h4>
+<p><code>*</code> matches any sequence of characters; <code>?</code> matches any single character. (Glob-style, not regex.)</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"alarmKey"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"STA_*"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p>Matches <code>STA_ASSOC_FAILURE</code>, <code>STA_AUTH_FAILURE</code>, <code>STA_DEAUTH</code>, etc.</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"alarmKey"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"*FAILURE"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p>Matches anything ending in <code>FAILURE</code>.</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"code"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"E?00"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p>Matches <code>E100</code>, <code>E200</code>, <code>E300</code>, etc.</p>
+<h4 id="multiple-conditions-in-one-rule">Multiple conditions in one rule</h4>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"outcome"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7">, </span><span style="color:#8DDB8C">"severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"critical"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"critical"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"CRITICAL FAILURE"</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<p>Logical <strong>AND</strong>: both <code>outcome=error</code> and <code>severity=critical</code> must be present in the metadata for the rule to fire.</p>
+<h4 id="multiple-rules">Multiple rules</h4>
+<p>The rule array itself is logical <strong>OR</strong>: rule 2 fires if rule 1 didn’t, etc. First match wins.</p>
+<h3 id="naming-conditions">Naming conditions</h3>
+<p>Match keys reference top-level metadata fields by name — no prefix required. Whatever your payload puts in <code>metadata</code>, the rule’s <code>match</code> object names it directly. For example, the bundled Kopia score uses <code>"match": { "outcome": "error" }</code> because the Kopia ingestion module emits an <code>outcome</code> field at the top of the metadata object; the rule names it as is.</p>
+<p>Stringification is implicit: numbers, booleans and strings all collapse to their textual form, so a rule <code>{"exit_code": 0}</code> matches metadata values of <code>0</code>, <code>"0"</code>, or <code>0.0</code> interchangeably. Glob wildcards <code>*</code> and <code>?</code> are supported in string values (<code>{"key": "EVT_*_Connected"}</code> collapses a family of provider-specific event keys).</p>
+<hr>
+<h2 id="114--action-triggers-reference">11.4 — Action triggers reference</h2>
+<p>Three trigger types are supported in V1. Each is mutually exclusive — an action has exactly one trigger.</p>
+<h3 id="openurl"><code>openURL</code></h3>
+<p>Opens a URL. macOS picks the handler based on the scheme.</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openURL"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"https://example.com/"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p><strong>Allowed schemes</strong> (per the public catalog schema): <code>http</code>, <code>https</code>, <code>ssh</code>, <code>mailto</code>, <code>tel</code>, <code>sms</code>, <code>facetime</code>, <code>vnc</code>, <code>rdp</code>, plus documented app schemes (<code>obsidian://</code>, <code>things://</code>, etc.).</p>
+<p><strong>Rejected schemes</strong>: <code>file</code>, <code>javascript</code>, <code>data</code>, <code>vbscript</code>, anything not whitelisted.</p>
+<p>The whitelist exists because URL handlers can do anything an app can do — <code>file://</code> opens local resources, <code>javascript:</code> runs script in the browser context. Restricting to network and communication schemes keeps the action surface contained.</p>
+<h3 id="openterminalwith"><code>openTerminalWith</code></h3>
+<p>Opens Terminal.app and runs a command.</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openTerminalWith"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"kopia snapshot list ${metadata.path}"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p><strong>Important</strong>: this trigger is <strong>not allowed in scores submitted to the public catalog</strong>. The public catalog reviews scores for safety, and a score that runs arbitrary shell commands is too high-risk to vet thoroughly. Catalog scores must use <code>openURL</code> (with <code>ssh://</code> for shell access if needed) or <code>copyToClipboard</code>.</p>
+<p>For your <strong>local</strong> install (drop a score into <code>~/Library/Application Support/Tempo/Scores/</code>), <code>openTerminalWith</code> is fully supported. The restriction is purely about distribution — anything you run on your own Mac is your own decision.</p>
+<h3 id="copytoclipboard"><code>copyToClipboard</code></h3>
+<p>Copies a string to the system clipboard.</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#96D0FF">"trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"copyToClipboard"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.host}"</span><span style="color:#ADBAC7"> }</span></span></code></pre>
+<p>No scheme restrictions — the value is a string, not a URL.</p>
+<h3 id="interpolation">Interpolation</h3>
+<p>All three triggers support <code>${metadata.xxx}</code> placeholder substitution at click time:</p>
+<ul>
+<li><code>${metadata.host}</code> → the value of <code>metadata.host</code> from the event payload</li>
+<li><code>${title}</code> → the event’s title</li>
+<li><code>${startDate}</code> → the event’s timestamp (ISO 8601)</li>
+<li><code>${metadata.custom.disk_usage_percent}</code> → reaches into the custom bucket</li>
+</ul>
+<p>If a referenced field is missing from the payload, Tempo substitutes an empty string. The action still fires; the resolved URL or command may be malformed (<code>ssh://admin@</code> with no host), in which case macOS will surface the error.</p>
+<h3 id="systemicon"><code>systemIcon</code></h3>
+<p>Each action takes an SF Symbol name as its icon. Common choices:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>SF Symbol</th><th>Use case</th></tr></thead><tbody><tr><td><code>globe</code></td><td>Open URL (web)</td></tr><tr><td><code>lock</code></td><td>SSH / login</td></tr><tr><td><code>terminal</code></td><td>Terminal command</td></tr><tr><td><code>doc.on.clipboard</code></td><td>Copy something</td></tr><tr><td><code>network</code></td><td>Network-related</td></tr><tr><td><code>house</code></td><td>Home (HA dashboard)</td></tr><tr><td><code>book</code></td><td>Documentation</td></tr><tr><td><code>arrow.clockwise</code></td><td>Re-run / refresh</td></tr><tr><td><code>list.bullet</code></td><td>List / log view</td></tr><tr><td><code>cloud</code></td><td>Cloud service</td></tr><tr><td><code>square.and.arrow.up</code></td><td>Open in another app</td></tr></tbody></table>
+<p>The full SF Symbols catalog is browsable in the <strong>SF Symbols</strong> app from Apple. Pick names that visually convey what the button does.</p>
+<hr>
+<h2 id="115--tempo-score-installer-file">11.5 — <code>.tempo-score</code> installer file</h2>
+<p>A <code>.tempo-score</code> file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognises the extension via Tempo’s UTI registration; double-clicking a <code>.tempo-score</code> file opens Tempo and triggers the <strong>Score Review Sheet</strong> — a preview UI showing what’s about to be installed:</p>
+<ul>
+<li>The provider identifier</li>
+<li>The display name and colour</li>
+<li>A preview of the rules and default actions</li>
+<li>A diff if a score with this provider identifier is already installed (existing rules vs incoming rules)</li>
+</ul>
+<p>The user clicks <strong>Install</strong> to apply, or <strong>Cancel</strong> to skip.</p>
+<h3 id="why-the-special-extension">Why the special extension</h3>
+<p>A <code>.tempo-score</code> file is the friction-free distribution format. A user can:</p>
+<ol>
+<li>Click a <code>.tempo-score</code> link on a webpage</li>
+<li>Their browser downloads the file</li>
+<li>They double-click in Finder</li>
+<li>Tempo opens the review sheet</li>
+<li>They click Install</li>
+</ol>
+<p>Total time: about ten seconds. No editor, no JSON, no reading docs.</p>
+<h3 id="distribution">Distribution</h3>
+<p>The public catalog at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a> hosts vetted <code>.tempo-score</code> files for community-contributed sources. Click a file in the GitHub UI → Raw → save as <code>.tempo-score</code> → double-click to install.</p>
+<p>For your own scores you want to share, the same pattern works: put the file somewhere reachable (a Gist, a personal website, a Discord file upload), share the link, recipients double-click.</p>
+<h3 id="tempo-score-vs-json"><code>.tempo-score</code> vs <code>.json</code></h3>
+<p>Functionally identical content. The difference is the file extension:</p>
+<ul>
+<li><code>.json</code> — opens in your text editor by default; you’d have to manually copy it to <code>~/Library/Application Support/Tempo/Scores/</code></li>
+<li><code>.tempo-score</code> — opens in Tempo’s review sheet by default; one-click install</li>
+</ul>
+<p>Use <code>.tempo-score</code> for distribution, <code>.json</code> for local editing in <code>~/Library/Application Support/Tempo/Scores/</code>.</p>
+<hr>
+<h2 id="116--tempo-validate-cli-v1x">11.6 — <code>tempo-validate</code> CLI (V1.x)</h2>
+<blockquote>
+<p>🚧 <strong>V1.x roadmap</strong>: a command-line tool <code>tempo-validate</code> will ship in <code>/contrib/</code> for offline score linting. Useful for CI pipelines that vet community contributions to the public catalog, or for local sanity-checks before installing a hand-edited score.</p>
+</blockquote>
+<h3 id="expected-behaviour">Expected behaviour</h3>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#F69D50">tempo-validate</span><span style="color:#96D0FF"> path/to/score.json</span></span></code></pre>
+<p>Validates the score against the public schema. Exits 0 on valid, non-zero with a descriptive error on invalid.</p>
+<p>Likely extensions in the V1.x version:</p>
+<ul>
+<li>Lint warnings for rules that reference metadata keys not commonly seen for the provider</li>
+<li>Suggestions for missing fields (no <code>color</code>, no <code>groupingWindow</code>)</li>
+<li><code>--strict</code> mode that enforces the public-catalog rules (<code>openTerminalWith</code> rejected, etc.)</li>
+</ul>
+<p>For now, you can validate by:</p>
+<ol>
+<li>Loading the score in Tempo (file watcher picks up changes; parse errors land in OSLog, filterable by <code>app.tempo.tempo</code>)</li>
+<li>Manually running <code>jq</code> to confirm the JSON parses: <code>jq . path/to/score.json</code></li>
+<li>Checking the JSON Schema with any standard JSON Schema validator (the schema is at <code>https://tempoapp.app/schema/score.schema.json</code>)</li>
+</ol>
+<hr>
+<h2 id="117--best-practices">11.7 — Best practices</h2>
+<p>A score that’s good to use is a score that’s been thought about. A few patterns worth following:</p>
+<h3 id="severity-calibration">Severity calibration</h3>
+<ul>
+<li><strong><code>critical</code> is for the things that wake you up.</strong> WAN_DISCONNECTED, smoke detector, RAID degraded, root volume 100% full</li>
+<li><strong><code>error</code> is for “something I need to look at today.”</strong> Backup failed, monitor down, build broken</li>
+<li><strong><code>warning</code> is for “something I should be aware of, not urgent.”</strong> Low disk, one of three runs failed, deprecated API used</li>
+<li><strong><code>info</code> is for “this happened, no action needed.”</strong> Backup succeeded, deploy completed, login event</li>
+<li><strong><code>ok</code> is the same as <code>info</code> but signals positive outcome explicitly.</strong> Useful when the green “succeeded” pill is meaningful UX</li>
+</ul>
+<p>If every event is <code>critical</code>, none of them are. The five severities matter only if you use them with discipline.</p>
+<h3 id="action-design">Action design</h3>
+<ul>
+<li><strong>Idempotent</strong>. Clicking the action button twice in quick succession should not produce a double effect on the upstream side. (<code>openURL</code> is idempotent; <code>openTerminalWith</code> running a destructive command is not — be careful)</li>
+<li><strong>Visible side effects</strong>. The action’s label and SF Symbol should give the user a clear mental picture of what’s about to happen. “Open dashboard” is good; “Run thing” is not</li>
+<li><strong>Safe by default</strong>. Prefer read-only or transient actions (open URL, copy to clipboard, ping) over destructive ones (delete, restart, force-update). The action panel is one click away; treat it like a kitchen knife — sharp, but pointed at safe surfaces by default</li>
+</ul>
+<h3 id="naming">Naming</h3>
+<ul>
+<li><strong>Provider identifier</strong>: reverse-DNS for tools, <code>local.*</code> / <code>lab.*</code> for personal scripts, <code>scripts.&#x3C;lang>.&#x3C;name></code> for language-specific senders</li>
+<li><strong>Display name</strong>: the brand name everyone uses. “Kopia” not “kopia-backup-tool”. “GitHub” not “GitHub Actions Webhook Adapter”</li>
+<li><strong>Action labels</strong>: short, verb-led. “Open dashboard” not “Click here to open the dashboard”. “Copy MAC” not “Copy device MAC address to clipboard”</li>
+</ul>
+<h3 id="dont-overdo-grouping">Don’t overdo grouping</h3>
+<p>The temptation when writing your first score is to set up elaborate fallback chains. Resist. Most sources work fine with one or two grouping templates.</p>
+<p>A good rule of thumb: write grouping that handles the <strong>most common</strong> event shape from your source. Add fallbacks only when you observe in the real feed that some events aren’t grouping the way you expected.</p>
+<h3 id="use-the-available-keys-strip">Use the Available keys strip</h3>
+<p>Before writing rules, send a few real events from the source. Open the Score Editor, look at the Available keys strip — those are the keys actually present in your events. Write rules against those, not against keys you imagine might be there.</p>
+<h3 id="dont-ship-secrets-in-the-score">Don’t ship secrets in the score</h3>
+<p>Scores are JSON. They’re shared via the public catalog, copy-pasted in Discord, attached to GitHub issues. Never put a token, an API key, or a credential in a score’s action triggers.</p>
+<p>If you need a secret in an action, the right pattern is:</p>
+<ul>
+<li>The user creates the token/secret on their own Mac (Keychain, env var, dotfile)</li>
+<li>The action references the user-side secret indirectly (a script file the user wrote that reads from their Keychain)</li>
+<li>The score itself is purely about <em>which</em> action runs, not about the secret it uses</li>
+</ul>
+<hr>
+<h2 id="118--worked-example">11.8 — Worked example</h2>
+<p>Let’s write a score from scratch for a fictional tool: a custom log-scanning script that POSTs results.</p>
+<h3 id="the-payload">The payload</h3>
+<p>The script POSTs:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "title"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"log_scan completed"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"scripts.python.log_scan"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "metadata"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "host"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"monitor-01.lab"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Warning"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "duration_ms"</span><span style="color:#ADBAC7">: </span><span style="color:#6CB6FF">3400</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "custom"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "matches_found"</span><span style="color:#ADBAC7">: </span><span style="color:#6CB6FF">12</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "log_file"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"/var/log/syslog"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "scan_pattern"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ERROR|FAIL"</span></span>
+<span class="line"><span style="color:#ADBAC7">    }</span></span>
+<span class="line"><span style="color:#ADBAC7">  }</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<h3 id="goal">Goal</h3>
+<p>A card that:</p>
+<ul>
+<li>Shows “Log scan · {matches_found} matches” as the title</li>
+<li>Coloured by severity: 0 matches → ok green, 1-9 → warning yellow, 10+ → error red</li>
+<li>Has actions: “Open log file” (opens the scanned file in Console.app via <code>file://</code> … wait, that’s not whitelisted), “Copy log file path”, “SSH to host”</li>
+</ul>
+<h3 id="the-score">The score</h3>
+<p><code>~/Library/Application Support/Tempo/Scores/scripts.python.log_scan.json</code>:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#ADBAC7">{</span></span>
+<span class="line"><span style="color:#8DDB8C">  "providerIdentifier"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"scripts.python.log_scan"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "displayName"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Log Scan"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "color"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"#FF9F0A"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severityDefault"</span><span style="color:#ADBAC7">: {</span></span>
+<span class="line"><span style="color:#8DDB8C">    "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"info"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">    "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"OK"</span></span>
+<span class="line"><span style="color:#ADBAC7">  },</span></span>
+<span class="line"><span style="color:#8DDB8C">  "severityRules"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Critical"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"critical"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.custom.matches_found} matches"</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Error"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"error"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.custom.matches_found} matches"</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Warning"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"warning"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.custom.matches_found} matches"</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "match"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"OK"</span><span style="color:#ADBAC7"> },</span></span>
+<span class="line"><span style="color:#8DDB8C">      "severity"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"info"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Clean"</span></span>
+<span class="line"><span style="color:#ADBAC7">    }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ],</span></span>
+<span class="line"><span style="color:#8DDB8C">  "grouping"</span><span style="color:#ADBAC7">: [</span><span style="color:#96D0FF">"${metadata.host}/${metadata.custom.log_file}"</span><span style="color:#ADBAC7">],</span></span>
+<span class="line"><span style="color:#8DDB8C">  "groupingWindow"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"1d"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">  "defaultActions"</span><span style="color:#ADBAC7">: [</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"SSH to host"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"lock.open"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openURL"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ssh://admin@${metadata.host}"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Copy log path"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"doc.on.clipboard"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"copyToClipboard"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"${metadata.custom.log_file}"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">    },</span></span>
+<span class="line"><span style="color:#ADBAC7">    {</span></span>
+<span class="line"><span style="color:#8DDB8C">      "label"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"Tail log"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "systemIcon"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"list.bullet"</span><span style="color:#ADBAC7">,</span></span>
+<span class="line"><span style="color:#8DDB8C">      "trigger"</span><span style="color:#ADBAC7">: { </span><span style="color:#8DDB8C">"openTerminalWith"</span><span style="color:#ADBAC7">: </span><span style="color:#96D0FF">"ssh admin@${metadata.host} tail -100 ${metadata.custom.log_file}"</span><span style="color:#ADBAC7"> }</span></span>
+<span class="line"><span style="color:#ADBAC7">    }</span></span>
+<span class="line"><span style="color:#ADBAC7">  ]</span></span>
+<span class="line"><span style="color:#ADBAC7">}</span></span></code></pre>
+<h3 id="what-this-gets-you">What this gets you</h3>
+<p>When a log_scan event arrives:</p>
+<ul>
+<li>Title rendered as <code>log_scan completed</code>, with the severity pill coloured by <code>metadata.label</code> and labelled with the match count</li>
+<li>Three action buttons in the action panel: SSH, Copy path, Tail log</li>
+<li>Events from the same host + log file group together within a 1-day window</li>
+<li>The source panel shows “Log Scan” with the orange (#FF9F0A) accent</li>
+</ul>
+<h3 id="adjustments-after-observing-real-traffic">Adjustments after observing real traffic</h3>
+<p>Once a few events have arrived, look at the Available keys strip in the Score Editor for <code>scripts.python.log_scan</code>. Maybe you discover:</p>
+<ul>
+<li><code>metadata.custom.matches_found</code> isn’t always set (the script forgot it on early-exit paths). Add a fallback in the labels: <code>"label": "${metadata.custom.matches_found} matches"</code> could resolve as <code> matches</code> (empty)</li>
+<li>The tail log command needs sudo on some hosts. Adjust the action</li>
+</ul>
+<p>The score is iterative — you ship the first version, run it for a few days, refine the rules and actions based on what the feed actually looks like.</p>
+<hr>
+<h2 id="where-to-go-from-here">Where to go from here</h2>
+<ul>
+<li><strong>Submitting a score to the public catalog</strong> → <a href="https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md">github.com/caereforge/tempo-scores → CONTRIBUTING.md</a></li>
+<li><strong>The full webhook payload reference</strong> → <a href="https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md"><code>docs/webhook-reference.md</code></a></li>
+<li><strong>The Score Editor for hands-on changes</strong> → <a href="/docs/07-score-editor">§7 — Score Editor</a></li>
+<li><strong>Per-source setup for bundled providers</strong> → <a href="/docs/10-sources-reference">§10 — Sources reference</a></li>
+</ul> </article> <nav class="page-pager" data-astro-cid-uadgga6g> <a class="pager-link prev" href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>← Previous</span> <span class="pager-title" data-astro-cid-uadgga6g>Sources reference</span> </a> <a class="pager-link next" href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>Next →</span> <span class="pager-title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </nav> </main> </div>   </body></html>

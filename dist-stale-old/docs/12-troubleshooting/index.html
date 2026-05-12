@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="en"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Troubleshooting — Tempo user guide</title><meta name="description" content="Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files."><link rel="canonical" href="https://tempoapp.app/docs/12-troubleshooting/"><link rel="icon" type="image/svg+xml" href="/icons/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png"><meta property="og:title" content="Troubleshooting — Tempo user guide"><meta property="og:description" content="Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files."><meta property="og:type" content="website"><meta property="og:url" content="https://tempoapp.app/docs/12-troubleshooting/"><meta property="og:image" content="https://tempoapp.app/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tempoapp.app/og-image.png"><style>:root{--bg: #0d0d0f;--bg2: #141416;--border: #242428;--text: #f2f2f7;--text2: #8e8e93;--text3: #48484a;--blue: #0a84ff;--green: #30d158;--red: #ff453a;--orange: #ff9f0a;--font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;--font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;--measure: 680px}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;line-height:1.6}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}::selection{background:var(--blue);color:#fff}.site-nav[data-astro-cid-4lunwx2e]{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--border)}.site-nav-inner[data-astro-cid-4lunwx2e]{max-width:1100px;margin:0 auto;padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}.site-nav-logo[data-astro-cid-4lunwx2e]{font-family:var(--font-sans);font-weight:600;font-size:1rem;letter-spacing:-.005em;color:var(--text);text-decoration:none}.site-nav-logo[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-menu[data-astro-cid-4lunwx2e]{position:relative}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{list-style:none;cursor:pointer;display:none;padding:.35rem .5rem;border-radius:6px;color:var(--text2);transition:color .12s ease,background .12s ease}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]::-webkit-details-marker{display:none}.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]:hover{color:var(--text);background:var(--bg2)}.hamburger[data-astro-cid-4lunwx2e]{display:inline-flex;flex-direction:column;gap:4px;width:18px}.hamburger[data-astro-cid-4lunwx2e] span[data-astro-cid-4lunwx2e]{display:block;height:1.5px;background:currentColor;border-radius:1px}.site-nav-links[data-astro-cid-4lunwx2e]{display:flex;gap:1.25rem;align-items:center}.site-nav-link[data-astro-cid-4lunwx2e]{color:var(--text2);font-size:.9rem;text-decoration:none;transition:color .12s ease}.site-nav-link[data-astro-cid-4lunwx2e]:hover{color:var(--text);text-decoration:none}.site-nav-link[data-astro-cid-4lunwx2e].active{color:var(--text);font-weight:500}@media(max-width:720px){.site-nav-menu[data-astro-cid-4lunwx2e] summary[data-astro-cid-4lunwx2e]{display:inline-flex;align-items:center}.site-nav-menu[data-astro-cid-4lunwx2e]:not([open]) .site-nav-links[data-astro-cid-4lunwx2e]{display:none}.site-nav-menu[data-astro-cid-4lunwx2e][open] .site-nav-links[data-astro-cid-4lunwx2e]{position:absolute;top:calc(100% + .5rem);right:0;flex-direction:column;align-items:flex-start;gap:.5rem;padding:.85rem 1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;min-width:160px;box-shadow:0 6px 24px #00000059}}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.DrUdJ2yv.css"></head> <body> <header class="site-nav" data-astro-cid-4lunwx2e> <div class="site-nav-inner" data-astro-cid-4lunwx2e> <a class="site-nav-logo" href="/" aria-label="Tempo home" data-astro-cid-4lunwx2e>Tempo</a> <details class="site-nav-menu" data-astro-cid-4lunwx2e> <summary aria-label="Open menu" data-astro-cid-4lunwx2e> <span class="hamburger" aria-hidden="true" data-astro-cid-4lunwx2e> <span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span><span data-astro-cid-4lunwx2e></span> </span> </summary> <nav class="site-nav-links" aria-label="Primary" data-astro-cid-4lunwx2e> <a href="/gallery/" class="site-nav-link" data-astro-cid-4lunwx2e> Gallery </a><a href="/downloads" class="site-nav-link" data-astro-cid-4lunwx2e> Downloads </a><a href="/docs/" class="site-nav-link" data-astro-cid-4lunwx2e> Docs </a><a href="/scores/" class="site-nav-link" data-astro-cid-4lunwx2e> Scores </a><a href="/blog/" class="site-nav-link" data-astro-cid-4lunwx2e> Blog </a> </nav> </details> </div> </header>   <div class="docs-layout" data-astro-cid-uadgga6g> <aside class="sidebar" data-astro-cid-uadgga6g> <nav class="sidebar-nav" data-astro-cid-uadgga6g> <a class="back" href="/docs" data-astro-cid-uadgga6g>← Documentation</a> <ol class="chapter-list" data-astro-cid-uadgga6g> <li class data-astro-cid-uadgga6g> <a href="/docs/01-introduction" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>01</span> <span class="title" data-astro-cid-uadgga6g>Introduction</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/02-concepts" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>02</span> <span class="title" data-astro-cid-uadgga6g>Concepts</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/03-getting-started" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>03</span> <span class="title" data-astro-cid-uadgga6g>Getting started</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/04-source-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>04</span> <span class="title" data-astro-cid-uadgga6g>Source panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/05-event-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>05</span> <span class="title" data-astro-cid-uadgga6g>Event panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/06-action-panel" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>06</span> <span class="title" data-astro-cid-uadgga6g>Action panel</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/07-score-editor" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>07</span> <span class="title" data-astro-cid-uadgga6g>Score Editor</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/08-settings-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>08</span> <span class="title" data-astro-cid-uadgga6g>Settings reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/09-backup-restore" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>09</span> <span class="title" data-astro-cid-uadgga6g>Backup and restore</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/10-sources-reference" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>10</span> <span class="title" data-astro-cid-uadgga6g>Sources reference</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>11</span> <span class="title" data-astro-cid-uadgga6g>Score authoring</span> </a> </li><li class="is-current" data-astro-cid-uadgga6g> <a href="/docs/12-troubleshooting" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>12</span> <span class="title" data-astro-cid-uadgga6g>Troubleshooting</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>13</span> <span class="title" data-astro-cid-uadgga6g>FAQ</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/14-glossary" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>14</span> <span class="title" data-astro-cid-uadgga6g>Glossary</span> </a> </li><li class data-astro-cid-uadgga6g> <a href="/docs/15-appendix" data-astro-cid-uadgga6g> <span class="num" data-astro-cid-uadgga6g>15</span> <span class="title" data-astro-cid-uadgga6g>Appendix</span> </a> </li> </ol> </nav> </aside> <main class="doc" data-astro-cid-uadgga6g> <header class="page-header" data-astro-cid-uadgga6g> <p class="eyebrow" data-astro-cid-uadgga6g>Tempo user guide · Chapter 12</p> </header> <article class="prose" data-astro-cid-uadgga6g> <h1 id="12--troubleshooting">12 — Troubleshooting</h1>
+<p>Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files. When something feels wrong, the failure is almost always in one of these — and the patterns repeat.</p>
+<p>This chapter walks the failures we’ve seen, in rough order of “how often it bites people.”</p>
+<hr>
+<h2 id="121--networking-lan-ingestion">12.1 — Networking (LAN ingestion)</h2>
+<p>By far the most common class of problem: a source is configured, a webhook fires, but Tempo’s feed stays silent. The source app reports “webhook delivered successfully,” but Tempo never received it.</p>
+<p>The full networking troubleshooting page is on the website at <a href="https://tempoapp.app/scores/troubleshooting-networking">tempoapp.app/scores/troubleshooting-networking</a> — five scenarios that cover ~95% of the cases. The summary is below; for diagnostic commands and per-scenario fixes, the website page is the canonical reference.</p>
+<h3 id="quick-decision-tree">Quick decision tree</h3>
+<p>From the <strong>source</strong> machine (the one trying to send to Tempo):</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. curl -v http://&#x3C;your-mac>:7776/health</span></span>
+<span class="line"><span>   ├── 200 OK → Tempo is reachable. Skip to §12.3</span></span>
+<span class="line"><span>   ├── timeout → firewall (Mac-local or router/VLAN) is dropping packets</span></span>
+<span class="line"><span>   └── connection refused → Tempo isn't listening (Mac asleep? Tempo not running? wrong port?)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. If timeout: ping &#x3C;your-mac> from the source. If ping fails too,</span></span>
+<span class="line"><span>   the firewall/VLAN is the problem (router or Mac-local)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. If hostname doesn't resolve, use the LAN IP directly</span></span></code></pre>
+<h3 id="the-five-scenarios-that-cover-most-cases">The five scenarios that cover most cases</h3>
+<ol>
+<li><strong>Mac-local firewall denying inbound</strong> — macOS Application Firewall, Little Snitch (incoming rules are separate from outgoing), LuLu. Allow Tempo</li>
+<li><strong>Source is on a different VLAN</strong> — your router’s firewall is default-deny between VLANs. Add an allow rule for source VLAN → Mac IP, port 7776</li>
+<li><strong>Hostname doesn’t resolve from the source</strong> — mDNS (<code>.local</code>) doesn’t propagate across VLANs or through some routers. Use the Mac’s LAN IP directly; pair with DHCP reservation</li>
+<li><strong>AP / client isolation</strong> — guest WiFi or “IoT-safe” mode prevents same-network devices from talking. Disable isolation or move source to a trusted SSID/VLAN</li>
+<li><strong>Tempo isn’t actually listening</strong> — Mac is asleep, Tempo isn’t running, or the port is wrong. Open Settings → Ingestion to confirm port and that the server is up</li>
+</ol>
+<h3 id="diagnostic-bundle">Diagnostic bundle</h3>
+<p>Tempo’s <strong>Settings → Help → Export diagnostics bundle</strong> generates a zip that includes:</p>
+<ul>
+<li><code>firewall.txt</code> — reports macOS Application Firewall state, detects Little Snitch / LuLu / Murus / Radio Silence / Hands Off</li>
+<li>App version, configuration summary</li>
+<li>Last 24 hours of OSLog output</li>
+</ul>
+<p>Attach this to a Discord support thread or GitHub issue. The bundle is usually 50-200 KB; no PII, no token values, no event payloads.</p>
+<blockquote>
+<p>🛠 <strong>Tip</strong>: if the source is on the same Mac as Tempo (a script running locally), networking shouldn’t be a factor — <code>curl http://localhost:7776/ingest</code> always works as long as Tempo is running. Same-Mac connectivity issues usually point at Tempo not running, the wrong port, or the wrong token, not at firewall/network problems.</p>
+</blockquote>
+<hr>
+<h2 id="122--apple-calendar-sync-issues">12.2 — Apple Calendar sync issues</h2>
+<p>Calendar entries or reminders aren’t appearing in Tempo, or they appear but reflect stale state (you marked a reminder done on iPhone, but it’s still showing as open in Tempo). A few common patterns:</p>
+<h3 id="permission-revoked">Permission revoked</h3>
+<p>If Tempo lost calendar/reminders permission:</p>
+<ul>
+<li><strong>Symptom</strong>: Apple Calendar source disappears from the source panel, or appears but with zero events</li>
+<li><strong>Check</strong>: System Settings → Privacy &#x26; Security → Calendar (and Reminders). Tempo should be ticked</li>
+<li><strong>Fix</strong>: re-tick Tempo if it’s unticked. Quit and re-launch Tempo; it’ll re-request access on next launch</li>
+</ul>
+<h3 id="calendarlist-not-in-the-allowlist">Calendar/list not in the allowlist</h3>
+<ul>
+<li><strong>Symptom</strong>: some calendars appear, others don’t</li>
+<li><strong>Check</strong>: Tempo Settings → Agenda. Each calendar and reminder list has a checkbox; only ticked ones appear in the timeline</li>
+<li><strong>Fix</strong>: tick the missing ones</li>
+</ul>
+<h3 id="icloud-sync-delay">iCloud sync delay</h3>
+<p>If you change a reminder on another device (iPhone, iPad), there’s an iCloud-side delay before the change reaches macOS, plus an EventKit notification delay before Tempo sees it.</p>
+<ul>
+<li><strong>Symptom</strong>: a reminder you completed on iPhone shows as open in Tempo for 30 seconds to several minutes</li>
+<li><strong>Check</strong>: open Reminders.app on the same Mac. Does the reminder show as completed there? If not, iCloud hasn’t synced yet — wait</li>
+<li><strong>Fix</strong>: time. There’s no Tempo-side workaround for iCloud sync timing</li>
+</ul>
+<h3 id="task-manager-ical-subscription-latency">Task manager iCal subscription latency</h3>
+<p>If you’re using a task manager (Todoist, OmniFocus, Things, TickTick) bridged to Calendar.app via iCal subscription, the path is:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Task manager → iCal export URL → Calendar.app subscription refresh → EventKit → Tempo</span></span></code></pre>
+<p>Each hop adds latency. The Calendar.app subscription refresh interval is typically 5-15 minutes. A change in your task manager won’t reach Tempo faster than your iCal subscription’s refresh.</p>
+<ul>
+<li><strong>Workaround</strong>: change the subscription refresh interval to “Every 5 minutes” in Calendar.app (File → Get Info on the subscribed calendar)</li>
+<li><strong>Architectural fix</strong>: native API integration with a specific task manager is on the V1.x+ roadmap as a candidate Tempo IAP unlock</li>
+</ul>
+<h3 id="subscribed-calendar-shows-mystery-items">Subscribed calendar shows mystery items</h3>
+<p>If you see calendar entries in Tempo whose source you can’t identify, the most likely cause is a <strong>leftover iCal subscription</strong> in Calendar.app from a service you’ve migrated away from.</p>
+<ul>
+<li><strong>Check</strong>: open Calendar.app → File → in the sidebar, look for subscribed calendars. Right-click → Delete the obsolete one</li>
+<li><strong>Fix</strong>: the entries disappear from Tempo on the next refresh</li>
+</ul>
+<h3 id="eventkit-doesnt-notify-for-some-change-types">EventKit doesn’t notify for some change types</h3>
+<p>EventKit’s notification system isn’t comprehensive — some kinds of changes (a calendar’s colour changing in Calendar.app, certain attachment edits) don’t fire a notification. Tempo’s view stays a few minutes stale until the next periodic refresh.</p>
+<ul>
+<li><strong>Workaround</strong>: quit and re-launch Tempo for an immediate refresh</li>
+<li><strong>Acceptable</strong>: most users never notice this; the changes that don’t notify are rare and mostly cosmetic</li>
+</ul>
+<hr>
+<h2 id="123--a-score-isnt-appearing">12.3 — A score isn’t appearing</h2>
+<p>You’ve created a score (or are using a bundled one) and events from the source aren’t being styled the way you expected.</p>
+<h3 id="symptom-events-arrive-but-render-with-default-styling-no-severity">Symptom: events arrive but render with default styling, no severity</h3>
+<ul>
+<li><strong>Check 1</strong>: open the Score Editor for the provider. Is the score loaded? If the editor shows “No score selected” when you click on the provider’s chip, the score file may not be parsing</li>
+<li><strong>Check 2</strong>: open Console.app, filter by subsystem <code>app.tempo.tempo</code>. Look for “Failed to parse score” or “Schema validation error” messages</li>
+<li><strong>Fix</strong>: validate the JSON manually. <code>jq . ~/Library/Application\ Support/Tempo/Scores/&#x3C;provider>.json</code> — if it errors, fix the JSON. Otherwise check against the schema at <code>https://tempoapp.app/schema/score.schema.json</code></li>
+</ul>
+<h3 id="symptom-events-arrive-severity-is-set-but-custom-labels-show-literal-metadataxxx">Symptom: events arrive, severity is set, but custom labels show literal <code>${metadata.xxx}</code></h3>
+<ul>
+<li><strong>Cause</strong>: the score’s interpolation references a metadata key that the payload doesn’t include</li>
+<li><strong>Check</strong>: open the Score Editor → Available keys strip. The chips show keys actually present in recent events. If <code>${metadata.host}</code> shows up literally, <code>host</code> isn’t in the strip — the payload doesn’t have it</li>
+<li><strong>Fix</strong>: either change the score to reference a key that’s actually present, or change the upstream sender to include the missing key</li>
+</ul>
+<h3 id="symptom-events-dont-arrive-at-all">Symptom: events don’t arrive at all</h3>
+<ul>
+<li><strong>Check 1</strong>: confirm the request is reaching Tempo. Open Console.app, filter by <code>app.tempo.tempo</code>. Send a test event. You should see “Accepted ingestion …” or “Rejected ingestion … reason: <reason>”
+<ul>
+<li><strong>No message at all</strong> → the request isn’t reaching Tempo. Networking problem (§12.1)</li>
+<li><strong>“Rejected: invalid token”</strong> → token is wrong or revoked. Settings → Ingestion → confirm the token is active and correct</li>
+<li><strong>“Rejected: provider mismatch”</strong> → token is bound to a different providerIdentifier than the payload declares. Either change the payload’s <code>providerIdentifier</code> or rebind the token</li>
+<li><strong>“Rejected: schema validation: <field>”</field></strong> → payload is malformed. The error message names the offending field</li>
+</ul>
+</reason></li>
+<li><strong>Check 2</strong>: rate limiting. If you’re sending many events rapidly (a script in a tight loop), the rate limit (600 req/10min/token, 3000 req/10min/IP) may be active. Wait 10 minutes; the limit slides</li>
+</ul>
+<h3 id="symptom-score-has-rules-but-the-wrong-rule-is-firing">Symptom: score has rules but the wrong rule is firing</h3>
+<ul>
+<li><strong>Cause</strong>: rules evaluate top-to-bottom, first match wins. A more general rule above a more specific one means the specific case never gets reached</li>
+<li><strong>Check</strong>: in the Score Editor, look at rule order. The Try panel on the right shows you which rule actually fires for a recent event</li>
+<li><strong>Fix</strong>: move the specific rule above the general one (use the up-arrow on the rule card)</li>
+</ul>
+<h3 id="symptom-bundled-scores-behaviour-seems-off-after-an-app-update">Symptom: bundled score’s behaviour seems off after an app update</h3>
+<ul>
+<li><strong>Cause</strong>: an update may have improved a bundled score, but your local edits to that score persist (Tempo doesn’t overwrite user edits on update)</li>
+<li><strong>Fix</strong>: in the Score Editor, click <strong>Reset to bundled defaults</strong>. This replaces your local copy with the bundled version. You’ll lose your customisations — make a copy first if you want to merge them back manually</li>
+</ul>
+<hr>
+<h2 id="124--dmg-wont-open--gatekeeper-warning">12.4 — DMG won’t open / Gatekeeper warning</h2>
+<p>You downloaded the DMG and macOS refuses to open Tempo.</p>
+<h3 id="symptom-tempo-cant-be-opened-because-it-is-from-an-unidentified-developer">Symptom: “Tempo can’t be opened because it is from an unidentified developer”</h3>
+<ul>
+<li><strong>Cause</strong>: macOS doesn’t recognise the signature. Usually caused by a corrupted download or a non-default browser stripping the quarantine attribute oddly</li>
+<li><strong>Fix 1</strong> (preferred): re-download the DMG from <code>downloads.tempoapp.app</code>. Use the default browser for the download (Safari or whatever else is set in System Settings)</li>
+<li><strong>Fix 2</strong>: if re-downloading still produces this dialog, open System Settings → Privacy &#x26; Security. Scroll to the “Security” section. Click <strong>Open Anyway</strong> next to the Tempo entry</li>
+</ul>
+<h3 id="symptom-tempo-is-damaged-and-cant-be-opened">Symptom: “Tempo is damaged and can’t be opened”</h3>
+<ul>
+<li><strong>Cause</strong>: almost always a corrupted download. The signature check failed because the file’s bytes don’t match what we shipped</li>
+<li><strong>Fix</strong>: re-download the DMG. If it persists, verify the SHA-256 checksum against the value on the changelog page. If the checksum matches but macOS still rejects, file a GitHub issue with your macOS version and the checksum</li>
+</ul>
+<h3 id="symptom-macos-opens-the-dmg-but-the-tempo-icon-launches-and-immediately-quits">Symptom: macOS opens the DMG but the Tempo icon launches and immediately quits</h3>
+<ul>
+<li><strong>Cause</strong>: typically a missing entitlement or a permission dialog being dismissed without granting</li>
+<li><strong>Fix</strong>: check Console.app for <code>app.tempo.tempo</code> entries around the launch time. Look for “missing entitlement” or “permission denied” errors. The most common cause in this state is Calendar/Reminders permission being denied at first launch — open System Settings → Privacy &#x26; Security → Calendar and tick Tempo</li>
+</ul>
+<hr>
+<h2 id="125--performance-with-many-sources">12.5 — Performance with many sources</h2>
+<p>If your timeline has tens of thousands of events and Tempo feels sluggish:</p>
+<h3 id="reduce-retention">Reduce retention</h3>
+<ul>
+<li>Settings → Maintenance → Database → <strong>Keep events for</strong> → pick a window (90 days, 6 months, 1 year)</li>
+<li>On the next launch, Tempo deletes events older than the window. Database shrinks; queries get faster</li>
+</ul>
+<p>The 84-day heatmap window means anything beyond that isn’t visualised anyway, so a 90-day or 180-day retention is usually fine for active users.</p>
+<h3 id="auto-dismiss-noisy-sources">Auto-dismiss noisy sources</h3>
+<ul>
+<li>Settings → Maintenance → Auto-dismiss → enable per source for the chatty ones</li>
+<li>Auto-dismissed events stay in the database (subject to retention) but drop off the live feed</li>
+</ul>
+<h3 id="hide-sources-youre-not-currently-using">Hide sources you’re not currently using</h3>
+<ul>
+<li>Source panel → info button (ⓘ) → <strong>Hide from timeline</strong></li>
+<li>Hidden sources stop contributing to the feed and the heatmap. Their events still arrive and are stored; un-hide later if you want them back</li>
+</ul>
+<h3 id="tighten-grouping">Tighten grouping</h3>
+<ul>
+<li>A source that produces many similar events with no grouping is the most likely cause of a long feed. Score Editor → Stack grouping → enable, with a grouping template that clusters related events</li>
+</ul>
+<h3 id="vacuum-the-database">Vacuum the database</h3>
+<p>If retention has deleted a lot of rows, the database file may have empty space. Tempo runs <code>VACUUM INTO</code> automatically every time it produces a backup snapshot, so an easy way to reclaim space is to trigger an on-demand backup from <strong>Settings → Maintenance → Database → Backup now</strong>, then keep using Tempo as normal.</p>
+<p>For a direct vacuum on the live database, quit Tempo and run:</p>
+<pre class="astro-code github-dark-dimmed" style="background-color:#22272e;color:#adbac7; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#F69D50">sqlite3</span><span style="color:#96D0FF"> ~/Library/Application</span><span style="color:#F47067">\ </span><span style="color:#96D0FF">Support/Tempo/Tempo.sqlite</span><span style="color:#96D0FF"> 'VACUUM;'</span></span></code></pre>
+<p>V1 does not expose a manual “Vacuum now” button in the UI; it’s a candidate for a future release.</p>
+<h3 id="when-all-of-the-above-isnt-enough">When all of the above isn’t enough</h3>
+<p>Open a Discord support thread with your diagnostic bundle (Settings → Help → Export diagnostics). We’ll look at your config and timeline volume; if there’s a deeper issue, we’d rather hear about it.</p>
+<hr>
+<h2 id="126--logs-and-diagnostic-export">12.6 — Logs and diagnostic export</h2>
+<h3 id="oslog-consoleapp">OSLog (Console.app)</h3>
+<p>Tempo uses Apple’s unified logging system. Logs are accessible via Console.app:</p>
+<ol>
+<li>Open Console.app</li>
+<li>In the left sidebar, click your Mac name</li>
+<li>In the top filter bar, set: <strong>Subsystem: <code>app.tempo.tempo</code></strong></li>
+<li>Click <strong>Start Streaming</strong> to watch live, or <strong>Action → Include Info Messages</strong> for retrospective lookback</li>
+</ol>
+<p>Useful filters:</p>
+<ul>
+<li><code>Action: Include Info Messages</code> for general activity</li>
+<li><code>Process: Tempo</code> if you have a noisy log feed and want only Tempo entries</li>
+<li>Search for specific terms: “Failed to parse”, “Rejected ingestion”, “Score reload”, etc.</li>
+</ul>
+<h3 id="diagnostic-bundle-1">Diagnostic bundle</h3>
+<p>The single-click way to grab “everything Tempo support might want”:</p>
+<ul>
+<li><strong>Settings → Help → Export diagnostics bundle…</strong></li>
+</ul>
+<p>The bundle is a zip containing:</p>
+<ul>
+<li><code>manifest.json</code> — bundle version, app version, generation timestamp</li>
+<li><code>system.txt</code> — macOS version, hardware summary</li>
+<li><code>firewall.txt</code> — macOS Application Firewall state, third-party firewall detection</li>
+<li><code>config.json</code> — your Tempo configuration summary (sources connected, retention, auto-rules — <em>not</em> tokens or event payloads)</li>
+<li><code>oslog.log</code> — the last 24 hours of Tempo’s OSLog output</li>
+</ul>
+<p>Use the bundle when:</p>
+<ul>
+<li>Asking for help on Discord or GitHub</li>
+<li>Reporting a bug</li>
+<li>Comparing behaviour with another user</li>
+</ul>
+<p>What’s <em>not</em> in the bundle:</p>
+<ul>
+<li>Token <strong>values</strong> (only token names appear, in <code>config.json</code>)</li>
+<li>Event payloads or titles</li>
+<li>Calendar contents</li>
+<li>Anything in your <code>~/Library/Application Support/Tempo/Scores/</code> (your score files)</li>
+</ul>
+<p>If a support request needs your scores, attach them separately. The bundle deliberately excludes them because scores can contain <code>${metadata.xxx}</code> interpolations that a paranoid eye might read as data leakage even though they’re just templates.</p>
+<h3 id="audit-log">Audit log</h3>
+<p>Every ingestion attempt — accepted or rejected — is captured in OSLog. Filter by subsystem <code>app.tempo.tempo</code> and look for <code>Accepted ingestion</code> or <code>Rejected ingestion</code> entries. Each entry includes:</p>
+<ul>
+<li>Source IP</li>
+<li>Token name (never the value)</li>
+<li>Provider identifier</li>
+<li>Result + reason on rejection</li>
+</ul>
+<p>The audit log isn’t surfaced as a UI in V1; it lives in OSLog. The diagnostic bundle includes the last 24 hours of it. For long-term forensics, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple’s <code>os_log</code> reference).</p>
+<hr>
+<h2 id="127--reset-to-bundled-defaults">12.7 — Reset to bundled defaults</h2>
+<p>If a bundled score has drifted into a state you don’t understand, or you want to undo wholesale customisation:</p>
+<h3 id="reset-a-single-score">Reset a single score</h3>
+<ul>
+<li><strong>Score Editor → toolbar → Reset to bundled defaults</strong></li>
+</ul>
+<p>This replaces your local copy of the score with the version that ships in the app bundle. Your customisations are gone — make a duplicate first via the chip bar’s <strong>Duplicate</strong> if you want a backup.</p>
+<h3 id="reset-all-scores">Reset all scores</h3>
+<p>There’s no single “reset all” button in V1. To do it manually:</p>
+<ol>
+<li>Quit Tempo</li>
+<li>Delete the contents of <code>~/Library/Application Support/Tempo/Scores/</code> (move to Trash to keep a recovery option)</li>
+<li>Re-launch Tempo</li>
+</ol>
+<p>On launch, the bundled scores are seeded fresh. Any user-authored scores you wrote from scratch and didn’t keep elsewhere are gone — back up first.</p>
+<h3 id="reset-settings">Reset settings</h3>
+<p>To reset Tempo’s UserDefaults (theme, footer toggle, heatmap colours, auto-rules, source overrides):</p>
+<ol>
+<li>Quit Tempo</li>
+<li>Run in Terminal: <code>defaults delete app.tempo.tempo</code></li>
+<li>Re-launch Tempo</li>
+</ol>
+<p>This removes all your preferences. Calendar permission, ingestion tokens (in Keychain), and event database are unaffected.</p>
+<blockquote>
+<p>⚠️ <strong>Warning</strong>: reset is destructive. Always make a backup (Settings → Maintenance → Database → Backup now) before resetting anything you can’t easily reconstruct.</p>
+</blockquote>
+<h3 id="full-nuclear-reset">Full nuclear reset</h3>
+<p>If you want Tempo back to first-launch state:</p>
+<ol>
+<li>Quit Tempo</li>
+<li>Move <code>~/Library/Application Support/Tempo/</code> to Trash</li>
+<li>Run <code>defaults delete app.tempo.tempo</code></li>
+<li>Open Keychain Access, delete all entries for <code>app.tempo.tempo</code></li>
+<li>Re-launch Tempo</li>
+</ol>
+<p>You’re back to “first launch — grant calendar permission” state. Use this only if everything else has failed.</p>
+<hr>
+<h2 id="when-troubleshooting-fails">When troubleshooting fails</h2>
+<p>If you’ve worked through this chapter and the problem persists, the project’s support channels are:</p>
+<ul>
+<li><strong>Discord</strong> — invite link at <a href="https://tempoapp.app/community/">tempoapp.app/community</a></li>
+<li><strong>GitHub Issues</strong> — <a href="https://github.com/caereforge/tempo-site/issues">github.com/caereforge/tempo-site/issues</a> for site/docs issues, public repo for the app to come post-V2</li>
+<li><strong>Email</strong> — <code>support@tempoapp.app</code></li>
+</ul>
+<p>When asking for help, include:</p>
+<ul>
+<li>Your macOS version (System Settings → General → About)</li>
+<li>Your Tempo version (menubar Tempo → About Tempo)</li>
+<li>The diagnostic bundle (Settings → Help → Export diagnostics)</li>
+<li>A description of what you expected vs what happened</li>
+</ul>
+<p>The support team is one person (the founder) plus the community. We’ll get back to you, but be patient — this is freeware in V1, not a 24/7 enterprise product.</p> </article> <nav class="page-pager" data-astro-cid-uadgga6g> <a class="pager-link prev" href="/docs/11-score-authoring" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>← Previous</span> <span class="pager-title" data-astro-cid-uadgga6g>Score authoring</span> </a> <a class="pager-link next" href="/docs/13-faq" data-astro-cid-uadgga6g> <span class="pager-dir" data-astro-cid-uadgga6g>Next →</span> <span class="pager-title" data-astro-cid-uadgga6g>FAQ</span> </a> </nav> </main> </div>   </body></html>
