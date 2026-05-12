@@ -94,7 +94,7 @@ Scores live as files in `~/Library/Application Support/Tempo/Scores/`. Tempo loa
 
 The score system is **the canonical configuration surface** between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source — different colours, different labels, different action buttons — the answer is almost always "edit the score."
 
-> 💡 **Note**: scores are the V1 way to customise Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) for hands-on editing without touching JSON directly. A visual score builder is on the V2 roadmap; until then, the editor + manual JSON cover all use cases.
+> 💡 **Note**: scores are the V1 way to customise Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) that covers severity rules, presentation, and grouping for hands-on editing without touching JSON. Default actions (the buttons themselves) are edited in the score JSON file directly in V1 — see [§7.6](/docs/07-score-editor#76-default-actions). A visual editor for actions is on the V2 roadmap.
 
 **Where to learn more**: [chapter 7 — Score Editor](/docs/07-score-editor) for hands-on editing; [chapter 11 — Score authoring](/docs/11-score-authoring) for the full JSON reference; [glossary entry for score](/docs/14-glossary#score).
 
