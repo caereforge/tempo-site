@@ -70,7 +70,7 @@ The severity badge at the rightmost edge of every alert card uses a shared visua
 
 | Severity | Label | Colour | Meaning |
 |---|---|---|---|
-| `info` | INFO | green / neutral | Informational only, no action needed |
+| `info` | INFO | blue | Informational only, no action needed |
 | `ok` | OK | green | Positive outcome (a backup succeeded, a probe is up) |
 | `warning` | WARNING | yellow | Something to look at, not urgent |
 | `error` | ERROR | red | Something failed, attention needed |
