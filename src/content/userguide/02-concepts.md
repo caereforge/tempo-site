@@ -1,6 +1,6 @@
 ---
 title: "Concepts"
-description: "The atomic unit Tempo deals with is the **event**."
+description: "The vocabulary Tempo uses — events, sources, providers, scores, severity, acknowledgment, dismissal — what each one means and how they relate."
 chapter: 2
 order: 2
 draft: false
