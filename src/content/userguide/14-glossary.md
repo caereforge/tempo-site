@@ -325,7 +325,3 @@ For events from sources that report ongoing conditions (like Uptime Kuma monitor
 Stateful behaviour requires the source to send updates with a stable [externalID](#externalid) so Tempo can recognise updates as belonging to the same condition.
 
 **See also**: Chapter 2.5 (Severity, state, acknowledgment, dismissal).
-
----
-
-*Glossary draft 2026-05-04. Living doc — refined as the rest of the User Guide is written. Add a term whenever a chapter introduces a new one and there isn't already an entry.*
