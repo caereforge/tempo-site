@@ -636,7 +636,14 @@ const allShots: Shot[] = [
     .hero-shots {
       grid-template-columns: 1fr;
     }
-    .scenario-grid,
+    .scenario-grid {
+      grid-template-columns: 1fr;
+    }
+    .settings-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
     .settings-grid {
       grid-template-columns: 1fr;
     }
