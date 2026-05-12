@@ -641,19 +641,16 @@ The helper:
 START=$(date +%s)
 if rsync -az ~/Documents user@nas.local:/backups/laptop/; then
     DURATION=$(( $(date +%s) - START ))
-    tempo_send \
-      --provider local.nightly_backup \
-      --title "nightly_backup · OK in ${DURATION}s" \
-      --label OK \
-      --host "$(hostname)" \
-      --duration-ms $((DURATION * 1000))
+    tempo_send local.nightly_backup "nightly_backup · OK in ${DURATION}s" \
+      --severity info \
+      --meta host="$(hostname)" \
+      --meta duration_s=$DURATION
 else
-    tempo_send \
-      --provider local.nightly_backup \
-      --title "nightly_backup · failed" \
-      --label Error \
-      --host "$(hostname)" \
-      --exit-code $?
+    EXIT=$?
+    tempo_send local.nightly_backup "nightly_backup · failed (exit ${EXIT})" \
+      --severity error \
+      --meta host="$(hostname)" \
+      --meta exit_code=$EXIT
 fi
 ```
 
