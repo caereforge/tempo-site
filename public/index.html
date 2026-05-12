@@ -48,9 +48,9 @@ body {
 
 /* ── Nav ── */
 nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 40px;
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -60,6 +60,8 @@ nav {
   -webkit-backdrop-filter: blur(12px);
   z-index: 100;
 }
+.nav-logo { justify-self: start; }
+.nav-links { justify-self: center; }
 .nav-logo {
   display: flex;
   align-items: center;
