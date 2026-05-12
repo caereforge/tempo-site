@@ -486,14 +486,16 @@ const allShots: Shot[] = [
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
-  /* Heatmap list — stacked single-column. Native aspect ratios differ
-     wildly (daily strip ≈ 24:1, historical mosaic ≈ 1.76:1), so side-by-
-     side renders one of them unusable. Full-width rows keep both
-     legible at the displayed scale. */
+  /* Heatmap list — two boxes side-by-side, equal width, heights auto from
+     content. Native aspect ratios differ wildly (daily strip ≈ 24:1,
+     historical mosaic ≈ 1.76:1), so the heights end up very different —
+     intentional: the boxes match in width, the images keep their natural
+     proportions inside. */
   .heatmap-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
   }
   .heatmap-card {
     margin: 0;
