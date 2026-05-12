@@ -139,7 +139,7 @@ Every event gets a **severity** label. The five values, from quietest to loudest
 
 | Severity | Meaning | Default colour |
 |---|---|---|
-| `info` | Informational, no action needed | green / neutral |
+| `info` | Informational, no action needed | blue |
 | `ok` | Positive outcome (a backup succeeded, a probe is up) | green |
 | `warning` | Something you should look at, not urgent | yellow |
 | `error` | Something failed, attention needed | red |
