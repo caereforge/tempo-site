@@ -231,7 +231,7 @@ The Database tab covers permanent retention plus app backups.
 
 Permanently deletes older events from the database on app launch and when the setting changes. Default keeps everything.
 
-> 💡 **Note**: the activity heatmap visualises the last 84 days. Setting retention shorter than 84 days will leave the corresponding tiles permanently empty — historical activity outside the retention window can't be reconstructed. Dismissed events keep contributing to the heatmap until they fall out of retention.
+> 💡 **Note**: the [source history view](/docs/14-glossary#source-history-view) (the GitHub-style 84-day grid you reach from a source's menu) visualises the last 84 days. Setting retention shorter than 84 days will leave the corresponding tiles permanently empty — historical activity outside the retention window can't be reconstructed. Dismissed events keep contributing to the history view until they fall out of retention.
 
 For most users, **Forever** is the right choice. Tempo's database is small (most events are a few hundred bytes) and disk space is cheap. Pick a window only if your timeline grows large enough to feel slow (millions of events) or you have policy reasons to limit retention.
 
