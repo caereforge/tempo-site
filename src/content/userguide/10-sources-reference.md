@@ -516,7 +516,7 @@ The bundled Scripts score (covered in §10.2) provides a sensible default: maps 
 
 ### Title convention
 
-Per the documented convention (memory: `feedback_user_script_title_convention.md`):
+A useful title convention:
 
 ```
 <script_name> <metric_or_outcome>
