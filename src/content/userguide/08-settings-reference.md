@@ -119,7 +119,7 @@ Tokens are stored in your macOS Keychain (not on disk in cleartext). Tempo retri
 
 #### Audit log
 
-Every ingestion attempt — accepted or rejected — is logged via Apple's unified logging system (`os.Logger`). Filter by subsystem `app.tempo.tempo` in **Console.app** to see the trail. The log captures:
+Every ingestion attempt — accepted or rejected — is logged via Apple's unified logging system (`os.Logger`). Filter by subsystem `app.tempoapp.Tempo` in **Console.app** to see the trail. The log captures:
 
 - Timestamp
 - Source IP
