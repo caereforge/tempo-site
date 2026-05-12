@@ -112,7 +112,7 @@ Replace `$TEMPO_TOKEN` with the token shown in **Tempo Settings → Ingestion**.
 
 ### 4. Connect a real source
 
-Once you've seen an event arrive, you can connect a real source. The bundled scores cover the most common cases — Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar & Reminders. Each one has its own setup chapter in [§10 Sources reference](/docs/10-sources-reference).
+Once you've seen an event arrive, you can connect a real source. The bundled scores cover the most common cases — UniFi (Network and Protect), Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Scripts, Synology, and Hazel-via-Mail. Apple Calendar and Reminders are also pre-wired via a built-in EventKit provider (no score installation needed). Each source has its own setup chapter in [§10 Sources reference](/docs/10-sources-reference).
 
 If your source isn't on the bundled list, the [generic webhook](/docs/10-sources-reference#102-generic-webhook) covers anything that can POST JSON.
 
