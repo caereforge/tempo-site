@@ -6,19 +6,19 @@ tags: ["announcement", "release", "launch"]
 draft: false
 ---
 
-After months of solo work, **Tempo v1 is live**. Signed, notarized, Sparkle-ready, on the Downloads page.
+After months of solo work, **Tempo v1 is live**. Signed, notarized, Homebrew and Sparkle-ready, on the Downloads page.
 
-If you've been following this project on [Mac Power Users](https://talk.macpowerusers.com/t/tempo-im-building-a-mac-app-that-puts-every-event-from-every-tool-into-one-timeline/45187), on r/selfhosted or r/homelab, or through the newsletter, first of all, thank you. The early questions shaped how I talk about Tempo today. The framing "like Tapestry but for work" came from zkarj on the MPU thread and stuck. The demo video on the home page exists because mlevison asked for one. CalDAV got explicit setup docs in the user guide because rob raised the Fastmail case. The questions made the product clearer. This post wouldn't read the way it does without them.
+If you've been following this project on Mac Power Users, on r/selfhosted or r/macapps, or through the newsletter, first of all, thank you. The early questions shaped how I talk about Tempo today. The tagline framing came from a casual line in the MPU thread and stuck. The demo video on the home page exists because someone asked for one. CalDAV got explicit setup docs in the user guide because a Fastmail user raised the case. The questions made the product clearer. This post wouldn't read the way it does without them.
 
 This is meant as the canonical "what is it, who's it for, how do I get it, what's missing". Bookmark and link to it freely.
 
 ### What Tempo is
 
-A native macOS event hub. Anything that can POST JSON to a LAN endpoint shows up on one chronological timeline, side-by-side with your calendar entries and reminders. Each event arrives in context, with the actions you'd reach for already attached: SSH to the failing host, open the Home Assistant dashboard, restart the container, copy the IP, acknowledge the incident.
+A native macOS event hub. Anything that can POST JSON to a LAN endpoint shows up on one chronological timeline, optionally side-by-side with your calendar entries and reminders. Each event arrives in context, with the actions you'd reach for already attached: SSH to a host, open a tool's dashboard, restart the container, copy the IP, acknowledge the incident.
 
 **You stay the conductor. Tempo holds the score, and in v1 it never acts on its own.**
 
-The "score" is a small JSON file that defines the visual treatment, severity rules, grouping policy, and default actions for a source. Tempo ships with nine bundled scores at launch: UniFi Network, UniFi Protect, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Synology, Scripts (your own bash/python/etc.), and Hazel-via-Mail. Apple Calendar and Reminders are pre-wired via a built-in EventKit provider, no score installation needed.
+The "score" is a small JSON file that defines the visual treatment, severity rules, grouping policy, and default actions for a source. Tempo ships with nine bundled scores at launch: UniFi Network, UniFi Protect, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Synology, Scripts (your own bash/python/etc.), and Hazel. Apple Calendar and Reminders are pre-wired via a built-in EventKit provider, no score installation needed.
 
 Local SQLite database. No account. No cloud sync. No telemetry. The HTTP ingestion server binds your LAN so a NAS, a Home Assistant box, or a monitoring stack on a different host can post to it directly, with per-provider tokens, an audit log, and optional TLS.
 
@@ -36,7 +36,7 @@ Tempo is that tool.
 
 The wedge audience is homelab operators, Home Assistant users, self-hosters, sysadmins running a Mac as their daily driver. If you have a NAS, a UniFi controller, a Kopia backup running somewhere, an Uptime Kuma instance, and the urge to stop juggling seven dashboards, Tempo is built for you.
 
-The secondary audience is any Mac power user who'd benefit from one timeline for calendar + reminders + alerts + webhooks + automation outputs. You don't need a homelab to use Tempo. Apple Calendar + Reminders + a Hazel rule that POSTs a webhook, or an Apple Shortcut that does the same, already gives you something useful out of the box.
+The secondary audience (but not by relevance) is any Mac power user who'd benefit from one timeline for calendar + reminders + alerts + webhooks + automation outputs. You don't need a homelab to use Tempo. Apple Calendar + Reminders + a Hazel rule that POSTs a webhook, or an Apple Shortcut that does the same, already gives you something useful out of the box.
 
 ### What v1 doesn't do
 
@@ -51,13 +51,13 @@ For the full "what Tempo isn't" list, see the [scope-and-discipline post](/blog/
 
 ### Pricing
 
-**v1 is freeware. Forever, for everyone who installs it.** No trial, no Free/Pro tiers, no subscription, no account required. The full reasoning is in the [freeware announcement post](/blog/tempo-goes-freeware/), but the short version: I want the v1 community to shape what v2 looks like, and freeware Y1 is how I get out of the gate without paywall friction.
+**v1 is freeware. Forever, for everyone who installs it.** No trial, no Free/Pro tiers, no subscription, no account required. The full reasoning is in the [freeware announcement post](/blog/tempo-goes-freeware/), but the short version: I want the v1 community to shape what v2 looks like, and freeware v1 is how I get out of the gate without paywall friction.
 
 v2 may eventually be a paid one-time purchase, if v1 finds an audience and the community asks for things that justify a second major release. That's a 2026/2027 question, not a today question.
 
 ### Get Tempo
 
-- **[Download the DMG](https://downloads.tempoapp.app/Tempo-0.3.0.dmg)** (7 MB, signed and notarized for Developer ID, macOS 15+)
+- **[Download the DMG](https://downloads.tempoapp.app/Tempo-0.3.1.dmg)** (7 MB, signed and notarized for Developer ID, macOS 15+)
 - **[Full user guide](/docs/)**: fifteen chapters covering concepts, setup, score authoring, troubleshooting, glossary
 - **[Score catalog](/scores/)**: bundled scores plus community contributions (Pi-hole, Proxmox, Jellyfin, Vaultwarden, Hazel)
 - **[Roadmap](/roadmap/)**: what's coming in v1.1, v1.2, and beyond, driven by what you ask for
