@@ -73,7 +73,7 @@ Bundle file name: `tempo-backup-YYYYMMDD-HHmmss.tempobackup`
 
 Ingestion tokens — both their values *and* their names — are never written to the backup bundle. The list of token names alone reveals which services your Mac talks to (Kopia, UniFi, GitHub Actions, …), which is sensitive infrastructure metadata; the values themselves are credentials. Both belong in the macOS Keychain, not in a file on a backup drive.
 
-If you want your tokens to survive a Mac swap, the path is **Settings → Ingestion**, click the **Save in Keychain** button on each token you care about. That mirrors the token to a per-token Keychain item with `kSecAttrSynchronizable=true`, which iCloud Keychain replicates to your other Macs. On a fresh Mac, after iCloud Keychain has synced (give it a minute), the tokens are reachable from the Keychain Access app under service names starting with `app.tempoapp.tempo.token.`.
+If you want your tokens to survive a Mac swap, the path is **Settings → Ingestion**, click the **Save in Keychain** button on each token you care about. That mirrors the token to a per-token Keychain item with `kSecAttrSynchronizable=true`, which iCloud Keychain replicates to your other Macs. On a fresh Mac, after iCloud Keychain has synced (give it a minute), the tokens are reachable from the Keychain Access app under the service `app.tempo.tempo.publictoken` (one entry per token; the token name lives in the account field).
 
 A V1.1+ panel will let you re-import these synced Keychain entries back into Tempo automatically. For V1, the import is manual — see [§9.4 — Step 4](#step-4--recreate-or-import-your-ingestion-tokens) below for the procedure.
 
