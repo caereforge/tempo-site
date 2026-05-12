@@ -42,13 +42,31 @@ In Hazel, edit the rule you want Tempo to receive notifications for. Add a new a
 TEMPO_HOST="127.0.0.1:7776"
 TEMPO_TOKEN="paste-your-hazel-token-here"
 
+# Default provider — every Hazel rule POSTs under the umbrella id and
+# the score above renders all of them with the same five actions. Good
+# when you have one or two Hazel rules and want them grouped together.
+PROVIDER="com.noodlesoft.hazel"
+
+# Optional — turn this rule into its own sub-source under the Hazel
+# umbrella. Pick a short stable suffix (scanner, mail, keepa, photos,
+# downloads, ...) and uncomment the line below. The same Tempo token
+# works for any com.noodlesoft.hazel.* sub-source as long as it's
+# bound to the parent prefix in Settings → Ingestion.
+#
+# Examples (uncomment ONE):
+#   PROVIDER="com.noodlesoft.hazel.scanner"   # ~/Scans → invoice PDFs
+#   PROVIDER="com.noodlesoft.hazel.mail"      # Mail rule export → carrier emails, receipts
+#   PROVIDER="com.noodlesoft.hazel.keepa"     # Keepa price-drop email forwards
+#   PROVIDER="com.noodlesoft.hazel.photos"    # ~/Pictures import → organising shots
+#   PROVIDER="com.noodlesoft.hazel.downloads" # ~/Downloads → cleanup / triage rules
+
 curl -sS -X POST "http://$TEMPO_HOST/ingest" \
   -H "X-Tempo-Token: $TEMPO_TOKEN" \
   -H "Content-Type: application/json" \
   -d "$(cat <<EOF
 {
   "title": "$HAZEL_RULE_NAME — $(basename "$1")",
-  "providerIdentifier": "com.noodlesoft.hazel",
+  "providerIdentifier": "$PROVIDER",
   "eventType": "alert",
   "metadata": {
     "path":   "$1",
