@@ -1,6 +1,6 @@
 ---
 title: "Glossary"
-description: "A user action you take on an event to mean \"I've seen this, I'm leaving it in the feed for now.\" The event stays visible but its appearance shifts — the title becomes lighter, the severity meta-text gets an outlined \"Acked\" pill — so it sto"
+description: "Definitions for every Tempo-specific term: event, source, provider, score, severity, ack, dismiss, ingestion, heatmap, and more. Cross-linked to the chapters that introduce each one."
 chapter: 14
 order: 14
 draft: false
