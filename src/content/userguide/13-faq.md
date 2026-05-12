@@ -98,9 +98,9 @@ Tempo does not collect or transmit telemetry of any kind in V1. The ingestion se
 
 - `Tempo.sqlite` — events database
 - `Scores/` — score JSON files
-- `Logs/`, `audit.log` — diagnostic
+- `Logs/` — diagnostic (rolling daily files, 7-day retention)
 
-Plus `~/Library/Preferences/app.tempo.tempo.plist` for settings, and macOS Keychain for ingestion tokens.
+Plus `~/Library/Preferences/app.tempoapp.Tempo.plist` for settings, and macOS Keychain for ingestion tokens.
 
 See [§9.1](/docs/09-backup-restore#91--where-your-data-lives) for the full breakdown.
 
