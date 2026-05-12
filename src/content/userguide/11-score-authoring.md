@@ -371,9 +371,9 @@ Likely extensions in the V1.x version:
 
 For now, you can validate by:
 
-1. Loading the score in Tempo (file watcher picks up changes; parse errors land in OSLog, filterable by `app.tempo.tempo`)
+1. Loading the score in Tempo (file watcher picks up changes; parse errors land in OSLog, filterable by `app.tempoapp.Tempo`)
 2. Manually running `jq` to confirm the JSON parses: `jq . path/to/score.json`
-3. Checking the JSON Schema with any standard JSON Schema validator (the schema is at `https://tempoapp.app/schema/score.schema.json`)
+3. Checking the JSON Schema with any standard JSON Schema validator (the canonical schema is at [`schema/score.schema.json`](https://github.com/caereforge/tempo-scores/blob/main/schema/score.schema.json) in the public catalog repo)
 
 ---
 
