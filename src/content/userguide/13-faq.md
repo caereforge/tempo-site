@@ -253,5 +253,5 @@ The site (`tempo-site`) is open-source on GitHub.
 ### What's "v1.x" vs "v2"?
 
 - **v1.0** is the current launch (May 2026)
-- **v1.x** are post-launch updates within the v1 line: bug fixes, missing features that didn't make the launch cut (Sparkle if not in v1.0, Visual Action Builder UI for some score features, in-app score browser, etc.)
+- **v1.x** are post-launch updates within the v1 line: bug fixes plus features that didn't make the launch cut (Visual Action Builder UI for some score features, in-app score browser, etc.)
 - **v2** is a future major release that may add automations, OAuth integrations for Google/Outlook calendar, advanced features. v2 is conditional on V1 traction
