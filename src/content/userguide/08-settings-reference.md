@@ -1,6 +1,6 @@
 ---
 title: "Settings reference"
-description: "Tempo's Settings window has five tabs: **Interface**, **Agenda**, **Ingestion**, **Maintenance**, **Help**."
+description: "Reference for every option in Tempo's Settings window across the five tabs: Interface, Agenda, Ingestion, Maintenance, and Help."
 chapter: 8
 order: 8
 draft: false
