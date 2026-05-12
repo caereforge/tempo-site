@@ -14,6 +14,8 @@ The sources are presented in a stable order (calendar first, then generic webhoo
 
 > 🛠 **Tip**: every native (non-Apple Calendar) source uses the same plumbing — Tempo's HTTP ingestion server on port `7776`, a per-provider token, a JSON or plain-text payload. The differences are which endpoint to hit and what fields the bundled score knows about. If you're comfortable with the generic webhook in §10.2, the native modules are mostly minor variations on the same shape.
 
+> 💡 **About endpoint paths**: you'll notice some sources hit dedicated root paths (`/kopia`, `/uptime-kuma`) while UniFi sits under `/ingest/unifi`. That's a historical artifact — the earliest two native modules (Kopia, Uptime Kuma) landed before we settled on `/ingest/<source>` as the convention. The behaviour is identical regardless of path; the URL each source uses is documented in its section below. Existing scores keep working unchanged across releases.
+
 ---
 
 ## 10.1 — Apple Calendar and Reminders
