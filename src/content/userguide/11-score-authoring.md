@@ -85,7 +85,7 @@ A stable, namespaced identifier for the source. Pattern: `^[a-z0-9]+([._-][a-z0-
 
 **Conventions**:
 
-- **Reverse-DNS** for vendors and well-known tools — `com.kopia`, `com.ubiquiti.unifi`, `org.home-assistant`, `io.uptimekuma`
+- **Reverse-DNS** for vendors and well-known tools — `com.kopia`, `com.ubiquiti.unifi`, `com.home-assistant`, `com.uptime-kuma`
 - **`scripts.<language>.<name>`** for shell/Python/Ruby scripts — `scripts.shell.check_disk`, `scripts.python.log_scan`
 - **`local.<name>`** for senders running on the same Mac as Tempo — `local.check_disk`, `local.backup_notify`
 - **`lab.<host>.<name>`** for senders on other LAN hosts — `lab.nas01.smart_check`
