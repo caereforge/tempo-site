@@ -493,48 +493,53 @@ const allShots: Shot[] = [
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
   }
-  /* Heatmap list — two boxes side-by-side, sized to match the timeline
-     scenario thumbnails (≈ 16:10). Native aspect ratios of the actual
-     heatmaps differ wildly (daily strip ≈ 24:1, historical mosaic ≈
-     1.76:1); we contain each image inside the fixed 16:10 frame so both
-     boxes match the scenario thumbs in width AND height. The daily
-     strip ends up centered with empty bg above/below — intentional, it
-     stays legible at the same visual scale as the rest of the gallery. */
-  .heatmap-list {
+  /* Heatmap grid — asymmetric: historical at half-width in top-left,
+     caption beside it (top-right), daily spanning the full row below.
+     Different aspect ratios get appropriate space: mosaic gets a card,
+     strip gets a row. */
+  .heatmap-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1.5rem 2rem;
     align-items: start;
   }
   .heatmap-card {
     margin: 0;
+  }
+  .heatmap-card.daily-full {
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
   }
-  .heatmap-card .shot-thumb {
-    aspect-ratio: 16 / 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg2);
+  .heatmap-caption {
+    align-self: center;
+  }
+  .heatmap-caption h3 {
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    margin-bottom: 0.5rem;
+  }
+  .heatmap-caption p {
+    color: var(--text2);
+    font-size: 0.9rem;
+    line-height: 1.55;
   }
   .heatmap-card .shot-thumb img {
     max-width: 100%;
-    max-height: 100%;
-    width: auto;
     height: auto;
     display: block;
   }
-  .heatmap-card h3 {
+  .heatmap-card.daily-full h3 {
     font-size: 1rem;
     letter-spacing: -0.005em;
     margin-bottom: 0.25rem;
   }
-  .heatmap-card p {
+  .heatmap-card.daily-full figcaption p {
     color: var(--text2);
     font-size: 0.9rem;
     line-height: 1.55;
+    max-width: 75ch;
   }
 
   /* Settings grid — 4 across so settings shots stay visually smaller
