@@ -45,20 +45,29 @@ const lastUpdated = "May 2026";
       of the possibility of such damages. Use Tempo at your own risk.
     </p>
 
-    <h2>Automation: you are the author</h2>
+    <h2>Scores and actions: you decide what runs</h2>
     <p>
-      Tempo is built to execute automations called "scores" that you author,
-      install, or enable within the application. Tempo does not create,
-      enable, or execute any score on your behalf. A fresh installation
-      contains zero active automations.
+      Tempo executes actions you trigger through "scores", small JSON files
+      that declare the buttons attached to each event source. Tempo ships
+      with a curated set of bundled scores installed and enabled by default
+      so the application works on first launch; you can disable, modify, or
+      remove any of them from Settings, and you can author your own or
+      install additional ones from the public catalog.
     </p>
     <p>
-      You are solely responsible for the scores you create, install, or run,
-      and for the actions they perform, including but not limited to:
-      opening URLs, running Terminal commands, invoking AppleScripts, posting
-      to third-party services, modifying system state, or interacting with
-      HomeKit accessories. Tempo maintains a local audit log of automatic
-      actions so you can review what happened and when.
+      In v1.x every action runs only when you click its button. Tempo does
+      not fire any action on your behalf: a score declares what a button
+      does, but Tempo never executes it autonomously. A fresh installation
+      contains no auto-firing automation, and v1.x will never introduce one.
+    </p>
+    <p>
+      You are solely responsible for the actions you trigger and for the
+      scores you author, install, modify, or keep enabled, including but
+      not limited to: opening URLs, running Terminal commands, invoking
+      AppleScripts, posting to third-party services, modifying system
+      state, or interacting with HomeKit accessories. Tempo maintains a
+      local audit log of every action you trigger so you can review what
+      ran and when.
     </p>
     <p>
       Community-contributed scores, whether downloaded from the public Tempo
@@ -66,7 +75,8 @@ const lastUpdated = "May 2026";
       source, carry the same responsibility. The reviewed catalog includes a
       security and sanity check by the Tempo team, but that review is not a
       warranty. <strong>The functional responsibility of a score lies with
-      its author, and the decision to install any score lies with you.</strong>
+      its author, and the decision to install, modify, or keep a score
+      enabled lies with you.</strong>
     </p>
 
     <h2>Network ingestion</h2>
