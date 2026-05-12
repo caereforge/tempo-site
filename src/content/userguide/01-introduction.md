@@ -1,6 +1,6 @@
 ---
 title: "Introduction"
-description: "Tempo is a native macOS event hub."
+description: "Tempo is a native macOS event hub for homelab operators, sysadmins, and Mac power users. What Tempo is, who it's for, what isn't in scope, and where to start reading."
 chapter: 1
 order: 1
 draft: false
