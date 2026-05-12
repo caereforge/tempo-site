@@ -186,7 +186,7 @@ Tokens didn't ride the backup bundle (see §9.2). Two paths to bring them onto t
 
 1. Wait a minute or two after the new Mac signs into your Apple ID — iCloud Keychain needs time to replicate
 2. Open **Keychain Access** (Spotlight → "Keychain Access")
-3. Filter the list to entries whose service starts with `app.tempoapp.tempo.token.`
+3. Filter the list to entries whose service is `app.tempo.tempo.publictoken` — one entry per saved token, with the token name in the account field
 4. For each entry: double-click → tick **Show password** (Touch ID / login password prompt) → copy the value
 5. In Tempo, **Settings → Ingestion → + Add token**: paste the value, set the same name as the source Mac, and bind it to the same `providerIdentifier` it had there (Keychain Access shows the binding in the entry's account field)
 
