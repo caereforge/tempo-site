@@ -170,7 +170,7 @@ A button at the bottom of the source panel switches the panel into **Manage Sour
 
 ### Event panel (centre)
 
-This is where the timeline lives. Three things are stacked vertically:
+This is where the timeline lives. Four things are stacked vertically:
 
 1. **Tab selector** at the top — switches the centre panel between **Timeline** (the chronological feed of events, the default view), **Score Editor** (chapter 7) and **Search** (find an event by title, metadata, or source)
 2. **Day picker** — a small date control next to the tab selector. Lets you jump to any past day to see what the timeline looked like then
