@@ -66,8 +66,7 @@ Bundle file name: `tempo-backup-YYYYMMDD-HHmmss.tempobackup`
 
 - **Ingestion tokens** — handled separately via the Keychain. See the next sub-section
 - **Custom themes and sound packs** — these aren't a V1 feature; drop-in folders for both ship in V1.1+. When they land, they'll be backed up alongside scores
-- **Logs** — diagnostic-only, not configuration
-- **Audit log** — forensic record of ingestion attempts; restoring it on a new Mac would be misleading (different machine, different history)
+- **Logs** — diagnostic-only and machine-specific (this includes the audit trail of ingestion attempts; restoring it on a new Mac would be misleading)
 
 ### Tokens are deliberately not in the backup
 
