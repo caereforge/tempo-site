@@ -7,7 +7,7 @@ function isActive(prefix: string): boolean {
 // Nav items mirror the homepage nav order so both surfaces look the
 // same. Story and FAQ are anchors that route back to homepage sections
 // — useful from any page to jump to the narrative pitch or FAQ.
-const links: { href: string; label: string }[] = [
+const links: { href: string; label: string; external?: boolean }[] = [
   { href: "/#story", label: "Story" },
   { href: "/gallery/", label: "Gallery" },
   { href: "/#faq", label: "FAQ" },
@@ -16,6 +16,7 @@ const links: { href: string; label: string }[] = [
   { href: "/scores/", label: "Scores" },
   { href: "/docs/", label: "Docs" },
   { href: "/blog/", label: "Blog" },
+  { href: "https://discord.gg/QnaCNKd9CN", label: "Discord", external: true },
 ];
 ---
 <header class="site-nav">
