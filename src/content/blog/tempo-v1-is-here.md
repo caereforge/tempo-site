@@ -57,7 +57,7 @@ v2 may eventually be a paid one-time purchase, if v1 finds an audience and the c
 
 ### Get Tempo
 
-- **[Download the DMG](https://downloads.tempoapp.app/Tempo-0.3.1.dmg)** (7 MB, signed and notarized for Developer ID, macOS 15+). You can also choose to use Homebrew.
+- **[Download the DMG](https://downloads.tempoapp.app/Tempo-latest.dmg)** (7 MB, signed and notarized for Developer ID, macOS 15+). You can also choose to use Homebrew.
 - **[Full user guide](/docs/)**: fifteen chapters covering concepts, setup, score authoring, troubleshooting, glossary
 - **[Score catalog](/scores/)**: bundled scores plus community contributions (Pi-hole, Proxmox, Jellyfin, Vaultwarden, Hazel)
 - **[Roadmap](/roadmap/)**: what's coming in v1.1, v1.2, and beyond, driven by what you ask for
