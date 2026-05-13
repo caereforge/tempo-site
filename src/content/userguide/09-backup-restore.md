@@ -27,8 +27,9 @@ Tempo writes to one location:
 │   └── ...
 ├── Themes/                     ← user-installed themes (V1.1+)
 ├── Sounds/                     ← user-installed sound packs (V1.x)
-├── Logs/                       ← OSLog mirror, last few rotations
-└── audit.log                   ← ingestion attempts (forensic)
+└── Logs/                       ← diagnostic log mirror (rolling daily files,
+                                    7-day retention — includes the audit
+                                    trail of every ingestion attempt)
 ```
 
 Plus:
