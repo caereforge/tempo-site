@@ -126,11 +126,11 @@ Configuration is **already inside the `.tempobackup` bundle** the V1 backup tool
 Two cases where copying files alongside the bundle is useful:
 
 - **Custom themes and sound packs** (V1.1+) — once these features ship, drop-in folders (`~/Library/Application Support/Tempo/Themes/`, `~/Library/Application Support/Tempo/Sounds/`) can be mirrored manually until they're folded into the bundle
-- **Out-of-band copies** for paranoia — a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite`, `Logs/`, and `audit.log`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` zip
+- **Out-of-band copies** for paranoia — a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite` and `Logs/`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` zip
 
 ```bash
 # Snippet for the out-of-band copy approach
-rsync -a --exclude='Tempo.sqlite*' --exclude='Logs/' --exclude='audit.log' \
+rsync -a --exclude='Tempo.sqlite*' --exclude='Logs/' \
   ~/Library/Application\ Support/Tempo/ \
   ~/iCloud\ Drive/Tempo/Mirror/
 ```
