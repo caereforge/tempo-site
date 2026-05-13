@@ -79,7 +79,7 @@ The intrinsic limits of this pattern:
 - **Refresh latency**. Tempo sees what Calendar.app sees, which is what the iCal subscription has fetched on its last refresh. Sub-minute responsiveness isn't possible on this path
 - **Subscription cap**. Calendar.app has its own performance characteristics for many subscribed calendars; if you have 10+ task-manager subscriptions, latency and battery cost compound
 
-> 💡 **Note**: native API integration with a specific task manager — actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state — is on the V1.x+ roadmap as a candidate Tempo IAP unlock (see `project_tempo_iap_brainstorm_2026_04_25.md`). For V1, iCal subscription is the sanctioned bridge.
+> 💡 **Note**: native API integration with a specific task manager — actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state — is a candidate for a future release. For V1, iCal subscription is the sanctioned bridge.
 
 ---
 
