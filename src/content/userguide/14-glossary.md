@@ -160,7 +160,7 @@ Headline metric is the difference between a card that says "Backup completed" an
 
 ### Heatmap
 
-The 24-hour activity strip that sits above the event feed for the current day. Each segment is one hour, coloured by the highest-severity event in that hour: green (info/ok), yellow (warning), red (error/critical), neutral grey (no events).
+The 24-hour activity strip that sits above the event feed for the current day. Each segment is one hour, coloured by the highest-severity event in that hour: blue (info), green (ok), yellow (warning), red (error/critical), neutral grey (no events).
 
 Click any hour segment to scroll the feed to that hour. Two visual styles available — pill or flat — togglable in Settings → Interface.
 
