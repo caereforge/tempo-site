@@ -36,6 +36,8 @@ const links: { href: string; label: string; external?: boolean }[] = [
     {links.map((link) => (
       <a
         href={link.href}
+        target={link.external ? "_blank" : undefined}
+        rel={link.external ? "noopener noreferrer" : undefined}
         class:list={["site-nav-link", { active: isActive(link.href) }]}
       >
         {link.label}
