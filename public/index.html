@@ -400,6 +400,47 @@ nav {
 }
 .nav-link:hover { color: var(--text); background: rgba(255,255,255,.06); }
 
+/* Dropdown using native <details> — no JS, click-to-toggle. */
+.nav-dropdown { position: relative; }
+.nav-dropdown summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.nav-dropdown summary::-webkit-details-marker { display: none; }
+.nav-chevron { font-size: 9px; transition: transform .15s; }
+.nav-dropdown[open] .nav-chevron { transform: rotate(180deg); }
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-width: 140px;
+  padding: 4px;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.nav-dropdown-item {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+.nav-dropdown-item:hover {
+  color: var(--text);
+  background: rgba(255,255,255,.06);
+  text-decoration: none;
+}
+
 /* ── FAQ ── */
 .faq-wrap {
   max-width: 760px;
