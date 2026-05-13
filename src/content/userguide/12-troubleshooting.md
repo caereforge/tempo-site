@@ -264,14 +264,14 @@ If a support request needs your scores, attach them separately. The bundle delib
 
 ### Audit log
 
-Every ingestion attempt — accepted or rejected — is captured in OSLog. Filter by subsystem `app.tempoapp.Tempo` and look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
+Every ingestion attempt — accepted or rejected — is captured both in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`) and in the rolling daily file log under `~/Library/Application Support/Tempo/Logs/tempo-YYYY-MM-DD.log` (7-day retention). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
 
 - Source IP
 - Token name (never the value)
 - Provider identifier
 - Result + reason on rejection
 
-The audit log isn't surfaced as a UI in V1; it lives in OSLog. The diagnostic bundle includes the last 24 hours of it. For long-term forensics, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple's `os_log` reference).
+The audit trail isn't surfaced as a UI in V1 — read it via Console.app filtered on the subsystem, or open the file log directly. The diagnostic bundle bundles the file log automatically. For long-term forensics beyond the 7-day window, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple's `os_log` reference).
 
 ---
 
