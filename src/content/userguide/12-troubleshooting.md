@@ -120,7 +120,7 @@ You've created a score (or are using a bundled one) and events from the source a
 ### Symptom: events arrive but render with default styling, no severity
 
 - **Check 1**: open the Score Editor for the provider. Is the score loaded? If the editor shows "No score selected" when you click on the provider's chip, the score file may not be parsing
-- **Check 2**: open Console.app, filter by subsystem `app.tempo.tempo`. Look for "Failed to parse score" or "Schema validation error" messages
+- **Check 2**: open Console.app, filter by subsystem `app.tempoapp.Tempo`. Look for "Failed to parse score" or "Schema validation error" messages
 - **Fix**: validate the JSON manually. `jq . ~/Library/Application\ Support/Tempo/Scores/<provider>.json` — if it errors, fix the JSON. Otherwise check against the schema at `https://tempoapp.app/schema/score.schema.json`
 
 ### Symptom: events arrive, severity is set, but custom labels show literal `${metadata.xxx}`
@@ -131,7 +131,7 @@ You've created a score (or are using a bundled one) and events from the source a
 
 ### Symptom: events don't arrive at all
 
-- **Check 1**: confirm the request is reaching Tempo. Open Console.app, filter by `app.tempo.tempo`. Send a test event. You should see "Accepted ingestion ..." or "Rejected ingestion ... reason: <reason>"
+- **Check 1**: confirm the request is reaching Tempo. Open Console.app, filter by `app.tempoapp.Tempo`. Send a test event. You should see "Accepted ingestion ..." or "Rejected ingestion ... reason: <reason>"
   - **No message at all** → the request isn't reaching Tempo. Networking problem (§12.1)
   - **"Rejected: invalid token"** → token is wrong or revoked. Settings → Ingestion → confirm the token is active and correct
   - **"Rejected: provider mismatch"** → token is bound to a different providerIdentifier than the payload declares. Either change the payload's `providerIdentifier` or rebind the token
@@ -169,7 +169,7 @@ You downloaded the DMG and macOS refuses to open Tempo.
 ### Symptom: macOS opens the DMG but the Tempo icon launches and immediately quits
 
 - **Cause**: typically a missing entitlement or a permission dialog being dismissed without granting
-- **Fix**: check Console.app for `app.tempo.tempo` entries around the launch time. Look for "missing entitlement" or "permission denied" errors. The most common cause in this state is Calendar/Reminders permission being denied at first launch — open System Settings → Privacy & Security → Calendar and tick Tempo
+- **Fix**: check Console.app for `app.tempoapp.Tempo` entries around the launch time. Look for "missing entitlement" or "permission denied" errors. The most common cause in this state is Calendar/Reminders permission being denied at first launch — open System Settings → Privacy & Security → Calendar and tick Tempo
 
 ---
 
@@ -224,7 +224,7 @@ Tempo uses Apple's unified logging system. Logs are accessible via Console.app:
 
 1. Open Console.app
 2. In the left sidebar, click your Mac name
-3. In the top filter bar, set: **Subsystem: `app.tempo.tempo`**
+3. In the top filter bar, set: **Subsystem: `app.tempoapp.Tempo`**
 4. Click **Start Streaming** to watch live, or **Action → Include Info Messages** for retrospective lookback
 
 Useful filters:
@@ -264,7 +264,7 @@ If a support request needs your scores, attach them separately. The bundle delib
 
 ### Audit log
 
-Every ingestion attempt — accepted or rejected — is captured in OSLog. Filter by subsystem `app.tempo.tempo` and look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
+Every ingestion attempt — accepted or rejected — is captured in OSLog. Filter by subsystem `app.tempoapp.Tempo` and look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
 
 - Source IP
 - Token name (never the value)
@@ -300,7 +300,7 @@ On launch, the bundled scores are seeded fresh. Any user-authored scores you wro
 To reset Tempo's UserDefaults (theme, footer toggle, heatmap colours, auto-rules, source overrides):
 
 1. Quit Tempo
-2. Run in Terminal: `defaults delete app.tempo.tempo`
+2. Run in Terminal: `defaults delete app.tempoapp.Tempo`
 3. Re-launch Tempo
 
 This removes all your preferences. Calendar permission, ingestion tokens (in Keychain), and event database are unaffected.
@@ -313,8 +313,8 @@ If you want Tempo back to first-launch state:
 
 1. Quit Tempo
 2. Move `~/Library/Application Support/Tempo/` to Trash
-3. Run `defaults delete app.tempo.tempo`
-4. Open Keychain Access, delete all entries for `app.tempo.tempo`
+3. Run `defaults delete app.tempoapp.Tempo`
+4. Open Keychain Access, delete all entries for `app.tempoapp.Tempo`
 5. Re-launch Tempo
 
 You're back to "first launch — grant calendar permission" state. Use this only if everything else has failed.
