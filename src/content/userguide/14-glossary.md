@@ -272,7 +272,7 @@ Used for distributing community-contributed scores via the public catalog at [gi
 
 A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`. Drives the colouring of cards, badges, and the heatmap. Assigned by the [score](#score) for the source — not a property the upstream tool sets directly.
 
-`info` and `ok` are quiet (green or no colour). `warning` is yellow. `error` and `critical` are red. The exact mapping is configurable per score via [severity rules](#severity-rule).
+`info` is blue and `ok` is green — both quiet outcomes, distinguishable. `warning` is yellow. `error` and `critical` are red. The exact mapping is configurable per score via [severity rules](#severity-rule).
 
 **See also**: Chapter 2.5 (Severity, state, acknowledgment, dismissal).
 
