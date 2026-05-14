@@ -68,7 +68,7 @@ For questions, feedback, or score contributions: the [tempo-scores repo on GitHu
 
 ### A note on AI
 
-Tempo's author and architect is me, a human. The executor is AI-assisted. The why and the how, including which patterns I use day-to-day and what I think about "vibe-coded" as a label, are in [Is Tempo vibe-coded?](/blog/is-tempo-vibecoded/). Short answer: no, but the question is worth taking seriously.
+Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. The why and the how, including which patterns I use day-to-day and what I think about "vibe-coded" as a label, are in [Is Tempo vibe-coded?](/blog/is-tempo-vibecoded/). Short answer: no, but the question is worth taking seriously.
 
 ---
 
