@@ -389,8 +389,17 @@ The whole loop took five minutes. No restart, no JSON, no documentation cross-re
 
 ---
 
+## A note on action buttons
+
+The Score Editor handles colors, severity rules, grouping, and display names — but action **buttons** (the entries in `defaultActions`) are authored directly in the score JSON in V1. The Editor will surface action authoring in a later release; for now, the canonical surface is the file.
+
+If you want to add or change buttons on a source's events, see the walkthrough on the blog: [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) — concrete example, ~5 minutes end to end. The full field reference lives in [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference).
+
+---
+
 ## Where to go from here
 
+- **Adding a custom button via JSON** → blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/)
 - **Writing a brand-new score from scratch** → [§11 — Score authoring](/docs/11-score-authoring)
 - **The JSON schema underneath the editor** → [§11.1 — JSON schema overview](/docs/11-score-authoring#111-json-schema-overview)
 - **The action triggers reference** → [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference)
