@@ -4,6 +4,12 @@ import { getCollection } from "astro:content";
 
 const ANNOUNCEMENT_TAG = "announcement";
 
+// Tags rendered in bold in the sidebar tag cloud. Used to draw attention
+// to evergreen surfaces (how-to walkthroughs) that we want readers to
+// stumble onto regardless of which post they landed on. Extend the set
+// when more featured tag clusters land (e.g., "dev-log").
+const FEATURED_TAGS = new Set(["how-to"]);
+
 const allPosts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
