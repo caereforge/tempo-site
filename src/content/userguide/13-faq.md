@@ -154,6 +154,10 @@ Yes — this is the core of Tempo. Every event type has its own action set, defi
 
 See [§7 — Score Editor](/docs/07-score-editor) for hands-on; [§11 — Score authoring](/docs/11-score-authoring) for the developer reference.
 
+### Can I add a custom button to events?
+
+Yes, by editing the source's score file directly. The Score Editor handles colors, severity rules, and display names; action buttons are authored as JSON in V1. The blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) walks through the full flow with a concrete example. See also [§11 — Score authoring](/docs/11-score-authoring) for the reference.
+
 ### Can I write my own scores?
 
 Yes. The score system is the canonical configuration surface. Documented end-to-end in [§11 — Score authoring](/docs/11-score-authoring), with a worked example.
