@@ -5,6 +5,8 @@ pubDate: 2026-04-22
 tags: ["dev-log", "engineering"]
 ---
 
+*📅 April 22, 2026 — Tempo pre-V1 alpha*
+
 Hello everyone,
 
 I think it's time for a technical update — to share what I'm working on and where Tempo stands.

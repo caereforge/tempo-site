@@ -6,6 +6,8 @@ tags: ["announcement", "release", "launch"]
 draft: false
 ---
 
+*📅 May 14, 2026*
+
 After months of solo work, **Tempo v1 is live**. Signed, notarized, Homebrew and Sparkle-ready, on the Downloads page.
 
 First, I would like to thank all of those who have asked questions, provided suggestions or even unwillingly pointed me to a reflection: you have really helped shape Tempo from the beginning.

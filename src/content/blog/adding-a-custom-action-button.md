@@ -6,6 +6,8 @@ tags: ["how-to"]
 draft: false
 ---
 
+*📅 May 15, 2026 — Tempo 1.0.3*
+
 Some time ago I was looking at a card from a Kopia backup in my timeline and thought I wanted to tail the logfile to check some data. I was about to fire my terminal up but I thought: why don't I create a new button in Tempo? It took 5 minutes. Tempo picked up the change live, and the button was ready to click.
 
 ## How the buttons work

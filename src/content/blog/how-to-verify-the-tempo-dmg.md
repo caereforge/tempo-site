@@ -6,6 +6,8 @@ tags: ["security", "transparency"]
 draft: false
 ---
 
+*📅 May 14, 2026 — Tempo 1.0.0*
+
 When you download Tempo from [tempoapp.app](https://tempoapp.app), three things check whether the file is what we shipped:
 
 1. **macOS Gatekeeper** validates the Developer ID signature and the Apple notarization ticket when you double-click. If anything has been tampered with, the OS refuses to open it.

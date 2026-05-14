@@ -6,6 +6,8 @@ tags: [philosophy]
 draft: false
 ---
 
+*📅 May 6, 2026*
+
 Before getting into the question, I want to define what "to vibecode" actually means.
 
 Karpathy coined the term in a more neutral light (give in to the vibes, embrace exponentials) but in practice it's drifted somewhere else. Today it usually points to an app whose architecture, design, and code were produced end-to-end by an AI. Someone with an LLM subscription hands the AI an idea, the AI does the work. These apps tend to be simple. They lean on what the operating system already provides and stack a thin programmed layer on top that does some task. There's no real control over the architecture, none over the code. Security (network side and system side) is left to the AI, with no competent audit to confirm that the security level is even reasonable.

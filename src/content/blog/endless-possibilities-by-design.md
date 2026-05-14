@@ -5,6 +5,8 @@ pubDate: 2026-04-28
 tags: ["scores", "design", "automation"]
 ---
 
+*📅 April 28, 2026*
+
 I know it sounds like an exaggeration — but it's not far from the truth.
 
 Tempo was designed to be adaptable from day one. I was using Hazel and kept thinking about what I could build if "something" could read the exit code of a rule and react with other actions — another script, another Hazel rule, a HomeKit notification. That "something" became Tempo.

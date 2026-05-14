@@ -5,6 +5,8 @@ pubDate: 2026-04-18
 tags: ["intro", "origin"]
 ---
 
+*📅 April 18, 2026*
+
 Hi there. If you landed on this site, it's because you're curious about Tempo, the app I'm building. But before I tell you about the app, I think it makes sense to tell you a bit about me — who I am, and why I've spent time and money building it.
 
 I'm a sysadmin in Unix environments. Mostly Solaris and Linux, but no real limits: any flavor of Unix is fine by me (well, maybe some of them a bit less), and on every one I've run into I've gotten my hands dirty, with real passion.

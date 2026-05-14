@@ -5,6 +5,8 @@ pubDate: 2026-04-21
 tags: ["philosophy", "design"]
 ---
 
+*📅 April 21, 2026*
+
 As Tempo takes shape and gets close to release, there's one thing I think it's worth being clear about: what is Tempo *not*?
 
 Well, to start — Tempo isn't a calendar. It shows your calendar, and your tasks if you want it to, but it isn't built to manage them. My day is full of commitments like anyone's, though, and while I'm glancing at the timeline to see what's going on in my homelab, it's useful to also see the events that sometimes feel like they're chasing me. So I can see them, and I can run actions against them (that's the whole Tempo philosophy) — but nothing close to a real calendar or to my task app of choice (Todoist, in my case).

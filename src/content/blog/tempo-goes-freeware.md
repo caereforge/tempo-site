@@ -5,6 +5,8 @@ pubDate: 2026-04-22
 tags: ["announcement", "release", "community"]
 ---
 
+*📅 April 22, 2026*
+
 These past days of intense development, where the creative process has taken me over completely, I've also had time to think carefully about how I'd like Tempo to grow.
 
 Tempo costs time and money — that's true. But before thinking about recovering those costs, I care more about Tempo growing in the right way: shaped not only by my own needs, but by anyone who wants to use it and add even a small brick to the "House of Events" that Tempo is meant to be.

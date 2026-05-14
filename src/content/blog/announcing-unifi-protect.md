@@ -5,6 +5,8 @@ pubDate: 2026-05-07
 tags: ["announcement", "scores"]
 ---
 
+*📅 May 7, 2026*
+
 As you might guess, Tempo was built for my own needs and shaped around the tools I run in my home setup.
 
 I use Ubiquiti gear for my network — UniFi, specifically. And I have a few cameras I manage through Protect.
