@@ -113,6 +113,53 @@ const links: { href: string; label: string; external?: boolean }[] = [
   }
   .site-nav-link.active { color: var(--text); }
 
+  /* Dropdown using native <details> — no JS, click-to-toggle works
+     on desktop and mobile, accessible by keyboard. */
+  .site-nav-dropdown {
+    position: relative;
+  }
+  .site-nav-dropdown summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .site-nav-dropdown summary::-webkit-details-marker { display: none; }
+  .site-nav-chevron {
+    font-size: 9px;
+    transition: transform .15s;
+  }
+  .site-nav-dropdown[open] .site-nav-chevron { transform: rotate(180deg); }
+  .site-nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 140px;
+    padding: 4px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  }
+  .site-nav-dropdown-item {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    white-space: nowrap;
+    transition: color .15s, background .15s;
+  }
+  .site-nav-dropdown-item:hover {
+    color: var(--text);
+    background: rgba(255,255,255,.06);
+    text-decoration: none;
+  }
+
   /* Narrow viewports: collapse to a column with logo on top and links
      centred below. Tighter side padding so 8 items breathe on a phone. */
   @media (max-width: 720px) {
