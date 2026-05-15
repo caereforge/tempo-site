@@ -20,8 +20,6 @@ I understand code, I understand functions, I know the syntax of compiled languag
 
 Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. The way it works: structured prompts that carry the architectural intent into each session, and functional testing on every release before it goes out. I've been running Tempo on my own homelab for months — Home Assistant, UniFi, Kopia, Synology, and an *arr stack — and the pre-release polish I'm writing this from is the result of that loop.
 
-Claude has been an ideal interpreter for my ideas, but it's always been the executor.
-
 A few concrete examples of what that means in practice:
 
 - The database: I picked SQLite with GRDB instead of going with SwiftData, even though SwiftData is the modern Apple-stack default and Claude's first instinct was to pick it. I wanted explicit schema control and migrations that don't break if they run twice (or more) from day one — not magic that hides what's happening underneath. That decision happened before any code got written.
