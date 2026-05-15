@@ -38,7 +38,7 @@ Reviews will happen as time allows. Tempo is free, and curating the catalog is a
 
 Tempo costs time and money, as I said. This is something every developer who wants to ship a complex, secure product like Tempo has to face.
 
-It's not just the **Claude** subscription I use as my development companion, by far the heaviest line. It's also the **domain registration** for tempoapp.app, the **Apple Developer Program** membership needed to sign and notarize the app, and — most importantly — the time I'm carving out of the hours I'd otherwise spend with my family.
+There's the **domain registration** for tempoapp.app, the **Apple Developer Program** membership needed to sign and notarize the app, and — most importantly — the time I'm carving out of the hours I'd otherwise spend with my family.
 
 I don't pay for storage, because Tempo doesn't need any: it's private, it collects no data, and everything stays on your Mac. At least that cost I can avoid.
 
