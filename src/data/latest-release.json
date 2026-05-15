@@ -1,7 +1,7 @@
 {
-  "version": "1.0.2",
-  "buildNumber": 21,
-  "sha256": "8c7c6fcf4a65087bfd8f0239547346869b02fd92065fde607e8cf9707519feb0",
-  "sizeBytes": 7464148,
-  "releaseDate": "2026-05-14"
+  "version": "1.0.3",
+  "buildNumber": 22,
+  "sha256": "8b60b66f7d9217eb25c753d525eb6b6f55e478b6d734d0206d49cb38a2d08e3e",
+  "sizeBytes": 7730706,
+  "releaseDate": "2026-05-15"
 }
