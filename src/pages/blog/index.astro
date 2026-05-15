@@ -284,6 +284,13 @@ const fmt = (d: Date) =>
     border-color: var(--blue);
     color: var(--text);
   }
+  /* Featured tags (set via FEATURED_TAGS) read with extra weight in
+     the sidebar so how-to walkthroughs catch the eye regardless of
+     which post the reader landed on. */
+  .tag-cloud .featured-tag a {
+    font-weight: 700;
+    color: var(--text);
+  }
   .tag-count {
     color: var(--text3);
     font-variant-numeric: tabular-nums;
