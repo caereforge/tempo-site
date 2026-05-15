@@ -46,6 +46,9 @@ Read the full story at [tempoapp.app/#story](https://tempoapp.app/#story).
 This repo holds the source of the public landing page only. The Tempo
 application itself is in private development and is not open source.
 
+Tempo's author and architect is me. Design, architecture, and testing
+are mine; implementation is AI-assisted with Claude Code.
+
 Deployed automatically to Cloudflare Pages on push to `main`.
 
 ## Devlog
