@@ -18,7 +18,7 @@ I'd say no.
 
 I understand code, I understand functions, I know the syntax of compiled languages — but I've never been a programmer by trade. I write shell scripts for work every day, mostly bash, some python. I know the logic that sits behind functions. But writing a whole macOS application in Swift, with no experience, and expecting it to work the way you want — that's almost a fantasy. That's why Claude has been such a good partner: it gave reliability and substance to ideas of mine that would otherwise have stayed in pure-thought territory.
 
-I designed Tempo, after a long stretch of architectural thinking. The architecture is mine, and so is the mechanics of how it works. The code was written by Claude under constant input from me, with every iteration checked for consistency. Once we had a working base, I drove all the testing and the subsequent implementations, all the way to the pre-release polish (I'm writing this a few days from the public v1).
+Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. The way it works: structured prompts that carry the architectural intent into each session, and functional testing on every release before it goes out. I've been running Tempo on my own homelab for months — Home Assistant, UniFi, Kopia, Synology, and an *arr stack — and the pre-release polish I'm writing this from is the result of that loop.
 
 Claude has been an ideal interpreter for my ideas, but it's always been the executor.
 
