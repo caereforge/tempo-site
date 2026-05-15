@@ -31,9 +31,9 @@ A few examples, from my own setup. If I get a notification from my Ubiquiti gate
 
 ---
 
-There's something I want to be upfront about, because I don't like leaving things unsaid: Tempo was built with the help of AI. I'm not a professional developer. I get the concepts, I've been writing procedural scripts for years, but I had never built an application in a compiled language — even though I've spent my entire working life surrounded by developers and sysadmins, and I've seen a lot of architecture go by.
+There's something I want to be upfront about, because I don't like leaving things unsaid: Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. I'm not a professional developer — I get the concepts, I've been writing procedural scripts for years, but I had never built an application in a compiled language. I've spent my working life surrounded by developers and sysadmins, and I've seen a lot of architecture go by.
 
-But the AI is not the architect. It's a tool that writes code and needs to be guided. My twenty-five years of work as a sysadmin and integrator — understanding what a system has to do, what it must *not* do, where it breaks, where it's exposed to security risks, how it makes it into production — are the foundation AI built Tempo on top of. And the security side, in particular, is entirely mine: which surfaces Tempo exposes on the network, how it protects access tokens, where the user's data ends up, what an incoming payload can *never* force Tempo to do. These decisions I haven't delegated, and I won't. AI is a great tool for someone who knows what they're building. It's a wrecking ball in the hands of someone who doesn't. I know what I'm building.
+Which surfaces Tempo exposes on the network, how it protects access tokens, where the user's data ends up, what an incoming payload can *never* force Tempo to do — these decisions are mine and I haven't delegated them. AI is a great tool for someone who knows what they're building. It's a wrecking ball in the hands of someone who doesn't. I know what I'm building.
 
 ---
 
