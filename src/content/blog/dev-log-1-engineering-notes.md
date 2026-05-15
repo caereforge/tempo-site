@@ -11,7 +11,7 @@ Hello everyone,
 
 I think it's time for a technical update — to share what I'm working on and where Tempo stands.
 
-These past days have been intense. The creative flow has taken me over, and Claude has been working alongside me closely. Before going into the details, one piece of framing: Tempo is built with AI assistance, but the architectural decisions are not delegated. Threat model, schema design, naming conventions, security trade-offs — all of these cross my desk first. What follows is not a feature list: it's the engineering choices I made, that Claude then helped me implement. The code stays closed. The principles do not.
+These past days have been intense. The creative flow has taken me over, and Claude has been working alongside me closely. Before going into the details, one piece of framing: Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. Threat model, schema design, naming conventions, security trade-offs — all of these cross my desk first. What follows is not a feature list: it's the engineering choices I made, that Claude Code then helped me implement. The code stays closed. The principles do not.
 
 Tempo runs on my Mac every day and works well. I've focused on the tools I actually use in my environment — and on making sure that each integration holds up to the traffic it generates. The following modules are feature-complete and only need fine-tuning:
 
