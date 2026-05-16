@@ -52,8 +52,8 @@ Design plugin (`design:design-critique`).
   Actions workflow committed for future auto-deploy on push).
 - Positioning rewritten for homelab / Home Assistant audience: hero copy,
   sources strip aligned to V1 scope (Apple Calendar/Reminders, Home Assistant,
-  Uptime Kuma, Kopia, UniFi, GitHub Actions), pricing FAQ added (€49 one-time
-  + 15-day trial), roadmap aligned to actual V1 IN/OUT scope.
+  Uptime Kuma, Kopia, UniFi, GitHub Actions), pricing FAQ added, roadmap
+  aligned to actual V1 IN/OUT scope.
 - Devlog section added to surface the dated trail on the site itself.
 
 ## [2026-04-13] — Domain registered
