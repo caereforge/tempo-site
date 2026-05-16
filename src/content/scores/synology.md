@@ -1,31 +1,28 @@
 ---
 title: "Synology"
-description: "DSM notifications in your Tempo timeline, with one-click actions to jump into Storage Manager, Log Center, Security Advisor, and SSH."
+description: "DSM notifications in your Tempo timeline, with one-click actions to jump into Storage Manager, Log Center, Security Advisor, and SSH. Built-in: ships with Tempo, no separate score to install."
 providerIdentifier: "com.synology"
 color: "#0070D1"
 version: "1.0.0"
-file: "/scores/synology.tempo-score"
 compatibility:
   - "DSM 7.0+"
   - "DSM 7.1"
   - "DSM 7.2"
 pubDate: 2026-04-23
-downloadable: true
+builtIn: true
 ---
 
-Synology DSM 7 and later support **Custom Webhook** as a notification transport out of the box. This score gives Tempo a place to receive those notifications and attach 10 one-click actions on each event — open DSM, jump straight into Storage Manager or Log Center, SSH to the NAS, ping it, copy details for an incident ticket.
+Synology is a **built-in source** in Tempo — bundled with the app, registered automatically on first launch. There's no `.tempo-score` file to download. DSM 7 and later support **Custom Webhook** as a notification transport out of the box; this score gives Tempo a place to receive those notifications and attaches 10 one-click actions on each event — open DSM, jump straight into Storage Manager or Log Center, SSH to the NAS, ping it, copy details for an incident ticket.
 
 No adapter on the Tempo side is required. You just configure DSM to POST to Tempo.
 
 ---
 
-## Install
+## Setup
 
-1. Download `synology.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet — click **Install**. The score is saved to `~/Library/Application Support/Tempo/Scores/synology.tempo-score`.
-3. In Tempo **Settings → Ingestion**, add a token named `synology` bound to `com.synology`. Copy the token — you'll paste it into DSM in step 5.
-4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/events` (or `127.0.0.1` if Tempo is loopback-only).
-5. Configure DSM (see below).
+1. In Tempo **Settings → Ingestion**, add a token named `synology` bound to `com.synology`. Copy the token — you'll paste it into DSM in step 3.
+2. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/events` (or `127.0.0.1` if Tempo is loopback-only).
+3. Configure DSM (see below).
 
 ## DSM side — configure the webhook
 
