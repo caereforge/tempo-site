@@ -6,3 +6,10 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Internal-only work, never publish to the GitHub mirror.
+# Sensitive content lives under siblings outside the repo
+# (~/Downloads/Developer/tempo-site-private/).
+drafts/
+handovers/
+docs/_session-handoff.md
