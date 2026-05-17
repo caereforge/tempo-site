@@ -2,13 +2,10 @@ name = "tempo-download-tracker"
 main = "src/index.ts"
 compatibility_date = "2026-05-18"
 
-# R2 bucket binding — fill bucket_name with the actual R2 bucket
-# that currently backs downloads.tempoapp.app. Run from worker/ dir:
-#   wrangler r2 bucket list
-# and paste the bucket name below.
+# R2 bucket binding — backs downloads.tempoapp.app
 [[r2_buckets]]
 binding = "TEMPO_BUCKET"
-bucket_name = "REPLACE-WITH-R2-BUCKET-NAME"
+bucket_name = "tempo-downloads"
 
 # Analytics Engine dataset binding.
 # Dataset is auto-created on first writeDataPoint.
