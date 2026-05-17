@@ -96,10 +96,13 @@ const lastUpdated = "May 18, 2026";
         <code>downloads.tempoapp.app</code> (app downloads and update feed), and
         any related subdomains. When your browser or Tempo connects to these,
         Cloudflare sees the request — the same way it sees any of the millions
-        of sites it serves. Standard access logs, no custom logging we add.
-        Cloudflare may process these access logs in non-EU jurisdictions; such
-        transfers occur under Standard Contractual Clauses (SCCs) approved by
-        the European Commission.
+        of sites it serves. We use Cloudflare's analytics to understand
+        aggregate download and update-check patterns (counts by version,
+        country, time): no IP retention beyond serving the response, no
+        cookies, no tracking pixels, no fingerprinting, no correlation with
+        any identity. Cloudflare may process this data in non-EU jurisdictions
+        under Standard Contractual Clauses (SCCs) approved by the European
+        Commission.
       </li>
       <li>
         <strong>Your chosen third-party sources.</strong> If you connect Tempo
