@@ -44,7 +44,7 @@ function classifyRequest(
     return {
       eventType: "update_check",
       version: m ? m[1] : "",
-      uaBucket: "sparkle",
+      uaBucket,
     };
   }
 
