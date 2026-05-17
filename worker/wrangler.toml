@@ -1,0 +1,30 @@
+name = "tempo-download-tracker"
+main = "src/index.ts"
+compatibility_date = "2026-05-18"
+
+# R2 bucket binding — fill bucket_name with the actual R2 bucket
+# that currently backs downloads.tempoapp.app. Run from worker/ dir:
+#   wrangler r2 bucket list
+# and paste the bucket name below.
+[[r2_buckets]]
+binding = "TEMPO_BUCKET"
+bucket_name = "REPLACE-WITH-R2-BUCKET-NAME"
+
+# Analytics Engine dataset binding.
+# Dataset is auto-created on first writeDataPoint.
+[[analytics_engine_datasets]]
+binding = "TEMPO_ANALYTICS"
+dataset = "tempo_downloads"
+
+# Route the worker to downloads.tempoapp.app. After first deploy you must
+# also point the DNS record for downloads.tempoapp.app to the worker
+# (proxied/orange-cloud). The custom domain binding can be created in
+# the Cloudflare dashboard under Workers & Pages → tempo-download-tracker
+# → Settings → Domains & Routes → Add Custom Domain → downloads.tempoapp.app.
+[[routes]]
+pattern = "downloads.tempoapp.app/*"
+zone_name = "tempoapp.app"
+
+# Observability for the worker itself (errors, invocation counts).
+[observability]
+enabled = true
