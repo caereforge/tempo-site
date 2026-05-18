@@ -65,13 +65,39 @@ curl -sI https://downloads.tempoapp.app/Tempo-latest.dmg | head -20
 
 Expected: `HTTP/2 200`, sensible `etag`, `cache-control` set by the worker.
 
-To see events arriving in Analytics Engine, wait ~1 minute then run:
+To see Worker invocations live, run in a separate terminal:
 
 ```bash
-wrangler analytics-engine sql 'SELECT index1 AS event, count() AS n FROM tempo_downloads GROUP BY event'
+wrangler tail
 ```
 
-(Or use the Analytics Engine SQL endpoint via the dashboard.)
+This streams real-time request logs from the deployed Worker — useful to
+confirm the route is intercepting and to inspect the classification logic.
+
+To query aggregate data in Analytics Engine, two options:
+
+**Dashboard SQL editor (no setup)**:
+Open https://dash.cloudflare.com/ → Workers & Pages → Analytics Engine →
+select dataset `tempo_downloads`. There is an inline SQL editor.
+
+**HTTP SQL API (programmatic)**:
+The `wrangler` CLI does not expose Analytics Engine SQL queries as a
+subcommand (as of v4.92). To query programmatically, POST against:
+
+```
+https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/analytics_engine/sql
+```
+
+with a Bearer API token holding the `Account Analytics: Read` permission
+(create one at https://dash.cloudflare.com/profile/api-tokens). Example:
+
+```bash
+curl -X POST \
+  -H "Authorization: Bearer $CF_API_TOKEN" \
+  -H "Content-Type: text/plain" \
+  --data "SELECT index1 AS event, count() AS n FROM tempo_downloads GROUP BY event" \
+  "https://api.cloudflare.com/client/v4/accounts/<ACCOUNT_ID>/analytics_engine/sql"
+```
 
 ## Rolling back
 
