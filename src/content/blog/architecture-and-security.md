@@ -59,5 +59,3 @@ A few things I am explicit about:
 - **Closed source.** v1's binary is closed, which means you cannot audit the code. What I offer in compensation: notarized + signed binary, disclosed threat model (this post), scores as plain-text JSON you can read and modify, an audit log that records every request, and the [scope-and-discipline post](/blog/what-tempo-is-not/) that lays out what Tempo will and will not become.
 
 Security questions and feedback are welcome on the [tempo-scores GitHub repo](https://github.com/caereforge/tempo-scores), alongside score contributions. The Discord (link in the menu) is where deeper conversations happen.
-
-This post lives alongside the Reddit launch thread on r/selfhosted, where shorter questions and discussion are happening: [Tempo v1 on r/selfhosted](URL_HERE)
