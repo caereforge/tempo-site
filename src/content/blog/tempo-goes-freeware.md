@@ -5,7 +5,7 @@ pubDate: 2026-04-22
 tags: ["announcement", "release", "community"]
 ---
 
-*📅 April 22, 2026*
+*📅 April 22, 2026 · Leo from Caereforge*
 
 These past days of intense development, where the creative process has taken me over completely, I've also had time to think carefully about how I'd like Tempo to grow.
 
@@ -51,3 +51,7 @@ The costs and the work are real, so if the response from the community is positi
 But that's future music. Right now, v1 is what matters, and v1 is free.
 
 **Let's build Tempo together.**
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

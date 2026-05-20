@@ -6,7 +6,7 @@ tags: ["security", "transparency"]
 draft: false
 ---
 
-*📅 May 14, 2026 — Tempo 1.0.0*
+*📅 May 14, 2026 · Tempo 1.0.0 · Leo from Caereforge*
 
 When you download Tempo from [tempoapp.app](https://tempoapp.app), three things check whether the file is what we shipped:
 

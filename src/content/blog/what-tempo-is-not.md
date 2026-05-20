@@ -5,7 +5,7 @@ pubDate: 2026-04-21
 tags: ["philosophy", "design"]
 ---
 
-*📅 April 21, 2026*
+*📅 April 21, 2026 · Leo from Caereforge*
 
 As Tempo takes shape and gets close to release, there's one thing I think it's worth being clear about: what is Tempo *not*?
 
@@ -33,4 +33,4 @@ The ceiling is high. The floor is exactly where you put it.
 
 **Tempo is the score. Your day is the orchestra. You are the conductor.**
 
-— caereforge
+Leo from [Caereforge](https://caereforge.com)

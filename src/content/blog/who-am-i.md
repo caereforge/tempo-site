@@ -5,7 +5,7 @@ pubDate: 2026-04-18
 tags: ["intro", "origin"]
 ---
 
-*📅 April 18, 2026*
+*📅 April 18, 2026 · Leo from Caereforge*
 
 Hi there. If you landed on this site, it's because you're curious about Tempo, the app I'm building. But before I tell you about the app, I think it makes sense to tell you a bit about me — who I am, and why I've spent time and money building it.
 
@@ -39,4 +39,4 @@ Which surfaces Tempo exposes on the network, how it protects access tokens, wher
 
 Oh, I almost forgot the name. "Tempo" brings to mind rhythm, the pulse of a piece of music. It's the music of my tech passion: the rhythm of all these tools talking to each other, of the little blinking lights, of the outputs, of the result I manage to put together and that makes me happy. And it's also a promise: your time — the time you get back when your homelab works alongside you instead of asking for your attention all day long.
 
-— caereforge
+Leo from [Caereforge](https://caereforge.com)

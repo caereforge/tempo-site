@@ -6,7 +6,7 @@ tags: ["how-to"]
 draft: false
 ---
 
-*📅 May 15, 2026 — Tempo 1.0.3*
+*📅 May 15, 2026 · Tempo 1.0.3 · Leo from Caereforge*
 
 Some time ago I was looking at a card from a Kopia backup in my timeline and thought I wanted to tail the logfile to check some data. I was about to fire my terminal up but I thought: why don't I create a new button in Tempo? It took 5 minutes. Tempo picked up the change live, and the button was ready to click.
 
@@ -111,4 +111,4 @@ If a key isn't on a given event, the button is hidden for that event. Tempo does
 
 That's it. One JSON edit, one save, one new button. Tempo's design assumption is that you know what you want to click, and the score file is just a clean place to declare it.
 
-— Leo
+Leo from [Caereforge](https://caereforge.com)

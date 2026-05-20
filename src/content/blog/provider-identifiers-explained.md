@@ -6,7 +6,7 @@ tags: ["how-to"]
 draft: false
 ---
 
-*📅 May 16, 2026 — Tempo 1.0.3*
+*📅 May 16, 2026 · Tempo 1.0.3 · Leo from Caereforge*
 
 Open Settings → Ingestion → New Token in Tempo and you'll see two fields: a name for the token, and a **Provider** field. The token name is free text — call it whatever helps you recognise it later. The Provider field is not free text in the same sense. It expects a specific string, and if you guess wrong the events from that sender will be rejected with a `403`.
 
@@ -250,4 +250,4 @@ The right string costs you nothing and gives you everything the bundled score wa
 - **User Guide §11 — Score authoring** is the field-by-field spec for the score file format if you're writing your own: [/docs/score-authoring/](/docs/score-authoring/)
 - **Discord** is the fastest path if your sender is still hitting `403` after reading this. Paste the curl command and the error and we'll figure it out together.
 
-— Leo
+Leo from [Caereforge](https://caereforge.com)

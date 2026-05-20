@@ -6,7 +6,7 @@ tags: ["announcement", "release", "launch"]
 draft: false
 ---
 
-*📅 May 14, 2026*
+*📅 May 14, 2026 · Leo from Caereforge*
 
 After months of solo work, **Tempo v1 is live**. Signed, notarized, Homebrew and Sparkle-ready, on the Downloads page.
 
@@ -75,3 +75,7 @@ Tempo's author and architect is me. Design, architecture, and testing are mine; 
 If you've been waiting to try it, you're holding the link. If you've been on the fence about whether your stack fits, the [What is Tempo?](/docs/01-introduction/) chapter is a five-minute read that answers it. If you find something rough, the GitHub Issues are the fastest place to flag it, and they directly shape the v1.x roadmap.
 
 Thank you to everyone who's been part of the early conversation. v1 wouldn't read the way it does without your questions.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

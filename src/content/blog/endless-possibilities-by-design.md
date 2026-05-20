@@ -5,7 +5,7 @@ pubDate: 2026-04-28
 tags: ["scores", "design", "automation"]
 ---
 
-*📅 April 28, 2026*
+*📅 April 28, 2026 · Leo from Caereforge*
 
 I know it sounds like an exaggeration — but it's not far from the truth.
 
@@ -35,3 +35,7 @@ A field on the sender side becomes a placeholder on the score side becomes a but
 None of this happens without your click. That's deliberate: V1 wants you in control while we test these patterns across ten different homelabs. V2 will open up auto-firing for the scores that have proven solid — but you'll always be the one deciding which to enable, and when. The V1 architecture was built to grow into that, no rewrites.
 
 The real limit of Tempo is whatever you can describe in a JSON payload. And that, usually, is enough.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

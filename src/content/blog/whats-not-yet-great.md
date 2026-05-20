@@ -6,7 +6,7 @@ tags: ["transparency", "release"]
 draft: false
 ---
 
-*📅 May 15, 2026 — Tempo 1.0.3*
+*📅 May 15, 2026 · Tempo 1.0.3 · Leo from Caereforge*
 
 Let's be honest: an app, like fruit, needs time to ripen properly. Tempo is good enough for the moment, at least for what I've been able to test myself. But some parts still need work.
 
@@ -25,3 +25,7 @@ The Score Editor handles colors, severity rules, grouping, and display names —
 ## Calendars and reminders are read-only
 
 Tempo aggregates events from Apple Calendar, Reminders, and (in V1.x) Fastmail CalDAV, but it doesn't write back. Dismissing an event in Tempo only removes it from your timeline view — the source-side event is untouched. Creating new calendar entries from Tempo is V3+ scope, because it deserves a thought-out UX and conflict-resolution story I don't want to rush. For now Tempo is the read surface; your calendar app stays the write surface.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

@@ -6,7 +6,7 @@ tags: [philosophy]
 draft: false
 ---
 
-*📅 May 6, 2026*
+*📅 May 6, 2026 · Leo from Caereforge*
 
 Before getting into the question, I want to define what "to vibecode" actually means.
 
@@ -45,3 +45,7 @@ It's a piece of me I'm putting out there because I think it has value, and I thi
 More than that: this chance to create something — as opposed to my day job, where I administer and manage but I don't make — has touched something deep. It gave me the freedom to be what I am: someone passionate, spending his own time on something he loves, for an environment he loves.
 
 So, in that light: no, I don't think Tempo is vibecoded. It's AI-assisted, and AI is a great tool for someone who knows what they're building. It's a wrecking ball in the hands of someone who doesn't. I know what I'm building.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

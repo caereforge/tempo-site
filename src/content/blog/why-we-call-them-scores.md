@@ -5,7 +5,7 @@ pubDate: 2026-04-23
 tags: ["scores", "design", "community"]
 ---
 
-*📅 April 23, 2026*
+*📅 April 23, 2026 · Leo from Caereforge*
 
 If tempo in music means the speed at which a piece is played (slow or fast) and its rhythmic structure organized in steady measures (until it changes), then it's the scores that set the cadence of those measures.
 
@@ -46,3 +46,7 @@ In another post I wrote: *the payload is input, the score is policy, you're the 
 Tempo is open to the community and it handles a huge range of inputs — pretty much all the common ones across self-hosted and cloud tools. Discussion happens in [the Discord](https://tempoapp.app/discord/) (link in the menu), and PRs to the score catalog get reviewed and merged.
 
 The Tempo that each of you builds on top of your own infrastructure will be different. And that's exactly the point.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

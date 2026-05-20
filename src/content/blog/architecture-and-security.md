@@ -5,7 +5,7 @@ pubDate: 2026-05-20
 tags: ["engineering", "architecture", "security"]
 ---
 
-*📅 May 20, 2026 - Tempo 1.0.4*
+*📅 May 20, 2026 · Tempo 1.0.4 · Leo from Caereforge*
 
 A pass at what's inside Tempo v1: enough to give you a mental model of the app, with enough detail on the security side to let you decide whether you trust it on your network. The architecture section is deliberately light. My goal is to describe the shape of the system, not publish a blueprint someone could clone in a weekend. The security section is more detailed, because that's where a technical reader has earned the right to specifics.
 
@@ -59,3 +59,7 @@ A few things I am explicit about:
 - **Closed source.** v1's binary is closed, which means you cannot audit the code. What I offer in compensation: notarized + signed binary, disclosed threat model (this post), scores as plain-text JSON you can read and modify, an audit log that records every request, and the [scope-and-discipline post](/blog/what-tempo-is-not/) that lays out what Tempo will and will not become.
 
 Security questions and feedback are welcome on the [tempo-scores GitHub repo](https://github.com/caereforge/tempo-scores), alongside score contributions. The Discord (link in the menu) is where deeper conversations happen.
+
+---
+
+Leo from [Caereforge](https://caereforge.com)

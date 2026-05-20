@@ -5,7 +5,7 @@ pubDate: 2026-05-07
 tags: ["announcement", "scores"]
 ---
 
-*📅 May 7, 2026*
+*📅 May 7, 2026 · Leo from Caereforge*
 
 As you might guess, Tempo was built for my own needs and shaped around the tools I run in my home setup.
 
@@ -20,3 +20,7 @@ There's one thing worth saying, though: the thumbnails Protect sends can vary wi
 That's why the default thumbnail retention is **1 day**. You can raise it under **Tempo → Settings → Maintenance → Database**, where the panel shows you exactly how much disk the image cache is currently using and lets you pick the retention window that fits your setup.
 
 ![Image retention setting in Maintenance → Database](/img/blog/Tempo.Blog.Protect_DB_Retention.png)
+
+---
+
+Leo from [Caereforge](https://caereforge.com)
