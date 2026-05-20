@@ -97,10 +97,11 @@ const lastUpdated = "May 18, 2026";
         any related subdomains. When your browser or Tempo connects to these,
         Cloudflare sees the request — the same way it sees any of the millions
         of sites it serves. We use Cloudflare's analytics to understand
-        aggregate download and update-check patterns (counts by version,
-        country, time): no IP retention beyond serving the response, no
-        cookies, no tracking pixels, no fingerprinting, no correlation with
-        any identity. Cloudflare may process this data in non-EU jurisdictions
+        aggregate download, update-check, and site-visit patterns (counts by
+        version, page section, country, referrer source, time): no IP
+        retention beyond serving the response, no cookies, no tracking
+        pixels, no client-side JavaScript beacon, no fingerprinting, no
+        correlation with any identity. Cloudflare may process this data in non-EU jurisdictions
         under Standard Contractual Clauses (SCCs) approved by the European
         Commission.
       </li>
