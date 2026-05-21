@@ -97,14 +97,18 @@ export default {
     const ua = request.headers.get("user-agent") ?? "";
     const country = request.headers.get("cf-ipcountry") ?? "XX";
     const { eventType, version, uaBucket } = classifyRequest(path, ua);
+    // HEAD requests transfer no bytes — count them under a distinct
+    // event_type so they don't inflate download/update_check totals.
+    const analyticsEventType: EventType =
+      method === "HEAD" ? "head_check" : eventType;
 
     ctx.waitUntil(
       Promise.resolve().then(() => {
         try {
           env.TEMPO_ANALYTICS.writeDataPoint({
-            blobs: [eventType, path, country, version, uaBucket],
+            blobs: [analyticsEventType, path, country, version, uaBucket],
             doubles: [1],
-            indexes: [eventType],
+            indexes: [analyticsEventType],
           });
         } catch (_err) {
           // Never fail the request because of analytics.
