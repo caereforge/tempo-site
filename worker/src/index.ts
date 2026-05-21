@@ -20,7 +20,7 @@ interface Env {
   TEMPO_ANALYTICS: AnalyticsEngineDataset;
 }
 
-type EventType = "download" | "update_check" | "checksum" | "other";
+type EventType = "download" | "update_check" | "checksum" | "head_check" | "other";
 type UABucket = "sparkle" | "browser" | "homebrew_curl" | "other";
 
 const DMG_VERSION_RE = /Tempo-([0-9]+\.[0-9]+\.[0-9]+|latest)\.dmg(\.sha256)?$/;
