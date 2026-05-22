@@ -41,6 +41,14 @@ type UABucket = "browser" | "bot" | "feed_reader" | "other";
 const ASSET_RE =
   /\.(css|js|mjs|map|svg|png|jpe?g|gif|webp|avif|ico|woff2?|ttf|otf|eot|webmanifest)$/i;
 
+// Vulnerability scanner / probe patterns. Matching paths get a normal HTTP
+// response but are NOT logged to Analytics Engine — keeps the visitor
+// dataset focused on real navigation instead of internet background noise.
+// Pattern set is conservative: only well-known scanner targets, never
+// regular site paths.
+const PROBE_RE =
+  /^\/(?:\.env(?:\.|$|\/)|\.git[/.]|wp-(?:admin|login|content|includes|config)|xmlrpc\.php|wp-comments-post|wlwmanifest|phpmyadmin|administrator|configuration\.php|appsettings|secrets?\.json|credentials|\.DS_Store|backup\.(?:zip|tar|tar\.gz|sql)|\.aws\/|\.ssh\/|web\.config|actuator\/|api\/v\d+\/admin|console\/?$|admin\.php|jenkins\/|drupal|joomla)/i;
+
 const FEED_PATHS = new Set([
   "/rss.xml",
   "/atom.xml",
