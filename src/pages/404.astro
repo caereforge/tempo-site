@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="404 — Not found · Tempo"
+  description="The page you're looking for doesn't exist on tempoapp.app."
+>
+  <main class="not-found">
+    <h1>404</h1>
+    <p class="lead">The page you're looking for isn't here.</p>
+    <p>It may have moved, or you may have followed an old link. A few useful starting points:</p>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/downloads/">Download Tempo</a></li>
+      <li><a href="/docs/">User guide</a></li>
+      <li><a href="/scores/">Score catalog</a></li>
+      <li><a href="/blog/">Blog</a></li>
+    </ul>
+  </main>
+
+  <style>
+    .not-found {
+      max-width: 640px;
+      margin: 6rem auto 4rem;
+      padding: 0 1.5rem;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    }
+    .not-found h1 {
+      font-size: 6rem;
+      font-weight: 700;
+      margin: 0 0 1rem;
+      color: #58a6ff;
+      line-height: 1;
+    }
+    .not-found .lead {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      color: #c9d1d9;
+    }
+    .not-found p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .not-found ul {
+      margin-top: 1.25rem;
+      padding-left: 1.25rem;
+      line-height: 2;
+    }
+    .not-found a {
+      color: #58a6ff;
+      text-decoration: none;
+    }
+    .not-found a:hover { text-decoration: underline; }
+  </style>
+</BaseLayout>
