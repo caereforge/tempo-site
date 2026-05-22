@@ -5,7 +5,7 @@
  * and writes aggregate request events to Cloudflare Analytics Engine.
  *
  * Events captured (server-side aggregate only):
- *   - event_type: "download" | "update_check" | "checksum" | "other"
+ *   - event_type: "download" | "update_check" | "checksum" | "head_check" | "other"
  *   - path: the requested URL path
  *   - version: extracted from filename or Sparkle UA when present
  *   - country: CF-IPCountry header (ISO-3166-1 alpha-2)
