@@ -77,6 +77,9 @@ function classifyPath(pathname: string): {
   if (ASSET_RE.test(pathname)) {
     return { shouldLog: false, eventType: "other", section: "asset" };
   }
+  if (PROBE_RE.test(pathname)) {
+    return { shouldLog: false, eventType: "other", section: "probe" };
+  }
   if (FEED_PATHS.has(pathname)) {
     return { shouldLog: true, eventType: "feed", section: "feed" };
   }
