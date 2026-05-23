@@ -114,17 +114,13 @@ and Hazel rules POSTing under those sub-sources get the right buttons
 without any score authoring:
 
 - **`com.noodlesoft.hazel.mail`** — when Hazel hands off an email
-  (carrier delivery notification, parsed receipt, third-party alert
-  forwarded into a folder), actions are *Open in Mail*, *Open link*,
-  *Copy sender*, *Copy rule name*. The metadata Hazel sends should
-  include `sender`, `messageID`, and ideally a primary `url` from the
-  email body.
-- **`com.noodlesoft.hazel.keepa`** — for the Keepa price-drop-alert
-  pattern. Actions are *Open on Amazon*, *Open in Mail*, *Copy product
-  URL*, *Copy product name*. Metadata should include `product`,
-  `productURL`, and `messageID`.
+  (carrier delivery notification, parsed receipt, price-drop alert,
+  third-party notification forwarded into a folder), actions are
+  *Open in Mail*, *Open link*, *Copy sender*, *Copy rule name*. The
+  metadata Hazel sends should include `sender`, `messageID`, and
+  ideally a primary `url` from the email body.
 
-Both seed automatically on first launch — no separate install step.
+Seeds automatically on first launch — no separate install step.
 
 ### Custom sub-sources
 
