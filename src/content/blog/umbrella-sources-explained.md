@@ -109,13 +109,17 @@ You're not limited to the bundled umbrellas. Any score becomes an umbrella the m
 
 No special flag, no configuration, the prefix hierarchy is implicit. If the identifiers share a prefix and a score exists at that prefix, you have an umbrella.
 
-## Sub-sources: by language or by purpose
+## How sub-sources work today
 
-The bundled Scripts umbrella groups sub-sources by language, `scripts.shell.*`, `scripts.python.*`, `scripts.applescript.*`. That's a natural split when you have a handful of scripts in different languages and want to tell them apart at a glance.
+Not all umbrellas handle sub-sources the same way in 1.0.x.
 
-Conceptually, the second segment doesn't have to be a language. It can be whatever grouping makes sense to you, by purpose for example: `scripts.system.disk_check`, `scripts.backup.restic_daily`, `scripts.metrics.cpu_temp`. The score resolution (prefix walking) handles this correctly, the umbrella `scripts.json` catches all of them regardless of what the second segment says.
+**Hazel and UniFi** let you create any sub-source freely. POST as `com.noodlesoft.hazel.invoices` or `com.noodlesoft.hazel.receipts` and each appears as its own named row under the Hazel parent in the source panel. Same for UniFi: `com.ubiquiti.unifi.talk` would show up alongside Network and Protect.
 
-**Current limitation:** in Tempo 1.0.x, the source panel groups Scripts sub-sources by a fixed set of recognised languages (Shell, Python, AppleScript). Custom second segments like `system` or `backup` will work for score resolution and event rendering, but they appear under an "Other" group in the source panel instead of getting their own named row. The same applies to user-created umbrellas that aren't among the bundled sources, their sub-sources show as flat rows rather than grouped under a parent. V1.1 will remove this limitation and derive grouping dynamically from your provider identifiers.
+**Scripts** is more constrained. The source panel groups sub-sources by a fixed set of recognised languages: Shell, Python, and AppleScript. If you use `scripts.shell.check_disk`, it appears under "Shell". But a custom second segment like `scripts.backup.restic` lands under "Other" instead of getting its own "Backup" row. The score resolution still works correctly, `scripts.json` catches all `scripts.*` senders regardless, but the source panel won't reflect your naming.
+
+**User-created umbrellas** (like `com.example.mystack`) work for score resolution via prefix walking, but their sub-sources appear as flat rows in the source panel rather than grouped under a parent.
+
+V1.1 will remove these limitations. Source panel grouping will derive dynamically from your provider identifiers, with no hardcoded special cases.
 
 ## What's coming in V1.1
 
