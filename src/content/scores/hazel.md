@@ -48,17 +48,16 @@ TEMPO_TOKEN="paste-your-hazel-token-here"
 PROVIDER="com.noodlesoft.hazel"
 
 # Optional — turn this rule into its own sub-source under the Hazel
-# umbrella. Pick a short stable suffix (scanner, mail, keepa, photos,
+# umbrella. Pick a short stable suffix (scanner, mail, photos,
 # downloads, ...) and uncomment the line below. The same Tempo token
 # works for any com.noodlesoft.hazel.* sub-source as long as it's
 # bound to the parent prefix in Settings → Ingestion.
 #
 # Examples (uncomment ONE):
 #   PROVIDER="com.noodlesoft.hazel.scanner"   # ~/Scans → invoice PDFs
-#   PROVIDER="com.noodlesoft.hazel.mail"      # Mail rule export → carrier emails, receipts
-#   PROVIDER="com.noodlesoft.hazel.keepa"     # Keepa price-drop email forwards
+#   PROVIDER="com.noodlesoft.hazel.mail"      # Mail rule export → receipts, shipping, price drops
+#   PROVIDER="com.noodlesoft.hazel.downloads" # ~/Downloads → cleanup, sorting
 #   PROVIDER="com.noodlesoft.hazel.photos"    # ~/Pictures import → organising shots
-#   PROVIDER="com.noodlesoft.hazel.downloads" # ~/Downloads → cleanup / triage rules
 
 curl -sS -X POST "http://$TEMPO_HOST/ingest" \
   -H "X-Tempo-Token: $TEMPO_TOKEN" \
