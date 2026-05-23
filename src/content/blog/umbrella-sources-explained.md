@@ -9,7 +9,7 @@ tags: ["scores", "how-to", "design"]
 
 Most sources in Tempo are straightforward. Kopia is Kopia. Uptime Kuma is Uptime Kuma. One sender, one score, one row in the source panel.
 
-But some sources are families. UniFi covers Network and Protect — very different signals under one vendor. Hazel can be driven by file rules, Mail rules, or anything you wire up to it. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant. You'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
+But some sources are families. UniFi covers Network and Protect — very different signals under one vendor. Hazel can watch folders for new files, react to downloads, or pick up messages that a Mail.app rule exported to a folder. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant. You'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
 
 That's what umbrella sources solve.
 
