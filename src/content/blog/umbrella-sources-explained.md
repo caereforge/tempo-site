@@ -113,22 +113,9 @@ No special flag, no configuration, the prefix hierarchy is implicit. If the iden
 
 The bundled Scripts umbrella groups sub-sources by language, `scripts.shell.*`, `scripts.python.*`, `scripts.applescript.*`. That's a natural split when you have a handful of scripts in different languages and want to tell them apart at a glance.
 
-But the second segment doesn't have to be a language. It can be whatever grouping makes sense to you. If you'd rather organise by purpose:
+Conceptually, the second segment doesn't have to be a language. It can be whatever grouping makes sense to you, by purpose for example: `scripts.system.disk_check`, `scripts.backup.restic_daily`, `scripts.metrics.cpu_temp`. The score resolution (prefix walking) handles this correctly, the umbrella `scripts.json` catches all of them regardless of what the second segment says.
 
-```
-scripts.system.disk_check       ← system health
-scripts.system.memory_usage
-scripts.metrics.cpu_temp        ← monitoring
-scripts.metrics.bandwidth
-scripts.backup.restic_daily     ← backup jobs
-scripts.backup.borg_nas
-```
-
-Each distinct second segment (`system`, `metrics`, `backup`) becomes its own sub-source row in the source panel. The umbrella `scripts.json` score still catches all of them. You could even mix the two conventions, `scripts.shell.quick_check` alongside `scripts.backup.restic_daily`, and each appears as its own sub-source.
-
-The same applies to any umbrella. A Hazel setup might use `com.noodlesoft.hazel.invoices`, `com.noodlesoft.hazel.receipts`, `com.noodlesoft.hazel.downloads`, one sub-source per workflow, all under the same parent score.
-
-Pick the split that matches how you think about your senders, not how the code is written.
+**Current limitation:** in Tempo 1.0.x, the source panel groups Scripts sub-sources by a fixed set of recognised languages (Shell, Python, AppleScript). Custom second segments like `system` or `backup` will work for score resolution and event rendering, but they appear under an "Other" group in the source panel instead of getting their own named row. The same applies to user-created umbrellas that aren't among the bundled sources, their sub-sources show as flat rows rather than grouped under a parent. V1.1 will remove this limitation and derive grouping dynamically from your provider identifiers.
 
 ## What's coming in V1.1
 
