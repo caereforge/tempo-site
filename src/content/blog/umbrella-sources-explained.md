@@ -130,6 +130,10 @@ The same applies to any umbrella. A Hazel setup might use `com.noodlesoft.hazel.
 
 Pick the split that matches how you think about your senders, not how the code is written.
 
+## What's coming in V1.1
+
+This post describes the umbrella model as it works in Tempo 1.0.x. Version 1.1 will ship a redesigned Score Editor that makes umbrella configuration more visual and more flexible, including per-sub-source card colour overrides and dynamic grouping driven entirely by your provider identifiers, with no hardcoded special cases. A new post will cover the V1.1 changes when they land.
+
 ## Further reading
 
 - **[What to type when Tempo asks for a provider](/blog/provider-identifiers-explained/)** covers the full provider identifier system, including the bundled source table and naming conventions.
