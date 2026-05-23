@@ -25,7 +25,7 @@ Three umbrellas ship out of the box:
 | **Hazel** | `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.scanner` |
 | **UniFi** | `com.ubiquiti.unifi.network`, `com.ubiquiti.unifi.protect` |
 
-In the source panel, each sender still gets its own row — you see Shell, Python, Mail, Scanner as distinct sub-sources. But in the Score Editor, there's one score. The parent defines the severity rules, the action buttons, and the grouping policy. Every child inherits all of it. Card colour is the exception — each sub-source can have its own, set directly from the source panel with a click on the colour dot next to its name.
+In the source panel, each sender still gets its own row — you see Shell, Python, Mail, Scanner as distinct sub-sources. But in the Score Editor, there's one score. The parent defines the severity rules, the action buttons, and the grouping policy. Every child inherits all of it.
 
 ## How the resolution works
 
