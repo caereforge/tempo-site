@@ -1,6 +1,6 @@
 ---
 title: "Umbrella sources: one score, many senders"
-description: "Some sources in Tempo aren't a single row — they're a family. Scripts, Hazel, UniFi: one parent score covers every sub-source underneath. Here's how it works and how to use it."
+description: "Some sources in Tempo aren't a single row, they're a family. Scripts, Hazel, UniFi: one parent score covers every sub-source underneath. Here's how it works and how to use it."
 pubDate: 2026-05-23
 tags: ["scores", "how-to", "design"]
 ---
@@ -9,13 +9,13 @@ tags: ["scores", "how-to", "design"]
 
 Most sources in Tempo are straightforward. Kopia is Kopia. Uptime Kuma is Uptime Kuma. One sender, one score, one row in the source panel.
 
-But some sources are families. UniFi covers Network and Protect — very different signals under one vendor. Hazel can watch folders for new files, react to downloads, or pick up messages that a Mail.app rule exported to a folder. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant. You'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
+But some sources are families. UniFi covers Network and Protect, very different signals under one vendor. Hazel can watch folders for new files, react to downloads, or pick up messages that a Mail.app rule exported to a folder. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant. You'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
 
 That's what umbrella sources solve.
 
 ## The idea
 
-An umbrella source is a single score that covers a whole family of senders. The score file lives at the parent level — `scripts.json`, `com.noodlesoft.hazel.json`, `com.ubiquiti.unifi.json` — and every sender whose provider identifier starts with that prefix inherits the parent's configuration automatically.
+An umbrella source is a single score that covers a whole family of senders. The score file lives at the parent level, `scripts.json`, `com.noodlesoft.hazel.json`, `com.ubiquiti.unifi.json`, and every sender whose provider identifier starts with that prefix inherits the parent's configuration automatically.
 
 Three umbrellas ship out of the box:
 
@@ -25,15 +25,15 @@ Three umbrellas ship out of the box:
 | **Hazel** | `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.scanner` |
 | **UniFi** | `com.ubiquiti.unifi.network`, `com.ubiquiti.unifi.protect` |
 
-In the source panel, each sender still gets its own row — you see Shell, Python, Mail, Scanner as distinct sub-sources. But in the Score Editor, there's one score. The parent defines the severity rules, the action buttons, and the grouping policy. Every child inherits all of it.
+In the source panel, each sender still gets its own row, you see Shell, Python, Mail, Scanner as distinct sub-sources. But in the Score Editor, there's one score. The parent defines the severity rules, the action buttons, and the grouping policy. Every child inherits all of it.
 
 ## How the resolution works
 
 When Tempo receives an event, it looks for a score matching the event's provider identifier. The lookup walks up the dot-separated hierarchy until it finds a match:
 
-1. Look for `scripts.shell.check_disk.json` — not found.
-2. Drop the last segment: look for `scripts.shell.json` — not found.
-3. Drop again: look for `scripts.json` — found. Use it.
+1. Look for `scripts.shell.check_disk.json`, not found.
+2. Drop the last segment: look for `scripts.shell.json`, not found.
+3. Drop again: look for `scripts.json`, found. Use it.
 
 This is prefix walking. The most specific score wins, and the parent catches everything that doesn't have a dedicated override. It's the same resolution pattern regardless of how deep the identifier goes.
 
@@ -51,7 +51,7 @@ A single umbrella score gives you quite a lot of control over how different send
 }
 ```
 
-This makes `backup_check` events with keyword `Failed` render as critical, while a `disk_usage` event with keyword `OK` renders as green — same score, different presentation.
+This makes `backup_check` events with keyword `Failed` render as critical, while a `disk_usage` event with keyword `OK` renders as green, same score, different presentation.
 
 **Conditional actions (new in 1.0.5).** Individual severity rules can now carry their own action buttons. A critical match can surface an SSH button that a routine OK match doesn't show:
 
@@ -97,7 +97,7 @@ The same works for any umbrella. Drop `com.noodlesoft.hazel.mail.json` next to `
 
 When you create a token in Settings → Ingestion, the provider field uses the same prefix binding. A token bound to `scripts` authorises every `scripts.*` sender. A token bound to `scripts.shell` only authorises Shell senders. The trade-off is convenience versus blast radius if the token leaks.
 
-For umbrellas with many senders — Scripts especially — one token at the parent level is the practical choice. For umbrellas with two or three well-known children — UniFi Network and Protect — a token per child is worth the extra minute in Settings.
+For umbrellas with many senders, Scripts especially, one token at the parent level is the practical choice. For umbrellas with two or three well-known children, UniFi Network and Protect, a token per child is worth the extra minute in Settings.
 
 ## Writing your own umbrella
 
@@ -107,11 +107,11 @@ You're not limited to the bundled umbrellas. Any score becomes an umbrella the m
 2. Have your senders POST as `com.example.mystack.web`, `com.example.mystack.api`, `com.example.mystack.worker`.
 3. Each sender appears as its own sub-source in the panel, all inheriting the parent score.
 
-No special flag, no configuration — the prefix hierarchy is implicit. If the identifiers share a prefix and a score exists at that prefix, you have an umbrella.
+No special flag, no configuration, the prefix hierarchy is implicit. If the identifiers share a prefix and a score exists at that prefix, you have an umbrella.
 
 ## Sub-sources: by language or by purpose
 
-The bundled Scripts umbrella groups sub-sources by language — `scripts.shell.*`, `scripts.python.*`, `scripts.applescript.*`. That's a natural split when you have a handful of scripts in different languages and want to tell them apart at a glance.
+The bundled Scripts umbrella groups sub-sources by language, `scripts.shell.*`, `scripts.python.*`, `scripts.applescript.*`. That's a natural split when you have a handful of scripts in different languages and want to tell them apart at a glance.
 
 But the second segment doesn't have to be a language. It can be whatever grouping makes sense to you. If you'd rather organise by purpose:
 
@@ -124,9 +124,9 @@ scripts.backup.restic_daily     ← backup jobs
 scripts.backup.borg_nas
 ```
 
-Each distinct second segment (`system`, `metrics`, `backup`) becomes its own sub-source row in the source panel. The umbrella `scripts.json` score still catches all of them. You could even mix the two conventions — `scripts.shell.quick_check` alongside `scripts.backup.restic_daily` — and each appears as its own sub-source.
+Each distinct second segment (`system`, `metrics`, `backup`) becomes its own sub-source row in the source panel. The umbrella `scripts.json` score still catches all of them. You could even mix the two conventions, `scripts.shell.quick_check` alongside `scripts.backup.restic_daily`, and each appears as its own sub-source.
 
-The same applies to any umbrella. A Hazel setup might use `com.noodlesoft.hazel.invoices`, `com.noodlesoft.hazel.receipts`, `com.noodlesoft.hazel.downloads` — one sub-source per workflow, all under the same parent score.
+The same applies to any umbrella. A Hazel setup might use `com.noodlesoft.hazel.invoices`, `com.noodlesoft.hazel.receipts`, `com.noodlesoft.hazel.downloads`, one sub-source per workflow, all under the same parent score.
 
 Pick the split that matches how you think about your senders, not how the code is written.
 
@@ -134,6 +134,6 @@ Pick the split that matches how you think about your senders, not how the code i
 
 - **[What to type when Tempo asks for a provider](/blog/provider-identifiers-explained/)** covers the full provider identifier system, including the bundled source table and naming conventions.
 - **[Why we call them scores](/blog/why-we-call-them-scores/)** explains the score concept and lists every score shipping at launch.
-- **User Guide §11 — Score authoring** is the field-by-field spec: [/docs/score-authoring/](/docs/score-authoring/)
+- **User Guide §11, Score authoring** is the field-by-field spec: [/docs/score-authoring/](/docs/score-authoring/)
 
 Leo from [Caereforge](https://caereforge.com)
