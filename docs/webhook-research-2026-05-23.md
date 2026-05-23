@@ -413,9 +413,47 @@ Research date: 2026-05-23. Covers 100+ tools across homelab, DevOps, Mac product
 | **Alfred** | Via shell scripts | Limited (user-invoked) | Medium |
 | **Stream Deck** | Via plugins/scripts | User-triggered | Can trigger HTTP requests |
 
-### Mac tools pending detailed research:
-- DEVONthink, Hookmark, OmniFocus, Things 3, Fantastical, Cardhop, Drafts, Obsidian, Bear, Notion, Craft, PopClip
-- CleanMyMac, iStat Menus, 1Password, Transmit, Forklift, Tower/Fork, Proxyman, Screens, Pastebot, Typinator, SoundSource/Audio Hijack, Bunch
+### Mac Productivity Apps (detailed)
+
+| App | AppleScript | Shortcuts | Native HTTP | Event Triggers | Tempo Integration Path |
+|-----|:-----------:|:---------:|:-----------:|:--------------:|----------------------|
+| **DEVONthink** | Full | No | Via script | Rich (import, modify, tag, schedule via Smart Rules) | Smart Rule → shell script → POST |
+| **Drafts** | No | Yes | **Yes** (HTTP class) | Manual/chained actions | Native HTTP action step |
+| **OmniFocus** | Full (Pro) | Yes | **Yes** (URL.FetchRequest) | Manual/URL only | Native Omni Automation JS |
+| **Notion** | No | No | **Yes** (webhook actions) | Property/schema/comment changes | Native outgoing webhooks |
+| **Obsidian** | No | Limited | Via plugins | Via plugin API (file create/modify/delete) | Webhooks plugin or Templater |
+| **Hazel** | Yes | Yes | Via shell | File appears/changes in folder | Shell script → POST |
+| **PopClip** | Yes | No | Via shell | Text selection | Shell script extension |
+| **Things 3** | Full | Yes | No | None | AppleScript → shell → POST |
+| **Fantastical** | Limited | Yes | No | None | Shortcuts bridge |
+| **Bear** | No | Yes | No | None | Shortcuts bridge |
+| **Craft** | No | Yes | No | None | Shortcuts bridge |
+| **Hookmark** | Pro | Yes | No | None (action-driven) | AppleScript bridge |
+| **Cardhop** | Limited | Yes | No | None | Shortcuts bridge |
+| **MindNode** | Yes | Yes | No | None | Shortcuts bridge |
+| **Marked 2/3** | Partial | No | No | On render | Preprocessor script |
+
+### Mac System/Utility Apps (detailed)
+
+| Tool | Automation | HTTP Out | Events | Tempo Path |
+|------|-----------|----------|--------|------------|
+| **Bunch** | AppleScript, Shortcuts, CLI, curl | **Yes** (curl in scripts) | Schedule/URL trigger | Direct curl POST |
+| **Stream Deck** | Plugins | **Yes** (API Request plugin) | Button press | Plugin POST |
+| **Audio Hijack** | Full JS API | Via runShellCommand | Session start/stop/record | Script → curl |
+| **1Password** | Shortcuts, CLI (`op`) | Events API (poll) | Sign-in, item usage (business) | Poll Events API |
+| **Tower** | Git hooks | Via hooks | Push/pull/fetch completion | Hook → curl |
+| **iStat Menus** | AppleScript | No | CPU/memory/disk/network thresholds | Notification Center bridge |
+| **Typinator** | AppleScript | No | On expansion (scripts) | Inline script |
+| **TextExpander** | AppleScript | No | On expansion (scripts) | Inline script |
+| **Transmit** | Full AppleScript | No | None (imperative) | Wrap in script |
+| **ForkLift** | AppleScript | No | None | Wrap in script |
+| **Bartender** | AppleScript | No | None | — |
+| **Proxyman** | CLI, MCP | MCP | None (debug tool) | — |
+| **SoundSource** | Shortcuts (17 actions) | No | None | — |
+| **CleanMyMac** | None | No | None | — |
+| **Strongbox** | None | No | None | — |
+| **Screens/Jump Desktop** | URL scheme only | No | None | — |
+| **Pastebot** | Shell filters | No | None | — |
 
 ---
 
