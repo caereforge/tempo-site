@@ -72,9 +72,12 @@ The `"extend"` mode adds these buttons alongside the score's default actions. Us
 
 ## What requires a separate score
 
-The display name in the source panel comes from the score's `displayName` field — one value per score. If you want a sub-source to carry a completely different display name, or its own set of default actions unrelated to the parent's, a dedicated score file is the way.
+Two things live at the score level and apply uniformly to every sub-source under the umbrella:
 
-That said, most per-sub-source needs are already covered without a separate file: card colour is set from the source panel, severity and badge are handled by metadata-matching rules, and conditional actions (1.0.5+) let individual rules carry their own buttons.
+- **Card colour.** The tint of event cards comes from the score's top-level `color` field. Sub-sources that share an umbrella share the colour. (Umbrellas whose children have their own dedicated score files — like UniFi Network and Protect — can have different colours per child, because each child score carries its own `color`.)
+- **Display name and default actions.** One `displayName`, one `defaultActions` array per score file.
+
+If you want a specific sub-source to look visually distinct or carry different default actions, drop a dedicated score file for it (see the escape hatch below). For severity, badge, and conditional actions, the umbrella score's `severityRules` with metadata matching already covers per-sub-source differentiation without extra files.
 
 ## The escape hatch
 
