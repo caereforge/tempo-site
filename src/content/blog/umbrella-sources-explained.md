@@ -72,12 +72,9 @@ The `"extend"` mode adds these buttons alongside the score's default actions. Us
 
 ## What requires a separate score
 
-Two things can't be customized per sub-source within a single score file:
+The display name in the source panel comes from the score's `displayName` field — one value per score. If you want a sub-source to carry a completely different display name, or its own set of default actions unrelated to the parent's, a dedicated score file is the way.
 
-- **Card colour.** The tint of the entire event card comes from the score's top-level `color` field. All sub-sources under the same umbrella share it.
-- **Display name.** The friendly name in the source panel comes from `displayName` — one value per score.
-
-If you want one sub-source to look visually distinct — say, a red card for a critical monitoring script and a blue card for an informational one — you need a dedicated score file for that sub-source.
+That said, most per-sub-source needs are already covered without a separate file: card colour is set from the source panel, severity and badge are handled by metadata-matching rules, and conditional actions (1.0.5+) let individual rules carry their own buttons.
 
 ## The escape hatch
 
