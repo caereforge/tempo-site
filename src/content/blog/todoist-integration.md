@@ -1,5 +1,5 @@
 ---
-title: "Todoist meets your timeline"
+title: "Tempo welcomes Todoist"
 description: "How to bring your Todoist tasks into Tempo with a lightweight polling script and a purpose-built score."
 pubDate: 2026-05-27
 tags: ["how-to", "scores", "automation"]
