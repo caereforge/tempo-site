@@ -102,19 +102,25 @@ export default {
     const analyticsEventType: EventType =
       method === "HEAD" ? "head_check" : eventType;
 
-    ctx.waitUntil(
-      Promise.resolve().then(() => {
-        try {
-          env.TEMPO_ANALYTICS.writeDataPoint({
-            blobs: [analyticsEventType, path, country, version, uaBucket],
-            doubles: [1],
-            indexes: [analyticsEventType],
-          });
-        } catch (_err) {
-          // Never fail the request because of analytics.
-        }
-      }),
-    );
+    // Skip analytics for "other" — on this host every legitimate request is
+    // download / update_check / checksum / head_check. Everything else is
+    // 404 noise (vuln/secret scanners hitting .env, .git/*, wp-json/*, etc.)
+    // and only inflates the dataset.
+    if (analyticsEventType !== "other") {
+      ctx.waitUntil(
+        Promise.resolve().then(() => {
+          try {
+            env.TEMPO_ANALYTICS.writeDataPoint({
+              blobs: [analyticsEventType, path, country, version, uaBucket],
+              doubles: [1],
+              indexes: [analyticsEventType],
+            });
+          } catch (_err) {
+            // Never fail the request because of analytics.
+          }
+        }),
+      );
+    }
 
     const object =
       method === "HEAD"
