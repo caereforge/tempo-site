@@ -124,6 +124,14 @@ SCHEMA: dict[str, Any] = {
             "type": "array",
             "items": {"$ref": "#/definitions/triageRule"},
         },
+        "restStateOverrides": {
+            "type": "array",
+            "items": {"$ref": "#/definitions/restStateOverride"},
+        },
+        "closedCycleSeverity": {
+            "type": "string",
+            "enum": ["info", "warning"],
+        },
     },
     "definitions": {
         "severityEntry": {
