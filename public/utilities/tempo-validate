@@ -168,6 +168,53 @@ SCHEMA: dict[str, Any] = {
                 },
             },
         },
+        "matchObject": {
+            "type": "object",
+            "additionalProperties": {"type": ["string", "number", "boolean"]},
+        },
+        "groupingRule": {
+            "type": "object",
+            "required": ["match", "role"],
+            "additionalProperties": False,
+            "properties": {
+                "match": {"$ref": "#/definitions/matchObject"},
+                "role": {
+                    "type": "string",
+                    "enum": ["opens", "closes", "single", "repeats", "continues"],
+                },
+                "key": {"type": "string"},
+                "window": {"type": "string"},
+                "stackColor": {
+                    "type": "string",
+                    "enum": ["current-state", "worst-severity"],
+                },
+            },
+        },
+        "indicatorRule": {
+            "type": "object",
+            "required": ["match"],
+            "additionalProperties": False,
+            "properties": {
+                "match": {"$ref": "#/definitions/matchObject"},
+                "color": {"type": "string"},
+                "emoji": {"type": "string"},
+            },
+        },
+        "tagRule": {
+            "type": "object",
+            "required": ["match", "tag"],
+            "additionalProperties": False,
+            "properties": {
+                "match": {"$ref": "#/definitions/matchObject"},
+                "tag": {"type": "string"},
+            },
+        },
+        "triageRule": {
+            "type": "object",
+            "required": ["match"],
+            "additionalProperties": False,
+            "properties": {"match": {"$ref": "#/definitions/matchObject"}},
+        },
     },
 }
 
