@@ -201,6 +201,73 @@
           ]
         }
       }
+    },
+    "matchObject": {
+      "type": "object",
+      "description": "Shallow key → expected value. Each value compares (as a string) against the event's metadata; string values may use glob wildcards * and ?.",
+      "additionalProperties": { "type": ["string", "number", "boolean"] }
+    },
+    "groupingRule": {
+      "type": "object",
+      "required": ["match", "role"],
+      "additionalProperties": false,
+      "properties": {
+        "match": { "$ref": "#/definitions/matchObject" },
+        "role": {
+          "type": "string",
+          "enum": ["opens", "closes", "single", "repeats", "continues"],
+          "description": "opens/closes/continues = stateful session (a subject leaving and returning to its rest state); single = never stacks; repeats = stacks repetitions within window."
+        },
+        "key": {
+          "type": "string",
+          "description": "Subject-key template (e.g. ${metadata.monitorID}). Events whose key resolves equal form one episode/series."
+        },
+        "window": {
+          "type": "string",
+          "description": "For repeats: max stack span from the anchor. For opens: settle-gap enabling multi-cycle flap aggregation. Omit = unbounded. e.g. 5m, 2h, 6h, 1d."
+        },
+        "stackColor": {
+          "type": "string",
+          "enum": ["current-state", "worst-severity"],
+          "description": "Stack header color basis. Omit to use the mechanism default (session → current-state, repeats → worst-severity)."
+        }
+      }
+    },
+    "indicatorRule": {
+      "type": "object",
+      "required": ["match"],
+      "additionalProperties": false,
+      "properties": {
+        "match": { "$ref": "#/definitions/matchObject" },
+        "color": {
+          "type": "string",
+          "description": "Named (red/orange/yellow/green/blue/purple) or #RRGGBB. Used when emoji is omitted."
+        },
+        "emoji": {
+          "type": "string",
+          "description": "Rendered instead of the colored indicator when set."
+        }
+      }
+    },
+    "tagRule": {
+      "type": "object",
+      "required": ["match", "tag"],
+      "additionalProperties": false,
+      "properties": {
+        "match": { "$ref": "#/definitions/matchObject" },
+        "tag": {
+          "type": "string",
+          "description": "Tag text. Supports ${metadata.xxx} interpolation."
+        }
+      }
+    },
+    "triageRule": {
+      "type": "object",
+      "required": ["match"],
+      "additionalProperties": false,
+      "properties": {
+        "match": { "$ref": "#/definitions/matchObject" }
+      }
     }
   }
 }
