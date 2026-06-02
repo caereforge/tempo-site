@@ -223,6 +223,15 @@ SCHEMA: dict[str, Any] = {
             "additionalProperties": False,
             "properties": {"match": {"$ref": "#/definitions/matchObject"}},
         },
+        "restStateOverride": {
+            "type": "object",
+            "required": ["match", "restState"],
+            "additionalProperties": False,
+            "properties": {
+                "match": {"$ref": "#/definitions/matchObject"},
+                "restState": {"type": "string", "enum": ["on", "off"]},
+            },
+        },
     },
 }
 
