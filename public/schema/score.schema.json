@@ -28,6 +28,11 @@
       "description": "Accent color for this source, as #RRGGBB.",
       "pattern": "^#[0-9A-Fa-f]{6}$"
     },
+    "surface": {
+      "type": "string",
+      "enum": ["timeline", "agenda"],
+      "description": "Which pane this source's events render on. 'timeline' = alert feed + heatmap (participates in the needs-attention model); 'agenda' = calendar/reminders pane (read-only context, neutral pill). Defaults from eventType when omitted (alerts → timeline, everything else → agenda)."
+    },
     "senderSeverityWins": {
       "type": "boolean",
       "description": "When true (default), a payload's explicit non-info severity short-circuits the rules. When false, score rules always run, letting the user reclassify events from senders that over-declare severity."
