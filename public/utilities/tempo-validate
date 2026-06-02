@@ -54,6 +54,7 @@ SCHEMA: dict[str, Any] = {
         },
         "displayName": {"type": "string", "minLength": 1},
         "color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "surface": {"type": "string", "enum": ["timeline", "agenda"]},
         "senderSeverityWins": {"type": "boolean"},
         "severityDefault": {"$ref": "#/definitions/severityEntry"},
         "severityRules": {
