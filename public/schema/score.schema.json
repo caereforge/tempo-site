@@ -100,6 +100,40 @@
       "type": "string",
       "description": "Time window inside which related events stack. Empty string = no cutoff (events stack regardless of how far apart in time).",
       "enum": ["", "15m", "30m", "1h", "6h", "1d", "1w"]
+    },
+    "eventPattern": {
+      "type": "string",
+      "enum": ["episodic", "entity", "run-bound"],
+      "description": "How this source's events relate over time. 'episodic' (default) = stateful entities that flip state; 'entity' = one row per subject; 'run-bound' = a run with a start/finish lifecycle (e.g. a script). Omit for the default."
+    },
+    "stackTitle": {
+      "type": "string",
+      "description": "Optional ${metadata.xxx} template for the title shown on a collapsed stack's primary row."
+    },
+    "groupingRules": {
+      "type": "array",
+      "description": "Declarative episode/stack engine. Ordered; first match wins per event. Supersedes the legacy grouping/groupingWindow primitive when present.",
+      "items": { "$ref": "#/definitions/groupingRule" }
+    },
+    "indicatorRules": {
+      "type": "array",
+      "description": "Ordered list painting a small colored indicator (or emoji) per event. First match wins. Independent from severity.",
+      "items": { "$ref": "#/definitions/indicatorRule" }
+    },
+    "tagRules": {
+      "type": "array",
+      "description": "Ordered list attaching a text tag to matching events. First match wins.",
+      "items": { "$ref": "#/definitions/tagRule" }
+    },
+    "ackRules": {
+      "type": "array",
+      "description": "Events matching any of these are auto-acknowledged on arrival.",
+      "items": { "$ref": "#/definitions/triageRule" }
+    },
+    "dismissRules": {
+      "type": "array",
+      "description": "Events matching any of these are auto-dismissed on arrival.",
+      "items": { "$ref": "#/definitions/triageRule" }
     }
   },
   "definitions": {
