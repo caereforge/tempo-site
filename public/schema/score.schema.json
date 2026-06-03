@@ -278,6 +278,19 @@
       "properties": {
         "match": { "$ref": "#/definitions/matchObject" }
       }
+    },
+    "restStateOverride": {
+      "type": "object",
+      "required": ["match", "restState"],
+      "additionalProperties": false,
+      "properties": {
+        "match": { "$ref": "#/definitions/matchObject" },
+        "restState": {
+          "type": "string",
+          "enum": ["on", "off"],
+          "description": "'off' = natural-off subject (TV/decoder/phone) → swap opens↔closes. 'on' = server default (explicit no-op)."
+        }
+      }
     }
   }
 }
