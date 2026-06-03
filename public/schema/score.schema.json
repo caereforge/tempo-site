@@ -288,7 +288,12 @@
         "restState": {
           "type": "string",
           "enum": ["on", "off"],
-          "description": "'off' = natural-off subject (TV/decoder/phone) → swap opens↔closes. 'on' = server default (explicit no-op)."
+          "description": "'off' = natural-off subject (TV/decoder/phone) → swap opens↔closes. 'on' = server default (explicit; e.g. to carry only a per-device closedCycleSeverity)."
+        },
+        "closedCycleSeverity": {
+          "type": "string",
+          "enum": ["info", "warning"],
+          "description": "Per-subject resolved-cycle severity, overriding the score-level default. Lets a server in a heterogeneous source be 'warning' while a TV is 'info'. Omit to use the score default."
         }
       }
     }
