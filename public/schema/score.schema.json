@@ -137,13 +137,8 @@
     },
     "restStateOverrides": {
       "type": "array",
-      "description": "Rest-state classification ('server vs TV'). groupingRules declare the SERVER orientation (rest=on: the down/absent transition opens a cycle). Each override marks subjects whose rest state is OFF (a TV/decoder/phone: the cycle is on→off) — the engine swaps opens↔closes for them. Default (no override) = rest on.",
+      "description": "Rest-state classification ('server vs TV'). groupingRules declare the SERVER orientation (rest=on: the down/absent transition opens a cycle). Each override marks subjects whose rest state is OFF (a TV/decoder/phone: the cycle is on→off) — the engine swaps opens↔closes for them. Each entry also carries a per-device resolved-cycle severity (closedCycleSeverity). Default (no override) = rest on, resolved info.",
       "items": { "$ref": "#/definitions/restStateOverride" }
-    },
-    "closedCycleSeverity": {
-      "type": "string",
-      "enum": ["info", "warning"],
-      "description": "Severity of a CLOSED (resolved) cycle. 'info' (default) = the resolved flap is quiet and drops off attention. 'warning' = it stays in needs-attention until acked (a server that flapped overnight). The open cycle's severity is unaffected."
     }
   },
   "definitions": {
