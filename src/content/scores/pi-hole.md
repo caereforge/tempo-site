@@ -34,64 +34,70 @@ Save as `pihole-tempo.sh`, edit the four config values, run on cron every 5–10
 
 ```sh
 #!/usr/bin/env bash
-# pihole-tempo.sh — emit Pi-hole state changes to Tempo
-set -euo pipefail
+# pihole-tempo.sh — emit Pi-hole state + update-available to Tempo
+set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────
 PIHOLE_URL="http://pi.hole"        # base URL of your Pi-hole
-PIHOLE_PASS="your-admin-password"  # admin password (v6) or API token
+PIHOLE_PASS="your-admin-password"  # admin password (v6)
 TEMPO_URL="http://your-mac.local:7776/ingest"
 TEMPO_TOKEN="paste-tempo-token-here"
 STATE_DIR="${HOME}/.local/state/pihole-tempo"
 # ──────────────────────────────────────────────────────────────────────────
 
 mkdir -p "$STATE_DIR"
-LAST_FILE="${STATE_DIR}/last_status"
 
-# Auth (Pi-hole v6 — single-shot session)
-SID=$(curl -s -X POST -H "Content-Type: application/json" \
-    -d "{\"password\":\"${PIHOLE_PASS}\"}" \
-    "${PIHOLE_URL}/api/auth" | jq -r '.session.sid // empty')
+emit() { # title status action
+    curl -sS --max-time 5 -X POST \
+        -H "X-Tempo-Token: ${TEMPO_TOKEN}" -H "Content-Type: application/json" \
+        -d "{\"providerIdentifier\":\"net.pi-hole.pi-hole\",\"title\":\"$1\",\"startDate\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"eventType\":\"alert\",\"metadata\":{\"Status\":\"$2\",\"Action\":\"$3\",\"ServerUrl\":\"${PIHOLE_URL}\"}}" \
+        "${TEMPO_URL}" >/dev/null
+}
+# returns success only when the value for <key> differs from the last run
+changed() {
+    local f="${STATE_DIR}/last_$1" last
+    last=$( [ -f "$f" ] && cat "$f" || echo "" )
+    echo "$2" > "$f"
+    [ "$2" != "$last" ]
+}
 
+# ── Auth (Pi-hole v6). IMPORTANT: delete the session at the end — auth on
+#    every run WITHOUT deleting exhausts Pi-hole's API seats (api_seats_exceeded).
+SID=$(curl -s --max-time 5 -X POST -H "Content-Type: application/json" \
+    -d "{\"password\":\"${PIHOLE_PASS}\"}" "${PIHOLE_URL}/api/auth" \
+    | jq -r '.session.sid // empty')
+
+# ── 1. Blocking status + reachability (the high-value signal: DNS down) ────
 if [ -z "$SID" ]; then
     STATUS="unreachable"
 else
-    BLOCKING=$(curl -s -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/dns/blocking" \
+    BLOCKING=$(curl -s --max-time 5 -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/dns/blocking" \
                | jq -r '.blocking // "unknown"')
     case "$BLOCKING" in
-        enabled)   STATUS="up" ;;
-        disabled)  STATUS="disabled" ;;
-        *)         STATUS="unreachable" ;;
+        enabled)  STATUS="up" ;;
+        disabled) STATUS="disabled" ;;
+        *)        STATUS="unreachable" ;;
+    esac
+fi
+if changed status "$STATUS"; then
+    case "$STATUS" in
+        up)          emit "Pi-hole — blocking enabled"  "up"          "blocking_enabled" ;;
+        disabled)    emit "Pi-hole — blocking disabled" "disabled"    "blocking_disabled" ;;
+        unreachable) emit "Pi-hole unreachable"         "unreachable" "" ;;
     esac
 fi
 
-LAST=$( [ -f "$LAST_FILE" ] && cat "$LAST_FILE" || echo "")
-echo "$STATUS" > "$LAST_FILE"
+# ── 2. Update available (local vs remote per component: core / web / ftl) ──
+if [ -n "$SID" ]; then
+    UPD=$(curl -s --max-time 5 -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/info/version" \
+        | jq -r '[.version.core, .version.web, .version.ftl] | map(select(.local.version != .remote.version)) | length')
+    if changed update "${UPD:-0}" && [ "${UPD:-0}" -gt 0 ]; then
+        emit "Pi-hole — update available" "up" "update_available"
+    fi
+fi
 
-# Only emit on transitions
-if [ "$STATUS" = "$LAST" ]; then exit 0; fi
-
-case "$STATUS" in
-    up)          ACTION="blocking_enabled";  TITLE="Pi-hole — blocking enabled" ;;
-    disabled)    ACTION="blocking_disabled"; TITLE="Pi-hole — blocking disabled" ;;
-    unreachable) ACTION="";                  TITLE="Pi-hole unreachable" ;;
-esac
-
-curl -sS -X POST \
-    -H "X-Tempo-Token: ${TEMPO_TOKEN}" \
-    -H "Content-Type: application/json" \
-    -d "{
-      \"providerIdentifier\": \"net.pi-hole.pi-hole\",
-      \"title\": \"${TITLE}\",
-      \"startDate\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
-      \"eventType\": \"alert\",
-      \"metadata\": {
-        \"Status\": \"${STATUS}\",
-        \"Action\": \"${ACTION}\",
-        \"ServerUrl\": \"${PIHOLE_URL}\"
-      }
-    }" \
-    "${TEMPO_URL}" >/dev/null
+# ── Clean up the session (prevents api_seats_exceeded over time) ───────────
+[ -n "$SID" ] && curl -s --max-time 5 -X DELETE -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/auth" >/dev/null 2>&1
 ```
 
 ## Schedule
@@ -163,6 +169,7 @@ The rest of the script is identical.
 
 ## Notes
 
-- The polling script is intentionally minimal — track only Status and Action transitions. Extend it as you wish (gravity update detection, `/api/info` for version/update checks) using the same `metadata` keys.
+- The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable` — a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end — Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval — a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
+- `high_load` and `gravity_update` from the severity table are left as optional extensions (CPU load is noisy on a DNS resolver; gravity has no clean status endpoint) — add them with the same `metadata` keys if you want them.
 - The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score — explicitly trusted by you.
 - For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS` — Tempo lists them as the same source but each event carries its own URL.
