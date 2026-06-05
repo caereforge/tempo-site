@@ -38,6 +38,11 @@
       "label": "Copy user email",
       "systemIcon": "envelope",
       "trigger": { "copyToClipboard": "${metadata.UserEmail}" }
+    },
+    {
+      "label": "Copy source IP",
+      "systemIcon": "network",
+      "trigger": { "copyToClipboard": "${metadata.IP}" }
     }
   ]
 }

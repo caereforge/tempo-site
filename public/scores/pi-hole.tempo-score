@@ -24,12 +24,12 @@
     {
       "label": "Open query log",
       "systemIcon": "list.bullet.rectangle",
-      "trigger": { "openURL": "${metadata.ServerUrl}/admin/queries.php" }
+      "trigger": { "openURL": "${metadata.ServerUrl}/admin/queries" }
     },
     {
       "label": "Open settings",
       "systemIcon": "gearshape",
-      "trigger": { "openURL": "${metadata.ServerUrl}/admin/settings.php" }
+      "trigger": { "openURL": "${metadata.ServerUrl}/admin/settings" }
     },
     {
       "label": "Copy server URL",

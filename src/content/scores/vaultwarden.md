@@ -11,7 +11,7 @@ pubDate: 2026-04-30
 downloadable: true
 ---
 
-Surface Vaultwarden auth events, admin actions, and liveness in Tempo with four default actions (open vault, open admin, copy server URL, copy user email).
+Surface Vaultwarden auth events, admin actions, and liveness in Tempo with five default actions (open vault, open admin, copy server URL, copy user email, copy source IP).
 
 Vaultwarden has **no native outbound webhook**, so this integration is **poll- and log-driven**: a small bash script either polls Vaultwarden's admin diagnostics endpoint (liveness) and/or tails its log file (auth events), and POSTs to Tempo when something changes.
 
@@ -55,7 +55,7 @@ LAST_STATUS_FILE="${STATE_DIR}/last_status"
 LAST_LOG_OFFSET="${STATE_DIR}/last_log_offset"
 
 emit_event() {
-    local title=$1 event=$2 status=${3:-} email=${4:-}
+    local title=$1 event=$2 status=${3:-} email=${4:-} ip=${5:-}
     curl -sS -X POST \
         -H "X-Tempo-Token: ${TEMPO_TOKEN}" \
         -H "Content-Type: application/json" \
@@ -68,7 +68,8 @@ emit_event() {
             \"Event\": \"${event}\",
             \"Status\": \"${status}\",
             \"ServerUrl\": \"${VW_URL}\",
-            \"UserEmail\": \"${email}\"
+            \"UserEmail\": \"${email}\",
+            \"IP\": \"${ip}\"
           }
         }" \
         "${TEMPO_URL}" >/dev/null
@@ -96,36 +97,31 @@ CURRENT_SIZE=$(stat -f%z "$VW_LOG" 2>/dev/null || stat -c%s "$VW_LOG")
 [ "$CURRENT_SIZE" -lt "$LAST_OFFSET" ] && LAST_OFFSET=0
 
 tail -c +$((LAST_OFFSET + 1)) "$VW_LOG" | while IFS= read -r line; do
+    # Vaultwarden 1.32+ lines carry "IP: <addr>" and "Username: <email>."
+    ip=$(echo "$line"    | grep -oE 'IP: [0-9a-fA-F:.]+'   | head -n1 | sed 's/IP: //; s/\.$//')
+    email=$(echo "$line" | grep -oE 'Username: [^ ]+@[^ ]+' | head -n1 | sed 's/Username: //; s/\.$//')
+    [ -z "$email" ] && email=$(echo "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+' | head -n1 | sed 's/\.$//')
     case "$line" in
-        *"Username or password is incorrect"*|*"login failed"*)
-            email=$(echo "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+' | head -n 1)
-            emit_event "Login failed" "login_failed" "" "$email"
-            ;;
-        *"User logged in successfully"*|*"Logged in"*)
-            email=$(echo "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+' | head -n 1)
-            emit_event "User logged in" "user_login" "" "$email"
-            ;;
-        *"Admin authenticated"*)
-            emit_event "Admin login"          "admin_login"        "" ""
-            ;;
-        *"Admin login failed"*)
-            emit_event "Admin login failed"   "admin_login_failed" "" ""
-            ;;
-        *"User registered"*|*"User created"*)
-            email=$(echo "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+' | head -n 1)
-            emit_event "User created" "user_created" "" "$email"
-            ;;
+        *"Username or password is incorrect"*)
+            echo "$(date +%s)" >> "${STATE_DIR}/recent.log"
+            emit_event "Login failed"       "login_failed"       "" "$email" "$ip" ;;
+        *"logged in successfully"*)
+            emit_event "User logged in"     "user_login"         "" "$email" "$ip" ;;
+        *"Invalid admin token"*)
+            emit_event "Admin login failed" "admin_login_failed" "" ""      "$ip" ;;
+        *"(post_admin_login)"*"=> 200 OK"*)
+            emit_event "Admin login"        "admin_login"        "" ""      "$ip" ;;
+        *"User registered"*|*"created account"*)
+            emit_event "User created"       "user_created"       "" "$email" "$ip" ;;
         *"Vault exported"*|*"Exported vault"*)
-            email=$(echo "$line" | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+' | head -n 1)
-            emit_event "Vault exported" "vault_exported" "" "$email"
-            ;;
+            emit_event "Vault exported"     "vault_exported"     "" "$email" "$ip" ;;
     esac
 done
 
 echo "$CURRENT_SIZE" > "$LAST_LOG_OFFSET"
 ```
 
-> **Tuning the script.** The patterns above match the default Vaultwarden log format. Confirm yours with `tail vaultwarden.log` and tweak the `case` branches if the strings differ. Vaultwarden's wording has changed across versions — adapt rather than blindly trust.
+> **Tuning the script.** The `login_failed`, `user_login`, `admin_login_failed`, and `admin_login` patterns are validated against real Vaultwarden 1.32–1.34 logs (the log line carries `IP: <addr>` and `Username: <email>.`, which the script extracts). The `user_created` and `vault_exported` patterns are **best-effort** — Vaultwarden's wording for those varies by version, so confirm with `tail vaultwarden.log` and adapt the `case` branch if needed. Always adapt rather than blindly trust.
 
 ## Schedule
 
@@ -140,10 +136,16 @@ crontab -e
 Append to the script after the log tail:
 
 ```sh
-# If 5+ login_failed events appeared in the last 5 minutes, escalate
-RECENT_FAILS=$(grep -c "login_failed" "${STATE_DIR}/recent.log" 2>/dev/null || echo 0)
-if [ "$RECENT_FAILS" -ge 5 ]; then
-    emit_event "Login failures burst (${RECENT_FAILS}/5min)" "login_failed_burst" "" ""
+# The main loop appends an epoch timestamp to recent.log on each login_failed.
+# Count those from the last 5 minutes; if 5+, escalate.
+NOW=$(date +%s); CUTOFF=$((NOW - 300))
+if [ -f "${STATE_DIR}/recent.log" ]; then
+    awk -v c="$CUTOFF" '$1 >= c' "${STATE_DIR}/recent.log" > "${STATE_DIR}/recent.log.tmp" \
+        && mv "${STATE_DIR}/recent.log.tmp" "${STATE_DIR}/recent.log"
+    RECENT_FAILS=$(wc -l < "${STATE_DIR}/recent.log" | tr -d ' ')
+    if [ "$RECENT_FAILS" -ge 5 ]; then
+        emit_event "Login failures burst (${RECENT_FAILS}/5min)" "login_failed_burst" "" ""
+    fi
 fi
 ```
 
@@ -174,6 +176,7 @@ Triggers the `warning` severity rule with a "Brute-force?" badge.
 - **`Event`** — drives severity for non-liveness events.
 - **`Status`** — used only for liveness transitions.
 - **`UserEmail`** — set when the event involves a user (login, export, registration).
+- **`IP`** — source IP of the auth event; present on every login/admin line and the most actionable field for a brute-force alert (drives the "Copy source IP" action).
 
 ## Notes
 
