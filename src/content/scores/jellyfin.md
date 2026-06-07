@@ -1,12 +1,12 @@
 ---
 title: "Jellyfin"
-description: "Jellyfin server events in Tempo's timeline with one-click actions to open the web UI, drill into items, or jump to admin."
+description: "Jellyfin server events in Tempo's timeline with one-click actions to open the web UI, drill into items, or jump to admin. Bulk imports collapse to one stack per series; playback pairs start↔stop."
 providerIdentifier: "org.jellyfin"
 color: "#AA5CC3"
-version: "1.0.0"
+version: "1.1.0"
 file: "/scores/jellyfin.tempo-score"
 compatibility:
-  - "Jellyfin 10.9 + Webhook plugin"
+  - "Jellyfin 10.9+ + Webhook plugin"
 pubDate: 2026-04-30
 downloadable: true
 ---
@@ -46,37 +46,39 @@ Tested with Jellyfin 10.9 + the official **Webhook plugin**.
      | `X-Tempo-Token`    | _the token from step 3_     |
      | `Content-Type`     | `application/json`          |
 
-   - **Notification Types** — tick the events you want surfaced. Suggested set:
+   - **Notification Types** — tick the events you want surfaced. Recommended default set (quiet but useful):
      - `Authentication Failure`
      - `Application Error`
-     - `Plugin Installation Failed`
-     - `Plugin Update Failed`
      - `Scheduled Task Failed`
-     - `Item Added`
-     - `Playback Start` / `Playback Stop` _(optional — high volume)_
+     - `Playback Start` / `Playback Stop`
+
+     **Leave `Item Added` OFF by default.** It fires once per file and **floods on any library rescan or restructure** — a bulk import of a series sends one event *per episode*. Only enable it if you keep the enriched template below (it carries `SeriesName`): the score then collapses a bulk add into **one stack per series** instead of N loose rows. See *Grouping* below.
+
+     **Never tick `Playback Progress`** — it fires roughly once per second during playback and will flood the timeline.
 
    - **Template** (paste verbatim into the Template field):
 
      ```handlebars
      {
        "providerIdentifier": "org.jellyfin",
-       "title": "{{NotificationType}}{{#if ItemName}} — {{ItemName}}{{/if}}",
-       "startDate": "{{Timestamp}}",
+       "title": "{{#if Name}}{{Name}}{{else}}{{NotificationType}}{{/if}}",
        "eventType": "alert",
        "metadata": {
          "NotificationType": "{{NotificationType}}",
-         "ServerName":       "{{ServerName}}",
-         "ServerUrl":        "{{ServerUrl}}",
-         "ServerVersion":    "{{ServerVersion}}",
-         "Username":         "{{NotificationUsername}}",
-         "ItemName":         "{{ItemName}}",
-         "ItemId":           "{{ItemId}}",
-         "ItemType":         "{{ItemType}}",
-         "DeviceName":       "{{DeviceName}}",
-         "ClientName":       "{{ClientName}}"
+         "ItemId":        "{{ItemId}}",
+         "ItemType":      "{{ItemType}}",
+         "Name":          "{{Name}}",
+         "SeriesName":    "{{SeriesName}}",
+         "SeasonNumber":  "{{SeasonNumber00}}",
+         "EpisodeNumber": "{{EpisodeNumber00}}",
+         "Year":          "{{Year}}",
+         "Username":      "{{NotificationUsername}}",
+         "ServerUrl":     "{{ServerUrl}}"
        }
      }
      ```
+
+     > The plugin HTML-escapes string values (`ì` → `&#236;`, `"` → `&quot;`), so titles with accents or quotes carry entities — harmless, JSON stays valid; a title-cleanup pass is a separate polish item. `startDate` is omitted on purpose — Tempo stamps the event at ingestion time.
 
 4. Click **Save**.
 
@@ -100,29 +102,41 @@ Trigger any of the configured events in Jellyfin (e.g. add a movie, fail a login
 | `PlaybackStop`              | `info`     | Stopped     |
 | _(default)_                 | `info`     | Info        |
 
+## Grouping
+
+The score ships with `groupingRules` so two common floods read as single entries:
+
+- **Bulk imports → one stack per series.** Every `ItemAdded` for an `Episode` joins a `repeats` stack keyed on `added:${SeriesName}` (6h window). Importing 100 episodes of a show collapses to one `▤N` stack instead of 100 rows — which is why `Item Added` is only worth enabling with the enriched template that carries `SeriesName`.
+- **Playback → start pairs with stop.** `PlaybackStart` `opens` and `PlaybackStop` `closes` a stack keyed on `play:${ItemId}:${Username}`, so a watch session is one entry that resolves when it ends.
+
+Movies, auth failures and plugin events match no grouping rule, so they render standalone — exactly what you want for one-off events.
+
 ## Required `metadata` fields
 
-Most actions need `ServerUrl`. The "Open item" action and "Copy item ID" need `ItemId` (only set on item-related notifications — clicking them on a non-item event opens a malformed URL, harmless).
+- **`NotificationType`** — drives severity.
+- **`ServerUrl`** — powers most actions (open web / item / admin).
+- **`ItemId`** — the "Open item" / "Copy item ID" actions and the playback grouping key.
+- **`SeriesName`** — the episode grouping key (empty for movies/audio → they don't join the per-series stack).
+- **`Username`** — part of the playback grouping key.
 
 ## Sample event payload
 
 ```json
 {
   "providerIdentifier": "org.jellyfin",
-  "title": "PlaybackStart — The Office S03E12",
-  "startDate": "2026-04-29T22:14:00Z",
+  "title": "The Office",
   "eventType": "alert",
   "metadata": {
     "NotificationType": "PlaybackStart",
-    "ServerName":       "media-server",
-    "ServerUrl":        "http://media.lan:8096",
-    "ServerVersion":    "10.9.6",
-    "Username":         "alice",
-    "ItemName":         "The Office S03E12",
-    "ItemId":           "abc123def456",
-    "ItemType":         "Episode",
-    "DeviceName":       "Apple TV",
-    "ClientName":       "Jellyfin Apple TV"
+    "ItemId":        "abc123def456",
+    "ItemType":      "Episode",
+    "Name":          "The Office",
+    "SeriesName":    "The Office",
+    "SeasonNumber":  "03",
+    "EpisodeNumber": "12",
+    "Year":          "2005",
+    "Username":      "alice",
+    "ServerUrl":     "http://media.lan:8096"
   }
 }
 ```
