@@ -54,6 +54,18 @@ SCHEMA: dict[str, Any] = {
         },
         "displayName": {"type": "string", "minLength": 1},
         "color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+        "helper": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "summary": {"type": "string", "minLength": 1},
+                "platforms": {
+                    "type": "array",
+                    "items": {"type": "string", "enum": ["sh", "py", "ps1"]},
+                },
+                "url": {"type": ["string", "null"]},
+            },
+        },
         "surface": {"type": "string", "enum": ["timeline", "agenda"]},
         "senderSeverityWins": {"type": "boolean"},
         "severityDefault": {"$ref": "#/definitions/severityEntry"},

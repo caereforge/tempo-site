@@ -28,6 +28,28 @@
       "description": "Accent color for this source, as #RRGGBB.",
       "pattern": "^#[0-9A-Fa-f]{6}$"
     },
+    "helper": {
+      "type": "object",
+      "description": "Optional descriptor for a companion helper/proxy this score relies on to produce events — a watcher/poller that runs on the SOURCE host (not on the Mac running Tempo) and POSTs to /ingest. Tempo never installs or runs it; this is purely descriptive so the app can surface 'this score uses a helper'. Helper variants + README sit beside the score in its package directory and are resolved relative to the score's own location (uniform for bundled and installed scores); set 'url' when the helper is hosted elsewhere (e.g. a bare third-party score). Shape-only — a README ships beside the helper by convention but is not enforced here.",
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "One-line description of what the helper does.",
+          "minLength": 1
+        },
+        "platforms": {
+          "type": "array",
+          "description": "Which OS variants ship in the package, by file extension. Display hint only.",
+          "items": { "type": "string", "enum": ["sh", "py", "ps1"] },
+          "uniqueItems": true
+        },
+        "url": {
+          "type": ["string", "null"],
+          "description": "External location when the helper is not bundled with Tempo. Omit or null = bundled (resolved by convention)."
+        }
+      }
+    },
     "surface": {
       "type": "string",
       "enum": ["timeline", "agenda"],
