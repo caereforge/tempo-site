@@ -162,6 +162,7 @@ SCHEMA: dict[str, Any] = {
             "properties": {
                 "label": {"type": "string", "minLength": 1},
                 "systemIcon": {"type": "string", "minLength": 1},
+                "_disabled": {"type": "boolean"},
                 "trigger": {
                     "type": "object",
                     "oneOf": [

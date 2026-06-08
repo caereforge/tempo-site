@@ -192,6 +192,10 @@
           "description": "SF Symbol name.",
           "minLength": 1
         },
+        "_disabled": {
+          "type": "boolean",
+          "description": "When true, the action ships with the score but is off by default — hidden until the user turns it on. Lets a score offer an optional action without cluttering the panel."
+        },
         "trigger": {
           "type": "object",
           "oneOf": [
