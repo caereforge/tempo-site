@@ -15,3 +15,7 @@ handovers/
 docs/_session-handoff.md
 /mpu-forum.md
 /reddit-macapps.md
+
+# Python bytecode cache
+__pycache__/
+*.pyc
