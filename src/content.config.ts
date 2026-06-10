@@ -50,4 +50,19 @@ const userguide = defineCollection({
   }),
 });
 
-export const collections = { blog, scores, userguide };
+const tips = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/tips" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    // Sort order within the tips list (lower = earlier).
+    order: z.number(),
+    // Grouping label shown in the index (e.g. "Sources", "Presentation").
+    category: z.string().optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, scores, userguide, tips };
