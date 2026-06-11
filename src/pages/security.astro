@@ -1,0 +1,302 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const lastUpdated = "June 11, 2026";
+---
+<BaseLayout
+  title="Security & Threat Model — Tempo"
+  description="Tempo's security posture stated plainly: what it protects, the trust zone it assumes, where data is encrypted and where it is not, and what is coming next. Secure by option, honest by default.">
+  <main class="legal">
+    <h1>Security &amp; Threat Model</h1>
+    <p class="meta">Last updated: {lastUpdated} · Applies to Tempo 1.x</p>
+
+    <p class="lede">
+      The short version: Tempo protects your tokens and your data at rest, runs
+      no cloud and no telemetry, and assumes the network it sits on is a home LAN
+      you control. Today the ingestion port speaks plain HTTP. That is a
+      deliberate, documented choice for a trusted LAN — not an oversight — and an
+      encrypted-ingestion option is the next security feature on the roadmap. This
+      page states all of that without hand-waving. Secure by option, honest by
+      default.
+    </p>
+
+    <h2>The trust boundary Tempo assumes</h2>
+    <p>
+      Tempo is built for homelab and self-hosted setups: Home Assistant, a NAS,
+      UniFi controllers, backup and monitoring stacks, your own scripts — usually
+      running on dedicated hosts, not on the same Mac as Tempo. To receive their
+      events, Tempo's ingestion listener binds <code>0.0.0.0</code> and is
+      reachable from other machines on your local network. The threat model
+      treats your <strong>LAN as a semi-trusted zone</strong>: the devices on it
+      are ones you own or have admitted, and you are the network's administrator.
+      This is the same posture most homelab tooling takes, and it is the
+      assumption everything below is calibrated against.
+    </p>
+    <p>
+      If that assumption does not hold for your network, the
+      <a href="#today">in-transit</a> and <a href="#harden">hardening</a>
+      sections tell you exactly what changes and what to do about it.
+    </p>
+
+    <h2>What is protected at rest</h2>
+    <p>
+      These protections ship in Tempo 1.x today. The
+      <a href="/blog/architecture-and-security/">architecture &amp; security
+      post</a> covers the reasoning in more depth; the summary:
+    </p>
+    <ul>
+      <li>
+        <strong>Per-provider tokens.</strong> Every sender gets its own token,
+        bound to a provider-identifier prefix. Tokens are not shared, not derived
+        from a master secret, and not bundled with the app. A leaked token can
+        impersonate that one sender only — it cannot pose as another provider or
+        escalate to an app-wide compromise — and you revoke each one
+        independently.
+      </li>
+      <li>
+        <strong>Keychain-stored secrets.</strong> Tokens live in the macOS
+        Keychain, scoped to the Tempo process — not in <code>UserDefaults</code>,
+        flat files, or environment variables. Access mediation is enforced by the
+        OS.
+      </li>
+      <li>
+        <strong>Strict input validation and rate limiting.</strong> Every
+        accepted request passes a centralized validator: unknown fields are
+        rejected (not silently absorbed), every string has a size cap, and URL
+        schemes in action triggers are explicitly allowlisted. Per-token rate
+        limits stop a misconfigured sender from drowning the database.
+      </li>
+      <li>
+        <strong>Local audit log.</strong> Accepted and rejected requests are
+        recorded through macOS unified logging — enough metadata to reconstruct an
+        incident (token, source IP, response code, timestamp), never the payload
+        contents. A rejection inspector in the app surfaces refused requests so a
+        misconfigured or hostile sender is visible, not silent.
+      </li>
+      <li>
+        <strong>Local data, no telemetry.</strong> The SQLite database stays on
+        your disk. There is no third-party analytics SDK, no phone-home, no
+        license server — v1 is freeware. Backups go to a path you choose. The
+        full data story is on the <a href="/privacy/">privacy page</a>.
+      </li>
+    </ul>
+
+    <h2 id="today">In transit, today: cleartext HTTP</h2>
+    <p>
+      This is the part a careful reader most needs stated plainly, so here it is:
+      <strong>Tempo's ingestion listener currently speaks plain HTTP.</strong> A
+      device that can capture packets on the same LAN segment — a machine running
+      <code>tcpdump</code> or Wireshark, a compromised switch, an attacker on the
+      same Wi-Fi — can read the per-provider token in the request header and the
+      JSON payload, including any sensitive fields you put in the event
+      (hostnames, IPs, account identifiers, message bodies). HTTP does not encrypt
+      any of that.
+    </p>
+    <p>
+      Why is the default plain HTTP, given how carefully the tokens are protected
+      at rest? Two concrete reasons, not laziness:
+    </p>
+    <ul>
+      <li>
+        <strong>The calibrated threat model.</strong> The default assumes a home
+        LAN you administer, where passive packet capture by a hostile party is
+        not the primary risk. For that environment, HTTP keeps setup
+        frictionless and every webhook source works out of the box.
+      </li>
+      <li>
+        <strong>Mandatory TLS would break senders, not just add a lock.</strong>
+        A self-signed certificate that every third-party tool had to accept would
+        lock out the many webhook sources that cannot skip certificate
+        verification or import a custom CA. Forcing TLS on everyone trades a
+        narrow risk for broad breakage.
+      </li>
+    </ul>
+    <p>
+      So the HTTP default is a documented decision for a trusted LAN — but it is a
+      real limit, and it is stated as one rather than glossed over. If your network
+      is not one where you trust every device that can see the wire, read on.
+    </p>
+
+    <h2>When the HTTP default is fine — and when it is not</h2>
+    <p><strong>Fine, as-is:</strong></p>
+    <ul>
+      <li>A home network you administer, wired or on Wi-Fi you control.</li>
+      <li>No untrusted guests, IoT, or capture-capable devices sharing the segment with Tempo and its sources.</li>
+    </ul>
+    <p><strong>Reconsider, and harden:</strong></p>
+    <ul>
+      <li>A shared office, coworking, or apartment-building LAN.</li>
+      <li>A flat segment that also carries guest devices or untrusted IoT.</li>
+      <li>Anywhere a peer could plausibly run a packet sniffer.</li>
+      <li>Anywhere a sender's payload carries data you would treat as sensitive — credentials, personal identifiers, regulated information.</li>
+    </ul>
+
+    <h2 id="harden">Hardening you can do today</h2>
+    <p>
+      All of these work with the current release. Pick what fits your network:
+    </p>
+    <ul>
+      <li>
+        <strong>Loopback-only.</strong> If every source runs on the same Mac as
+        Tempo, <em>Settings → Ingestion → Limit to loopback only</em> rebinds the
+        listener to <code>127.0.0.1</code>, and nothing crosses the wire at all.
+      </li>
+      <li>
+        <strong>Network segmentation.</strong> Put Tempo and its sources on a
+        trusted VLAN, isolated from guest and IoT segments. This shrinks the set
+        of devices that can see the traffic to ones you already trust.
+      </li>
+      <li>
+        <strong>A VPN or mesh overlay.</strong> Carry cross-host traffic over
+        Tailscale, WireGuard, or a similar overlay so the network layer encrypts
+        it, independent of Tempo. Point each sender at the overlay address.
+      </li>
+      <li>
+        <strong>TLS termination in front.</strong> A small Caddy, nginx, or
+        stunnel in front of Tempo's port lets TLS-capable senders connect over
+        HTTPS while the proxy forwards plaintext to Tempo on loopback. This is the
+        established "TLS today" answer until native support ships.
+      </li>
+      <li>
+        <strong>Scope and rotate tokens.</strong> One token per sender is already
+        the model — keep it that way, and rotate any token you suspect was
+        exposed. Revocation is independent and immediate.
+      </li>
+    </ul>
+
+    <h2>What is coming: encrypted ingestion</h2>
+    <p>
+      A native encrypted-ingestion option is the next security feature on the
+      roadmap, shipping in a Tempo 1.x update. The shape it will take:
+    </p>
+    <ul>
+      <li>
+        A <strong>TLS port alongside the plain one</strong> — two distinct ports,
+        rather than optional TLS on a single port, so a sender marked secure is
+        rejected outright on the cleartext port. That makes downgrade attacks
+        structurally impossible rather than a matter of configuration.
+      </li>
+      <li>
+        A <strong>self-signed certificate generated on first run</strong>,
+        exportable from the app so our own helpers can pin it and you can import
+        it into senders that verify certificates. If you own a domain, you will be
+        able to load your own certificate instead.
+      </li>
+      <li>
+        A <strong>per-provider secure flag</strong>, a natural extension of the
+        existing per-provider token model, with a padlock in the sources panel so
+        the transport state of each sender is visible at a glance.
+      </li>
+    </ul>
+    <p>
+      The cleartext default does not go away — it stays the frictionless path for
+      simple, trusted LANs. You opt an individual sender into TLS when its data or
+      its network warrants it. That is what <em>secure by option, honest by
+      default</em> means in practice. (This supersedes the "TLS is a v2 item" note
+      in the earlier architecture post: encrypted ingestion is now a planned v1.x
+      feature, not a v2 one.)
+    </p>
+
+    <h2>What Tempo does not defend against</h2>
+    <p>Stated explicitly, so the boundaries are clear:</p>
+    <ul>
+      <li>
+        <strong>A compromised host.</strong> If the Mac running Tempo is itself
+        compromised, the local database and the Keychain-scoped tokens are within
+        reach of that attacker. Tempo protects against network and sender-level
+        threats, not against an adversary who already owns the machine.
+      </li>
+      <li>
+        <strong>A leaked token used from inside the trusted zone.</strong> Until
+        you revoke it, a stolen token impersonates its one sender. Per-provider
+        scoping limits the blast radius to that single provider; it does not make
+        a leaked token harmless. Revoke it.
+      </li>
+      <li>
+        <strong>Intrusion detection.</strong> Tempo validates and rate-limits
+        input; it is not a WAF or an IDS and does not inspect payloads for attack
+        signatures.
+      </li>
+      <li>
+        <strong>Autonomous action.</strong> This one cuts the other way, in your
+        favour: Tempo never acts on a payload by itself. A hostile sender cannot
+        make Tempo run a command, open a URL, or write to a source — every action
+        is a human click. The payload is input; your clicks are the only
+        authority that fires anything.
+      </li>
+    </ul>
+
+    <h2>Reporting a vulnerability</h2>
+    <p>
+      If you find a security issue, please report it privately first at
+      <a href="mailto:security@tempoapp.app">security@tempoapp.app</a> rather than
+      opening a public issue, and give a reasonable window to fix it before
+      disclosure. General security questions and feedback are welcome on the
+      <a href="https://github.com/caereforge/tempo-scores">tempo-scores GitHub
+      repo</a> and in the Discord.
+    </p>
+
+    <h2>Changes to this page</h2>
+    <p>
+      This is a living document. When the security posture changes in a
+      substantive way — most immediately, when encrypted ingestion ships — the
+      date at the top will change and the change will be noted in the release
+      notes of the version that introduced it.
+    </p>
+  </main>
+
+  <style>
+    .legal {
+      max-width: 720px;
+      margin: 48px auto;
+      padding: 0 24px 80px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .legal .back {
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .legal .back a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .legal h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .legal h2 {
+      font-size: 20px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .legal .meta {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 32px;
+    }
+    .legal .lede {
+      font-size: 17px;
+      color: var(--text);
+      padding: 16px 20px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 32px;
+    }
+    .legal ul { padding-left: 22px; }
+    .legal li { margin-bottom: 8px; }
+    .legal code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .legal a { color: var(--blue); }
+  </style>
+</BaseLayout>
