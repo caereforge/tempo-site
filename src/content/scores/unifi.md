@@ -73,6 +73,10 @@ You can edit, remove, or add actions in **Settings → Score Editor**. Your loca
 
 Tempo carries the *signal* of detections forward in time (timestamp + camera + alarm name + event link) for as long as your event-retention setting says. The *images* are kept short — a few days by default — because they're bandwidth-class data and Protect's own dashboard is the canonical archive for them. The bundled Protect score includes an **Open in Protect** action that deep-links to the event page in Protect's web UI, so you always have a path back to the cistern when you need the older clip.
 
+## Known limitations
+
+**Use the plain `:7776` endpoint, not the TLS `:8776` port.** UniFi's webhook client (both Network and Protect) must POST to Tempo's plain-HTTP endpoint as shown in Setup above — not the encrypted TLS port. The TLS handshake itself succeeds (UniFi accepts Tempo's self-signed certificate), but UniFi's HTTPS request framing is not parsed correctly by Tempo's TLS listener: the request line and body arrive empty, so the events are dropped (you'll see them as `400 — empty body` in **Settings → Security → audit**). This is a UniFi-side framing quirk, not a certificate problem. Because the traffic stays on your LAN and every webhook is bound to a per-provider token, plain HTTP here is a deliberate, supported setup — not a security gap. (Improving TLS compatibility for UniFi is tracked for a later release.)
+
 ## V2 outlook
 
 UniFi Network ships a Network Integration API in addition to webhooks — for V1 we use webhooks exclusively (push, no polling, no API key custody). V2 may add an opt-in Integration API path for write actions (today: client guest-authorisation and device restart only). The webhook path will remain the default; the API is purely additive when there's a use case the webhook can't cover.
