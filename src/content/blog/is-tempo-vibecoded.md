@@ -38,7 +38,7 @@ A few concrete examples of what that means in practice:
 
 - **Hard constraints in `CLAUDE.md`:** there's a `CLAUDE.md` file at the root of the repository setting the project's non-negotiables: macOS 15+, Swift 6, no App Store, data stays local on the user's Mac, no telemetry — and clear, strong security. I wrote that file. It's the contract Claude works within.
 
-Furthermore, I use an instruction file called `Philosophy.md` that guides every decision I make and every iteration Claude does on the whole app. This non-technical file states clearly my idea of what software should be: safe (as much as possible), transparent in what it does, reliable (even though I can't test every environment, we'll fix any issue together), secure, and private (your data is only yours; I don't want and don't need to deal with it).
+On top of that, I use an instruction file called `Philosophy.md` that guides every decision I make and every iteration Claude does on the whole app. This non-technical file states clearly my idea of what software should be: safe (as much as possible), transparent in what it does, reliable (even though I can't test every environment, we'll fix any issue together), secure, and private (your data is only yours; I don't want and don't need to deal with it).
 
 Tempo is a piece of me I'm putting out there because I think it has value, and I think it's useful.
 
