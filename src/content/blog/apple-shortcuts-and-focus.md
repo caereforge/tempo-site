@@ -10,7 +10,7 @@ draft: true
 
 Tempo's rule of entry has always been simple: if a source can POST, Tempo can show it. Apple Shortcuts can POST. So as of 1.1, the automations running on your iPhone, iPad, and Mac can land on the same timeline as your servers and your calendar.
 
-Unlike most sources, the sender is already on the device — there's nothing new to install on the other end; you wire up a Shortcut and point it at Tempo.
+Unlike most sources, the sender is already on the device, there's nothing new to install on the other end; you wire up a Shortcut and point it at Tempo.
 
 > **One requirement: reachability.** The device has to be able to reach the Mac running Tempo. That means it's on the same LAN, or on a VPN/overlay like Tailscale **with it enabled**. Off the network the shortcut's POST simply won't arrive — Tempo's ingestion port is on your LAN, never exposed to the internet.
 
@@ -24,45 +24,73 @@ Anything a Shortcut can trigger:
 - **Battery** hitting a level.
 - **A tap you built** — any Shortcut you run by hand.
 
-## The Shortcuts source dresses it for you
+## The payload
 
-Send just a title and you get a clean, plain event. But the bundled **Shortcuts** score understands a small set of optional fields and uses them to make the event readable:
+Send just a `title` and you get a clean, plain event. Add a few optional fields and the bundled **Shortcuts** score dresses the event — an icon, a clean label, a tag, and session grouping. The shape matters, so here it is exactly.
 
-| Field | What it does |
-|---|---|
-| `category` | `sleep` · `focus` · `location` · `battery` · `automation` — picks the row icon (🌙 ☀️ 🔕 📍 🔋) and a tag |
-| `state` | `on` · `off` · `arrived` · `left` · `low` — refines the icon and the label |
-| `focus` | the Focus name, for grouping a Focus period |
-| `device` | for context |
+### Top-level fields
 
-With `category: sleep` and `state: on` / `off`, the score pairs bedtime and wake into one session — a single row per night instead of two loose events. Same idea for a Focus period.
+These sit at the top level of the JSON body, next to `title`:
 
-Install the score with one click from **Manage Sources**.
+| Field | Required | Value |
+|---|---|---|
+| `title` | yes | the headline text, e.g. `iPhone 13 Pro — Sleep on` |
+| `providerIdentifier` | yes | `com.shortcuts` |
+| `eventType` | yes | `alert` |
+| `severity` | no | `info` (default) · `ok` · `warning` · `error` · `critical` |
 
-## Wiring up a Shortcut
+### `metadata` fields (nested)
 
-The pattern is the same for every automation:
+These go **inside a `metadata` object** — the score reads them from there, not from the top level:
 
-1. **Shortcuts → Automation → +**, and pick a trigger (Focus, Sleep, Arrive, Battery Level…).
-2. Add a **Get Contents of URL** action:
-   - URL: `http://<your-mac-ip>:7776/ingest`
-   - Method: **POST**
-   - Headers: `X-Tempo-Token` = your token, `Content-Type` = `application/json`
-   - Request Body: **JSON**, with a `title`, `providerIdentifier: com.shortcuts`, `eventType: alert`, and a `metadata` dictionary holding the fields above.
-3. Turn off **Ask Before Running** so it fires silently. If it still prompts you for confirmation (or flashes the response back), add a **Nothing** action as the very last step — in my case that's what finally made it run without asking every time.
+| Field | Value | What it does |
+|---|---|---|
+| `category` | `sleep` · `focus` · `location` · `battery` · `automation` | sets the row icon (🌙 ☀️ 🔕 📍 🔋 ⚙️) and a tag |
+| `state` | `on` · `off` · `arrived` · `left` · `low` | refines the icon and label; pairs `sleep`/`focus` on→off into one session |
+| `focus` | the Focus name | groups a Focus period |
+| `device` | e.g. `iPhone 13 Pro` | shown for context |
+| *(anything else)* | your own value | preserved and shown on the event detail |
 
-A sleep example looks like this:
+The complete, correct payload looks like this — note `severity` **outside** `metadata`, and `category`/`state`/`device` **inside** it:
 
 ```json
 {
-  "title": "Sleep focus enabled",
+  "title": "iPhone 13 Pro — Sleep on",
   "providerIdentifier": "com.shortcuts",
   "eventType": "alert",
-  "metadata": { "category": "sleep", "state": "on", "device": "iPhone" }
+  "severity": "info",
+  "metadata": {
+    "category": "sleep",
+    "state": "on",
+    "device": "iPhone 13 Pro"
+  }
 }
 ```
 
-Create the token in **Settings → Ingestion**, bound to `com.shortcuts`, and — since this is on your LAN — pin its allowlist to the device's address. Getting the long token onto the phone is easiest as a QR code you scan with the Camera app.
+With `category: sleep` and `state: on` / `off`, the score pairs bedtime and wake into one session — a single row per night instead of two loose events. Same idea for a Focus period.
+
+> **Three things that fail silently if you get them wrong:**
+> 1. **`metadata` must be a nested object.** If you put `category`/`state` as top-level fields (a common first mistake), they're dropped and nothing matches — the event still arrives, just undressed.
+> 2. **Values are lowercase.** Matching is exact: `sleep` works, `Sleep` doesn't.
+> 3. **`severity` is top-level, not in `metadata`.** And don't confuse the metadata `state` (`on`/`off`, the Shortcuts convention) with the top-level `state` (`firing`/`resolved`, the event lifecycle — leave that out; Tempo handles it).
+
+Install the score with one click from **Manage Sources**.
+
+## Building the Shortcut on your phone
+
+Install the bundled Shortcuts score first (Manage Sources), then create a token in **Settings → Ingestion** bound to `com.shortcuts` — and, since this rides your LAN, pin its allowlist to the device's address. The long token is easiest to move to the phone as a **QR code** you scan with the Camera app.
+
+Then, on the device:
+
+1. **Shortcuts → Automation → New (+)**, and pick a trigger — Focus, Sleep, Arrive/Leave, Battery Level, or a tappable shortcut you run by hand.
+2. Add a **Get Contents of URL** action.
+   - **URL**: `http://<your-mac-ip>:7776/ingest`
+   - **Method**: `POST`
+   - **Headers** (tap to expand): `X-Tempo-Token` = your token, and `Content-Type` = `application/json`
+   - **Request Body**: switch to **JSON**, then add the fields:
+     - `title`, `providerIdentifier`, `eventType`, `severity` as **Text** values;
+     - add a field named **`metadata`** and set its *type* to **Dictionary** — then, inside that dictionary, add `category`, `state`, `device` (and `focus` if you use it) as Text. This nesting is the step people miss.
+3. Turn off **Ask Before Running** so it fires silently. If it still prompts for confirmation (or flashes the response back), add a **Nothing** action as the very last step — in my case that's what finally made it run without asking every time.
 
 ## A couple of iOS quirks worth knowing
 
@@ -70,6 +98,10 @@ Create the token in **Settings → Ingestion**, bound to `com.shortcuts`, and �
 - **Sleep** lives under its own trigger, tied to the Health sleep schedule — it's separate from the Focus list. If you set Sleep by hand (like I do), that trigger won't fire, so the move is to flip it around: a tappable **"Goodnight"** shortcut that sets the focus *and* POSTs to Tempo, with a "Good morning" counterpart at wake.
 
 That's it. The phone is just another sender now — and the timeline finally shows the part of the day that doesn't come from a server.
+
+## Further reading
+
+The fields above are what the Shortcuts source reads. The `/ingest` endpoint itself accepts the full event payload (custom `color`, `startDate`, action buttons, and more) — the complete contract is in **User Guide §10 — [Sources reference](/docs/10-sources-reference)**.
 
 ---
 
