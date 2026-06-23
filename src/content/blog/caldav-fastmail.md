@@ -1,15 +1,17 @@
 ---
 title: "CalDAV is here — starting with Fastmail"
-description: "Tempo now speaks CalDAV natively. Your Fastmail calendars show up in the Agenda without going through Apple's Internet Accounts."
+description: "Tempo now speaks CalDAV natively — experimentally. Your Fastmail calendars show up in the Agenda without going through Apple's Internet Accounts."
 pubDate: 2026-05-27
 tags: ["how-to", "caldav", "calendar"]
 ---
 
 *📅 May 27, 2026 — Tempo 1.1 · Leo from Caereforge*
 
+> ⚠️ **Experimental in 1.1.** CalDAV is the one part of Tempo I'd call beta. It's **read-only**, **Fastmail-scoped**, and configured **by hand in a JSON file** — there's no point-and-click setup for it yet. It works well on my own Mac, but expect rough edges and treat it as a preview, not a finished feature. The app marks the score with an "Experimental" badge for the same reason.
+
 Since day one, Tempo has been reading my calendars and reminders through Apple's EventKit; whatever you see in Calendar.app or Reminders.app, Tempo sees too. That works great for iCloud and for providers you've added via System Settings → Internet Accounts. But if you're a Fastmail user (or any CalDAV provider that doesn't play nicely with Internet Accounts), you've been stuck with a workaround or nothing at all.
 
-Not anymore. Tempo 1.1 ships with a native CalDAV engine that talks directly to your calendar server; no middleman, no Apple sync layer, no Internet Accounts entry needed. Your data still never leaves your Mac; we're just fetching it from a different door.
+Not anymore. Tempo 1.1 ships an experimental native CalDAV engine that talks directly to your calendar server; no middleman, no Apple sync layer, no Internet Accounts entry needed. Your data still never leaves your Mac; we're just fetching it from a different door.
 
 ## Why Fastmail first?
 
@@ -56,7 +58,7 @@ Your Fastmail events land in the Agenda panel alongside Apple Calendar, Reminder
 4. **Store the password in Keychain**: open Keychain Access, create a new password item with name `tempo-caldav-fastmail`, account `you@fastmail.com`, and paste your app-specific password.
 5. **Restart Tempo** — it picks up the config and starts syncing.
 
-The `calendars` array controls which calendars Tempo syncs. You can also manage this from Settings → Agenda → External Providers (CalDAV), where you'll see checkboxes for each discovered calendar.
+The `calendars` array in that file controls which calendars Tempo syncs — list the ones you want by name. There's no point-and-click picker for this yet: CalDAV is configured by editing the file, which is part of why it's still experimental. (Tempo gives you a button to open the file directly, so you don't have to go hunting for it.)
 
 ## Customizing the score
 
