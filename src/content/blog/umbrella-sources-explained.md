@@ -9,23 +9,26 @@ tags: ["scores", "how-to", "design"]
 
 Most sources in Tempo are straightforward. Kopia is Kopia. Uptime Kuma is Uptime Kuma. One sender, one score, one row in the source panel.
 
-But some sources are families. UniFi covers Network and Protect, very different signals under one vendor. Hazel can watch folders for new files, react to downloads, or pick up messages that a Mail.app rule exported to a folder. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant. You'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
+But some sources are families: one configuration that fits a whole group of related senders. Hazel can watch folders for new files, react to downloads, or pick up messages that a Mail.app rule exported to a folder. Scripts is a single banner over every Bash, Python, or AppleScript one-liner you point at Tempo. For these, one score per sender would be tedious and redundant — you'd end up maintaining dozens of nearly-identical JSON files that differ only in name.
 
 That's what umbrella sources solve.
 
-## The idea
+## Provider identifiers are namespaces
 
-An umbrella source is a single score that covers a whole family of senders. The score file lives at the parent level, `scripts.json`, `com.noodlesoft.hazel.json`, `com.ubiquiti.unifi.json`, and every sender whose provider identifier starts with that prefix inherits the parent's configuration automatically.
+Every source in Tempo is named by a **provider identifier** — a dotted, reverse-DNS string like `com.noodlesoft.hazel` or `scripts.shell.check_disk`. Read left to right, those dots are a hierarchy: a namespace, then progressively more specific names inside it. `com.noodlesoft` is Noodlesoft; `com.noodlesoft.hazel` is their app Hazel; `com.noodlesoft.hazel.mail` is one particular kind of Hazel event.
 
-Three umbrellas ship out of the box:
+That hierarchy is the whole trick. An **umbrella source is a single score placed at a namespace prefix** — and every sender whose identifier sits *underneath* that prefix inherits the score automatically. The file lives at the parent level (`scripts.json`, `com.noodlesoft.hazel.json`), and `scripts.shell.check_disk`, `scripts.python.sensor_poll`, `com.noodlesoft.hazel.mail` all fall under it.
+
+Two umbrellas ship out of the box:
 
 | Umbrella | Example senders |
 |---|---|
 | **Scripts** | `scripts.shell.check_disk`, `scripts.python.sensor_poll` |
 | **Hazel** | `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.scanner` |
-| **UniFi** | `com.ubiquiti.unifi.network`, `com.ubiquiti.unifi.protect` |
 
-In the source panel, each sender still gets its own row, you see Shell, Python, Mail, Scanner as distinct sub-sources. But in the Score Editor, there's one score. The parent defines the severity rules, the action buttons, and the grouping policy. Every child inherits all of it.
+In the source panel, each sender still gets its own row — you see Shell, Python, Mail, Scanner as distinct sub-sources, grouped under their parent. But there's one score behind them. The parent defines the severity rules, the action buttons, and the grouping policy, and every child inherits all of it.
+
+**Sharing a namespace doesn't *require* one umbrella score.** It's a choice. A vendor with two genuinely different products — UniFi Network and UniFi Protect, say — shares the `com.ubiquiti.unifi` namespace but ships as **two separate scores** (`com.ubiquiti.unifi.network`, `com.ubiquiti.unifi.protect`), each with its own colour, rules, and actions, still grouped visually under one **UniFi** parent in the panel. Umbrella = *one* score for many similar senders; separate scores under a shared namespace = *many* scores that just live in the same family. Both read as a tidy group; they differ in whether one configuration fits all the children or each child needs its own.
 
 ## How the resolution works
 
@@ -53,20 +56,18 @@ A single umbrella score gives you quite a lot of control over how different send
 
 This makes `backup_check` events with keyword `Failed` render as critical, while a `disk_usage` event with keyword `OK` renders as green, same score, different presentation.
 
-**Conditional actions (new in 1.0.5).** Individual severity rules can now carry their own action buttons. A critical match can surface an SSH button that a routine OK match doesn't show:
+**Per-match labels and styling.** A matching rule does more than set severity — it can override the badge `label`, the card `title` and `subtitle`, and tint the badge with its own `color`, all per match. One score dresses a `backup_check` failure and a routine `disk_usage` check into two distinct, readable cards:
 
 ```json
 {
   "match": { "keyword": "Critical" },
   "severity": "critical",
-  "actions": [
-    { "label": "SSH to host", "trigger": { "openURL": "ssh://${metadata.host}" } }
-  ],
-  "actionsMode": "extend"
+  "label": "Needs attention",
+  "color": "#E74C3C"
 }
 ```
 
-The `"extend"` mode adds these buttons alongside the score's default actions. Use `"replace"` to show only the rule-specific buttons when that rule matches.
+**Actions that show themselves only when they apply.** Action buttons live at the score level (`defaultActions`) and reach every sub-source — but a button whose `${metadata.xxx}` template doesn't resolve is hidden automatically. An "SSH to host" button keyed on `${metadata.host}` appears only on events that actually carry a host, and stays out of the way everywhere else.
 
 **Grouping.** The `grouping` array controls how events stack in the timeline. Hazel groups by `["${metadata.rule}", "${metadata.folder}"]`, so events from the same rule acting on the same folder collapse into one row. Scripts groups by `["${metadata.script_name}"]`.
 
@@ -77,7 +78,7 @@ A few things live at the score level and apply uniformly to every sub-source und
 - **Card colour.** The tint of event cards comes from the score's top-level `color` field. Sub-sources that share an umbrella share the colour today. Per-sub-source colour overrides from the source panel are planned for a future release.
 - **Display name and default actions.** One `displayName`, one `defaultActions` array per score file.
 
-If you need a specific sub-source to look visually distinct right now, drop a dedicated score file for it (see the escape hatch below). For severity, badge, and conditional actions, the umbrella score's `severityRules` with metadata matching already covers per-sub-source differentiation without extra files.
+If you need a specific sub-source to look visually distinct right now, drop a dedicated score file for it (see the escape hatch below). For severity, badge text, and styling, the umbrella score's `severityRules` with metadata matching already covers per-sub-source differentiation without extra files.
 
 ## The escape hatch
 
@@ -97,7 +98,7 @@ The same works for any umbrella. Drop `com.noodlesoft.hazel.mail.json` next to `
 
 When you create a token in Settings → Ingestion, the provider field uses the same prefix binding. A token bound to `scripts` authorises every `scripts.*` sender. A token bound to `scripts.shell` only authorises Shell senders. The trade-off is convenience versus blast radius if the token leaks.
 
-For umbrellas with many senders, Scripts especially, one token at the parent level is the practical choice. For umbrellas with two or three well-known children, UniFi Network and Protect, a token per child is worth the extra minute in Settings.
+For umbrellas with many senders, Scripts especially, one token at the parent level is the practical choice. For an umbrella with just a couple of well-known children, a token per child is worth the extra minute in Settings.
 
 ## Writing your own umbrella
 
@@ -109,21 +110,19 @@ You're not limited to the bundled umbrellas. Any score becomes an umbrella the m
 
 No special flag, no configuration, the prefix hierarchy is implicit. If the identifiers share a prefix and a score exists at that prefix, you have an umbrella.
 
-## How sub-sources work today
+## How sub-sources appear in the panel
 
-Not all umbrellas handle sub-sources the same way in 1.0.x.
+Score resolution always works by prefix walking, however deep the identifier goes — `scripts.json` catches every `scripts.*` sender regardless. How those senders *display* in the source panel is where there are still a few rough edges:
 
-**Hazel and UniFi** let you create any sub-source freely. POST as `com.noodlesoft.hazel.invoices` or `com.noodlesoft.hazel.receipts` and each appears as its own named row under the Hazel parent in the source panel. Same for UniFi: `com.ubiquiti.unifi.talk` would show up alongside Network and Protect.
+**Hazel** lets you create any sub-source freely. POST as `com.noodlesoft.hazel.invoices` or `com.noodlesoft.hazel.receipts` and each appears as its own named row under the Hazel parent. (The Apple and Shortcuts families group the same way.)
 
-**Scripts** is more constrained. The source panel groups sub-sources by a fixed set of recognised languages: Shell, Python, and AppleScript. If you use `scripts.shell.check_disk`, it appears under "Shell". But a custom second segment like `scripts.backup.restic` lands under "Other" instead of getting its own "Backup" row. The score resolution still works correctly, `scripts.json` catches all `scripts.*` senders regardless, but the source panel won't reflect your naming.
+**Scripts** is more constrained. The panel groups its sub-sources by a fixed set of recognised languages — Shell, Python, AppleScript. `scripts.shell.check_disk` appears under "Shell", but a custom second segment like `scripts.backup.restic` lands under "Other" instead of getting its own "Backup" row. Resolution is unaffected; only the panel's labelling is.
 
-**User-created umbrellas** (like `com.example.mystack`) work for score resolution via prefix walking, but their sub-sources appear as flat rows in the source panel rather than grouped under a parent.
+**Your own umbrellas** (like `com.example.mystack`) resolve correctly via prefix walking, but their sub-sources currently render as flat rows rather than nested under a parent.
 
-V1.1 will remove these limitations. Source panel grouping will derive dynamically from your provider identifiers, with no hardcoded special cases.
+## Still on the roadmap
 
-## What's coming in V1.1
-
-This post describes the umbrella model as it works in Tempo 1.0.x. Version 1.1 will ship a redesigned Score Editor that makes umbrella configuration more visual and more flexible, including per-sub-source card colour overrides and dynamic grouping driven entirely by your provider identifiers, with no hardcoded special cases. A new post will cover the V1.1 changes when they land.
+Tempo ships a visual Score Editor, so you can author and tune an umbrella score without ever opening JSON. Two refinements are not in yet: per-sub-source card-colour overrides (today the colour is set once per score), and source-panel grouping that derives entirely from your provider identifiers — no built-in special cases — so any namespace nests the way Hazel does. Until those land, the colour escape hatch above and the bundled families cover most needs.
 
 ## Further reading
 
