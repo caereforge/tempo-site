@@ -13,9 +13,9 @@ Tempo was designed to be adaptable from day one. I was using Hazel and kept thin
 
 Three concrete scenarios, all doable today:
 
-- **Hazel** — a rule that runs an embedded shell script sends Tempo the exit code, the matched file path, and the rule name. Tempo shows the event and, if the code isn't zero, paints it red and surfaces a "Re-run rule" button that fires exactly that rule again.
-- **Home Assistant** — a "back home" automation sends Tempo an event with the work-PC's MAC, the HA dashboard URL, and the automation ID in the payload. The event renders three buttons on the same row: **Wake-on-LAN** that magic-packets the PC, **Open in Home Assistant** that jumps straight to the automation's page, and **Re-run automation** that POSTs back to HA's API to fire it again. One arrival, three things you might want to do — all there waiting on the click.
-- **Kopia** — a finished snapshot sends Tempo the snapshot path. The event renders a "Restore from this snapshot" button that opens KopiaUI directly on that snapshot — one click, no drilling.
+- **Hazel** — a rule that runs an embedded shell script sends Tempo the exit code, the matched file path, and the rule name. If the code isn't zero, a severity rule paints the event red; the card carries a **Copy file path** button and a **Re-run the check** button that opens Terminal with the exact command, ready for you to run.
+- **Home Assistant** — a "back home" automation sends Tempo an event with the work-PC's MAC and the HA dashboard URL. The card renders three buttons on the same row: **Open in Home Assistant** that jumps straight to the dashboard, **SSH to the box**, and **Wake the PC** that opens Terminal with a `wakeonlan` command for that MAC. One arrival, three things you might want to do — all there waiting on the click.
+- **Kopia** — a finished snapshot sends Tempo the snapshot ID and path. The card carries a **Copy snapshot ID** button and a **Restore** button that opens Terminal with the `kopia snapshot restore` command pre-filled — one click to the prompt, no drilling.
 
 **You decide what to send Tempo. Tempo builds the buttons from what it receives.**
 
@@ -25,12 +25,12 @@ Mechanically: the score for a source declares its actions as JSON templates. Eac
 
 ```json
 "defaultActions": [
-  { "label": "Wake-on-LAN",   "trigger": { "openURL": "wol://${metadata.mac}" } },
-  { "label": "Open dashboard", "trigger": { "openURL": "${metadata.dashboardURL}" } }
+  { "label": "Open dashboard", "trigger": { "openURL": "${metadata.dashboardURL}" } },
+  { "label": "Wake the PC",    "trigger": { "openTerminalWith": "wakeonlan ${metadata.mac}" } }
 ]
 ```
 
-A field on the sender side becomes a placeholder on the score side becomes a button on the event row. Add the field, add the placeholder, click again — new button, no app rebuild.
+A field on the sender side becomes a placeholder on the score side becomes a button on the event row. Add the field, add the placeholder, click again — new button, no app rebuild. The button primitives are deliberately simple and safe: open a URL (`https`, `ssh`, and a few vetted schemes), open Terminal with a command for you to run, or copy text. Nothing fires on its own.
 
 None of this happens without your click. That's deliberate: V1 wants you in control while we test these patterns across ten different homelabs. V2 will open up auto-firing for the scores that have proven solid — but you'll always be the one deciding which to enable, and when. The V1 architecture was built to grow into that, no rewrites.
 
