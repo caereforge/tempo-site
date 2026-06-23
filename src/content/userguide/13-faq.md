@@ -72,7 +72,7 @@ The reasoning: outside the App Store sandbox so the LAN ingestion server, termin
 
 ### Where do I download it?
 
-[downloads.tempoapp.app](https://downloads.tempoapp.app) — always the latest release. [tempoapp.app/changelog](https://tempoapp.app/changelog) has versioned download links.
+[downloads.tempoapp.app](https://downloads.tempoapp.app) — always the latest release. [tempoapp.app/changelog](https://tempoapp.app/changelog) lists what changed in each version.
 
 ### Will Tempo continue to receive updates after v2 ships?
 

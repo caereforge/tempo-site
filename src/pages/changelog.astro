@@ -1,0 +1,153 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="Changelog — Tempo"
+  description="What changed in each release of Tempo. Tempo updates itself through Sparkle; this page is the plain-language record of what each version brings.">
+  <main class="legal">
+    <h1>Changelog</h1>
+    <p class="meta">What each release of Tempo brings. Updates arrive automatically through Sparkle.</p>
+
+    <h2>Version 1.1 <span class="ver-date">· June 2026</span></h2>
+    <p>
+      The biggest update since launch. A lot landed here — new ways to get events
+      into Tempo, a much larger catalog of ready-made sources, and a faster, more
+      capable timeline.
+    </p>
+
+    <h3>New</h3>
+    <ul>
+      <li>
+        <strong>Apple Shortcuts &amp; Focus.</strong> Send anything from your
+        iPhone, iPad, or Mac straight into your timeline — a Focus turning on or
+        off, bedtime, arriving home, or a tap on a Shortcut you built yourself. A
+        new Shortcuts source ties it all together.
+      </li>
+      <li>
+        <strong>Encrypted ingestion.</strong> Turn on TLS for the senders that
+        need it, one at a time. It's off by default — the plain local-network path
+        stays the easy default — and you require it per sender when the data or the
+        network calls for it.
+      </li>
+      <li>
+        <strong>A dozen new bundled sources.</strong> The catalog is now twenty
+        ready-made sources and growing: this release adds Beszel, Jellyfin,
+        Jellyseerr, Sonarr, Radarr, Prowlarr, Vaultwarden, Pi-hole, Synology,
+        Todoist, the new Shortcuts source, and an experimental Fastmail calendar.
+        Install any of them with one click from Manage Sources.
+      </li>
+      <li>
+        <strong>Timeline filter.</strong> Flip between everything on the timeline
+        and just what needs your attention.
+      </li>
+      <li>
+        <strong>Activity heatmap.</strong> See a source's recent activity at a
+        glance, right in its panel.
+      </li>
+      <li>
+        <strong>Remove a source.</strong> Manage Sources now removes a source —
+        keeping or clearing its history — not just installs one.
+      </li>
+    </ul>
+
+    <h3>Improved</h3>
+    <ul>
+      <li>
+        <strong>Faster and lighter.</strong> The timeline stays smooth and memory
+        stays low even with tens of thousands of events.
+      </li>
+      <li>
+        <strong>Search that takes you there.</strong> Click a result to jump
+        straight to the event and its actions.
+      </li>
+      <li>
+        <strong>Actions that know when to hide.</strong> A button that needs
+        information an event didn't include now stays out of the way instead of
+        sitting there broken.
+      </li>
+      <li>
+        <strong>Backups and cleanup.</strong> Scheduled and on-demand backups to a
+        folder you choose, plus automatic history trimming so the database doesn't
+        grow forever.
+      </li>
+      <li>
+        <strong>A sound on new events.</strong> Optional, per source, with a
+        single master switch.
+      </li>
+      <li>
+        <strong>Tidier sources.</strong> Related sources group neatly under one
+        parent — UniFi, Hazel, Apple — and the source list stays clean.
+      </li>
+      <li>
+        <strong>Help that finds the right page.</strong> The macOS Help menu lists
+        every guide chapter, so a search lands on the topic you need.
+      </li>
+    </ul>
+
+    <h3>Fixed</h3>
+    <ul>
+      <li>
+        Many fixes across the timeline, sources, and event handling — fewer
+        surprises, steadier counts, cleaner edges throughout.
+      </li>
+    </ul>
+
+    <hr />
+    <p class="older">
+      Releases before 1.1 predate this page. The current build and its checksum
+      are always on the <a href="/downloads/">downloads page</a>.
+    </p>
+  </main>
+
+  <style>
+    .legal {
+      max-width: 720px;
+      margin: 48px auto;
+      padding: 0 24px 80px;
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .legal h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .legal h2 {
+      font-size: 22px;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .legal h2 .ver-date {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text2);
+    }
+    .legal h3 {
+      font-size: 16px;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .legal .meta {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 32px;
+    }
+    .legal ul { padding-left: 22px; }
+    .legal li { margin-bottom: 8px; }
+    .legal hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0 24px;
+    }
+    .legal .older {
+      font-size: 14px;
+      color: var(--text2);
+    }
+    .legal a { color: var(--blue); }
+  </style>
+</BaseLayout>
