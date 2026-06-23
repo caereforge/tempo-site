@@ -1,6 +1,6 @@
 ---
 title: "Your iPhone, on the timeline: Apple Shortcuts & Focus"
-description: "Tempo can now hear anything Apple Shortcuts can send — a Focus turning on, bedtime, arriving home, a tap you built yourself. Here's the new Shortcuts source and how to wire it up."
+description: "Tempo can now accept events triggered by any shortcut-capable Apple device. A focus change, arriving/leaving home (or any place), any action you built yourself. Here's the new Shortcuts source and how to wire it up."
 pubDate: 2026-06-23
 tags: ["how-to", "scores", "shortcuts", "automation"]
 draft: true
@@ -10,7 +10,9 @@ draft: true
 
 Tempo's rule of entry has always been simple: if a source can POST, Tempo can show it. Apple Shortcuts can POST. So as of 1.1, the automations running on your iPhone, iPad, and Mac can land on the same timeline as your servers and your calendar.
 
-This is the most broadly useful source I've added, because almost everyone already has the sender: the Shortcuts app. You don't need a homelab to get value from it — you need a phone and one automation.
+Unlike most sources, the sender is already on the device — there's nothing new to install on the other end; you wire up a Shortcut and point it at Tempo.
+
+> **One requirement: reachability.** The device has to be able to reach the Mac running Tempo. That means it's on the same LAN, or on a VPN/overlay like Tailscale **with it enabled**. Off the network the shortcut's POST simply won't arrive — Tempo's ingestion port is on your LAN, never exposed to the internet.
 
 ## What you can send
 
@@ -47,7 +49,7 @@ The pattern is the same for every automation:
    - Method: **POST**
    - Headers: `X-Tempo-Token` = your token, `Content-Type` = `application/json`
    - Request Body: **JSON**, with a `title`, `providerIdentifier: com.shortcuts`, `eventType: alert`, and a `metadata` dictionary holding the fields above.
-3. Turn off **Ask Before Running** so it fires silently.
+3. Turn off **Ask Before Running** so it fires silently. If it still prompts you for confirmation (or flashes the response back), add a **Nothing** action as the very last step — in my case that's what finally made it run without asking every time.
 
 A sleep example looks like this:
 
