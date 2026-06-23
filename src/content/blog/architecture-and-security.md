@@ -54,7 +54,7 @@ This is the section where a technical reader has earned specifics. I owe you tho
 
 A few things I am explicit about:
 
-- **TLS on the ingestion port** is a v2 item. The v1 threat model treats LAN as a semi-trusted zone, which is consistent with how most homelab tooling positions itself; I would rather flag it explicitly than imply otherwise. If you need TLS today, a small Caddy or nginx in front of Tempo's port works.
+- **TLS on the ingestion port** was a v1.0 gap; it shipped as an opt-in in 1.1. The default still treats the LAN as a semi-trusted zone — plain HTTP, consistent with how most homelab tooling positions itself — but you can now enable a native TLS listener (port `8776`, off by default) and require it per sender. A Caddy or nginx proxy in front also still works if you prefer it. See the [security page](/security/#tls) for the full shape.
 - **No outbound automation, no bidirectional sync.** Tempo reads events. It does not POST back to your sources. v2 may extend this behind explicit per-action trust gates; v1 deliberately does not.
 - **Closed source.** v1's binary is closed, which means you cannot audit the code. What I offer in compensation: notarized + signed binary, disclosed threat model (this post), scores as plain-text JSON you can read and modify, an audit log that records every request, and the [scope-and-discipline post](/blog/what-tempo-is-not/) that lays out what Tempo will and will not become.
 

@@ -90,7 +90,7 @@ No account, no cloud sync, no third-party telemetry. Everything lives in a local
 
 The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet — it accepts only authenticated requests from per-provider tokens stored in the macOS Keychain.
 
-Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN; TLS support is on the V2 roadmap.
+Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN by default; a native TLS listener (opt-in, port `8776`, with a per-token *Require TLS* flag) shipped in 1.1. See [§8 — Settings](/docs/08-settings-reference#secure-tls) and the [security page](/security/#tls).
 
 ### Where exactly does my data live?
 

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const lastUpdated = "June 11, 2026";
+const lastUpdated = "June 23, 2026";
 ---
 <BaseLayout
   title="Security & Threat Model — Tempo"
@@ -13,11 +13,10 @@ const lastUpdated = "June 11, 2026";
     <p class="lede">
       The short version: Tempo protects your tokens and your data at rest, runs
       no cloud and no telemetry, and assumes the network it sits on is a home LAN
-      you control. Today the ingestion port speaks plain HTTP. That is a
-      deliberate, documented choice for a trusted LAN — not an oversight — and an
-      encrypted-ingestion option is the next security feature on the roadmap. This
-      page states all of that without hand-waving. Secure by option, honest by
-      default.
+      you control. By default the ingestion port speaks plain HTTP — a deliberate,
+      documented choice for a trusted LAN, not an oversight. Since 1.1 you can also
+      turn on a native TLS listener and require it per sender. This page states all
+      of that without hand-waving. Secure by option, honest by default.
     </p>
 
     <h2>The trust boundary Tempo assumes</h2>
@@ -81,10 +80,13 @@ const lastUpdated = "June 11, 2026";
       </li>
     </ul>
 
-    <h2 id="today">In transit, today: cleartext HTTP</h2>
+    <h2 id="today">In transit, by default: cleartext HTTP</h2>
     <p>
       This is the part a careful reader most needs stated plainly, so here it is:
-      <strong>Tempo's ingestion listener currently speaks plain HTTP.</strong> A
+      <strong>by default, Tempo's ingestion listener speaks plain HTTP.</strong>
+      (Since 1.1 you can turn on native TLS — see
+      <a href="#tls">encrypted ingestion</a> below; this section is about the
+      default.) A
       device that can capture packets on the same LAN segment — a machine running
       <code>tcpdump</code> or Wireshark, a compromised switch, an attacker on the
       same Wi-Fi — can read the per-provider token in the request header and the
@@ -152,10 +154,12 @@ const lastUpdated = "June 11, 2026";
         it, independent of Tempo. Point each sender at the overlay address.
       </li>
       <li>
-        <strong>TLS termination in front.</strong> A small Caddy, nginx, or
-        stunnel in front of Tempo's port lets TLS-capable senders connect over
-        HTTPS while the proxy forwards plaintext to Tempo on loopback. This is the
-        established "TLS today" answer until native support ships.
+        <strong>Native TLS, or a proxy in front.</strong> Since 1.1 Tempo has a
+        built-in TLS listener (see <a href="#tls">encrypted ingestion</a> below) —
+        the first-class way to encrypt the wire. If you prefer, a small Caddy,
+        nginx, or stunnel in front of Tempo's port still works: it lets
+        TLS-capable senders connect over HTTPS while the proxy forwards plaintext
+        to Tempo on loopback.
       </li>
       <li>
         <strong>Scope and rotate tokens.</strong> One token per sender is already
@@ -164,28 +168,35 @@ const lastUpdated = "June 11, 2026";
       </li>
     </ul>
 
-    <h2>What is coming: encrypted ingestion</h2>
+    <h2 id="tls">Encrypted ingestion (since 1.1)</h2>
     <p>
-      A native encrypted-ingestion option is the next security feature on the
-      roadmap, shipping in a Tempo 1.x update. The shape it will take:
+      Tempo 1.1 added a native TLS listener. It is <strong>off by default</strong>
+      — the plain LAN path stays the frictionless default — and you turn it on in
+      <em>Settings → Ingestion → Secure (TLS)</em>. How it works:
     </p>
     <ul>
       <li>
-        A <strong>TLS port alongside the plain one</strong> — two distinct ports,
-        rather than optional TLS on a single port, so a sender marked secure is
-        rejected outright on the cleartext port. That makes downgrade attacks
-        structurally impossible rather than a matter of configuration.
+        A <strong>TLS port alongside the plain one</strong> — <code>8776</code> by
+        default, separate from the cleartext <code>7776</code>. The two coexist, so
+        a mixed fleet (some senders speak HTTPS, some don't) keeps working while you
+        move one sender at a time.
       </li>
       <li>
-        A <strong>self-signed certificate generated on first run</strong>,
-        exportable from the app so our own helpers can pin it and you can import
-        it into senders that verify certificates. If you own a domain, you will be
-        able to load your own certificate instead.
+        A <strong>self-signed certificate, generated the first time you enable
+        TLS</strong> — local only, no certificate authority and no external
+        service. Download it from <em>Settings → Security → TLS certificate</em> to
+        pin it in senders that verify (<code>curl --cacert</code>, a CA file in a
+        library's TLS context); a sender can also encrypt without verifying when
+        pinning is impractical. The app warns 60 days before the certificate
+        expires, and re-mints it if your Mac's LAN IP changes.
       </li>
       <li>
-        A <strong>per-provider secure flag</strong>, a natural extension of the
-        existing per-provider token model, with a padlock in the sources panel so
-        the transport state of each sender is visible at a glance.
+        A <strong>per-provider <code>secure</code> flag</strong> — set
+        <em>Require TLS</em> on a token and that sender is refused on the cleartext
+        port with an opaque 401, so a stolen token replayed over plain HTTP, or a
+        sender that silently reverted, is rejected and surfaced rather than quietly
+        downgraded. A padlock on the source shows its transport state and turns
+        orange when a downgrade attempt hits it.
       </li>
     </ul>
     <p>
@@ -193,8 +204,8 @@ const lastUpdated = "June 11, 2026";
       simple, trusted LANs. You opt an individual sender into TLS when its data or
       its network warrants it. That is what <em>secure by option, honest by
       default</em> means in practice. (This supersedes the "TLS is a v2 item" note
-      in the earlier architecture post: encrypted ingestion is now a planned v1.x
-      feature, not a v2 one.)
+      in the earlier architecture post.) <strong>Loading your own certificate</strong>
+      in place of the self-signed one is planned for a later 1.x update.
     </p>
 
     <h2>What Tempo does not defend against</h2>
@@ -239,9 +250,8 @@ const lastUpdated = "June 11, 2026";
     <h2>Changes to this page</h2>
     <p>
       This is a living document. When the security posture changes in a
-      substantive way — most immediately, when encrypted ingestion ships — the
-      date at the top will change and the change will be noted in the release
-      notes of the version that introduced it.
+      substantive way, the date at the top will change and the change will be noted
+      in the release notes of the version that introduced it.
     </p>
   </main>
 

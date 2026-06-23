@@ -131,6 +131,16 @@ Useful for diagnosing "why didn't my event arrive?" — see [§12.3 — A score 
 
 In V1 the audit log is not exposed inside the Ingestion tab itself. To inspect it live, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. To share it with support, use **Help → Export diagnostics bundle…** — the bundle includes the last 24 hours of OSLog output (no token values, no payload contents).
 
+### Secure (TLS)
+
+By default the ingestion server speaks plain HTTP, which is the right choice for a LAN you control. When you want the bytes on the wire encrypted, turn on **Secure (TLS)** under *Settings → Ingestion*. It is **off by default**.
+
+- **TLS port** — `8776` by default (configurable, same 1024–65535 range as the plain port). The TLS listener runs **alongside** the plain `7776`, not instead of it, so a mixed fleet — some senders speak HTTPS, some don't — keeps working while you migrate.
+- **The certificate** — the first time you enable TLS, Tempo generates a **self-signed certificate** in the Keychain. No certificate authority, no external service: local-first. Download it from *Settings → Security → TLS certificate* to hand to senders that verify. A sender can either **pin** it (`curl --cacert tempo-cert.pem`, or a CA file in a library's TLS context — encrypt *and* verify) or **skip verification** (encrypt only) when pinning is impractical. The app warns **60 days** before the certificate expires, and re-mints it if the Mac's LAN IP changes (a sender that pinned the old cert must re-pin).
+- **Require TLS (per token)** — each token has a `secure` flag (*Require TLS*, the padlock toggle in the Tokens list). When set, that sender is **refused on the plain port** with an opaque 401 — so a stolen token replayed over HTTP, or a sender that silently reverted to cleartext, is rejected and surfaced instead of quietly downgraded. The source shows a **padlock** that turns orange when a downgrade attempt hits it. The flag is per *token* (the credential is the boundary), not per source.
+
+Loading your own certificate in place of the self-signed one is planned for a later 1.x update. See the [security page](/security/#tls) for the threat-model reasoning.
+
 ---
 
 ## 8.3 — Agenda
