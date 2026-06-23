@@ -13,7 +13,7 @@ Tempo was designed to be adaptable from day one. I was using Hazel and kept thin
 
 Three concrete scenarios, all doable today:
 
-- **Hazel** — a rule that runs an embedded shell script sends Tempo the exit code, the matched file path, and the rule name. If the code isn't zero, a severity rule paints the event red; the card carries a **Copy file path** button and a **Re-run the check** button that opens Terminal with the exact command, ready for you to run.
+- **Hazel** — a rule runs an embedded shell script that POSTs the run's outcome (a `severity` like `error` when it fails), the matched file path, and the rule name. A failed run shows red; the card carries a **Copy file path** button and a **Re-run** button that opens Terminal with the command, ready for you to run.
 - **Home Assistant** — a "back home" automation sends Tempo an event with the work-PC's MAC and the HA dashboard URL. The card renders three buttons on the same row: **Open in Home Assistant** that jumps straight to the dashboard, **SSH to the box**, and **Wake the PC** that opens Terminal with a `wakeonlan` command for that MAC. One arrival, three things you might want to do — all there waiting on the click.
 - **Kopia** — a finished snapshot sends Tempo the snapshot ID and path. The card carries a **Copy snapshot ID** button and a **Restore** button that opens Terminal with the `kopia snapshot restore` command pre-filled — one click to the prompt, no drilling.
 
