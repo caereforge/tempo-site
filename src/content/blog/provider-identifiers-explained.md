@@ -50,7 +50,7 @@ The decision is yours. Both work; the trade-off is convenience vs blast radius i
 
 ## The bundled sources
 
-Tempo ships with nine scores out of the box. If you're connecting one of these sources, this is the exact string to put in the Provider field:
+Tempo ships with twenty bundled scores out of the box and growing. If you're connecting one of these common sources, this is the exact string to put in the Provider field:
 
 | Source | Provider identifier |
 |---|---|

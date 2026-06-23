@@ -20,7 +20,7 @@ A native macOS event hub. Anything that can POST JSON to a LAN endpoint shows up
 
 **You stay the conductor. Tempo holds the score, and in v1 it never acts on its own.**
 
-The "score" is a small JSON file that defines how an event is represented in its card, severity rules you want to apply, grouping policy, and default actions for a source. Tempo ships with nine bundled scores at launch: UniFi Network, UniFi Protect, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Synology, Scripts (your own bash/python/etc.), and Hazel. Apple Calendar and Reminders are pre-wired via a built-in EventKit provider, no score installation needed. More are available to download.
+The "score" is a small JSON file that defines how an event is represented in its card, severity rules you want to apply, grouping policy, and default actions for a source. Tempo ships with twenty bundled scores at launch and growing: UniFi Network and Protect, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Synology, Beszel, Jellyfin, the *arr stack (Sonarr / Radarr / Prowlarr / Jellyseerr), Pi-hole, Vaultwarden, Todoist, Apple Shortcuts, Scripts (your own bash/python/etc.), and Hazel. Apple Calendar and Reminders are pre-wired via a built-in EventKit provider, no score installation needed. More are available to download.
 
 Local SQLite database. No account. No cloud sync. No telemetry. The HTTP ingestion server binds your LAN so a NAS, a Home Assistant box, or a monitoring stack on a different host can post to it directly, with per-provider tokens, an audit log, and optional TLS.
 
