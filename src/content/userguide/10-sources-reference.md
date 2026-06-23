@@ -142,11 +142,13 @@ A few highlights worth knowing:
 
 ### The bundled Scripts score
 
-Any payload whose `providerIdentifier` starts with `scripts.` (or matches the `local.*` / `lab.*` namespace conventions) is rendered through the bundled **Scripts score**, which:
+Any payload whose `providerIdentifier` starts with `scripts.` is rendered through the bundled **Scripts score**, which:
 
 - Maps `metadata.label` to a severity (`OK` → ok green, `Warning` → warning yellow, `Error` → error red, `Critical` → error red)
 - Surfaces a small set of generic actions (SSH to source host, copy host, copy title)
-- Groups scripts under a "Scripts" parent row in the source panel (so 20 different `scripts.*` providers don't take 20 sidebar rows)
+- Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.` — `scripts.shell` → **Shell**, `scripts.ruby` → **Ruby**, whatever you name it. Anything deeper rolls up: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**, and the specific name shows in the action panel when you open the event.
+
+**Why only one level?** It lets you split your scripts logically — shell checks apart from Python pollers — without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
 
 The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider — see [§11 — Score authoring](/docs/11-score-authoring).
 
@@ -166,7 +168,7 @@ The card is functional — you can still see *what* happened and *when* — but 
 Three ways to make a custom source's card richer, in increasing order of effort:
 
 1. **Pass more fields in the payload.** Add `severity` (`"warning"`, `"error"`, `"critical"`) and a few `metadata.custom.<key>` values so Tempo has something to display in the card and the action panel's details list. Five more lines of JSON is often enough to lift the card from "blank" to "informative" — no score authoring required.
-2. **Adopt the bundled Scripts score's namespace.** Name your provider `scripts.<lang>.<name>` (or `local.<name>` / `lab.<host>.<name>` per the conventions above) and the Scripts score picks it up automatically: severity from `metadata.label`, source-panel grouping under a single **Scripts** parent row, a couple of generic actions. Zero authoring.
+2. **Adopt the bundled Scripts score's namespace.** Name your provider `scripts.<lang>.<name>` and the Scripts score picks it up automatically: severity from `metadata.label`, source-panel grouping under a single **Scripts** parent row (one level deep, by `<lang>`), a couple of generic actions. Zero authoring.
 3. **Author a dedicated score** for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct colour, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.
 
 A useful heuristic: if you'll see this source's events more than once a week, the dedicated score is worth writing. For one-off ad-hoc senders that fire occasionally, option 1 or 2 is enough indefinitely.
@@ -506,15 +508,14 @@ If you have DSM + Surveillance Station + Photos + Drive — they all live under 
 
 The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarises something. Anything that produces a result-per-run.
 
-The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, surfaces generic actions, groups all `scripts.*` providers under one Scripts row in the source panel.
+The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, surfaces generic actions, and groups your senders under the **Scripts** row — one level deep, by the first segment after `scripts.` (see §10.2 for the why).
 
 ### Naming convention
 
 - `scripts.shell` — generic shell script senders
 - `scripts.python` — Python script senders
 - `scripts.ruby`, `scripts.go`, etc. — language-specific
-- `local.<name>` — for senders running on the same Mac as Tempo (preferred for clarity)
-- `lab.<host>.<name>` — for senders on other LAN hosts
+- `scripts.<anything>` — the first segment after `scripts.` becomes the sub-source row. Only that one level groups; deeper segments (`scripts.ruby.deploy`) are the script's own name and roll up under their first-level row, shown in the action panel.
 
 ### Title convention
 

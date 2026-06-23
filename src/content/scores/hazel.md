@@ -49,9 +49,11 @@ PROVIDER="com.noodlesoft.hazel"
 
 # Optional — turn this rule into its own sub-source under the Hazel
 # umbrella. Pick a short stable suffix (scanner, mail, photos,
-# downloads, ...) and uncomment the line below. The same Tempo token
-# works for any com.noodlesoft.hazel.* sub-source as long as it's
-# bound to the parent prefix in Settings → Ingestion.
+# downloads, ...) and uncomment the line below. Use ONE level only:
+# the suffix is the sub-source row, and anything deeper rolls up into
+# it (com.noodlesoft.hazel.scanner.invoices still shows under Scanner).
+# The same Tempo token works for any com.noodlesoft.hazel.* sub-source
+# as long as it's bound to the parent prefix in Settings → Ingestion.
 #
 # Examples (uncomment ONE):
 #   PROVIDER="com.noodlesoft.hazel.scanner"   # ~/Scans → invoice PDFs
