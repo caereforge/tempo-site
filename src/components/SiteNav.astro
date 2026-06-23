@@ -4,19 +4,19 @@ function isActive(prefix: string): boolean {
   if (prefix === "/") return pathname === "/";
   return pathname === prefix || pathname.startsWith(prefix + "/") || pathname === prefix.replace(/\/$/, "");
 }
-// Nav items mirror the homepage nav order so both surfaces look the
-// same. Story and FAQ are anchors that route back to homepage sections
-// — useful from any page to jump to the narrative pitch or FAQ.
+// Nav items mirror the homepage nav order so both surfaces look the same.
+// Story/FAQ were dropped (they only scroll the homepage). "Docs" is a dropdown
+// grouping the reference pages: the user guide and the security/threat model.
 const links: { href: string; label: string; external?: boolean }[] = [
-  { href: "/#story", label: "Story" },
   { href: "/gallery/", label: "Gallery" },
-  { href: "/#faq", label: "FAQ" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/downloads", label: "Downloads" },
   { href: "/changelog/", label: "Changelog" },
   { href: "/scores/", label: "Scores" },
-  { href: "/docs/", label: "Docs" },
-  { href: "/blog/", label: "Blog" },
+];
+const docsLinks: { href: string; label: string }[] = [
+  { href: "/docs/", label: "User Guide" },
+  { href: "/security/", label: "Security" },
 ];
 ---
 <header class="site-nav">
@@ -43,6 +43,15 @@ const links: { href: string; label: string; external?: boolean }[] = [
         {link.label}
       </a>
     ))}
+    <details class="site-nav-dropdown">
+      <summary class:list={["site-nav-link", { active: isActive("/docs") || isActive("/security") }]}>Docs<span class="site-nav-chevron" aria-hidden="true">▾</span></summary>
+      <div class="site-nav-dropdown-menu">
+        {docsLinks.map((d) => (
+          <a class="site-nav-dropdown-item" href={d.href}>{d.label}</a>
+        ))}
+      </div>
+    </details>
+    <a href="/blog/" class:list={["site-nav-link", { active: isActive("/blog/") }]}>Blog</a>
     <details class="site-nav-dropdown">
       <summary class="site-nav-link">Support<span class="site-nav-chevron" aria-hidden="true">▾</span></summary>
       <div class="site-nav-dropdown-menu">

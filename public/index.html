@@ -536,14 +536,18 @@ footer {
     <circle cx="289" cy="75.1" r="15.12" fill="#9B2D1E"/>
   </svg></a>
   <div class="nav-links">
-    <a class="nav-link" href="#story">Story</a>
     <a class="nav-link" href="/gallery/">Gallery</a>
-    <a class="nav-link" href="#faq">FAQ</a>
     <a class="nav-link" href="/roadmap">Roadmap</a>
     <a class="nav-link" href="/downloads/">Downloads</a>
     <a class="nav-link" href="/changelog/">Changelog</a>
     <a class="nav-link" href="/scores/">Scores</a>
-    <a class="nav-link" href="/docs/">Docs</a>
+    <details class="nav-dropdown">
+      <summary class="nav-link">Docs<span class="nav-chevron" aria-hidden="true">▾</span></summary>
+      <div class="nav-dropdown-menu">
+        <a class="nav-dropdown-item" href="/docs/">User Guide</a>
+        <a class="nav-dropdown-item" href="/security/">Security</a>
+      </div>
+    </details>
     <a class="nav-link" href="/blog/">Blog</a>
     <details class="nav-dropdown">
       <summary class="nav-link">Support<span class="nav-chevron" aria-hidden="true">▾</span></summary>
