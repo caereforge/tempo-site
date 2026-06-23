@@ -69,10 +69,11 @@ The complete, correct payload looks like this — note `severity` **outside** `m
 
 With `category: sleep` and `state: on` / `off`, the score pairs bedtime and wake into one session — a single row per night instead of two loose events. Same idea for a Focus period.
 
-> **Three things that fail silently if you get them wrong:**
+> **Two things that fail silently if you get them wrong:**
 > 1. **`metadata` must be a nested object.** If you put `category`/`state` as top-level fields (a common first mistake), they're dropped and nothing matches — the event still arrives, just undressed.
-> 2. **Values are lowercase.** Matching is exact: `sleep` works, `Sleep` doesn't.
-> 3. **`severity` is top-level, not in `metadata`.** And don't confuse the metadata `state` (`on`/`off`, the Shortcuts convention) with the top-level `state` (`firing`/`resolved`, the event lifecycle — leave that out; Tempo handles it).
+> 2. **`severity` is top-level, not in `metadata`.** And don't confuse the metadata `state` (`on`/`off`, the Shortcuts convention) with the top-level `state` (`firing`/`resolved`, the event lifecycle — leave that out; Tempo handles it).
+>
+> Values are **case-insensitive**, so `Sleep` and `sleep` both match — iOS Shortcuts tends to auto-capitalise, and that's fine.
 
 Install the score with one click from **Manage Sources**.
 
