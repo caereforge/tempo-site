@@ -1,0 +1,15 @@
+# Cloudflare Pages redirects — https://developers.cloudflare.com/pages/configuration/redirects/
+#
+# /community and /discord are linked from the nav, the user guide, and several
+# blog posts as if they were pages. They are not — they are friendly aliases for
+# the Discord invite. Redirect them so every existing (and future) link resolves
+# instead of 404-ing to the site's own 404 page. 302 (not 301): the invite URL
+# may change, so don't let browsers cache it permanently.
+/community   https://discord.gg/QnaCNKd9CN   302
+/community/  https://discord.gg/QnaCNKd9CN   302
+/discord     https://discord.gg/QnaCNKd9CN   302
+/discord/    https://discord.gg/QnaCNKd9CN   302
+
+# @astrojs/sitemap emits sitemap-index.xml; crawlers (and some tools) probe the
+# conventional /sitemap.xml. Point it at the real index.
+/sitemap.xml  /sitemap-index.xml  301

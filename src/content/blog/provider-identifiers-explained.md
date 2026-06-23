@@ -102,7 +102,7 @@ Provider identifier: `com.caldav.fastmail`. You won't type it in the New Token s
 
 The full step-by-step walkthrough — generating the Fastmail app-password, the `security add-generic-password` Keychain command, the JSON shape with worked examples, the duplicates-with-Internet-Accounts caveat — lives at [github.com/caereforge/tempo-scores/tree/main/beta](https://github.com/caereforge/tempo-scores/tree/main/beta). The raw `.json` source for the score is in the same directory if you want to inspect it before installing.
 
-If you want CalDAV for a non-Fastmail provider, the honest answer is "not yet" — feedback in [Discord](https://discord.gg/caereforge) helps prioritise which server lands next.
+If you want CalDAV for a non-Fastmail provider, the honest answer is "not yet" — feedback in [Discord](https://discord.gg/QnaCNKd9CN) helps prioritise which server lands next.
 
 ## Your own senders — the Scripts umbrella
 
@@ -246,8 +246,8 @@ The right string costs you nothing and gives you everything the bundled score wa
 
 ## Further reading
 
-- **User Guide §10 — Sources reference** documents each bundled source end-to-end, including the exact webhook URL and headers each one expects: [/docs/sources-reference/](/docs/sources-reference/)
-- **User Guide §11 — Score authoring** is the field-by-field spec for the score file format if you're writing your own: [/docs/score-authoring/](/docs/score-authoring/)
+- **User Guide §10 — Sources reference** documents each bundled source end-to-end, including the exact webhook URL and headers each one expects: [/docs/10-sources-reference/](/docs/10-sources-reference/)
+- **User Guide §11 — Score authoring** is the field-by-field spec for the score file format if you're writing your own: [/docs/11-score-authoring/](/docs/11-score-authoring/)
 - **Discord** is the fastest path if your sender is still hitting `403` after reading this. Paste the curl command and the error and we'll figure it out together.
 
 Leo from [Caereforge](https://caereforge.com)

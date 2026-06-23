@@ -105,7 +105,7 @@ If a key isn't on a given event, the button is hidden for that event. Tempo does
 
 ## A few pointers from here
 
-- **Chapter 11 — Score authoring** in the User Guide is the reference: every field, the severity rules, conditional visibility. Worth a bookmark once you start customising more than one source: [/docs/score-authoring/](/docs/score-authoring/)
+- **Chapter 11 — Score authoring** in the User Guide is the reference: every field, the severity rules, conditional visibility. Worth a bookmark once you start customising more than one source: [/docs/11-score-authoring/](/docs/11-score-authoring/)
 - **Chapter 7 — Score Editor** covers the in-app UI for editing scores. The Editor handles colors, severity rules, grouping, display names. Action authoring stays in JSON for V1 and lands in the UI later.
 - **Discord** is the easiest way to ask if something doesn't work, and the easiest way to show off what you wired together. I read everything there.
 

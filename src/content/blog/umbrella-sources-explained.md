@@ -129,6 +129,6 @@ This post describes the umbrella model as it works in Tempo 1.0.x. Version 1.1 w
 
 - **[What to type when Tempo asks for a provider](/blog/provider-identifiers-explained/)** covers the full provider identifier system, including the bundled source table and naming conventions.
 - **[Why we call them scores](/blog/why-we-call-them-scores/)** explains the score concept and lists every score shipping at launch.
-- **User Guide §11, Score authoring** is the field-by-field spec: [/docs/score-authoring/](/docs/score-authoring/)
+- **User Guide §11, Score authoring** is the field-by-field spec: [/docs/11-score-authoring/](/docs/11-score-authoring/)
 
 Leo from [Caereforge](https://caereforge.com)
