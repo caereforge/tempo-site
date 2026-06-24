@@ -8,7 +8,7 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
 ---
 <BaseLayout
   title="Scores — Tempo"
-  description="Preconfigured Tempo scores for your homelab — Synology, Proxmox, Uptime Kuma, and more."
+  description="Preconfigured Tempo scores for your homelab: Synology, Proxmox, Uptime Kuma, and more."
 >
   <header class="page-header">
     <h1>Scores</h1>
@@ -16,10 +16,10 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
       Small declarative files that teach Tempo how to read events from a specific source and which one-click actions to attach. Drop one into Tempo, and the source is wired up.
     </p>
     <p class="lede-secondary">
-      Tempo v1 ships with several scores <strong>built-in</strong> — they don't need to be downloaded, just configured. Apple Calendar and Reminders are first-class sources too, surfaced via a dedicated EventKit integration. The other entries here are <strong>downloadable add-ons</strong> for sources outside the bundled set, with the catalog growing over time.
+      Tempo v1 ships with several scores <strong>built-in</strong>: they don't need to be downloaded, just configured. Apple Calendar and Reminders are sources too, surfaced via a dedicated EventKit integration. The other entries here are <strong>downloadable add-ons</strong> for sources outside the bundled set, with the catalog growing over time.
     </p>
     <p class="lede-secondary">
-      Score installed but nothing lands in the feed? See <a href="/scores/troubleshooting-networking">troubleshooting networking</a> — five patterns cover almost every case.
+      Score installed but nothing lands in the feed? See <a href="/scores/troubleshooting-networking">troubleshooting networking</a>: five patterns cover almost every case.
     </p>
   </header>
 
@@ -57,7 +57,7 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
   <footer class="contribute-callout">
     <h2>Contribute your own</h2>
     <p>
-      Got a tool that should be in the catalog? Scores are JSON files — open a
+      Got a tool that should be in the catalog? Scores are JSON files. Open a
       pull request at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a>
       and follow the <a href="https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md">CONTRIBUTING guide</a>.
       The review rubric is public so you can self-check before submitting.

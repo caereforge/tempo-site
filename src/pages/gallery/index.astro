@@ -9,32 +9,32 @@ const heroShots: Shot[] = [
   {
     id: "hero-timeline",
     title: "The timeline",
-    caption: "Every signal, on one chronological feed. Calendar entries, webhook alerts, monitoring events, your own scripts — all in the order they happened.",
+    caption: "Every signal, on one chronological feed. Calendar entries, webhook alerts, monitoring events, your own scripts, all in the order they happened.",
   },
   {
     id: "hero-action-panel",
     title: "Actions in context",
-    caption: "Each event carries its next move. Open a URL, run a command, copy a value, launch a dashboard — even jump into Todoist, Obsidian, or DEVONthink. One click from the row, no app-switching.",
+    caption: "Each event carries its next move. Open a URL, run a command, copy a value, launch a dashboard, even jump into Todoist, Obsidian, or DEVONthink. One click from the row, no app-switching.",
   },
   {
     id: "hero-score-editor-ha",
-    title: "Score Editor — Home Assistant",
-    caption: "Teach Tempo how to read a new source. Severity rules, color, grouping, custom labels — all declarative, no code.",
+    title: "Score Editor: Home Assistant",
+    caption: "Teach Tempo how to read a new source. Severity rules, color, grouping, and custom labels, all declarative, no code.",
   },
   {
     id: "hero-score-editor-unifi",
-    title: "Score Editor — UniFi",
+    title: "Score Editor: UniFi",
     caption: "Dense rule sets handle the long tail of alarm classes. The editor scales to every flavor of source you throw at it.",
   },
   {
     id: "hero-score-editor-synology",
-    title: "Score Editor — Synology",
-    caption: "Same surface, simpler source. Each score is shaped to what its tool emits — no one-size-fits-all template.",
+    title: "Score Editor: Synology",
+    caption: "Same surface, simpler source. Each score is shaped to what its tool emits: no one-size-fits-all template.",
   },
   {
     id: "hero-light-theme",
     title: "Light theme",
-    caption: "Same Tempo, lighter palette. Match your workspace — dark for the homelab cave, light for the home office.",
+    caption: "Same Tempo, lighter palette. Match your workspace: dark for the homelab cave, light for the home office.",
   },
 ];
 
@@ -42,7 +42,7 @@ const heatmapShots: Shot[] = [
   {
     id: "heatmap-historical",
     title: "Historical heatmap",
-    caption: "Sits at the bottom of the source panel. Shows an 84-day window — useful for spotting patterns and busy days at a glance.",
+    caption: "Sits at the bottom of the source panel. Shows an 84-day window, useful for spotting patterns and busy days at a glance.",
   },
   {
     id: "heatmap-daily",
@@ -55,12 +55,12 @@ const settingsShots: Shot[] = [
   {
     id: "settings-interface",
     title: "Interface",
-    caption: "Theme, app icon, agenda visibility, system status footer — the surface-level knobs you tune first.",
+    caption: "Theme, app icon, agenda visibility, system status footer: the surface-level knobs you tune first.",
   },
   {
     id: "settings-agenda",
     title: "Agenda",
-    caption: "What flows in from Apple Calendar and Reminders — which calendars, which list, how far ahead.",
+    caption: "What flows in from Apple Calendar and Reminders: which calendars, which list, how far ahead.",
   },
   {
     id: "settings-ingestion",
@@ -77,22 +77,22 @@ const settingsShots: Shot[] = [
 const homelabScenarios: Shot[] = [
   {
     id: "homelab-kuma-down",
-    title: "Uptime Kuma — host recovered",
+    title: "Uptime Kuma: host recovered",
     caption: "Kuma POSTs the recovery as soon as the monitor goes back up, Tempo flags it green. Action panel offers Open in Kuma to inspect the dashboard, ping the host, and copy the monitor URL.",
   },
   {
     id: "homelab-unifi-connect",
-    title: "UniFi — device flapping, stacked",
-    caption: "When a device disconnects and reconnects repeatedly, Tempo collapses the noise into a single stack on the timeline — count visible at a glance, full sequence one click away. Same row stays under the UniFi parent in the source panel.",
+    title: "UniFi: device flapping, stacked",
+    caption: "When a device disconnects and reconnects repeatedly, Tempo collapses the noise into a single stack on the timeline: count visible at a glance, full sequence one click away. Same row stays under the UniFi parent in the source panel.",
   },
   {
     id: "homelab-kopia-complete",
-    title: "Kopia — backup complete",
+    title: "Kopia: backup complete",
     caption: "Snapshot finished, size and duration in the row. Action to open the repository in Finder or copy the snapshot ID for scripting.",
   },
   {
     id: "homelab-ha-scene",
-    title: "Home Assistant — automation finished",
+    title: "Home Assistant: automation finished",
     caption: "HA fires a webhook when a scene runs. Tempo records it next to today's other events; action button triggers the inverse scene if you change your mind.",
   },
 ];
@@ -100,8 +100,8 @@ const homelabScenarios: Shot[] = [
 const wfhScenarios: Shot[] = [
   {
     id: "wfh-meeting-cross-source",
-    title: "Meeting starting — URLs auto-extracted",
-    caption: "Calendar event with URLs in the notes — Tempo extracts them automatically as action buttons. One click jumps to the Todoist task, the Obsidian note, the DEVONthink doc, or the meeting link in the browser. Zero configuration: the publisher of the feed put the links there, Tempo just surfaces them.",
+    title: "Meeting starting: URLs auto-extracted",
+    caption: "Calendar event with URLs in the notes: Tempo extracts them automatically as action buttons. One click jumps to the Todoist task, the Obsidian note, the DEVONthink doc, or the meeting link in the browser. Zero configuration: the publisher of the feed put the links there, Tempo only surfaces them.",
   },
   {
     id: "wfh-scan-from-mfp",
@@ -110,12 +110,12 @@ const wfhScenarios: Shot[] = [
   },
   {
     id: "wfh-delivery",
-    title: "Delivery — out for arrival",
+    title: "Delivery: out for arrival",
     caption: "Carrier email arrives. A Mail rule + Hazel script extracts the tracking number and POSTs to Tempo. Action panel opens the carrier's tracking page directly so you can see the status without digging through email, plus copy the tracking number.",
   },
   {
     id: "wfh-keepa-pricedrop",
-    title: "Keepa — price drop on a watched product",
+    title: "Keepa: price drop on a watched product",
     caption: "Keepa sends its free email alert when a wishlist item drops below your threshold. A Mail rule forwards it to Tempo via Hazel. Action panel opens the Amazon page so you can pull the trigger or pass.",
   },
 ];
@@ -130,12 +130,12 @@ const allShots: Shot[] = [
 ---
 <BaseLayout
   title="Gallery — Tempo"
-  description="What Tempo looks like, and a few examples of what people use it for — homelab monitoring, work-from-home triage, and the in-between."
+  description="What Tempo looks like, and a few examples of what people use it for: homelab monitoring, work-from-home triage, and the in-between."
 >
   <header class="gallery-header">
     <h1>Gallery</h1>
     <p class="lede">
-      Tempo in action — pick your theme, then watch your events roll in.
+      Tempo in action: pick your theme, then watch your events roll in.
     </p>
   </header>
 
@@ -179,7 +179,7 @@ const allShots: Shot[] = [
       </figure>
       <div class="heatmap-caption">
         <h3>Historical heatmap</h3>
-        <p>Sits at the bottom of the source panel. Shows an 84-day window — useful for spotting patterns and busy days at a glance.</p>
+        <p>Sits at the bottom of the source panel. Shows an 84-day window, useful for spotting patterns and busy days at a glance.</p>
       </div>
       <figure class="heatmap-card daily-full">
         <a href="#heatmap-daily" class="shot-thumb" aria-label="Open Daily heatmap fullscreen">
@@ -233,7 +233,7 @@ const allShots: Shot[] = [
         Tempo aggregates the signals your digital life already throws off:
         Uptime Kuma, UniFi, your backup system, Pi-hole, Proxmox, your house
         via Home Assistant, GitHub, your own scripts. Everything lands on one
-        Mac-native timeline, with the next move one click from the row — and
+        Mac-native timeline, with the next move one click from the row, and
         you can customize the buttons too. No new dashboards, no logging in
         to check status. Apple Calendar and Reminders flow in alongside,
         ready to show your day at a glance.
@@ -259,12 +259,12 @@ const allShots: Shot[] = [
       <span class="scenario-chip">For home office</span>
       <h2 id="for-wfh">Meetings, errands, the desk you actually sit at</h2>
       <p class="scenario-intro">
-        Work-from-home has its own rhythm — meetings that need focus, a
+        Work-from-home has its own rhythm: meetings that need focus, a
         printer-scanner you wish would tell you when it's done, deliveries
         that interrupt the day, small purchases you've been waiting on. Many
         of the tools involved don't speak webhooks natively, so Tempo gets
-        them through small bridges — Hazel rules, Mail rules, Apple
-        Shortcuts. The same timeline, just wired to a different stack.
+        them through small bridges: Hazel rules, Mail rules, Apple
+        Shortcuts. The same timeline, wired to a different stack.
       </p>
     </header>
     <div class="scenario-grid">
@@ -299,7 +299,7 @@ const allShots: Shot[] = [
         Notes, drafts, editorial deadlines on one side; OBS scene changes,
         Frame.io reviews, render queues on the other. We'll add both
         environments here in the weeks after launch. If your stack doesn't
-        fit any of these labels, that's fine too — point it at Tempo and
+        fit any of these labels, that's fine too. Point it at Tempo and
         it'll find a row.
       </p>
     </header>
@@ -309,11 +309,11 @@ const allShots: Shot[] = [
     <h2 id="whats-next">What's next</h2>
     <ul class="whats-next-list">
       <li><strong>Apple Shortcuts + Automator integration</strong> <em>(any genre, every tempo)</em></li>
-      <li><strong>In-app score browser</strong> — install scores from inside Tempo</li>
+      <li><strong>In-app score browser</strong>: install scores from inside Tempo</li>
       <li><strong>Time Machine</strong>, built-in</li>
-      <li><strong>Timeline filtering</strong> — show all events, or only those needing attention</li>
+      <li><strong>Timeline filtering</strong>: show all events, or only those needing attention</li>
       <li><strong>More theme presets</strong></li>
-      <li><strong>Sound customization</strong> — drop-in your own</li>
+      <li><strong>Sound customization</strong>: drop-in your own</li>
       <li><strong>Map preview</strong> for Calendar events with locations</li>
       <li>
         <strong>More scores</strong>, grouped by where they live in your stack:
@@ -334,8 +334,8 @@ const allShots: Shot[] = [
 
   <footer class="gallery-footer">
     <p>
-      Ready to try it on your own stack? <a href="/downloads">Download Tempo</a>
-      — or read the <a href="/docs/">docs</a> first to see what a score looks
+      Try it on your own stack. <a href="/downloads">Download Tempo</a>,
+      or read the <a href="/docs/">docs</a> first to see what a score looks
       like.
     </p>
   </footer>

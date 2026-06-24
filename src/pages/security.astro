@@ -13,7 +13,7 @@ const lastUpdated = "June 23, 2026";
     <p class="lede">
       The short version: Tempo protects your tokens and your data at rest, runs
       no cloud and no telemetry, and assumes the network it sits on is a home LAN
-      you control. By default the ingestion port speaks plain HTTP — a deliberate,
+      you control. By default the ingestion port speaks plain HTTP: a deliberate,
       documented choice for a trusted LAN, not an oversight. Since 1.1 you can also
       turn on a native TLS listener and require it per sender. This page states all
       of that without hand-waving. Secure by option, honest by default.
@@ -22,7 +22,7 @@ const lastUpdated = "June 23, 2026";
     <h2>The trust boundary Tempo assumes</h2>
     <p>
       Tempo is built for homelab and self-hosted setups: Home Assistant, a NAS,
-      UniFi controllers, backup and monitoring stacks, your own scripts — usually
+      UniFi controllers, backup and monitoring stacks, your own scripts, usually
       running on dedicated hosts, not on the same Mac as Tempo. To receive their
       events, Tempo's ingestion listener binds <code>0.0.0.0</code> and is
       reachable from other machines on your local network. The threat model
@@ -48,13 +48,13 @@ const lastUpdated = "June 23, 2026";
         <strong>Per-provider tokens.</strong> Every sender gets its own token,
         bound to a provider-identifier prefix. Tokens are not shared, not derived
         from a master secret, and not bundled with the app. A leaked token can
-        impersonate that one sender only — it cannot pose as another provider or
-        escalate to an app-wide compromise — and you revoke each one
+        impersonate that one sender only (it cannot pose as another provider or
+        escalate to an app-wide compromise), and you revoke each one
         independently.
       </li>
       <li>
         <strong>Keychain-stored secrets.</strong> Tokens live in the macOS
-        Keychain, scoped to the Tempo process — not in <code>UserDefaults</code>,
+        Keychain, scoped to the Tempo process, not in <code>UserDefaults</code>,
         flat files, or environment variables. Access mediation is enforced by the
         OS.
       </li>
@@ -67,7 +67,7 @@ const lastUpdated = "June 23, 2026";
       </li>
       <li>
         <strong>Local audit log.</strong> Accepted and rejected requests are
-        recorded through macOS unified logging — enough metadata to reconstruct an
+        recorded through macOS unified logging: enough metadata to reconstruct an
         incident (token, source IP, response code, timestamp), never the payload
         contents. A rejection inspector in the app surfaces refused requests so a
         misconfigured or hostile sender is visible, not silent.
@@ -75,7 +75,7 @@ const lastUpdated = "June 23, 2026";
       <li>
         <strong>Local data, no telemetry.</strong> The SQLite database stays on
         your disk. There is no third-party analytics SDK, no phone-home, no
-        license server — v1 is freeware. Backups go to a path you choose. The
+        license server. V1 is freeware. Backups go to a path you choose. The
         full data story is on the <a href="/privacy/">privacy page</a>.
       </li>
     </ul>
@@ -84,12 +84,12 @@ const lastUpdated = "June 23, 2026";
     <p>
       This is the part a careful reader most needs stated plainly, so here it is:
       <strong>by default, Tempo's ingestion listener speaks plain HTTP.</strong>
-      (Since 1.1 you can turn on native TLS — see
+      (Since 1.1 you can turn on native TLS, see
       <a href="#tls">encrypted ingestion</a> below; this section is about the
       default.) A
-      device that can capture packets on the same LAN segment — a machine running
+      device that can capture packets on the same LAN segment (a machine running
       <code>tcpdump</code> or Wireshark, a compromised switch, an attacker on the
-      same Wi-Fi — can read the per-provider token in the request header and the
+      same Wi-Fi) can read the per-provider token in the request header and the
       JSON payload, including any sensitive fields you put in the event
       (hostnames, IPs, account identifiers, message bodies). HTTP does not encrypt
       any of that.
@@ -114,12 +114,12 @@ const lastUpdated = "June 23, 2026";
       </li>
     </ul>
     <p>
-      So the HTTP default is a documented decision for a trusted LAN — but it is a
+      So the HTTP default is a documented decision for a trusted LAN, but it is a
       real limit, and it is stated as one rather than glossed over. If your network
       is not one where you trust every device that can see the wire, read on.
     </p>
 
-    <h2>When the HTTP default is fine — and when it is not</h2>
+    <h2>When the HTTP default is fine, and when it is not</h2>
     <p><strong>Fine, as-is:</strong></p>
     <ul>
       <li>A home network you administer, wired or on Wi-Fi you control.</li>
@@ -130,7 +130,7 @@ const lastUpdated = "June 23, 2026";
       <li>A shared office, coworking, or apartment-building LAN.</li>
       <li>A flat segment that also carries guest devices or untrusted IoT.</li>
       <li>Anywhere a peer could plausibly run a packet sniffer.</li>
-      <li>Anywhere a sender's payload carries data you would treat as sensitive — credentials, personal identifiers, regulated information.</li>
+      <li>Anywhere a sender's payload carries data you would treat as sensitive: credentials, personal identifiers, regulated information.</li>
     </ul>
 
     <h2 id="harden">Hardening you can do today</h2>
@@ -155,15 +155,15 @@ const lastUpdated = "June 23, 2026";
       </li>
       <li>
         <strong>Native TLS, or a proxy in front.</strong> Since 1.1 Tempo has a
-        built-in TLS listener (see <a href="#tls">encrypted ingestion</a> below) —
-        the first-class way to encrypt the wire. If you prefer, a small Caddy,
+        built-in TLS listener (see <a href="#tls">encrypted ingestion</a> below),
+        the built-in way to encrypt the wire. If you prefer, a small Caddy,
         nginx, or stunnel in front of Tempo's port still works: it lets
         TLS-capable senders connect over HTTPS while the proxy forwards plaintext
         to Tempo on loopback.
       </li>
       <li>
         <strong>Scope and rotate tokens.</strong> One token per sender is already
-        the model — keep it that way, and rotate any token you suspect was
+        the model. Keep it that way, and rotate any token you suspect was
         exposed. Revocation is independent and immediate.
       </li>
     </ul>
@@ -171,19 +171,19 @@ const lastUpdated = "June 23, 2026";
     <h2 id="tls">Encrypted ingestion (since 1.1)</h2>
     <p>
       Tempo 1.1 added a native TLS listener. It is <strong>off by default</strong>
-      — the plain LAN path stays the frictionless default — and you turn it on in
+      (the plain LAN path stays the frictionless default), and you turn it on in
       <em>Settings → Ingestion → Secure (TLS)</em>. How it works:
     </p>
     <ul>
       <li>
-        A <strong>TLS port alongside the plain one</strong> — <code>8776</code> by
+        A <strong>TLS port alongside the plain one</strong>: <code>8776</code> by
         default, separate from the cleartext <code>7776</code>. The two coexist, so
         a mixed fleet (some senders speak HTTPS, some don't) keeps working while you
         move one sender at a time.
       </li>
       <li>
         A <strong>self-signed certificate, generated the first time you enable
-        TLS</strong> — local only, no certificate authority and no external
+        TLS</strong>: local only, no certificate authority and no external
         service. Download it from <em>Settings → Security → TLS certificate</em> to
         pin it in senders that verify (<code>curl --cacert</code>, a CA file in a
         library's TLS context); a sender can also encrypt without verifying when
@@ -191,7 +191,7 @@ const lastUpdated = "June 23, 2026";
         expires, and re-mints it if your Mac's LAN IP changes.
       </li>
       <li>
-        A <strong>per-provider <code>secure</code> flag</strong> — set
+        A <strong>per-provider <code>secure</code> flag</strong>: set
         <em>Require TLS</em> on a token and that sender is refused on the cleartext
         port with an opaque 401, so a stolen token replayed over plain HTTP, or a
         sender that silently reverted, is rejected and surfaced rather than quietly
@@ -200,7 +200,7 @@ const lastUpdated = "June 23, 2026";
       </li>
     </ul>
     <p>
-      The cleartext default does not go away — it stays the frictionless path for
+      The cleartext default does not go away. It stays the frictionless path for
       simple, trusted LANs. You opt an individual sender into TLS when its data or
       its network warrants it. That is what <em>secure by option, honest by
       default</em> means in practice. (This supersedes the "TLS is a v2 item" note
@@ -231,7 +231,7 @@ const lastUpdated = "June 23, 2026";
       <li>
         <strong>Autonomous action.</strong> This one cuts the other way, in your
         favour: Tempo never acts on a payload by itself. A hostile sender cannot
-        make Tempo run a command, open a URL, or write to a source — every action
+        make Tempo run a command, open a URL, or write to a source: every action
         is a human click. The payload is input; your clicks are the only
         authority that fires anything.
       </li>

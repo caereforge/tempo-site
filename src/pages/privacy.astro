@@ -17,8 +17,8 @@ const lastUpdated = "May 18, 2026";
 
     <h2>What Tempo stores locally</h2>
     <p>
-      Every event Tempo ingests — calendar entries, reminders, webhook alerts,
-      script results, whatever you connect — is stored in a
+      Every event Tempo ingests (calendar entries, reminders, webhook alerts,
+      script results, whatever you connect) is stored in a
       local SQLite database under <code>~/Library/Application Support/Tempo/</code>.
       Attachments, configuration, tokens, scores, and logs live in the same
       directory. This data never leaves your Mac through Tempo.
@@ -37,7 +37,7 @@ const lastUpdated = "May 18, 2026";
     </p>
     <ul>
       <li>
-        <strong>Update checks (Sparkle)</strong> — Tempo asks
+        <strong>Update checks (Sparkle):</strong> Tempo asks
         <code>downloads.tempoapp.app</code> whether a newer version exists.
         This request carries your current Tempo version and your IP address
         (unavoidable for any HTTPS request). We don't correlate it with an
@@ -59,7 +59,7 @@ const lastUpdated = "May 18, 2026";
       drops). The log lives in the same
       <code>~/Library/Application Support/Tempo/</code> directory and is never
       transmitted. Its purpose is to give you a paper trail of what the app did
-      on your behalf — useful for diagnosing surprises and for the support
+      on your behalf, useful for diagnosing surprises and for the support
       bundle export, which you can review and trim before sending if you ever
       file a bug report.
     </p>
@@ -95,7 +95,7 @@ const lastUpdated = "May 18, 2026";
         <strong>Cloudflare</strong> serves <code>tempoapp.app</code> (this site),
         <code>downloads.tempoapp.app</code> (app downloads and update feed), and
         any related subdomains. When your browser or Tempo connects to these,
-        Cloudflare sees the request — the same way it sees any of the millions
+        Cloudflare sees the request, the same way it sees any of the millions
         of sites it serves. We use Cloudflare's analytics to understand
         aggregate download, update-check, and site-visit patterns (counts by
         version, page section, country, referrer source, time): no IP
@@ -146,7 +146,7 @@ const lastUpdated = "May 18, 2026";
       Postal correspondence: send a message to the privacy email above and we
       will respond with a postal address suitable for formal communication, on
       request. Because Tempo collects no personal data on our side, there is
-      no data subject access request to fulfil — your local
+      no data subject access request to fulfil: your local
       <code>~/Library/Application Support/Tempo/</code> folder <em>is</em> the
       complete record.
     </p>
@@ -155,7 +155,7 @@ const lastUpdated = "May 18, 2026";
     <p>
       Tempo stores authentication tokens for external services (per-provider
       ingestion tokens, OAuth tokens for calendar providers if added, etc.) in
-      the macOS Keychain — not in the app's preferences or database. If you
+      the macOS Keychain, not in the app's preferences or database. If you
       move your Tempo folder to another Mac, tokens do not travel with it; you
       reconfigure them on the new machine.
     </p>
