@@ -11,19 +11,19 @@ draft: false
 When you download Tempo from [tempoapp.app](https://tempoapp.app), three things check whether the file is what we shipped:
 
 1. **macOS Gatekeeper** validates the Developer ID signature and the Apple notarization ticket when you double-click. If anything has been tampered with, the OS refuses to open it.
-2. **Sparkle** validates an EdDSA signature on every update before Tempo installs it. This is independent of Apple's chain — separate key, separate verification path.
+2. **Sparkle** validates an EdDSA signature on every update before Tempo installs it. This is independent of Apple's chain: separate key, separate verification path.
 3. **You, if you want to**, can compare the SHA-256 hash of the DMG you downloaded against the one we publish on the [downloads page](https://tempoapp.app/downloads/).
 
 The first two happen automatically. The third one is something you do explicitly, and it's the topic of this post.
 
 ## When to bother
 
-For most users, the Gatekeeper check is enough. macOS won't open an unsigned or tampered DMG, period — that's the default safety net.
+For most users, the Gatekeeper check is enough. macOS won't open an unsigned or tampered DMG, period. That's the default safety net.
 
 Verifying the SHA-256 yourself is useful in three situations:
 
 - **Before opening the DMG on a Mac that's been offline for a while.** Gatekeeper relies on Apple's notarization servers to verify the ticket. If the system has stale revocation data, Gatekeeper might not catch a revoked ticket. The hash gives you a check independent of any server.
-- **When you got the DMG from an unusual route** — a colleague's USB drive, a download mirror, an archive backup. Comparing the hash to what we published confirms you have the same bytes we shipped.
+- **When you got the DMG from an unusual route**: a colleague's USB drive, a download mirror, an archive backup. Comparing the hash to what we published confirms you have the same bytes we shipped.
 - **As a habit.** If you verify signed software downloads as part of how you work, this is one less thing to skip.
 
 ## How to verify
@@ -40,7 +40,7 @@ You'll see a line like:
 cf4ba0fd858f912ffb2f339ef52c1002e42c8dc6a21defee2e63f96d1fa3fe40  Tempo-latest.dmg
 ```
 
-Compare the long hex string to the one shown on [tempoapp.app/downloads/](https://tempoapp.app/downloads/) under "Verify your download." If they match, you have an exact byte-for-byte copy of what we built and signed. If they don't, something is off — re-download fresh from tempoapp.app and don't open the file you have.
+Compare the long hex string to the one shown on [tempoapp.app/downloads/](https://tempoapp.app/downloads/) under "Verify your download." If they match, you have an exact byte-for-byte copy of what we built and signed. If they don't, something is off: re-download fresh from tempoapp.app and don't open the file you have.
 
 The hash is computed once, at release time, from the same DMG that goes to the CDN. The Homebrew cask formula carries the same hash. Same source of truth, three places it appears: the site, the cask, your terminal.
 

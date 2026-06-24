@@ -1,17 +1,17 @@
 ---
 title: "CalDAV is here — starting with Fastmail"
-description: "Tempo now speaks CalDAV natively — experimentally. Your Fastmail calendars show up in the Agenda without going through Apple's Internet Accounts."
+description: "Tempo now speaks CalDAV natively, experimentally. Your Fastmail calendars show up in the Agenda without going through Apple's Internet Accounts."
 pubDate: 2026-05-27
 tags: ["how-to", "caldav", "calendar"]
 ---
 
-*📅 May 27, 2026 — Tempo 1.1 · Leo from Caereforge*
+*📅 May 27, 2026 · Tempo 1.1 · Leo from Caereforge*
 
-> ⚠️ **Experimental in 1.1.** CalDAV is the one part of Tempo I'd call beta. It's **read-only**, **Fastmail-scoped**, and configured **by hand in a JSON file** — there's no point-and-click setup for it yet. It works well on my own Mac, but expect rough edges and treat it as a preview, not a finished feature. The app marks the score with an "Experimental" badge for the same reason.
+> ⚠️ **Experimental in 1.1.** CalDAV is the one part of Tempo I'd call beta. It's **read-only**, **Fastmail-scoped**, and configured **by hand in a JSON file**: there's no point-and-click setup for it yet. It works well on my own Mac, but expect rough edges and treat it as a preview, not a finished feature. The app marks the score with an "Experimental" badge for the same reason.
 
 Since day one, Tempo has been reading my calendars and reminders through Apple's EventKit; whatever you see in Calendar.app or Reminders.app, Tempo sees too. That works great for iCloud and for providers you've added via System Settings → Internet Accounts. But if you're a Fastmail user (or any CalDAV provider that doesn't play nicely with Internet Accounts), you've been stuck with a workaround or nothing at all.
 
-Not anymore. Tempo 1.1 ships an experimental native CalDAV engine that talks directly to your calendar server; no middleman, no Apple sync layer, no Internet Accounts entry needed. Your data still never leaves your Mac; we're just fetching it from a different door.
+Not anymore. Tempo 1.1 ships an experimental native CalDAV engine that talks directly to your calendar server: no middleman, no Apple sync layer, no Internet Accounts entry needed. Your data still never leaves your Mac; we're fetching it from a different door.
 
 ## Why Fastmail first?
 
@@ -25,7 +25,7 @@ The CalDAV engine is a three-layer design:
 2. **Adapter layer**: per-provider logic. The Fastmail adapter knows the server URL, auth method (Basic + app-specific password), and any quirks. A generic CalDAV adapter is also included for other providers.
 3. **Score layer**: the `.tempo-score` file that tells Tempo how to display and act on your Fastmail events. Same system as every other Tempo source.
 
-The engine polls your server periodically and upserts events into Tempo's local database. It uses CalDAV sync tokens, so after the first full sync only changes are fetched — it's lightweight on both your Mac and the server.
+The engine polls your server periodically and upserts events into Tempo's local database. It uses CalDAV sync tokens, so after the first full sync only changes are fetched. It's lightweight on both your Mac and the server.
 
 ## What you get
 
@@ -37,7 +37,7 @@ Your Fastmail events land in the Agenda panel alongside Apple Calendar, Reminder
 
 ## Setting it up
 
-1. **Install the score**: double-click `com.caldav.fastmail.tempo-score` — review and install.
+1. **Install the score**: double-click `com.caldav.fastmail.tempo-score`, then review and install.
 2. **Create an app-specific password** in Fastmail: Settings → Privacy & Security → App Passwords → New. Give it CalDAV access.
 3. **Configure the provider**: create or edit the file `~/Library/Application Support/Tempo/external-providers.json`:
 
@@ -56,13 +56,13 @@ Your Fastmail events land in the Agenda panel alongside Apple Calendar, Reminder
 ```
 
 4. **Store the password in Keychain**: open Keychain Access, create a new password item with name `tempo-caldav-fastmail`, account `you@fastmail.com`, and paste your app-specific password.
-5. **Restart Tempo** — it picks up the config and starts syncing.
+5. **Restart Tempo**. It picks up the config and starts syncing.
 
-The `calendars` array in that file controls which calendars Tempo syncs — list the ones you want by name. There's no point-and-click picker for this yet: CalDAV is configured by editing the file, which is part of why it's still experimental. (Tempo gives you a button to open the file directly, so you don't have to go hunting for it.)
+The `calendars` array in that file controls which calendars Tempo syncs; list the ones you want by name. There's no point-and-click picker for this yet: CalDAV is configured by editing the file, which is part of why it's still experimental. (Tempo gives you a button to open the file directly, so you don't have to go hunting for it.)
 
 ## Customizing the score
 
-Scores are just JSON files — you can open them in any text editor. If you have the Fastmail desktop app installed, you can add a button to open it directly. Go to Settings → Scores, click "Open score location in Finder", open `com.caldav.fastmail.json`, and add an entry to the `defaultActions` array:
+Scores are plain JSON files you can open in any text editor. If you have the Fastmail desktop app installed, you can add a button to open it directly. Go to Settings → Scores, click "Open score location in Finder", open `com.caldav.fastmail.json`, and add an entry to the `defaultActions` array:
 
 ```json
 {
@@ -72,7 +72,7 @@ Scores are just JSON files — you can open them in any text editor. If you have
 }
 ```
 
-Save the file — Tempo picks up score changes automatically, no restart needed. This is one of the things I like about the score system: if you need a button, you add it yourself in 30 seconds.
+Save the file. Tempo picks up score changes automatically, no restart needed. This is one of the things I like about the score system: if you need a button, you add it yourself in 30 seconds.
 
 ## What about other CalDAV providers?
 

@@ -55,7 +55,7 @@ Done.
 
 ## What you can put in `trigger`
 
-Three flavours of trigger cover most of what you'd want.
+Three flavors of trigger cover most of what you'd want.
 
 **`openURL`** opens any URL with the system handler. So this works:
 
@@ -99,14 +99,14 @@ A UniFi Network event from the bundled webhook adapter carries `metadata.ip` and
 }
 ```
 
-The label interpolates too. That's why you see `Ping web-01` or `Ping nas-backup` on the row instead of a generic "Ping" — the button reads the event's own metadata.
+The label interpolates too. That's why you see `Ping web-01` or `Ping nas-backup` on the row instead of a generic "Ping": the button reads the event's own metadata.
 
 If a key isn't on a given event, the button is hidden for that event. Tempo doesn't render half-resolved templates; quiet is better than confusing.
 
 ## A few pointers from here
 
-- **Chapter 11 — Score authoring** in the User Guide is the reference: every field, the severity rules, conditional visibility. Worth a bookmark once you start customising more than one source: [/docs/11-score-authoring/](/docs/11-score-authoring/)
-- **Chapter 7 — Score Editor** covers the in-app UI for editing scores. The Editor handles colors, severity rules, grouping, display names. Action authoring stays in JSON for V1 and lands in the UI later.
+- **Chapter 11, Score authoring** in the User Guide is the reference: every field, the severity rules, conditional visibility. Worth a bookmark once you start customizing more than one source: [/docs/11-score-authoring/](/docs/11-score-authoring/)
+- **Chapter 7, Score Editor** covers the in-app UI for editing scores. The Editor handles colors, severity rules, grouping, display names. Action authoring stays in JSON for V1 and lands in the UI later.
 - **Discord** is the easiest way to ask if something doesn't work, and the easiest way to show off what you wired together. I read everything there.
 
 That's it. One JSON edit, one save, one new button. Tempo's design assumption is that you know what you want to click, and the score file is just a clean place to declare it.
