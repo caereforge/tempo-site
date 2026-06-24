@@ -25,7 +25,7 @@ A score is a single JSON object. The minimum viable score:
 }
 ```
 
-That's a valid score. It does almost nothing — every event from `com.example.my-tool` would render with the default Tempo styling, no severity logic, no custom actions — but it's enough to show "My Tool" in the source panel and to load without errors.
+That's a valid score. It does almost nothing (every event from `com.example.my-tool` would render with the default Tempo styling, no severity logic, no custom actions) but it's enough to show "My Tool" in the source panel and to load without errors.
 
 A score with all the bells:
 
@@ -71,7 +71,7 @@ Every top-level field other than `providerIdentifier` and `displayName` is optio
 
 ### Where score files live
 
-User-installed scores live in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads when files change. The file name should match `<providerIdentifier>.json` — Tempo doesn't enforce this strictly, but the convention makes the directory navigable and the score-vs-provider relationship clear at a glance.
+User-installed scores live in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads when files change. The file name should match `<providerIdentifier>.json`. Tempo doesn't enforce this strictly, but the convention makes the directory navigable and the score-vs-provider relationship clear at a glance.
 
 Bundled scores ship with the app in `Tempo.app/Contents/Resources/Scores/*.json`. Only `scripts.json` auto-seeds into the user-scores directory on first launch (with a version marker so the seeder doesn't overwrite user edits); the rest install on demand from **Manage Sources**.
 
@@ -83,14 +83,14 @@ Bundled scores ship with the app in `Tempo.app/Contents/Resources/Scores/*.json`
 
 A stable, namespaced identifier for the source.
 
-The actual validator is permissive: `^[A-Za-z0-9._\-]{1,128}$` — uppercase is allowed, and the length ceiling is 128 characters. The lowercase reverse-DNS form below is a **catalog naming convention**, not a hard rule; it keeps the public catalog tidy and the directory navigable, but Tempo will accept any identifier that matches the validator.
+The actual validator is permissive: `^[A-Za-z0-9._\-]{1,128}$`, so uppercase is allowed, and the length ceiling is 128 characters. The lowercase reverse-DNS form below is a **catalog naming convention**, not a hard rule; it keeps the public catalog tidy and the directory navigable, but Tempo will accept any identifier that matches the validator.
 
 **Conventions**:
 
-- **Reverse-DNS** for vendors and well-known tools — `com.kopia`, `com.ubiquiti.unifi`, `com.home-assistant`, `com.uptime-kuma`
-- **`scripts.<language>.<name>`** for shell/Python/Ruby scripts — `scripts.shell.check_disk`, `scripts.python.log_scan`
-- **`local.<name>`** for senders running on the same Mac as Tempo — `local.check_disk`, `local.backup_notify`
-- **`lab.<host>.<name>`** for senders on other LAN hosts — `lab.nas01.smart_check`
+- **Reverse-DNS** for vendors and well-known tools: `com.kopia`, `com.ubiquiti.unifi`, `com.home-assistant`, `com.uptime-kuma`
+- **`scripts.<language>.<name>`** for shell/Python/Ruby scripts: `scripts.shell.check_disk`, `scripts.python.log_scan`
+- **`local.<name>`** for senders running on the same Mac as Tempo: `local.check_disk`, `local.backup_notify`
+- **`lab.<host>.<name>`** for senders on other LAN hosts: `lab.nas01.smart_check`
 
 The identifier is the **machine identity** of the sender. It's used for token binding (a token bound to `com.kopia` rejects events declaring `com.example`), for upsert deduplication, and for prefix-walking score resolution (a score for `scripts` covers every `scripts.*.*`).
 
@@ -104,7 +104,7 @@ If you don't want to set this in the score, the user can override it in their lo
 
 Accent colour for the source, as `#RRGGBB` hex. Pattern enforced.
 
-If omitted, Tempo uses a neutral gray (`#8E8E93` is a common fallback). Strongly recommended to set this — distinct colours are how the source panel stays scannable.
+If omitted, Tempo uses a neutral gray (`#8E8E93` is a common fallback). Strongly recommended to set this: distinct colours are how the source panel stays scannable.
 
 ### `severityDefault`
 
@@ -117,16 +117,16 @@ Fallback severity assigned to events when no `severityRules` rule matches. Objec
 }
 ```
 
-- **`severity`** (required) — one of `info`, `ok`, `warning`, `error`, `critical`
-- **`label`** (optional) — custom badge text. If omitted, the severity name uppercased
+- **`severity`** (required): one of `info`, `ok`, `warning`, `error`, `critical`
+- **`label`** (optional): custom badge text. If omitted, the severity name uppercased
 
 ### `severityRules`
 
 An ordered array of rules. Each rule has:
 
-- **`match`** (required) — an object of key/value conditions. All conditions must match (logical AND). Values support glob-style wildcards (`*`, `?`)
-- **`severity`** (required) — the severity to assign when this rule matches
-- **`label`** (optional) — custom badge text for this rule
+- **`match`** (required): an object of key/value conditions. All conditions must match (logical AND). Values support glob-style wildcards (`*`, `?`)
+- **`severity`** (required): the severity to assign when this rule matches
+- **`label`** (optional): custom badge text for this rule
 
 ```json
 "severityRules": [
@@ -136,16 +136,16 @@ An ordered array of rules. Each rule has:
 ]
 ```
 
-Evaluation: top-to-bottom, first match wins. Order matters — put more specific rules above more general ones.
+Evaluation: top-to-bottom, first match wins. Order matters: put more specific rules above more general ones.
 
-> 💡 **Note**: the runtime also supports a richer rule shape with `color` overrides and presentation templates (`titleTemplate`, `subtitleTemplate`). The public catalog schema is intentionally narrower — those features are local-only and don't ship in catalog scores. Use the Score Editor for the richer shape; manage your own scores in `~/Library/Application Support/Tempo/Scores/` for distribution.
+> 💡 **Note**: the runtime also supports a richer rule shape with `color` overrides and presentation templates (`titleTemplate`, `subtitleTemplate`). The public catalog schema is intentionally narrower: those features are local-only and don't ship in catalog scores. Use the Score Editor for the richer shape; manage your own scores in `~/Library/Application Support/Tempo/Scores/` for distribution.
 
 ### `grouping` and `groupingWindow`
 
 Stack grouping configuration. See [§2.6 — Stack and grouping](/docs/02-concepts#26--stack-and-grouping) and [§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping).
 
-- **`grouping`** — array of templates, with `${metadata.xxx}` placeholders. Tempo picks the first one that fully resolves
-- **`groupingWindow`** — duration string: `15m`, `30m`, `1h`, `6h`, `1d`, `1w`, or empty (no cutoff)
+- **`grouping`**: array of templates, with `${metadata.xxx}` placeholders. Tempo picks the first one that fully resolves
+- **`groupingWindow`**: duration string: `15m`, `30m`, `1h`, `6h`, `1d`, `1w`, or empty (no cutoff)
 
 ```json
 "grouping": [
@@ -162,9 +162,9 @@ Omit both for no grouping (every event renders as its own card).
 
 Array of action buttons that appear on every event from this provider. Each action has:
 
-- **`label`** (required, ≥1 char) — button text
-- **`systemIcon`** (required, ≥1 char) — SF Symbol name
-- **`trigger`** (required) — an object with one of five shapes (covered in §11.4)
+- **`label`** (required, ≥1 char): button text
+- **`systemIcon`** (required, ≥1 char): SF Symbol name
+- **`trigger`** (required): an object with one of five shapes (covered in §11.4)
 
 ```json
 "defaultActions": [
@@ -180,15 +180,15 @@ Per-event actions sent in the payload itself are *appended* after the default ac
 
 ### The grown schema — additional top-level blocks
 
-Beyond the basics above, a real bundled score can use the following blocks. They're all optional, and most of them are also editable from the Score Editor (the exceptions are noted). Hitting a shipped score like `com.beszel.json` — which uses `senderSeverityWins`, `groupingRules`, `helper` and `surface` together — these are what you'll find.
+Beyond the basics above, a real bundled score can use the following blocks. They're all optional, and most of them are also editable from the Score Editor (the exceptions are noted). A shipped score like `com.beszel.json` uses `senderSeverityWins`, `groupingRules`, `helper` and `surface` together; these are what you'll find.
 
-- **`senderSeverityWins`** (boolean, default `true`) — when `true`, a payload that carries its own non-`info` severity field short-circuits `severityRules` and uses the sender's severity directly. Set `false` to make your rules authoritative for a source that over-declares severity. Editable on the Severity tab.
-- **`groupingRules`** / **`restStateOverrides`** — *session* grouping, distinct from the template `grouping` above. `groupingRules` assign each event an `opens` / `closes` / `continues` role keyed off `${metadata.x}` values, so a monitor that goes down and later recovers folds into one episode. Used by stateful sources (Uptime Kuma, Beszel, UniFi). `restStateOverrides` adjusts the resting/closed-cycle severity of such an episode. **File-authored and read-only in the editor** — the editor preserves them but does not expose a UI for them.
-- **`indicatorRules`** / **`tagRules`** — payload-driven emoji indicators and tags attached to matching events. Edited on the **Tags & emoji** tab.
-- **`ackRules`** / **`dismissRules`** — payload conditions that auto-acknowledge or auto-dismiss matching events. Evaluation is **any-rule-matches** (logical OR across rules); when both an ack rule and a dismiss rule match the same event, **dismiss wins**. Edited on the **Ack and dismiss** tab.
-- **`helper`** — a short string naming the ingestion helper or adapter associated with the source (informational / catalog metadata).
-- **`surface`** — `"timeline"` (default) or `"agenda"`. An `agenda` score is a day-view source (calendar/reminders-style); it only exposes the Source and Actions tabs in the editor and skips the severity/grouping/tag/ack machinery.
-- **Meta keys** — keys prefixed with `_` are reserved metadata and are ignored by the runtime logic: **`_disabled`** (boolean — ship a score in a dormant state until the user enables it), **`_comment`** (free-text note for authors/reviewers), **`_bundledVersion`** (version marker the seeder uses to track bundled-vs-user state).
+- **`senderSeverityWins`** (boolean, default `true`): when `true`, a payload that carries its own non-`info` severity field short-circuits `severityRules` and uses the sender's severity directly. Set `false` to make your rules authoritative for a source that over-declares severity. Editable on the Severity tab.
+- **`groupingRules`** / **`restStateOverrides`**: *session* grouping, distinct from the template `grouping` above. `groupingRules` assign each event an `opens` / `closes` / `continues` role keyed off `${metadata.x}` values, so a monitor that goes down and later recovers folds into one episode. Used by stateful sources (Uptime Kuma, Beszel, UniFi). `restStateOverrides` adjusts the resting/closed-cycle severity of such an episode. **File-authored and read-only in the editor**: the editor preserves them but does not expose a UI for them.
+- **`indicatorRules`** / **`tagRules`**: payload-driven emoji indicators and tags attached to matching events. Edited on the **Tags & emoji** tab.
+- **`ackRules`** / **`dismissRules`**: payload conditions that auto-acknowledge or auto-dismiss matching events. Evaluation is **any-rule-matches** (logical OR across rules); when both an ack rule and a dismiss rule match the same event, **dismiss wins**. Edited on the **Ack and dismiss** tab.
+- **`helper`**: a short string naming the ingestion helper or adapter associated with the source (informational / catalog metadata).
+- **`surface`**: `"timeline"` (default) or `"agenda"`. An `agenda` score is a day-view source (calendar/reminders-style); it only exposes the Source and Actions tabs in the editor and skips the severity/grouping/tag/ack machinery.
+- **Meta keys**: keys prefixed with `_` are reserved metadata and are ignored by the runtime logic: **`_disabled`** (boolean, ships a score in a dormant state until the user enables it), **`_comment`** (free-text note for authors/reviewers), **`_bundledVersion`** (version marker the seeder uses to track bundled-vs-user state).
 
 ---
 
@@ -246,7 +246,7 @@ The rule array itself is logical **OR**: rule 2 fires if rule 1 didn't, etc. Fir
 
 ### Naming conditions
 
-Match keys reference top-level metadata fields by name — no prefix required. Whatever your payload puts in `metadata`, the rule's `match` object names it directly. For example, the bundled Kopia score uses `"match": { "outcome": "error" }` because the Kopia ingestion module emits an `outcome` field at the top of the metadata object; the rule names it as is.
+Match keys reference top-level metadata fields by name, no prefix required. Whatever your payload puts in `metadata`, the rule's `match` object names it directly. For example, the bundled Kopia score uses `"match": { "outcome": "error" }` because the Kopia ingestion module emits an `outcome` field at the top of the metadata object; the rule names it as is.
 
 Stringification is implicit: numbers, booleans and strings all collapse to their textual form, so a rule `{"exit_code": 0}` matches metadata values of `0`, `"0"`, or `0.0` interchangeably. Glob wildcards `*` and `?` are supported in string values (`{"key": "EVT_*_Connected"}` collapses a family of provider-specific event keys).
 
@@ -254,7 +254,7 @@ Stringification is implicit: numbers, booleans and strings all collapse to their
 
 ## 11.4 — Action triggers reference
 
-Five trigger types are supported: `openURL`, `openTerminalWith`, `copyToClipboard`, `completeReminder`, and `uncompleteReminder`. Each is mutually exclusive — an action has exactly one trigger. (`completeReminder` / `uncompleteReminder` flip an Apple Reminder's completed flag and apply only to EventKit reminder sources; the three below are the ones you'll author for ingested sources.)
+Five trigger types are supported: `openURL`, `openTerminalWith`, `copyToClipboard`, `completeReminder`, and `uncompleteReminder`. Each is mutually exclusive: an action has exactly one trigger. (`completeReminder` / `uncompleteReminder` flip an Apple Reminder's completed flag and apply only to EventKit reminder sources; the three below are the ones you'll author for ingested sources.)
 
 ### `openURL`
 
@@ -270,7 +270,7 @@ Opens a URL. macOS picks the handler based on the scheme.
 
 Anything outside this list is rejected, including `javascript:`, `data:`, `vbscript:`. Note that `vnc` and `rdp` are **not** allowed, and meeting-join schemes like `webex`, `jitsi`, and `gotomeeting` are **not** allowlisted either.
 
-**Two layers for `file://`.** The allowlist above is what a **remote-ingested payload action** is validated against — an action that arrives over `/ingest` from another host. There, `file://` is blocked. A **locally-installed score** (a score file you placed in `~/Library/Application Support/Tempo/Scores/`) additionally permits `file://` at click time, with percent-encoding applied to the path. The distinction is trust: a score on your own disk is your own decision; an action pushed in over the network is not.
+**Two layers for `file://`.** The allowlist above is what a **remote-ingested payload action** is validated against: an action that arrives over `/ingest` from another host. There, `file://` is blocked. A **locally-installed score** (a score file you placed in `~/Library/Application Support/Tempo/Scores/`) additionally permits `file://` at click time, with percent-encoding applied to the path. The distinction is trust: a score on your own disk is your own decision; an action pushed in over the network is not.
 
 The allowlist exists because URL handlers can do anything an app can do. Restricting remote payloads to network and communication schemes keeps the over-the-wire action surface contained.
 
@@ -284,7 +284,7 @@ Opens Terminal.app and runs a command.
 
 **Important**: this trigger is **not allowed in scores submitted to the public catalog**. The public catalog reviews scores for safety, and a score that runs arbitrary shell commands is too high-risk to vet thoroughly. Catalog scores must use `openURL` (with `ssh://` for shell access if needed) or `copyToClipboard`.
 
-For your **local** install (drop a score into `~/Library/Application Support/Tempo/Scores/`), `openTerminalWith` is fully supported. The restriction is purely about distribution — anything you run on your own Mac is your own decision.
+For your **local** install (drop a score into `~/Library/Application Support/Tempo/Scores/`), `openTerminalWith` is fully supported. The restriction is purely about distribution: anything you run on your own Mac is your own decision.
 
 ### `copyToClipboard`
 
@@ -294,7 +294,7 @@ Copies a string to the system clipboard.
 "trigger": { "copyToClipboard": "${metadata.host}" }
 ```
 
-No scheme restrictions — the value is a string, not a URL.
+No scheme restrictions: the value is a string, not a URL.
 
 ### Interpolation
 
@@ -305,7 +305,7 @@ The three string-based triggers (`openURL`, `openTerminalWith`, `copyToClipboard
 - `${startDate}` → the event's timestamp (ISO 8601)
 - `${metadata.custom.disk_usage_percent}` → reaches into the custom bucket
 
-If a referenced field is missing from the payload, the action does **not** fire with a malformed value. Tempo disables the button — it renders greyed out (about 55% opacity) and unclickable, with a tooltip that names the missing field(s): *"Can't run: the event is missing `host`."* This means an action whose template can't resolve simply can't be invoked, rather than firing a broken `ssh://admin@` with an empty host. Fix the upstream payload or reference a field that's actually present, and the button re-enables.
+If a referenced field is missing from the payload, the action does **not** fire with a malformed value. Tempo disables the button: it renders greyed out (about 55% opacity) and unclickable, with a tooltip that names the missing field(s): *"Can't run: the event is missing `host`."* This means an action whose template can't resolve can't be invoked, rather than firing a broken `ssh://admin@` with an empty host. Fix the upstream payload or reference a field that's actually present, and the button re-enables.
 
 ### `systemIcon`
 
@@ -331,7 +331,7 @@ The full SF Symbols catalog is browsable in the **SF Symbols** app from Apple. P
 
 ## 11.5 — `.tempo-score` installer file
 
-A `.tempo-score` file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognises the extension via Tempo's UTI registration; double-clicking a `.tempo-score` file opens Tempo and triggers the **Score Review Sheet** — a preview UI showing what's about to be installed:
+A `.tempo-score` file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognises the extension via Tempo's UTI registration; double-clicking a `.tempo-score` file opens Tempo and triggers the **Score Review Sheet**, a preview UI showing what's about to be installed:
 
 - The provider identifier
 - The display name and colour
@@ -362,8 +362,8 @@ For your own scores you want to share, the same pattern works: put the file some
 
 Functionally identical content. The difference is the file extension:
 
-- `.json` — opens in your text editor by default; you'd have to manually copy it to `~/Library/Application Support/Tempo/Scores/`
-- `.tempo-score` — opens in Tempo's review sheet by default; one-click install
+- `.json`: opens in your text editor by default; you'd have to manually copy it to `~/Library/Application Support/Tempo/Scores/`
+- `.tempo-score`: opens in Tempo's review sheet by default; one-click install
 
 Use `.tempo-score` for distribution, `.json` for local editing in `~/Library/Application Support/Tempo/Scores/`.
 
@@ -375,8 +375,8 @@ Tempo ships an offline score linter, `tempo-validate`, for sanity-checking a sco
 
 ### Where to get it
 
-- **Bundled in the app** — `Tempo.app/Contents/Resources/Utilities/shell/tempo-validate`
-- **Downloadable** — from [tempoapp.app/utilities/](https://tempoapp.app/utilities/)
+- **Bundled in the app**: `Tempo.app/Contents/Resources/Utilities/shell/tempo-validate`
+- **Downloadable**: from [tempoapp.app/utilities/](https://tempoapp.app/utilities/)
 
 ### Usage
 
@@ -409,9 +409,9 @@ If every event is `critical`, none of them are. The five severities matter only 
 
 ### Action design
 
-- **Idempotent**. Clicking the action button twice in quick succession should not produce a double effect on the upstream side. (`openURL` is idempotent; `openTerminalWith` running a destructive command is not — be careful)
+- **Idempotent**. Clicking the action button twice in quick succession should not produce a double effect on the upstream side. (`openURL` is idempotent; `openTerminalWith` running a destructive command is not, so be careful)
 - **Visible side effects**. The action's label and SF Symbol should give the user a clear mental picture of what's about to happen. "Open dashboard" is good; "Run thing" is not
-- **Safe by default**. Prefer read-only or transient actions (open URL, copy to clipboard, ping) over destructive ones (delete, restart, force-update). The action panel is one click away; treat it like a kitchen knife — sharp, but pointed at safe surfaces by default
+- **Safe by default**. Prefer read-only or transient actions (open URL, copy to clipboard, ping) over destructive ones (delete, restart, force-update). The action panel is one click away, so keep destructive actions out of the default set
 
 ### Naming
 
@@ -427,7 +427,7 @@ A good rule of thumb: write grouping that handles the **most common** event shap
 
 ### Use the Available keys strip
 
-Before writing rules, send a few real events from the source. Open the Score Editor, look at the Available keys strip — those are the keys actually present in your events. Write rules against those, not against keys you imagine might be there.
+Before writing rules, send a few real events from the source. Open the Score Editor, look at the Available keys strip: those are the keys actually present in your events. Write rules against those, not against keys you imagine might be there.
 
 ### Don't ship secrets in the score
 
@@ -472,7 +472,7 @@ A card that:
 
 - Shows "Log scan · {matches_found} matches" as the title
 - Coloured by severity: 0 matches → ok green, 1-9 → warning yellow, 10+ → error red
-- Has actions: "Open log file" (opens the scanned file via `file://` — permitted here because this is a locally-installed score; `file://` would be blocked only for a remote-ingested payload action), "Copy log file path", "SSH to host"
+- Has actions: "Open log file" (opens the scanned file via `file://`, permitted here because this is a locally-installed score; `file://` would be blocked only for a remote-ingested payload action), "Copy log file path", "SSH to host"
 
 ### The score
 
@@ -547,7 +547,7 @@ Once a few events have arrived, look at the Available keys strip in the Score Ed
 - `metadata.custom.matches_found` isn't always set (the script forgot it on early-exit paths). Add a fallback in the labels: `"label": "${metadata.custom.matches_found} matches"` could resolve as ` matches` (empty)
 - The tail log command needs sudo on some hosts. Adjust the action
 
-The score is iterative — you ship the first version, run it for a few days, refine the rules and actions based on what the feed actually looks like.
+The score is iterative: you ship the first version, run it for a few days, then refine the rules and actions based on what the feed actually looks like.
 
 ---
 

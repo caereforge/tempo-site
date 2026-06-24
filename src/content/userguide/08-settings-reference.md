@@ -16,54 +16,54 @@ Open Settings via **Cmd-,** or via the menubar icon → **Settings…**.
 
 ## 8.1 — Interface
 
-The Interface tab covers visual preferences — appearance, layout toggles, badge contrast, heatmap rendering.
+The Interface tab covers visual preferences: appearance, layout toggles, badge contrast, heatmap rendering.
 
 ### Theme
 
-- **Theme** — Light / Dark / System Default
+- **Theme**: Light / Dark / System Default
 
 Mirrors the menubar icon's Appearance submenu. Available here too because on macOS 26 you can hide the menubar icon entirely; in that case the Interface tab is your only switch.
 
 ### Startup
 
-- **Launch Tempo at login** — when enabled, macOS starts Tempo automatically when you log in
+- **Launch Tempo at login**: when enabled, macOS starts Tempo automatically when you log in
 
-This wires up `SMAppService` under the hood. You can also manage it from **System Settings → General → Login Items**, where Tempo will appear in the list of apps that start at login.
+This wires up `SMAppService`. You can also manage it from **System Settings → General → Login Items**, where Tempo will appear in the list of apps that start at login.
 
 ### Footer
 
-- **Show system stats footer** — toggles the compact bar at the bottom of the main window showing CPU, memory, disk, and network usage of this Mac
+- **Show system stats footer**: toggles the compact bar at the bottom of the main window showing CPU, memory, disk, and network usage of this Mac
 
 The footer is small (a single thin row of meters) and runs at low CPU cost. Off by default; turn it on if you want a glanceable resource view alongside the timeline.
 
 ### Appearance
 
-- **Contrast-aware badges** — when enabled, status pills (OVERDUE, COMPLETED, BACKUP OK) swap to a contrasting hue if they'd otherwise blend into the source colour
+- **Contrast-aware badges**: when enabled, status pills (OVERDUE, COMPLETED, BACKUP OK) swap to a contrasting hue if they'd otherwise blend into the source color
 
-Use case: you've coloured a source bright yellow, and a yellow `WARNING` pill on a yellow card is illegible. Contrast-aware badges detect the collision and shift the pill colour to keep both readable. Turn off if you prefer strict semantic colours regardless.
+Use case: you've colored a source bright yellow, and a yellow `WARNING` pill on a yellow card is illegible. Contrast-aware badges detect the collision and shift the pill color to keep both readable. Turn off if you prefer strict semantic colors regardless.
 
-- **Card stripe meaning** — picks what the 3-pixel left edge stripe on each card encodes:
-  - **Severity** (default) — the event's severity colour (red / yellow / green / source-fallback)
-  - **Source** — always the source colour, useful in multi-source setups when source identity matters more than severity at a glance
+- **Card stripe meaning**: picks what the 3-pixel left edge stripe on each card encodes:
+  - **Severity** (default): the event's severity color (red / yellow / green / source-fallback)
+  - **Source**: always the source color, useful in multi-source setups when source identity matters more than severity at a glance
 
-The severity stripe stays stable after you ack or resolve an event — the triage state is conveyed by the Acked / Resolved pills, not by the stripe.
+The severity stripe stays stable after you ack or resolve an event: the triage state is conveyed by the Acked / Resolved pills, not by the stripe.
 
 - **Activity heatmap style**:
-  - **Rounded pills** (default) — soft halo around active hours
-  - **Flat cells** — independent rectangular hour cells
+  - **Rounded pills** (default): soft halo around active hours
+  - **Flat cells**: independent rectangular hour cells
 
-- **Heatmap colours** — three pickers, one per semantic family:
-  - **Heatmap · Info** — covers regular events
-  - **Heatmap · Warning** — covers warning- and error-level events
-  - **Heatmap · Critical** — covers critical events (and hours dominated by errors)
+- **Heatmap colors**: three pickers, one per semantic family:
+  - **Heatmap · Info**: covers regular events
+  - **Heatmap · Warning**: covers warning- and error-level events
+  - **Heatmap · Critical**: covers critical events (and hours dominated by errors)
 
 Defaults are tuned to be legible in both light and dark modes; override only if you have a strong preference.
 
 ### Accessibility
 
-- **Colourblind mode for activity heatmap** — adds a vertical-fill encoding to the 24h heatmap (taller fill = more severe), so severity reads even when colours don't
+- **Colorblind mode for activity heatmap**: adds a vertical-fill encoding to the 24h heatmap (taller fill = more severe), so severity reads even when colors don't
 
-> 💡 **Note**: as of V1, this is the only colourblind affordance in Tempo. A full audit (event-card severity colouring, source-row badges, action-panel pills) is on the V1.x roadmap.
+> 💡 **Note**: as of V1, this is the only colorblind affordance in Tempo. A full audit (event-card severity coloring, source-row badges, action-panel pills) is on the V1.x roadmap.
 
 ---
 
@@ -73,8 +73,8 @@ The Ingestion tab is where you configure the HTTP server that receives events fr
 
 ### Network
 
-- **Listen on port** — the TCP port Tempo's ingestion server binds to. Default `7776`. Valid range 1024-65535. Changes require a Tempo restart to take effect (the active port is shown until restart)
-- **Limit to loopback only** — when enabled, only `localhost` (this Mac) can reach the ingestion endpoint. Off by default — Tempo binds `0.0.0.0` so other machines on your LAN can post events
+- **Listen on port**: the TCP port Tempo's ingestion server binds to. Default `7776`. Valid range 1024-65535. Changes require a Tempo restart to take effect (the active port is shown until restart)
+- **Limit to loopback only**: when enabled, only `localhost` (this Mac) can reach the ingestion endpoint. Off by default, so Tempo binds `0.0.0.0` and other machines on your LAN can post events
 
 The default (LAN-reachable) is intentional. Most homelab users have monitoring tools running on dedicated hardware (NAS, Raspberry Pi, dedicated server) that need to send events to Tempo on the Mac. Loopback-only would make Tempo useless for that wedge.
 
@@ -86,18 +86,18 @@ If you don't have any external sources and just want Tempo for Apple Calendar + 
 
 The Tokens section lists every active ingestion token. Each row shows:
 
-- **Token name** (something descriptive — "Kopia NAS," "check_disk script")
-- **Bound provider** (if any) — the providerIdentifier this token is allowed to send as
+- **Token name** (something descriptive, like "Kopia NAS" or "check_disk script")
+- **Bound provider** (if any): the providerIdentifier this token is allowed to send as
 - **Token value** preview (first/last few characters, with a copy-to-clipboard button)
-- **Status** — Active / Revoked
-- **Action menu** — Regenerate, Revoke, Delete
+- **Status**: Active / Revoked
+- **Action menu**: Regenerate, Revoke, Delete
 
 #### Adding a token
 
 The **+ Add token** button opens a sheet:
 
-- **Name** — descriptive label, e.g., "Kopia NAS" or "check_disk script"
-- **Bind to a specific provider** (toggle) — when on, takes a `providerIdentifier` like `com.kopia` or `scripts.shell`. The token will reject any payload whose `providerIdentifier` doesn't match
+- **Name**: descriptive label, e.g., "Kopia NAS" or "check_disk script"
+- **Bind to a specific provider** (toggle): when on, takes a `providerIdentifier` like `com.kopia` or `scripts.shell`. The token will reject any payload whose `providerIdentifier` doesn't match
 
 Bound tokens are the recommended pattern. Unbound tokens are convenient for testing but mean a leak compromises every source equally.
 
@@ -119,7 +119,7 @@ Tokens are stored in your macOS Keychain (not on disk in cleartext). Tempo retri
 
 #### Audit log
 
-Every ingestion attempt — accepted or rejected — is logged via Apple's unified logging system (`os.Logger`). Filter by subsystem `app.tempoapp.Tempo` in **Console.app** to see the trail. The log captures:
+Every ingestion attempt, accepted or rejected, is logged via Apple's unified logging system (`os.Logger`). Filter by subsystem `app.tempoapp.Tempo` in **Console.app** to see the trail. The log captures:
 
 - Timestamp
 - Source IP
@@ -127,17 +127,17 @@ Every ingestion attempt — accepted or rejected — is logged via Apple's unifi
 - Provider identifier
 - Accept / reject result, with reason on rejection (invalid token, malformed JSON, rate-limited, etc.)
 
-Useful for diagnosing "why didn't my event arrive?" — see [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing).
+Useful for diagnosing "why didn't my event arrive?" See [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing).
 
-In V1 the audit log is not exposed inside the Ingestion tab itself. To inspect it live, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. To share it with support, use **Help → Export diagnostics bundle…** — the bundle includes the last 24 hours of OSLog output (no token values, no payload contents).
+In V1 the audit log is not exposed inside the Ingestion tab itself. To inspect it live, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. To share it with support, use **Help → Export diagnostics bundle…**: the bundle includes the last 24 hours of OSLog output (no token values, no payload contents).
 
 ### Secure (TLS)
 
 By default the ingestion server speaks plain HTTP, which is the right choice for a LAN you control. When you want the bytes on the wire encrypted, turn on **Secure (TLS)** under *Settings → Ingestion*. It is **off by default**.
 
-- **TLS port** — `8776` by default (configurable, same 1024–65535 range as the plain port). The TLS listener runs **alongside** the plain `7776`, not instead of it, so a mixed fleet — some senders speak HTTPS, some don't — keeps working while you migrate.
-- **The certificate** — the first time you enable TLS, Tempo generates a **self-signed certificate** in the Keychain. No certificate authority, no external service: local-first. Download it from *Settings → Security → TLS certificate* to hand to senders that verify. A sender can either **pin** it (`curl --cacert tempo-cert.pem`, or a CA file in a library's TLS context — encrypt *and* verify) or **skip verification** (encrypt only) when pinning is impractical. The app warns **60 days** before the certificate expires, and re-mints it if the Mac's LAN IP changes (a sender that pinned the old cert must re-pin).
-- **Require TLS (per token)** — each token has a `secure` flag (*Require TLS*, the padlock toggle in the Tokens list). When set, that sender is **refused on the plain port** with an opaque 401 — so a stolen token replayed over HTTP, or a sender that silently reverted to cleartext, is rejected and surfaced instead of quietly downgraded. The source shows a **padlock** that turns orange when a downgrade attempt hits it. The flag is per *token* (the credential is the boundary), not per source.
+- **TLS port**: `8776` by default (configurable, same 1024–65535 range as the plain port). The TLS listener runs **alongside** the plain `7776`, not instead of it, so a mixed fleet (some senders speak HTTPS, some don't) keeps working while you migrate.
+- **The certificate**: the first time you enable TLS, Tempo generates a **self-signed certificate** in the Keychain. No certificate authority, no external service: local-first. Download it from *Settings → Security → TLS certificate* to hand to senders that verify. A sender can either **pin** it (`curl --cacert tempo-cert.pem`, or a CA file in a library's TLS context, to encrypt *and* verify) or **skip verification** (encrypt only) when pinning is impractical. The app warns **60 days** before the certificate expires, and re-mints it if the Mac's LAN IP changes (a sender that pinned the old cert must re-pin).
+- **Require TLS (per token)**: each token has a `secure` flag (*Require TLS*, the padlock toggle in the Tokens list). When set, that sender is **refused on the plain port** with an opaque 401, so a stolen token replayed over HTTP, or a sender that silently reverted to cleartext, is rejected and surfaced instead of quietly downgraded. The source shows a **padlock** that turns orange when a downgrade attempt hits it. The flag is per *token* (the credential is the boundary), not per source.
 
 Loading your own certificate in place of the self-signed one is planned for a later 1.x update. See the [security page](/security/#tls) for the threat-model reasoning.
 
@@ -149,7 +149,7 @@ The Agenda tab controls how Apple Calendar entries and Reminders flow into Tempo
 
 ### Show personal agenda
 
-A toggle at the top of the tab. When off, Tempo doesn't show calendar entries or reminders in the timeline at all — you're using Tempo for monitoring/webhook events only.
+A toggle at the top of the tab. When off, Tempo doesn't show calendar entries or reminders in the timeline at all: you're using Tempo for monitoring/webhook events only.
 
 The same toggle is mirrored in the menubar icon's **View → Show personal agenda** submenu, so you can flip it without opening Settings.
 
@@ -167,9 +167,9 @@ Same shape, for Reminders lists. Tick the lists you want; untick the rest.
 
 Calendar and reminder data flows through Apple's EventKit framework. A few caveats worth knowing:
 
-- **Updates are notification-driven** — when you mark a reminder done in Reminders.app, Tempo updates within a second via the EventKit notification. Most of the time this is invisible; occasionally EventKit doesn't notify for a particular kind of change, and Tempo's view stays a few minutes stale until the next periodic refresh
-- **iCloud sync delays compound** — if your reminders sync from another device via iCloud, EventKit waits for the iCloud sync before notifying Tempo. A reminder you complete on iPhone might take 10-30 seconds to reflect in Tempo, depending on iCloud's batch interval
-- **Edge cases with task manager bridges** — if you use a task manager (Todoist, OmniFocus, Things, TickTick) that syncs to a calendar app via iCal subscription, Tempo reflects only what EventKit sees. Latency depends on the subscription refresh frequency and the task manager's export cadence
+- **Updates are notification-driven**: when you mark a reminder done in Reminders.app, Tempo updates within a second via the EventKit notification. Most of the time this is invisible; occasionally EventKit doesn't notify for a particular kind of change, and Tempo's view stays a few minutes stale until the next periodic refresh
+- **iCloud sync delays compound**: if your reminders sync from another device via iCloud, EventKit waits for the iCloud sync before notifying Tempo. A reminder you complete on iPhone might take 10-30 seconds to reflect in Tempo, depending on iCloud's batch interval
+- **Edge cases with task manager bridges**: if you use a task manager (Todoist, OmniFocus, Things, TickTick) that syncs to a calendar app via iCal subscription, Tempo reflects only what EventKit sees. Latency depends on the subscription refresh frequency and the task manager's export cadence
 
 For a more thorough discussion, see [§12.2 — Apple Calendar sync issues](/docs/12-troubleshooting#122-apple-calendar-sync-issues) and [§10.1 — Apple Calendar and Reminders](/docs/10-sources-reference#101-apple-calendar-and-reminders).
 
@@ -177,7 +177,7 @@ For a more thorough discussion, see [§12.2 — Apple Calendar sync issues](/doc
 
 ## 8.4 — Maintenance
 
-The Maintenance tab is the umbrella for housekeeping behaviours: rules that fire on a schedule (auto-ack, auto-dismiss), the source liveness threshold, and the database (retention, backups).
+The Maintenance tab is the umbrella for housekeeping behaviors: rules that fire on a schedule (auto-ack, auto-dismiss), the source liveness threshold, and the database (retention, backups).
 
 A segmented picker at the top of the tab switches between four sub-sections: **Auto-ack**, **Auto-dismiss**, **Liveness**, **Database**.
 
@@ -189,11 +189,11 @@ Auto-ack rules automatically acknowledge events older than a configurable thresh
 
 Five rows, one per severity, each with a threshold picker:
 
-- **Info** — default **6 hours**
-- **OK** — default **6 hours**
-- **Warning** — default **24 hours** (one full day, covering an overnight cycle)
-- **Error** — default **Never** (real incidents stay loud until you acknowledge them)
-- **Critical** — default **Never**
+- **Info**: default **6 hours**
+- **OK**: default **6 hours**
+- **Warning**: default **24 hours** (one full day, covering an overnight cycle)
+- **Error**: default **Never** (real incidents stay loud until you acknowledge them)
+- **Critical**: default **Never**
 
 The threshold options on each picker are: **Never, 1h, 6h, 12h, 1 day, 3 days, 7 days**.
 
@@ -205,13 +205,13 @@ Sources without an explicit override use the globals.
 
 ### Auto-dismiss
 
-Same shape as Auto-ack, but instead of acking, the rule **dismisses** the event after the threshold — removing it from the active feed entirely (still in the database, still in source history).
+Same shape as Auto-ack, but instead of acking, the rule **dismisses** the event after the threshold, removing it from the active feed entirely (still in the database, still in source history).
 
-Auto-dismiss rules run hourly. Dismissed events stay in the database (subject to the retention policy in the Database tab) — they just drop off the live timeline so you don't have to keep dismissing stale rows manually.
+Auto-dismiss rules run hourly. Dismissed events stay in the database (subject to the retention policy in the Database tab); they just drop off the live timeline so you don't have to keep dismissing stale rows manually.
 
 #### Per-source rules
 
-The Auto-dismiss tab is per-source by default — each source has its own enable/threshold setting. There's no global default for auto-dismiss; you opt in per source as you decide it's worth it.
+The Auto-dismiss tab is per-source by default: each source has its own enable/threshold setting. There's no global default for auto-dismiss; you opt in per source as you decide it's worth it.
 
 ### Liveness
 
@@ -219,7 +219,7 @@ The Liveness tab sets the threshold below which a source's bolt indicator stays 
 
 #### Global default
 
-- **Default threshold** — defaults to **24 hours**
+- **Default threshold**: defaults to **24 hours**
 
 Short enough to spot a quiet monitor within a day, long enough not to alarm on any source that ticks daily or weekly.
 
@@ -237,32 +237,32 @@ The Database tab covers permanent retention plus app backups.
 
 #### Retention
 
-- **Keep events for** — picker with options **Forever** (default), 30 days, 90 days, 6 months, 1 year, 2 years
+- **Keep events for**: picker with options **Forever** (default), 30 days, 90 days, 6 months, 1 year, 2 years
 
 Permanently deletes older events from the database on app launch and when the setting changes. Default keeps everything.
 
-> 💡 **Note**: the [source history view](/docs/14-glossary#source-history-view) (the GitHub-style 84-day grid you reach from a source's menu) visualises the last 84 days. Setting retention shorter than 84 days will leave the corresponding tiles permanently empty — historical activity outside the retention window can't be reconstructed. Dismissed events keep contributing to the history view until they fall out of retention.
+> 💡 **Note**: the [source history view](/docs/14-glossary#source-history-view) (the GitHub-style 84-day grid you reach from a source's menu) visualizes the last 84 days. Setting retention shorter than 84 days will leave the corresponding tiles permanently empty; historical activity outside the retention window can't be reconstructed. Dismissed events keep contributing to the history view until they fall out of retention.
 
 For most users, **Forever** is the right choice. Tempo's database is small (most events are a few hundred bytes) and disk space is cheap. Pick a window only if your timeline grows large enough to feel slow (millions of events) or you have policy reasons to limit retention.
 
 #### App backup
 
-- **Backup interval** — picker (e.g., Off / Daily / Weekly / On-demand only)
-- **Destination** — file picker showing your chosen backup directory
-- **Keep last** — how many backup bundles to retain (older ones are pruned)
-- **Backup now** — runs an on-demand backup immediately
+- **Backup interval**: picker (e.g., Off / Daily / Weekly / On-demand only)
+- **Destination**: file picker showing your chosen backup directory
+- **Keep last**: how many backup bundles to retain (older ones are pruned)
+- **Backup now**: runs an on-demand backup immediately
 
 Each backup is a **`.tempobackup` bundle** containing:
 
-- The SQLite database (as a `VACUUM INTO` snapshot — safe to take while Tempo is active)
+- The SQLite database (as a `VACUUM INTO` snapshot, safe to take while Tempo is active)
 - Your preferences (UserDefaults)
-- The `Scores/` folder (your customised and bundled scores)
+- The `Scores/` folder (your customized and bundled scores)
 
 Backup bundles are named `tempo-backup-YYYYMMDD-HHmmss.tempobackup` and pruned beyond the retain count.
 
-> 🛑 **Critical**: ingestion tokens are stored in the macOS Keychain and are **never written to the backup bundle**. When you restore on a new Mac, you'll need to recreate or re-install your ingestion tokens manually. Everything else (events, settings, scores, source colours, auto-rules) is in the bundle and restores automatically.
+> 🛑 **Critical**: ingestion tokens are stored in the macOS Keychain and are **never written to the backup bundle**. When you restore on a new Mac, you'll need to recreate or re-install your ingestion tokens manually. Everything else (events, settings, scores, source colors, auto-rules) is in the bundle and restores automatically.
 
-The recommended destination is **iCloud Drive** — sync is transparent, backups land on every device that's signed into the same iCloud account. Local paths or mounted remote filesystems work too; Tempo just writes to the path you give it.
+The recommended destination is **iCloud Drive**: sync is transparent, backups land on every device that's signed into the same iCloud account. Local paths or mounted remote filesystems work too; Tempo writes to the path you give it.
 
 The interval picker offers: **Off, every 6 hours, every 12 hours, every 18 hours, every 24 hours, every 2 days, every 7 days, every 30 days**. There's also a **Backup now** button next to the schedule for on-demand snapshots that are independent of the cadence.
 
@@ -284,7 +284,7 @@ Useful as a printable reference if you want to onboard another household member 
 
 ### Diagnostics
 
-- **Export diagnostics bundle…** — creates a zip with:
+- **Export diagnostics bundle…**: creates a zip with:
   - App version and build number
   - Configuration summary (which sources are connected, retention setting, auto-rule overrides)
   - The last 24 hours of Tempo's OSLog output
@@ -301,14 +301,14 @@ After export, Tempo offers **Show in Finder** so you can locate the file before 
 
 ### Where the rest of the support links live
 
-The Settings → Help tab is intentionally narrow: badge legend + diagnostics export. Everything else lives in the **menubar** so it's reachable without opening Settings:
+The Settings → Help tab is intentionally narrow: badge legend and diagnostics export. Everything else lives in the **menubar** so it's reachable without opening Settings:
 
-- **Tempo → About Tempo** — version, build, credits
-- **Tempo → Check for Updates…** — Sparkle update check
-- **Help → Tempo Documentation** — opens [tempoapp.app/docs](https://tempoapp.app/docs/)
-- **Help → Community** — opens [tempoapp.app/community](https://tempoapp.app/community/) (Discord invite)
-- **Help → Privacy Notice** — opens [tempoapp.app/privacy](https://tempoapp.app/privacy)
-- **Help → License & Disclaimer** — opens [tempoapp.app/license](https://tempoapp.app/license)
+- **Tempo → About Tempo**: version, build, credits
+- **Tempo → Check for Updates…**: Sparkle update check
+- **Help → Tempo Documentation**: opens [tempoapp.app/docs](https://tempoapp.app/docs/)
+- **Help → Community**: opens [tempoapp.app/community](https://tempoapp.app/community/) (Discord invite)
+- **Help → Privacy Notice**: opens [tempoapp.app/privacy](https://tempoapp.app/privacy)
+- **Help → License & Disclaimer**: opens [tempoapp.app/license](https://tempoapp.app/license)
 
 ---
 
@@ -316,5 +316,5 @@ The Settings → Help tab is intentionally narrow: badge legend + diagnostics ex
 
 - **Backing up properly before a migration** → [§9 — Backup and restore](/docs/09-backup-restore)
 - **Tuning a noisy source** → [§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping) for grouping; **Auto-ack** in this chapter for severity-aware aging
-- **Troubleshooting unexpected behaviour** → [§12 — Troubleshooting](/docs/12-troubleshooting)
-- **Per-source colour and display name overrides** → [§4 — Source panel](/docs/04-source-panel)
+- **Troubleshooting unexpected behavior** → [§12 — Troubleshooting](/docs/12-troubleshooting)
+- **Per-source color and display name overrides** → [§4 — Source panel](/docs/04-source-panel)

@@ -12,9 +12,9 @@ This chapter is the per-source manual: every bundled source gets its own section
 
 The sources are presented in a stable order (calendar first, then generic webhook, then alphabetised among bundled providers). Read straight through if you're new to Tempo; jump directly to the source you're connecting if you're not.
 
-> 🛠 **Tip**: every native (non-Apple Calendar) source uses the same plumbing — Tempo's HTTP ingestion server on port `7776`, a per-provider token, a JSON or plain-text payload. The differences are which endpoint to hit and what fields the bundled score knows about. If you're comfortable with the generic webhook in §10.2, the native modules are mostly minor variations on the same shape.
+> 🛠 **Tip**: every native (non-Apple Calendar) source uses the same plumbing: Tempo's HTTP ingestion server on port `7776`, a per-provider token, and a JSON or plain-text payload. The differences are which endpoint to hit and what fields the bundled score knows about. If you're comfortable with the generic webhook in §10.2, the native modules are mostly minor variations on the same shape.
 
-> 💡 **About endpoint paths**: you'll notice some sources hit dedicated root paths (`/kopia`, `/uptime-kuma`) while UniFi sits under `/ingest/unifi`. That's a historical artifact — the earliest two native modules (Kopia, Uptime Kuma) landed before we settled on `/ingest/<source>` as the convention. The behaviour is identical regardless of path; the URL each source uses is documented in its section below. Existing scores keep working unchanged across releases.
+> 💡 **About endpoint paths**: you'll notice some sources hit dedicated root paths (`/kopia`, `/uptime-kuma`) while UniFi sits under `/ingest/unifi`. That's a historical artifact: the earliest two native modules (Kopia, Uptime Kuma) landed before we settled on `/ingest/<source>` as the convention. The behaviour is identical regardless of path; the URL each source uses is documented in its section below. Existing scores keep working unchanged across releases.
 
 ---
 
@@ -26,10 +26,10 @@ The Apple Calendar and Reminders source is **automatic**: it activates the momen
 
 ### What flows in
 
-- **Calendar events** from every macOS calendar account you've enabled in Calendar.app — iCloud, Google (via macOS Internet Accounts), Exchange, CalDAV servers, local calendars
-- **Reminders** from every list you've enabled — iCloud Reminders, Exchange, CardDAV-style reminders
+- **Calendar events** from every macOS calendar account you've enabled in Calendar.app: iCloud, Google (via macOS Internet Accounts), Exchange, CalDAV servers, local calendars
+- **Reminders** from every list you've enabled: iCloud Reminders, Exchange, CardDAV-style reminders
 
-Each entry shows in the timeline as a compact row (no severity, no stripe, no headline metric — agenda items, not alerts). The provider icon is a calendar; the source colour is the calendar's native colour from Calendar.app.
+Each entry shows in the timeline as a compact row (no severity, no stripe, no headline metric: agenda items, not alerts). The provider icon is a calendar; the source colour is the calendar's native colour from Calendar.app.
 
 ### Setup
 
@@ -41,14 +41,14 @@ That's it. No tokens, no webhooks, no upstream config.
 
 ### What works
 
-- **Reading** calendar events and reminders into the timeline — yes, in real time via EventKit notifications
-- **Marking a reminder as completed** from the action panel — yes. This is the one canonical exception to "Tempo never writes back to source apps." When you tick the Complete button on a reminder card, Tempo tells EventKit to mark the reminder done in Reminders.app
+- **Reading** calendar events and reminders into the timeline: yes, in real time via EventKit notifications
+- **Marking a reminder as completed** from the action panel: yes. This is the one canonical exception to "Tempo never writes back to source apps." When you tick the Complete button on a reminder card, Tempo tells EventKit to mark the reminder done in Reminders.app
 
 ### What doesn't work
 
-- **Editing calendar events from Tempo** — no. Calendar.app is the editor; Tempo just displays
-- **Creating new calendar events or reminders** — no
-- **Editing reminder titles, due dates, list memberships** — no, only the completion toggle is exposed
+- **Editing calendar events from Tempo**: no. Calendar.app is the editor; Tempo only displays
+- **Creating new calendar events or reminders**: no
+- **Editing reminder titles, due dates, list memberships**: no, only the completion toggle is exposed
 
 ### Latency and caveats
 
@@ -59,9 +59,9 @@ EventKit is notification-driven. Most state changes propagate to Tempo within a 
 
 Slower paths:
 
-- **iCloud-synced changes from another device** — depends on iCloud's batch interval (typically 10-30 seconds, occasionally longer)
-- **Google Calendar via macOS Internet Accounts** — Google's push-vs-poll behaviour determines latency. Often 1-5 minutes to fan out
-- **CalDAV servers** — varies by server; macOS polls, so latency depends on the configured poll interval (typically 15 minutes)
+- **iCloud-synced changes from another device**: depends on iCloud's batch interval (typically 10-30 seconds, occasionally longer)
+- **Google Calendar via macOS Internet Accounts**: Google's push-vs-poll behaviour determines latency. Often 1-5 minutes to fan out
+- **CalDAV servers**: varies by server; macOS polls, so latency depends on the configured poll interval (typically 15 minutes)
 
 For more on troubleshooting calendar sync issues, see [§12.2 — Apple Calendar sync issues](/docs/12-troubleshooting#122-apple-calendar-sync-issues).
 
@@ -69,8 +69,8 @@ For more on troubleshooting calendar sync issues, see [§12.2 — Apple Calendar
 
 If you use a third-party task manager (Todoist, OmniFocus, Things, TickTick, anything that supports iCal export), the recommended pattern for V1 is:
 
-1. **Generate an iCal subscription URL** in your task manager — most expose this as "Calendar feed" or "Sync to calendar" or similar
-2. **Subscribe to the URL in macOS Calendar.app** — File → New Calendar Subscription → paste the URL, set a refresh interval (Calendar.app typically supports as fast as 5 minutes)
+1. **Generate an iCal subscription URL** in your task manager; most expose this as "Calendar feed" or "Sync to calendar" or similar
+2. **Subscribe to the URL in macOS Calendar.app**: File → New Calendar Subscription → paste the URL, set a refresh interval (Calendar.app typically supports as fast as 5 minutes)
 3. **Tick the subscribed calendar** in Tempo Settings → Agenda
 
 Your task-manager items now appear in the Tempo timeline alongside everything else.
@@ -81,7 +81,7 @@ The intrinsic limits of this pattern:
 - **Refresh latency**. Tempo sees what Calendar.app sees, which is what the iCal subscription has fetched on its last refresh. Sub-minute responsiveness isn't possible on this path
 - **Subscription cap**. Calendar.app has its own performance characteristics for many subscribed calendars; if you have 10+ task-manager subscriptions, latency and battery cost compound
 
-> 💡 **Note**: native API integration with a specific task manager — actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state — is a candidate for a future release. For V1, iCal subscription is the sanctioned bridge.
+> 💡 **Note**: native API integration with a specific task manager (actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state) is a candidate for a future release. For V1, iCal subscription is the sanctioned bridge.
 
 ---
 
@@ -123,7 +123,7 @@ A few highlights worth knowing:
 
 - **Title**: 1-200 chars, plain text. Don't include HTML or Markdown
 - **eventType**: `event`, `task`, `reminder`, `alert`. Defaults to `alert`
-- **externalID**: stable key — repeated POSTs with the same `externalID` UPSERT the existing row in place rather than creating a duplicate. Use this for stateful sources (a single monitor that flips down/up over time)
+- **externalID**: stable key. Repeated POSTs with the same `externalID` UPSERT the existing row in place rather than creating a duplicate. Use this for stateful sources (a single monitor that flips down/up over time)
 - **metadata**: a structured payload. Reserved keys are typed and validated; everything else goes in `metadata.custom`
 - **actions**: up to 8 buttons per event, each with a label, an SF Symbol icon, and a trigger (`openURL`, `openTerminalWith`, `copyToClipboard`)
 
@@ -146,28 +146,28 @@ Any payload whose `providerIdentifier` starts with `scripts.` is rendered throug
 
 - Maps `metadata.label` to a severity (`OK` → ok green, `Warning` → warning yellow, `Error` → error red, `Critical` → error red)
 - Surfaces a small set of generic actions (SSH to source host, copy host, copy title)
-- Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.` — `scripts.shell` → **Shell**, `scripts.ruby` → **Ruby**, whatever you name it. Anything deeper rolls up: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**, and the specific name shows in the action panel when you open the event.
+- Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.`: `scripts.shell` → **Shell**, `scripts.ruby` → **Ruby**, whatever you name it. Anything deeper rolls up: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**, and the specific name shows in the action panel when you open the event.
 
-**Why only one level?** It lets you split your scripts logically — shell checks apart from Python pollers — without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
+**Why only one level?** It lets you split your scripts logically (shell checks apart from Python pollers) without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
 
-The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider — see [§11 — Score authoring](/docs/11-score-authoring).
+The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider. See [§11 — Score authoring](/docs/11-score-authoring).
 
 ### What your card looks like without a score
 
-If you POST to `/ingest` with the bare minimum (`title` + `providerIdentifier`) and don't have a score for that provider — and your `providerIdentifier` doesn't fall under the bundled Scripts score's namespace conventions either — the event still lands in the timeline. Tempo doesn't require a score to ingest. But the card will look minimal:
+If you POST to `/ingest` with the bare minimum (`title` + `providerIdentifier`), don't have a score for that provider, and your `providerIdentifier` doesn't fall under the bundled Scripts score's namespace conventions either, the event still lands in the timeline. Tempo doesn't require a score to ingest. But the card will look minimal:
 
 - **Title and timestamp**, the two values you actually sent
-- A **neutral grey dot** in the source panel — Tempo has no colour to associate with the source
+- A **neutral grey dot** in the source panel, since Tempo has no colour to associate with the source
 - Severity stays `info` (the default), so the badge is the small grey "Info" pill
-- **No subtitle, no headline, no per-event metric** — none of the rich rendering that bundled scores extract from `metadata`
+- **No subtitle, no headline, no per-event metric**: none of the rich rendering that bundled scores extract from `metadata`
 - **No actions** in the action panel beyond the universal Acknowledge / Dismiss
 - The **source name** in the panel is the raw `providerIdentifier` string (`com.example.my-tool` rather than a friendly label)
 
-The card is functional — you can still see *what* happened and *when* — but it's hard to scan at a glance, especially next to fully-scored sources whose cards carry severity colour, custom pills, and one-click actions.
+The card is functional (you can still see *what* happened and *when*) but it's hard to scan at a glance, especially next to fully-scored sources whose cards carry severity colour, custom pills, and one-click actions.
 
 Three ways to make a custom source's card richer, in increasing order of effort:
 
-1. **Pass more fields in the payload.** Add `severity` (`"warning"`, `"error"`, `"critical"`) and a few `metadata.custom.<key>` values so Tempo has something to display in the card and the action panel's details list. Five more lines of JSON is often enough to lift the card from "blank" to "informative" — no score authoring required.
+1. **Pass more fields in the payload.** Add `severity` (`"warning"`, `"error"`, `"critical"`) and a few `metadata.custom.<key>` values so Tempo has something to display in the card and the action panel's details list. Five more lines of JSON is often enough to lift the card from "blank" to "informative", with no score authoring required.
 2. **Adopt the bundled Scripts score's namespace.** Name your provider `scripts.<lang>.<name>` and the Scripts score picks it up automatically: severity from `metadata.label`, source-panel grouping under a single **Scripts** parent row (one level deep, by `<lang>`), a couple of generic actions. Zero authoring.
 3. **Author a dedicated score** for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct colour, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.
 
@@ -193,13 +193,13 @@ Kopia is a backup tool that runs snapshots on a schedule (typically via cron, la
 
 1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.kopia`
 2. **Configure Kopia's notification**. Where exactly depends on how you run Kopia:
-   - **KopiaUI** — Preferences → Notifications → add a webhook with URL `http://localhost:7776/kopia` (or your Mac's LAN IP if Kopia runs on a different host), method `POST`, format `Plain Text`, header `X-Tempo-Token: <token>`
-   - **kopia CLI** — set `kopia notification webhook ...` per the Kopia docs, same fields
+   - **KopiaUI**: Preferences → Notifications → add a webhook with URL `http://localhost:7776/kopia` (or your Mac's LAN IP if Kopia runs on a different host), method `POST`, format `Plain Text`, header `X-Tempo-Token: <token>`
+   - **kopia CLI**: set `kopia notification webhook ...` per the Kopia docs, same fields
 3. **Trigger a snapshot** to verify. The first event should appear in Tempo within a second of the snapshot completing
 
 ### Payload shape
 
-Kopia's plain-text format is `Key: Value` lines — Tempo parses them into metadata:
+Kopia's plain-text format is `Key: Value` lines, which Tempo parses into metadata:
 
 ```
 status: success
@@ -240,7 +240,7 @@ Customise these via the Score Editor for per-repo SSH actions, dashboard URLs, e
 
 ### Stateless by design
 
-Each Kopia snapshot is a discrete event. The bundled score uses **no externalID** — every snapshot is a fresh row. The bundled score doesn't declare a `grouping` block by default, so each snapshot lands on its own line; if you want history-of-one-target collapsed into a stack, add a grouping template like `${metadata.repo}/${metadata.path}` in the Score Editor (with whatever time window suits your cadence).
+Each Kopia snapshot is a discrete event. The bundled score uses **no externalID**, so every snapshot is a fresh row. The bundled score doesn't declare a `grouping` block by default, so each snapshot lands on its own line; if you want history-of-one-target collapsed into a stack, add a grouping template like `${metadata.repo}/${metadata.path}` in the Score Editor (with whatever time window suits your cadence).
 
 ---
 
@@ -252,7 +252,7 @@ Each Kopia snapshot is a discrete event. The bundled score uses **no externalID*
 
 ### What it does
 
-UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhooks for events on the network: device disconnects, association failures, firmware updates, port changes, security events. Tempo's UniFi module parses the alarm JSON (which varies in shape across firmware versions — Tempo handles both flat and wrapped forms), maps it to severity via the bundled UniFi score, and renders it as a card.
+UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhooks for events on the network: device disconnects, association failures, firmware updates, port changes, security events. Tempo's UniFi module parses the alarm JSON (which varies in shape across firmware versions; Tempo handles both flat and wrapped forms), maps it to severity via the bundled UniFi score, and renders it as a card.
 
 ### Setup
 
@@ -265,17 +265,17 @@ UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhoo
    - **Authentication**: None (UniFi can't set arbitrary headers in some firmware, so Tempo accepts the token via `Authorization: Bearer <token>`)
    - **Add Header**: `Authorization: Bearer <token>` (or `X-Tempo-Token: <token>` if your firmware supports it)
    - **Content**: Default Content (let UniFi send its native shape)
-3. **Save** and trigger a test alarm — the controller's UI usually has a "Send test" button next to the webhook destination
+3. **Save** and trigger a test alarm; the controller's UI usually has a "Send test" button next to the webhook destination
 
 ### What UniFi events look like in Tempo
 
 The bundled UniFi score includes ~40 rules covering the alarm types most homelabs see. Common ones:
 
-- **STA_ASSOC_FAILURE** — wireless client failed to associate. Severity: warning
-- **STA_AUTH_FAILURE** — wireless authentication failure (wrong WPA password, certificate issue). Severity: warning
-- **WAN_DISCONNECTED** — uplink lost. Severity: critical
-- **DEVICE_OFFLINE** — managed device (AP, switch) went offline. Severity: error
-- **EVT_AD_LOGIN** — admin login to the controller. Severity: info
+- **STA_ASSOC_FAILURE**: wireless client failed to associate. Severity: warning
+- **STA_AUTH_FAILURE**: wireless authentication failure (wrong WPA password, certificate issue). Severity: warning
+- **WAN_DISCONNECTED**: uplink lost. Severity: critical
+- **DEVICE_OFFLINE**: managed device (AP, switch) went offline. Severity: error
+- **EVT_AD_LOGIN**: admin login to the controller. Severity: info
 
 Severity is per-rule and customisable in the Score Editor.
 
@@ -389,7 +389,7 @@ If your HA isn't at `homeassistant.local`, edit the actions in the Score Editor 
 
 Uptime Kuma is a self-hosted uptime monitor. Each "monitor" (an HTTP probe, a port check, a ping target) transitions between **DOWN / UP / PENDING / MAINTENANCE** states over time. Kuma fires a webhook on every state transition.
 
-Tempo's Uptime Kuma module emits a **stable externalID** per monitor (`kuma:<monitor-id-or-slug>`), which means repeated state transitions update the same row in place — the timeline shows one card per monitor that flips colour as the monitor's state changes, not a new card every 60 seconds when the monitor re-notifies.
+Tempo's Uptime Kuma module emits a **stable externalID** per monitor (`kuma:<monitor-id-or-slug>`), which means repeated state transitions update the same row in place: the timeline shows one card per monitor that flips colour as the monitor's state changes, not a new card every 60 seconds when the monitor re-notifies.
 
 ### Setup
 
@@ -435,10 +435,10 @@ The relay is intentionally a separate concern (it sits on your LAN and handles H
 
 ### Setup
 
-The relay is a small companion process distributed alongside the public score catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Detailed setup (binary download, environment variables, HMAC secret handling) lives in the catalog's README — this section is the high-level outline.
+The relay is a small companion process distributed alongside the public score catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Detailed setup (binary download, environment variables, HMAC secret handling) lives in the catalog's README; this section is the high-level outline.
 
 1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.github.actions`
-2. **Run the relay** on a host reachable from GitHub — typically a Cloudflare Tunnel exposing your Mac's port to the internet, or a small VPS. Configuration: GitHub HMAC secret, Tempo token, Tempo endpoint
+2. **Run the relay** on a host reachable from GitHub: typically a Cloudflare Tunnel exposing your Mac's port to the internet, or a small VPS. Configuration: GitHub HMAC secret, Tempo token, Tempo endpoint
 3. **In your GitHub repo**: Settings → Webhooks → Add webhook → relay URL, content-type `application/json`, the HMAC secret you configured
 
 ### What flows in
@@ -459,7 +459,7 @@ The bundled GitHub Actions score has rules for:
 
 ### Multi-template grouping
 
-GitHub events come in different shapes (issues, PRs, workflow runs each have different metadata). Bundled grouping uses a fallback chain so each event type clusters meaningfully — issues by issue number, PRs by PR number, workflow runs by workflow name + branch.
+GitHub events come in different shapes (issues, PRs, workflow runs each have different metadata). Bundled grouping uses a fallback chain so each event type clusters meaningfully: issues by issue number, PRs by PR number, workflow runs by workflow name + branch.
 
 ---
 
@@ -481,7 +481,7 @@ Synology DSM (the NAS operating system) supports webhook destinations via Notifi
    - URL: `http://<your-mac>:7776/ingest`
    - HTTP method: POST
    - Headers: `X-Tempo-Token: <token>`
-   - Body template: a JSON template DSM expands with placeholders like `@@SUBJECT@@` and `@@MESSAGE@@`. The exact template depends on DSM version — see the public score documentation at [tempoapp.app/scores/synology](https://tempoapp.app/scores/synology) for the current recommended template
+   - Body template: a JSON template DSM expands with placeholders like `@@SUBJECT@@` and `@@MESSAGE@@`. The exact template depends on DSM version; see the public score documentation at [tempoapp.app/scores/synology](https://tempoapp.app/scores/synology) for the current recommended template
 
 4. **Save** and trigger a test notification
 
@@ -497,7 +497,7 @@ The bundled score maps each to severity and offers a default action set: open DS
 
 ### Multiple Synology products
 
-If you have DSM + Surveillance Station + Photos + Drive — they all live under `com.synology` as the provider, but `metadata.sourceGroup` differentiates them. The source panel groups them under one Synology row with sub-rows per product.
+If you have DSM + Surveillance Station + Photos + Drive, they all live under `com.synology` as the provider, but `metadata.sourceGroup` differentiates them. The source panel groups them under one Synology row with sub-rows per product.
 
 ---
 
@@ -508,14 +508,14 @@ If you have DSM + Surveillance Station + Photos + Drive — they all live under 
 
 The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarises something. Anything that produces a result-per-run.
 
-The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, surfaces generic actions, and groups your senders under the **Scripts** row — one level deep, by the first segment after `scripts.` (see §10.2 for the why).
+The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, surfaces generic actions, and groups your senders under the **Scripts** row, one level deep, by the first segment after `scripts.` (see §10.2 for the why).
 
 ### Naming convention
 
-- `scripts.shell` — generic shell script senders
-- `scripts.python` — Python script senders
-- `scripts.ruby`, `scripts.go`, etc. — language-specific
-- `scripts.<anything>` — the first segment after `scripts.` becomes the sub-source row. Only that one level groups; deeper segments (`scripts.ruby.deploy`) are the script's own name and roll up under their first-level row, shown in the action panel.
+- `scripts.shell`: generic shell script senders
+- `scripts.python`: Python script senders
+- `scripts.ruby`, `scripts.go`, etc.: language-specific
+- `scripts.<anything>`: the first segment after `scripts.` becomes the sub-source row. Only that one level groups; deeper segments (`scripts.ruby.deploy`) are the script's own name and roll up under their first-level row, shown in the action panel.
 
 ### Title convention
 
@@ -527,9 +527,9 @@ A useful title convention:
 
 Examples:
 
-- `check_disk · 78% / 92% / 100%` — disk usage probe with three filesystems
-- `ssl_cert · expires in 12 days` — certificate expiry check
-- `backup_notify · OK +1.2GB` — backup wrapper
+- `check_disk · 78% / 92% / 100%`: disk usage probe with three filesystems
+- `ssl_cert · expires in 12 days`: certificate expiry check
+- `backup_notify · OK +1.2GB`: backup wrapper
 
 The severity goes in `metadata.label` or `metadata.severity`, **not** in the title. The title is for *what happened*; the severity field is for *how bad*.
 
@@ -578,7 +578,7 @@ If you find yourself doing the same thing across several scripts (same kinds of 
 
 ## 10.10 — `tempo-post` helper
 
-A wrapper that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. It ships bundled with Tempo.app as `tempo-post`, a macOS binary. For homelab hosts that aren't Macs — Linux boxes, a NAS, a Raspberry Pi — download the portable versions from the utilities page at [tempoapp.app/utilities/](https://tempoapp.app/utilities/): `tempo-post.sh` (bash/curl) and `tempo-post.ps1` (PowerShell).
+A wrapper that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. It ships bundled with Tempo.app as `tempo-post`, a macOS binary. For homelab hosts that aren't Macs (Linux boxes, a NAS, a Raspberry Pi), download the portable versions from the utilities page at [tempoapp.app/utilities/](https://tempoapp.app/utilities/): `tempo-post.sh` (bash/curl) and `tempo-post.ps1` (PowerShell).
 
 ### Installation
 
@@ -597,7 +597,7 @@ export TEMPO_HOST="http://127.0.0.1:7776"
 export TEMPO_TOKEN="<your-token>"
 ```
 
-The token is resolved in precedence order: `--token`, then `TEMPO_TOKEN`, then `TEMPO_TOKEN_FILE` (a path to a `chmod 600` file holding the token), then an interactive hidden prompt when the helper is run from a terminal. Without a terminal — under cron or launchd — it fails fast rather than hanging on a prompt, so set `TEMPO_TOKEN` or `TEMPO_TOKEN_FILE` for unattended jobs.
+The token is resolved in precedence order: `--token`, then `TEMPO_TOKEN`, then `TEMPO_TOKEN_FILE` (a path to a `chmod 600` file holding the token), then an interactive hidden prompt when the helper is run from a terminal. Without a terminal (under cron or launchd) it fails fast rather than hanging on a prompt, so set `TEMPO_TOKEN` or `TEMPO_TOKEN_FILE` for unattended jobs.
 
 ### Basic usage
 
@@ -676,4 +676,4 @@ Schedule with launchd or cron; the helper handles the rest.
 - **Customising one of the bundled scores** → [§7 — Score Editor](/docs/07-score-editor)
 - **The full webhook payload reference** → see [**§10.2 — Generic webhook → Full payload reference**](#full-payload-reference) above
 - **Troubleshooting "my events aren't arriving"** → [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion) and [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing)
-- **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores) — Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more
+- **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores): Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more

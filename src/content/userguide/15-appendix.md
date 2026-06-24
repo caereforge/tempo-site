@@ -73,7 +73,7 @@ A few standard macOS surfaces Tempo participates in:
 
 Tempo registers the `tempo://` URL scheme for deep linking:
 
-- **`tempo://event/<id>`** — focus the timeline on the event with the given ID (matches against both internal `id` and `externalID`). The window comes forward automatically. Unknown IDs are silent no-ops
+- **`tempo://event/<id>`**: focus the timeline on the event with the given ID (matches against both internal `id` and `externalID`). The window comes forward automatically. Unknown IDs are silent no-ops
 
 Use cases: an Apple Shortcut or a script that wants to jump to a specific event after some external action; a Hookmark link to a Tempo event from a note.
 
@@ -86,7 +86,7 @@ Use cases: an Apple Shortcut or a script that wants to jump to a specific event 
 
 V1 ships with [Sparkle](https://sparkle-project.org/). Tempo checks for updates on a configurable interval (default daily) and prompts you to install when a new version is available; you can also trigger a check manually from **Tempo → Check for Updates…** in the menubar. Updates are fetched from `downloads.tempoapp.app` and verified against an EdDSA signature embedded in the appcast.
 
-Spotlight indexing, Quick Look previews for `.tempo-score`, and a Share Extension are not part of V1 — they're candidates for a future release.
+Spotlight indexing, Quick Look previews for `.tempo-score`, and a Share Extension are not part of V1; they're candidates for a future release.
 
 ---
 
@@ -112,9 +112,9 @@ Full license text at [tempoapp.app/license](https://tempoapp.app/license). LICEN
 
 Short version:
 
-- **Tempo 1.x is and will remain freeware** — distributed free of charge, free for personal and commercial use. Existing and future 1.x releases stay free; whether a future major version (2.0) is paid is a data-driven decision (see below)
+- **Tempo 1.x is and will remain freeware**: distributed free of charge, free for personal and commercial use. Existing and future 1.x releases stay free; whether a future major version (2.0) is paid is a data-driven decision (see below)
 - **Provided as-is, without warranty of any kind.** You're responsible for the scores you install and the actions they perform. The license & disclaimer are linked from the About panel in-app
-- **After v2 ships, v1 will continue to receive security fixes only** — no new features, no behavioural changes. Direct support migrates to v2
+- **After v2 ships, v1 will continue to receive security fixes only**: no new features, no behavioural changes. Direct support migrates to v2
 
 The licensing approach is meant to be transparent: V1 is freeware-with-no-warranty, distributed broadly to find product-market fit. V2 is conditional and may be paid; that decision is data-driven, not date-driven.
 
@@ -126,12 +126,12 @@ Tempo is built on the shoulders of a great deal of open-source software. The ful
 
 Notable dependencies:
 
-- **Sparkle** — auto-update framework for macOS apps. [sparkle-project.org](https://sparkle-project.org/)
-- **SQLite** — embedded SQL database. [sqlite.org](https://sqlite.org/)
-- **SwiftUI / EventKit / Foundation** — Apple frameworks
-- **SF Symbols** — Apple's icon library
+- **Sparkle**: auto-update framework for macOS apps. [sparkle-project.org](https://sparkle-project.org/)
+- **SQLite**: embedded SQL database. [sqlite.org](https://sqlite.org/)
+- **SwiftUI / EventKit / Foundation**: Apple frameworks
+- **SF Symbols**: Apple's icon library
 
-The bundled scores reference and integrate with many third-party tools — Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, and more — none of which are dependencies of Tempo itself; they're upstream sources Tempo *receives from*.
+The bundled scores reference and integrate with many third-party tools (Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, and more), none of which are dependencies of Tempo itself; they're upstream sources Tempo *receives from*.
 
 Community-contributed scores beyond the bundled set live in the [public score catalog](https://github.com/caereforge/tempo-scores) and are credited in the catalog repo's CONTRIBUTING.md and at the top of each score file.
 
@@ -141,7 +141,7 @@ Community-contributed scores beyond the bundled set live in the [public score ca
 
 Thanks for reading.
 
-If something didn't land — a chapter that left you confused, a section that should have existed, a phrasing that read awkwardly — file an issue at [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues), or join the Discord at [tempoapp.app/community](https://tempoapp.app/community/).
+If something didn't land (a chapter that left you confused, a section that should have existed, a phrasing that read awkwardly) file an issue at [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues), or join the Discord at [tempoapp.app/community](https://tempoapp.app/community/).
 
 Documentation is the surface that compensates for V1 not having a Visual Action Builder yet. We take it seriously, and we'd rather hear that something didn't work than have you struggle through it alone.
 

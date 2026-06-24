@@ -8,7 +8,7 @@ pubDate: 2026-05-05
 ---
 # 12 — Troubleshooting
 
-Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files. When something feels wrong, the failure is almost always in one of these — and the patterns repeat.
+Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files. When something feels wrong, the failure is almost always in one of these, and the patterns repeat.
 
 This chapter walks the failures we've seen, in rough order of "how often it bites people."
 
@@ -18,7 +18,7 @@ This chapter walks the failures we've seen, in rough order of "how often it bite
 
 By far the most common class of problem: a source is configured, a webhook fires, but Tempo's feed stays silent. The source app reports "webhook delivered successfully," but Tempo never received it.
 
-The full networking troubleshooting page is on the website at [tempoapp.app/scores/troubleshooting-networking](https://tempoapp.app/scores/troubleshooting-networking) — five scenarios that cover ~95% of the cases. The summary is below; for diagnostic commands and per-scenario fixes, the website page is the canonical reference.
+The full networking troubleshooting page is on the website at [tempoapp.app/scores/troubleshooting-networking](https://tempoapp.app/scores/troubleshooting-networking), with five scenarios that cover ~95% of the cases. The summary is below; for diagnostic commands and per-scenario fixes, the website page is the canonical reference.
 
 ### Quick decision tree
 
@@ -40,23 +40,23 @@ From the **source** machine (the one trying to send to Tempo):
 
 ### The five scenarios that cover most cases
 
-1. **Mac-local firewall denying inbound** — macOS Application Firewall, Little Snitch (incoming rules are separate from outgoing), LuLu. Allow Tempo
-2. **Source is on a different VLAN** — your router's firewall is default-deny between VLANs. Add an allow rule for source VLAN → Mac IP, port 7776
-3. **Hostname doesn't resolve from the source** — mDNS (`.local`) doesn't propagate across VLANs or through some routers. Use the Mac's LAN IP directly; pair with DHCP reservation
-4. **AP / client isolation** — guest WiFi or "IoT-safe" mode prevents same-network devices from talking. Disable isolation or move source to a trusted SSID/VLAN
-5. **Double NAT or a CGNAT router in the path** — your ISP-provided router does NAT *and* your own router does NAT, or the ISP uses carrier-grade NAT. The source can't reach the Mac's LAN because it's on a different translated network. Bridge the ISP router, or move the source onto the same NAT layer as the Mac
+1. **Mac-local firewall denying inbound**: macOS Application Firewall, Little Snitch (incoming rules are separate from outgoing), LuLu. Allow Tempo
+2. **Source is on a different VLAN**: your router's firewall is default-deny between VLANs. Add an allow rule for source VLAN → Mac IP, port 7776
+3. **Hostname doesn't resolve from the source**: mDNS (`.local`) doesn't propagate across VLANs or through some routers. Use the Mac's LAN IP directly; pair with DHCP reservation
+4. **AP / client isolation**: guest WiFi or "IoT-safe" mode prevents same-network devices from talking. Disable isolation or move source to a trusted SSID/VLAN
+5. **Double NAT or a CGNAT router in the path**: your ISP-provided router does NAT *and* your own router does NAT, or the ISP uses carrier-grade NAT. The source can't reach the Mac's LAN because it's on a different translated network. Bridge the ISP router, or move the source onto the same NAT layer as the Mac
 
 ### Diagnostic bundle
 
 Tempo's **Settings → Help → Export diagnostics bundle** generates a zip that includes:
 
-- `firewall.txt` — reports macOS Application Firewall state, detects Little Snitch / LuLu / Murus / Radio Silence / Hands Off
+- `firewall.txt`: reports macOS Application Firewall state, detects Little Snitch / LuLu / Murus / Radio Silence / Hands Off
 - App version, configuration summary
 - Last 24 hours of OSLog output
 
 Attach this to a Discord support thread or GitHub issue. The bundle is usually 50-200 KB; no PII, no token values, no event payloads.
 
-> 🛠 **Tip**: if the source is on the same Mac as Tempo (a script running locally), networking shouldn't be a factor — `curl http://localhost:7776/ingest` always works as long as Tempo is running. Same-Mac connectivity issues usually point at Tempo not running, the wrong port, or the wrong token, not at firewall/network problems.
+> 🛠 **Tip**: if the source is on the same Mac as Tempo (a script running locally), networking shouldn't be a factor. `curl http://localhost:7776/ingest` always works as long as Tempo is running. Same-Mac connectivity issues usually point at Tempo not running, the wrong port, or the wrong token, not at firewall/network problems.
 
 ---
 
@@ -83,7 +83,7 @@ If Tempo lost calendar/reminders permission:
 If you change a reminder on another device (iPhone, iPad), there's an iCloud-side delay before the change reaches macOS, plus an EventKit notification delay before Tempo sees it.
 
 - **Symptom**: a reminder you completed on iPhone shows as open in Tempo for 30 seconds to several minutes
-- **Check**: open Reminders.app on the same Mac. Does the reminder show as completed there? If not, iCloud hasn't synced yet — wait
+- **Check**: open Reminders.app on the same Mac. Does the reminder show as completed there? If not, iCloud hasn't synced yet, so wait
 - **Fix**: time. There's no Tempo-side workaround for iCloud sync timing
 
 ### Task manager iCal subscription latency
@@ -108,7 +108,7 @@ If you see calendar entries in Tempo whose source you can't identify, the most l
 
 ### EventKit doesn't notify for some change types
 
-EventKit's notification system isn't comprehensive — some kinds of changes (a calendar's colour changing in Calendar.app, certain attachment edits) don't fire a notification. Tempo's view stays a few minutes stale until the next periodic refresh.
+EventKit's notification system isn't comprehensive. Some kinds of changes (a calendar's colour changing in Calendar.app, certain attachment edits) don't fire a notification, and Tempo's view stays a few minutes stale until the next periodic refresh.
 
 - **Workaround**: quit and re-launch Tempo for an immediate refresh
 - **Acceptable**: most users never notice this; the changes that don't notify are rare and mostly cosmetic
@@ -123,12 +123,12 @@ You've created a score (or are using a bundled one) and events from the source a
 
 - **Check 1**: open the Score Editor for the provider. Is the score loaded? If the editor shows "No score selected" when you click on the provider's chip, the score file may not be parsing
 - **Check 2**: open Console.app, filter by subsystem `app.tempoapp.Tempo`. Look for "Failed to parse score" or "Schema validation error" messages
-- **Fix**: validate the JSON manually. `jq . ~/Library/Application\ Support/Tempo/Scores/<provider>.json` — if it errors, fix the JSON. Otherwise check against the schema at `https://tempoapp.app/schema/score.schema.json`
+- **Fix**: validate the JSON manually. Run `jq . ~/Library/Application\ Support/Tempo/Scores/<provider>.json`; if it errors, fix the JSON. Otherwise check against the schema at `https://tempoapp.app/schema/score.schema.json`
 
 ### Symptom: events arrive, severity is set, but custom labels show literal `${metadata.xxx}`
 
 - **Cause**: the score's interpolation references a metadata key that the payload doesn't include
-- **Check**: open the Score Editor → Available keys strip. The chips show keys actually present in recent events. If `${metadata.host}` shows up literally, `host` isn't in the strip — the payload doesn't have it
+- **Check**: open the Score Editor → Available keys strip. The chips show keys actually present in recent events. If `${metadata.host}` shows up literally, `host` isn't in the strip: the payload doesn't have it
 - **Fix**: either change the score to reference a key that's actually present, or change the upstream sender to include the missing key
 
 ### Symptom: events don't arrive at all
@@ -138,7 +138,7 @@ You've created a score (or are using a bundled one) and events from the source a
   - **"Rejected: invalid token"** → token is wrong or revoked. Settings → Ingestion → confirm the token is active and correct
   - **"Rejected: provider mismatch"** → token is bound to a different providerIdentifier than the payload declares. Either change the payload's `providerIdentifier` or rebind the token
   - **"Rejected: schema validation: <field>"** → payload is malformed. The error message names the offending field
-- **Check 2**: rate limiting. If you're sending many events rapidly (a script in a tight loop), the rate limit may be active: 120 requests per minute, per token, on a sliding 60-second window. Wait a minute for the window to slide, or split load across more tokens — there is no per-IP limit, so an extra bound token raises your effective ceiling
+- **Check 2**: rate limiting. If you're sending many events rapidly (a script in a tight loop), the rate limit may be active: 120 requests per minute, per token, on a sliding 60-second window. Wait a minute for the window to slide, or split load across more tokens. There is no per-IP limit, so an extra bound token raises your effective ceiling
 
 ### Symptom: score has rules but the wrong rule is firing
 
@@ -149,7 +149,7 @@ You've created a score (or are using a bundled one) and events from the source a
 ### Symptom: bundled score's behaviour seems off after an app update
 
 - **Cause**: an update may have improved a bundled score, but your local edits to that score persist (Tempo doesn't overwrite user edits on update)
-- **Fix**: to drop your local edits and pick up the bundled version, quit Tempo, delete `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch — Tempo reseeds that score from the bundle on launch. Duplicate the score first (chip bar → **Duplicate**) if you want to keep your customizations to merge back manually
+- **Fix**: to drop your local edits and pick up the bundled version, quit Tempo, delete `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch. Tempo reseeds that score from the bundle on launch. Duplicate the score first (chip bar → **Duplicate**) if you want to keep your customizations to merge back manually
 
 ---
 
@@ -171,7 +171,7 @@ You downloaded the DMG and macOS refuses to open Tempo.
 ### Symptom: macOS opens the DMG but the Tempo icon launches and immediately quits
 
 - **Cause**: typically a missing entitlement or a permission dialog being dismissed without granting
-- **Fix**: check Console.app for `app.tempoapp.Tempo` entries around the launch time. Look for "missing entitlement" or "permission denied" errors. The most common cause in this state is Calendar/Reminders permission being denied at first launch — open System Settings → Privacy & Security → Calendar and tick Tempo
+- **Fix**: check Console.app for `app.tempoapp.Tempo` entries around the launch time. Look for "missing entitlement" or "permission denied" errors. The most common cause in this state is Calendar/Reminders permission being denied at first launch: open System Settings → Privacy & Security → Calendar and tick Tempo
 
 ---
 
@@ -243,11 +243,11 @@ The single-click way to grab "everything Tempo support might want":
 
 The bundle is a zip containing:
 
-- `manifest.json` — bundle version, app version, generation timestamp
-- `system.txt` — macOS version, hardware summary
-- `firewall.txt` — macOS Application Firewall state, third-party firewall detection
-- `config.json` — your Tempo configuration summary (sources connected, retention, auto-rules — *not* tokens or event payloads)
-- `oslog.log` — the last 24 hours of Tempo's OSLog output
+- `manifest.json`: bundle version, app version, generation timestamp
+- `system.txt`: macOS version, hardware summary
+- `firewall.txt`: macOS Application Firewall state, third-party firewall detection
+- `config.json`: your Tempo configuration summary (sources connected, retention, auto-rules, but *not* tokens or event payloads)
+- `oslog.log`: the last 24 hours of Tempo's OSLog output
 
 Use the bundle when:
 
@@ -266,7 +266,7 @@ If a support request needs your scores, attach them separately. The bundle delib
 
 ### Audit log
 
-Every ingestion attempt — accepted or rejected — is captured in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
+Every ingestion attempt, accepted or rejected, is captured in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
 
 - Source IP
 - Token name (never the value)
@@ -274,7 +274,7 @@ Every ingestion attempt — accepted or rejected — is captured in OSLog (subsy
 - Transport (TLS or cleartext)
 - Result + reason on rejection
 
-**Rejections** are also written to a CSV file at `~/Library/Application Support/Tempo/rejections.csv` (capped at the last 500 rows). There is no `Logs/` directory and no rolling daily file log — accepted events and the full history live in OSLog only.
+**Rejections** are also written to a CSV file at `~/Library/Application Support/Tempo/rejections.csv` (capped at the last 500 rows). There is no `Logs/` directory and no rolling daily file log; accepted events and the full history live in OSLog only.
 
 Rejections are surfaced as a UI: the **Security Audit window**, reachable from the shield icon or **Settings → Security**. It has **Security** and **All** tabs and shows, per rejected attempt, the status code, source IP, token name (never the value), provider, transport (TLS vs cleartext), and reason; you can mark an entry as handled. The window is backed by `rejections.csv` (last 500 rows).
 
@@ -292,7 +292,7 @@ If a bundled score has drifted into a state you don't understand, or you want to
 2. Delete `~/Library/Application Support/Tempo/Scores/<provider>.json` (move to Trash to keep a recovery option)
 3. Re-launch Tempo
 
-On launch, Tempo reseeds that score from the version that ships in the app bundle. Your customizations are gone — duplicate the score first via the chip bar's **Duplicate** if you want a backup.
+On launch, Tempo reseeds that score from the version that ships in the app bundle. Your customizations are gone, so duplicate the score first via the chip bar's **Duplicate** if you want a backup.
 
 ### Reset all scores
 
@@ -302,7 +302,7 @@ To reset every bundled score at once:
 2. Delete the contents of `~/Library/Application Support/Tempo/Scores/` (move to Trash to keep a recovery option)
 3. Re-launch Tempo
 
-On launch, the bundled scores are seeded fresh. Any user-authored scores you wrote from scratch and didn't keep elsewhere are gone — back up first.
+On launch, the bundled scores are seeded fresh. Any user-authored scores you wrote from scratch and didn't keep elsewhere are gone, so back up first.
 
 ### Reset settings
 
@@ -326,7 +326,7 @@ If you want Tempo back to first-launch state:
 4. Open Keychain Access, delete all entries for `app.tempoapp.Tempo`
 5. Re-launch Tempo
 
-You're back to "first launch — grant calendar permission" state. Use this only if everything else has failed.
+You're back to "first launch, grant calendar permission" state. Use this only if everything else has failed.
 
 ---
 
@@ -334,9 +334,9 @@ You're back to "first launch — grant calendar permission" state. Use this only
 
 If you've worked through this chapter and the problem persists, the project's support channels are:
 
-- **Discord** — invite link at [tempoapp.app/community](https://tempoapp.app/community/)
-- **GitHub Issues** — [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues) for site/docs issues, public repo for the app to come post-V2
-- **Email** — `support@tempoapp.app`
+- **Discord**: invite link at [tempoapp.app/community](https://tempoapp.app/community/)
+- **GitHub Issues**: [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues) for site/docs issues, public repo for the app to come post-V2
+- **Email**: `support@tempoapp.app`
 
 When asking for help, include:
 
@@ -345,4 +345,4 @@ When asking for help, include:
 - The diagnostic bundle (Settings → Help → Export diagnostics)
 - A description of what you expected vs what happened
 
-The support team is one person (the founder) plus the community. We'll get back to you, but be patient — this is freeware in V1, not a 24/7 enterprise product.
+The support team is one person (the founder) plus the community. We'll get back to you, but be patient: this is freeware in V1, not a 24/7 enterprise product.

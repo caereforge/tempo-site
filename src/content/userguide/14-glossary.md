@@ -8,7 +8,7 @@ pubDate: 2026-05-05
 ---
 # Glossary
 
-> Linked from across the User Guide. If you land here via a link, the term you came for is below — and there's a "See also" at the bottom of each entry that points back to the chapter where it's used in context.
+> Linked from across the User Guide. If you land here via a link, the term you came for is below, and there's a "See also" at the bottom of each entry that points back to the chapter where it's used in context.
 >
 > **Reading tip**: most terms make more sense once you've skimmed the [Concepts chapter](/docs/02-concepts). If a term feels abstract here, the chapter has an example.
 
@@ -16,7 +16,7 @@ pubDate: 2026-05-05
 
 ### Acked (acknowledged)
 
-A user action you take on an event to mean "I've seen this, I'm leaving it in the feed for now." The event stays visible but its appearance shifts — the title becomes lighter, the severity meta-text gets an outlined "Acked" pill — so it stops competing for your attention.
+A user action you take on an event to mean "I've seen this, I'm leaving it in the feed for now." The event stays visible but its appearance shifts (the title becomes lighter, the severity meta-text gets an outlined "Acked" pill) so it stops competing for your attention.
 
 Acking is reversible. It's distinct from [dismissing](#dismissed), which removes the event from the active feed entirely.
 
@@ -28,7 +28,7 @@ Acking is reversible. It's distinct from [dismissing](#dismissed), which removes
 
 Something Tempo can do when you click a button on an event. Each event ships with its own set of actions, declared in the [score](#score) for that source. Built-in action types in v1 are limited to harmless primitives: open a URL, run a terminal command, copy a string to the clipboard.
 
-Actions are user-triggered in v1 — Tempo never fires one on its own. Auto-firing actions are part of the v2 trajectory.
+Actions are user-triggered in v1: Tempo never fires one on its own. Auto-firing actions are part of the v2 trajectory.
 
 **See also**: Chapter 6 (Action panel), Chapter 7.6 (Default actions in scores).
 
@@ -38,11 +38,11 @@ Actions are user-triggered in v1 — Tempo never fires one on its own. Auto-firi
 
 The technical part of an [action](#action) that says *what* happens when the action is clicked. The five trigger types in v1:
 
-- `openURL` — opens a URL whose scheme is on Tempo's allowlist (`https`, `ssh`, `sftp`, `mailto`, and ~20 app schemes); `file://`, `javascript:` and similar are blocked
-- `openTerminalWith` — opens Terminal.app and runs a command
-- `copyToClipboard` — copies a string to the system clipboard
-- `completeReminder` — flips an Apple Reminder's done state to completed (EventKit write-back)
-- `uncompleteReminder` — flips an Apple Reminder back to not-completed (EventKit write-back)
+- `openURL`: opens a URL whose scheme is on Tempo's allowlist (`https`, `ssh`, `sftp`, `mailto`, and ~20 app schemes); `file://`, `javascript:` and similar are blocked
+- `openTerminalWith`: opens Terminal.app and runs a command
+- `copyToClipboard`: copies a string to the system clipboard
+- `completeReminder`: flips an Apple Reminder's done state to completed (EventKit write-back)
+- `uncompleteReminder`: flips an Apple Reminder back to not-completed (EventKit write-back)
 
 The two reminder triggers are the only place Tempo writes back to a source. Each trigger can use [interpolation](#interpolation) to pull values from the event's payload at click time.
 
@@ -52,9 +52,9 @@ The two reminder triggers are the only place Tempo writes back to a source. Each
 
 ### Needs-attention
 
-Not a stored field — a **computed predicate** Tempo evaluates on the fly from three independent axes: an event's [state](#state-firing--resolved) (`firing` / `resolved` / `info`), its [severity](#severity), and whether you've [acked](#acked-acknowledged) or [dismissed](#dismissed) it. An event needs attention roughly when it's `firing`, at `warning` severity or higher, and neither acked nor dismissed.
+Not a stored field. It's a **computed predicate** Tempo evaluates on the fly from three independent axes: an event's [state](#state-firing--resolved) (`firing` / `resolved` / `info`), its [severity](#severity), and whether you've [acked](#acked-acknowledged) or [dismissed](#dismissed) it. An event needs attention roughly when it's `firing`, at `warning` severity or higher, and neither acked nor dismissed.
 
-You don't usually need to think about this — Tempo derives it for you, and it shifts automatically when you click Ack/Dismiss buttons, when auto-dismiss rules fire, or when the source reports the condition resolved.
+You don't usually need to think about this. Tempo derives it for you, and it shifts automatically when you click Ack/Dismiss buttons, when auto-dismiss rules fire, or when the source reports the condition resolved.
 
 **See also**: [State (firing / resolved)](#state-firing--resolved), [Acked](#acked-acknowledged), [Dismissed](#dismissed), [Severity](#severity), Chapter 8.4 (Maintenance settings).
 
@@ -64,7 +64,7 @@ You don't usually need to think about this — Tempo derives it for you, and it 
 
 The trail of what happened on the ingestion side: which payloads arrived, from which IP, with which token, accepted or rejected and why. Useful when a [score](#score) isn't behaving as expected and you need to confirm whether the underlying event even reached Tempo.
 
-Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (last 500 rows) and surfaced in the Security Audit window (shield icon / Settings → Security). Everything else, accepted events included, lives in OSLog — viewable via macOS Console.app or via the diagnostic export from Settings → Help.
+Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (last 500 rows) and surfaced in the Security Audit window (shield icon / Settings → Security). Everything else, accepted events included, lives in OSLog, viewable via macOS Console.app or via the diagnostic export from Settings → Help.
 
 **See also**: Chapter 12.6 (Logs and diagnostic export).
 
@@ -72,7 +72,7 @@ Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (
 
 ### Bundled score
 
-A [score](#score) that ships preconfigured with Tempo for a common source. There are 20 bundled scores at launch — common sources such as Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, Fastmail (CalDAV), Apple Shortcuts, and more — see Chapter 10 for the full list. (Apple Calendar & Reminders come in via EventKit.) You don't need to write JSON to use a bundled source: just point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
+A [score](#score) that ships preconfigured with Tempo for a common source. There are 20 bundled scores at launch, covering common sources such as Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, Fastmail (CalDAV), Apple Shortcuts, and more; see Chapter 10 for the full list. (Apple Calendar & Reminders come in via EventKit.) You don't need to write JSON to use a bundled source: point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
 
 Bundled scores are editable. Your edits persist across app restarts and update checks. You can also reset a bundled score to its factory default at any time.
 
@@ -82,7 +82,7 @@ Bundled scores are editable. Your edits persist across app restarts and update c
 
 ### CI (continuous integration)
 
-The general category of tools that automatically build, test, and (often) deploy your code on every commit. Common ones in the homelab and dev space: GitHub Actions, GitLab CI, Jenkins, Drone, Buildkite. Tempo doesn't care which one you use — any CI system that can POST a webhook can send events to Tempo.
+The general category of tools that automatically build, test, and (often) deploy your code on every commit. Common ones in the homelab and dev space: GitHub Actions, GitLab CI, Jenkins, Drone, Buildkite. Tempo doesn't care which one you use; any CI system that can POST a webhook can send events to Tempo.
 
 GitHub Actions is the bundled-score source out of the box. Other CI systems use the generic webhook.
 
@@ -102,7 +102,7 @@ Custom labels often use [interpolation](#interpolation) so the label includes a 
 
 ### Dismissed
 
-A user action that removes an event from the active feed. The event isn't deleted — it's still in the database and you can find it via source history — but it stops appearing in the main timeline.
+A user action that removes an event from the active feed. The event isn't deleted (it's still in the database and you can find it via source history) but it stops appearing in the main timeline.
 
 Dismissing is the right move for events you've handled and don't want cluttering your view. For events you've seen but want to leave visible, [ack](#acked) instead.
 
@@ -112,7 +112,7 @@ Dismissing is the right move for events you've handled and don't want cluttering
 
 ### Event
 
-The atomic unit Tempo deals with. Anything that happens — a calendar entry, a backup completion, a UniFi alarm, a GitHub Actions run — arrives at Tempo as an event with a title, a timestamp, a [provider](#provider) identifier, and a payload of metadata.
+The atomic unit Tempo deals with. Anything that happens (a calendar entry, a backup completion, a UniFi alarm, a GitHub Actions run) arrives at Tempo as an event with a title, a timestamp, a [provider](#provider) identifier, and a payload of metadata.
 
 Events have a small set of types (`alert`, `event`, `task`, `reminder`) and a [severity](#severity). Both are assigned by the [score](#score) for that source.
 
@@ -152,7 +152,7 @@ Configurable per score: 15 minutes, 30 minutes, 1 hour, 6 hours, 1 day, 1 week, 
 
 ### Headline metric
 
-A user-facing number or short string surfaced prominently on an event card — file size, duration, error count, IP address — chosen by the [score](#score) for that source. Pulled from the event payload via [interpolation](#interpolation).
+A user-facing number or short string surfaced prominently on an event card (file size, duration, error count, IP address) chosen by the [score](#score) for that source. Pulled from the event payload via [interpolation](#interpolation).
 
 Headline metric is the difference between a card that says "Backup completed" and one that says "Backup completed · +147KB · 1.2s".
 
@@ -164,7 +164,7 @@ Headline metric is the difference between a card that says "Backup completed" an
 
 The 24-hour activity strip that sits above the event feed for the current day. Each segment is one hour, coloured by the highest-severity event in that hour: blue (info), green (ok), yellow (warning), red (error/critical), neutral grey (no events).
 
-Click any hour segment to scroll the feed to that hour. Two visual styles available — pill or flat — togglable in Settings → Interface.
+Click any hour segment to scroll the feed to that hour. Two visual styles available, pill or flat, togglable in Settings → Interface.
 
 **See also**: Chapter 5.5 (The heatmap), [Source history view](#source-history-view) for longer-range visualisation.
 
@@ -174,7 +174,7 @@ Click any hour segment to scroll the feed to that hour. Two visual styles availa
 
 The HTTP server inside Tempo that listens for incoming events from external sources. Default port `7776`, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it. Authenticates each request via per-provider [tokens](#ingestion-token) stored in the macOS Keychain. `POST` (ingestion) and `DELETE` are authenticated; `GET` is unauthenticated introspection (the `/health` probe).
 
-An optional encrypted listener runs on port `8776` (TLS, self-signed cert, anti-downgrade), opt-in per token via a `secure` flag — shipped in 1.1.
+An optional encrypted listener runs on port `8776` (TLS, self-signed cert, anti-downgrade), opt-in per token via a `secure` flag, shipped in 1.1.
 
 Receives events at `POST /ingest` (generic) and at module-specific paths (`/kopia`, `/ingest/unifi`, `/uptime-kuma`).
 
@@ -184,7 +184,7 @@ Receives events at `POST /ingest` (generic) and at module-specific paths (`/kopi
 
 ### Ingestion token
 
-A secret string used to authenticate webhook requests to Tempo's [ingestion server](#ingestion-server). Tokens are typically **per-provider** (bound at creation time to a specific `providerIdentifier`), so a leaked token can only be used to send events as the provider it's bound to — not to spoof other sources.
+A secret string used to authenticate webhook requests to Tempo's [ingestion server](#ingestion-server). Tokens are typically **per-provider** (bound at creation time to a specific `providerIdentifier`), so a leaked token can only be used to send events as the provider it's bound to, not to spoof other sources.
 
 Stored in the macOS Keychain. Sent in the `X-Tempo-Token` HTTP header (or `Authorization: Bearer <token>` for senders that can't set arbitrary headers, like UniFi).
 
@@ -196,7 +196,7 @@ Stored in the macOS Keychain. Sent in the `X-Tempo-Token` HTTP header (or `Autho
 
 Pulling values from an event's payload into a [custom label](#custom-label), [headline metric](#headline-metric), or [action trigger](#action-trigger) at the moment they're rendered or fired. Syntax: `${metadata.host}` for a payload field, `${title}` for the event's title, `${startDate}` for its timestamp.
 
-If a referenced field is missing from the payload, Tempo substitutes a placeholder rather than failing — so a slightly off score still renders something useful.
+If a referenced field is missing from the payload, Tempo substitutes a placeholder rather than failing, so a slightly off score still renders something useful.
 
 **See also**: Chapter 7.4 (Presentation and custom labels), Chapter 11.2 (Field reference).
 
@@ -236,7 +236,7 @@ Esc clears the selection. Click an unselected event without modifiers also clear
 
 A rule you set per [source](#source) that automatically [dismisses](#dismissed) events from that source after a configurable time window. Useful for noisy sources where each event is informational and not worth keeping in the active feed for long.
 
-Configured in Settings → Maintenance → Auto-dismiss. Doesn't delete the events — they stay in source history.
+Configured in Settings → Maintenance → Auto-dismiss. Doesn't delete the events; they stay in source history.
 
 **See also**: Chapter 8.4 (Maintenance settings).
 
@@ -244,7 +244,7 @@ Configured in Settings → Maintenance → Auto-dismiss. Doesn't delete the even
 
 ### Provider
 
-The system or category an event came from — Kopia, UniFi, Home Assistant, a custom webhook. Identified by a string like `com.kopia` or `com.ubiquiti.unifi.network`. One provider can host multiple [sources](#source) (e.g., several Kopia repositories all reporting under `com.kopia`). Some brand families act as umbrellas: `com.ubiquiti.unifi` covers `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` as siblings under a single **UniFi** parent row, leaving room for future Talk / Access / Connect / InnerSpace siblings.
+The system or category an event came from: Kopia, UniFi, Home Assistant, a custom webhook. Identified by a string like `com.kopia` or `com.ubiquiti.unifi.network`. One provider can host multiple [sources](#source) (e.g., several Kopia repositories all reporting under `com.kopia`). Some brand families act as umbrellas: `com.ubiquiti.unifi` covers `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` as siblings under a single **UniFi** parent row, leaving room for future Talk / Access / Connect / InnerSpace siblings.
 
 Each provider typically has one canonical [score](#score), though you can override or extend it.
 
@@ -254,7 +254,7 @@ Each provider typically has one canonical [score](#score), though you can overri
 
 ### Score
 
-A small JSON file that teaches Tempo about a source: how to display events from it, what severity to assign, what actions to offer when an event is clicked, how to group similar events. Think of it as the recipe a [provider](#provider) follows when an event comes in.
+A small JSON file that teaches Tempo about a source: how to display events from it, what severity to assign, what actions to offer when an event is clicked, how to group similar events. It's the recipe a [provider](#provider) follows when an event comes in.
 
 Tempo ships with [bundled scores](#bundled-score) for common sources. You can edit them, write your own from scratch, or install community-contributed scores from the public catalog. The score is the canonical configuration surface between raw payload and what you see and do.
 
@@ -264,9 +264,9 @@ Tempo ships with [bundled scores](#bundled-score) for common sources. You can ed
 
 ### `.tempo-score` file
 
-A score file with a custom file extension that triggers a one-click install flow. Double-clicking a `.tempo-score` file opens Tempo's **Score Review Sheet** — a preview of what's about to be installed (provider identifier, display name, colour, rules, default actions) — and an Install button.
+A score file with a custom file extension that triggers a one-click install flow. Double-clicking a `.tempo-score` file opens Tempo's **Score Review Sheet** (a preview of what's about to be installed: provider identifier, display name, colour, rules, default actions) and an Install button.
 
-Used for distributing community-contributed scores via the public catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Functionally identical to a `.json` score file, but the extension makes the install flow friction-free.
+Used for distributing community-contributed scores via the public catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Functionally identical to a `.json` score file, but the extension makes the install flow simpler.
 
 **See also**: Chapter 11.5 (`.tempo-score` installer file).
 
@@ -274,9 +274,9 @@ Used for distributing community-contributed scores via the public catalog at [gi
 
 ### Severity
 
-A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`. Drives the colouring of cards, badges, and the heatmap. Assigned by the [score](#score) for the source — not a property the upstream tool sets directly.
+A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`. Drives the colouring of cards, badges, and the heatmap. Assigned by the [score](#score) for the source, not a property the upstream tool sets directly.
 
-`info` is blue and `ok` is green — both quiet outcomes, distinguishable. `warning` is yellow. `error` and `critical` are red. The exact mapping is configurable per score via [severity rules](#severity-rule).
+`info` is blue and `ok` is green, both quiet outcomes, distinguishable. `warning` is yellow. `error` and `critical` are red. The exact mapping is configurable per score via [severity rules](#severity-rule).
 
 **See also**: Chapter 2.5 (Severity, state, acknowledgment, dismissal).
 
@@ -306,7 +306,7 @@ Sources appear as rows in the source panel. You can hide a source, set per-sourc
 
 A separate visualisation, accessed from the source actions menu (the "i" icon next to a source row → "Show history"), that displays activity for that single source over the past 84 days as a GitHub-contribution-style grid. Each cell is one day, coloured by activity volume + max severity.
 
-The full event database keeps everything indefinitely — the 84-day window is what this view renders, not what Tempo retains.
+The full event database keeps everything indefinitely; the 84-day window is what this view renders, not what Tempo retains.
 
 **See also**: Chapter 4.4 (Source actions menu).
 
@@ -314,7 +314,7 @@ The full event database keeps everything indefinitely — the 84-day window is w
 
 ### Stack
 
-A cluster of related events shown as a single card with a count badge instead of N separate cards. Stacking is driven by the [score](#score) — each score declares which payload fields define "relatedness" and a [grouping window](#grouping-window) inside which the stacking applies.
+A cluster of related events shown as a single card with a count badge instead of N separate cards. Stacking is driven by the [score](#score): each score declares which payload fields define "relatedness" and a [grouping window](#grouping-window) inside which the stacking applies.
 
 Click a stack to expand it into individual events. Use the dismiss-all footer at the bottom of an expanded stack to clear the whole cluster in one action.
 
