@@ -1,6 +1,6 @@
 ---
 title: "Adding a button to Tempo events"
-description: "How to add a custom action button to a source's events. Open a log file from a backup alert, copy an IP from a network event, jump to a terminal at a hostname. One JSON file, no relaunch."
+description: "How to add a custom action button to a source's events: open a log file, copy an IP, or jump to a terminal at a hostname. One JSON file, no relaunch."
 pubDate: 2026-05-15
 tags: ["how-to"]
 draft: false

@@ -1,6 +1,6 @@
 ---
 title: "Jellyfin"
-description: "Jellyfin server events in Tempo's timeline with one-click actions to open the web UI, drill into items, or jump to admin. Bulk imports collapse to one stack per series; playback pairs start↔stop."
+description: "Jellyfin server events in Tempo's timeline, with one-click actions to open the web UI, drill into items, or jump to admin. Bulk imports collapse per series."
 providerIdentifier: "org.jellyfin"
 color: "#AA5CC3"
 version: "1.1.0"

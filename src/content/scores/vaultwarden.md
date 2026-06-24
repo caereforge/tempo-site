@@ -1,6 +1,6 @@
 ---
 title: "Vaultwarden"
-description: "Vaultwarden auth activity in Tempo's timeline: failed/successful logins, admin access, vault exports and a brute-force burst signal, grouped per source IP. Log-driven, your secrets stay local."
+description: "Vaultwarden auth activity in Tempo's timeline: logins, admin access, vault exports, and a brute-force signal, grouped per source IP. Your secrets stay local."
 providerIdentifier: "com.vaultwarden"
 color: "#175DDC"
 version: "1.1.0"

@@ -1,6 +1,6 @@
 ---
-title: "Security matters: how to verify the Tempo DMG before installing it"
-description: "Three independent integrity layers stand between the Tempo DMG on your Mac and what we built on ours. Here's how each works, when to verify the SHA-256 yourself, and why we publish it."
+title: "How to verify the Tempo DMG before installing"
+description: "Three independent integrity layers stand between the Tempo DMG on your Mac and what we built. How each works, when to verify the SHA-256, and why we publish it."
 pubDate: 2026-05-14
 tags: ["security", "transparency"]
 draft: false

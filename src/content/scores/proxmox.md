@@ -1,6 +1,6 @@
 ---
 title: "Proxmox VE"
-description: "Proxmox Virtual Environment cluster events in Tempo's timeline. Open the datacenter UI, jump to a specific node or VM, copy IDs for an incident ticket, one click per event."
+description: "Proxmox VE cluster events in Tempo's timeline. Open the datacenter UI, jump to a node or VM, or copy IDs for an incident ticket, one click per event."
 providerIdentifier: "com.proxmox"
 color: "#E57000"
 version: "1.0.0"

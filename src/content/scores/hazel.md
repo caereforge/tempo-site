@@ -1,6 +1,6 @@
 ---
 title: "Hazel"
-description: "Bring Hazel rule fires into your Tempo timeline. Each rule firing becomes an event with one-click actions to open the file, jump to the source or destination folder, and copy the path or rule name."
+description: "Bring Hazel rule fires into your Tempo timeline. Each firing becomes an event with one-click actions to open the file, jump to a folder, or copy the path."
 providerIdentifier: "com.noodlesoft.hazel"
 color: "#C77B30"
 version: "1.0.0"

@@ -1,6 +1,6 @@
 ---
 title: "Synology"
-description: "DSM notifications in your Tempo timeline, with one-click actions to jump into Storage Manager, Log Center, Security Advisor, and SSH. Built-in: ships with Tempo, no separate score to install."
+description: "DSM notifications in your Tempo timeline, with one-click actions for Storage Manager, Log Center, Security Advisor, and SSH. Built-in: nothing to install."
 providerIdentifier: "com.synology"
 color: "#0070D1"
 version: "1.0.0"

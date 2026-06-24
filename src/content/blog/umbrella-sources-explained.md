@@ -1,6 +1,6 @@
 ---
 title: "Umbrella sources: one score, many senders"
-description: "Some sources in Tempo aren't a single row, they're a family. Scripts and Hazel are umbrellas: one parent score covers every sub-source underneath. Here's how that works, how deep it goes, and how it differs from a vendor grouping like UniFi."
+description: "Scripts and Hazel are umbrellas: one parent score covers every sub-source underneath. How that works, how deep it goes, and how it differs from UniFi grouping."
 pubDate: 2026-05-23
 tags: ["scores", "how-to", "design"]
 ---

@@ -1,6 +1,6 @@
 ---
 title: "UniFi"
-description: "Bring UniFi Network alarms (client connect/disconnect, device lost contact) and UniFi Protect events (motion, smart-detect, doorbell) into your Tempo timeline. Built-in: ships with Tempo, no separate score to install."
+description: "Bring UniFi Network alarms and UniFi Protect events (motion, smart-detect, doorbell) into your Tempo timeline. Built-in: ships with Tempo, nothing to install."
 providerIdentifier: "com.ubiquiti.unifi"
 color: "#0559C9"
 version: "1.0.0"

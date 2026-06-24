@@ -1,6 +1,6 @@
 ---
 title: "Source panel"
-description: "The source panel, the leftmost column in the Tempo window, lists every source Tempo knows about and gives you the controls for showing, hiding, filtering, and recoloring each one."
+description: "The source panel, the leftmost column in Tempo, lists every source and gives you the controls to show, hide, filter, and recolor each one."
 chapter: 4
 order: 4
 draft: false

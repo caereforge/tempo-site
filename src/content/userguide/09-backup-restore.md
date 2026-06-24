@@ -1,6 +1,6 @@
 ---
 title: "Backup and restore"
-description: "This chapter covers what's worth backing up, how Tempo's built-in backup tools work, what they include and exclude, and how to move your Tempo state to a new Mac."
+description: "What's worth backing up, how Tempo's built-in backup tools work, what they include and exclude, and how to move your Tempo state to a new Mac."
 chapter: 9
 order: 9
 draft: false

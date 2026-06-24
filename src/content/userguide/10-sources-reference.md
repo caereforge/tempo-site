@@ -1,6 +1,6 @@
 ---
 title: "Sources reference"
-description: "This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline."
+description: "The per-source manual: every bundled source gets a section covering setup, the payload fields its score expects, and what to expect in the timeline."
 chapter: 10
 order: 10
 draft: false

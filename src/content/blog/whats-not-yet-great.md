@@ -1,6 +1,6 @@
 ---
 title: "What's not yet great"
-description: "Honest notes on Tempo's rough edges, kept updated. The Score Editor still lags on very large scores; in-editor action editing and reminder write-back landed in 1.1; calendar entries stay read-only."
+description: "Honest notes on Tempo's rough edges. The Score Editor still lags on large scores; action editing and reminder write-back landed in 1.1; calendars read-only."
 pubDate: 2026-05-15
 tags: ["transparency", "release"]
 draft: false

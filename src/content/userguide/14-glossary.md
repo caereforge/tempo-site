@@ -1,6 +1,6 @@
 ---
 title: "Glossary"
-description: "Definitions for every Tempo-specific term: event, source, provider, score, severity, ack, dismiss, ingestion, heatmap, and more. Cross-linked to the chapters that introduce each one."
+description: "Definitions for every Tempo-specific term: event, source, provider, score, severity, ack, dismiss, ingestion, heatmap, and more, cross-linked to each chapter."
 chapter: 14
 order: 14
 draft: false

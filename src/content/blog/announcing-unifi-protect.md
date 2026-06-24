@@ -1,6 +1,6 @@
 ---
 title: "Announcing UniFi Protect in Tempo"
-description: "UniFi Protect joins UniFi Network as a built-in source. Tempo renders the motion thumbnail inline in the action panel, with a bounded image cache so the database stays sane."
+description: "UniFi Protect joins UniFi Network as a built-in source. Tempo renders the motion thumbnail inline, with a bounded image cache so the database stays sane."
 pubDate: 2026-05-07
 tags: ["announcement", "scores"]
 ---

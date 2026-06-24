@@ -1,6 +1,6 @@
 ---
 title: "FAQ"
-description: "Answers to the questions that come up most often about Tempo: pricing, privacy, sandboxing, integrations, V2 plans, and the difference between bundled and community scores."
+description: "Answers to the most common questions about Tempo: pricing, privacy, sandboxing, integrations, V2 plans, and bundled versus community scores."
 chapter: 13
 order: 13
 draft: false

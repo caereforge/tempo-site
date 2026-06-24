@@ -1,6 +1,6 @@
 ---
 title: "What to type when Tempo asks for a provider"
-description: "When you create a token in Tempo, the New Token sheet asks for a provider identifier. This is what it is, what to type for the bundled sources, and what to type for your own scripts."
+description: "The New Token sheet asks for a provider identifier. What it is, what to type for the bundled sources, and what to type for your own scripts."
 pubDate: 2026-05-16
 tags: ["how-to"]
 draft: false
