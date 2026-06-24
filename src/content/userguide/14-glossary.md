@@ -216,7 +216,7 @@ V1 only does passive liveness (silence detection). Active liveness (Tempo pingin
 
 A separate view that replaces the source panel's normal contents, accessed via the button at the top of the source panel. From Manage Sources you can: add a new source, reorder existing ones, edit per-source settings (display name, group membership, auto-dismiss override, liveness override), or remove a source entirely.
 
-The button label adapts to your current source count: "Get started - add a source" / "Add a source" / "Manage sources".
+The button label adapts to your current source count: "Add a source" (under five) / "Manage sources" (five or more).
 
 **See also**: Chapter 4 (Source panel).
 

@@ -186,7 +186,7 @@ For sources organised under an **umbrella** parent (UniFi grouping Network and P
 
 The button at the bottom of the source panel switches the panel into **Manage Sources** mode. The label adapts:
 
-- **"Get started - add a source"** when you have one or two sources (you've just installed Tempo)
+- **"Add a source"** when you have one to four sources (highlighted with a sparkles icon right after install)
 - **"Add a source"** when you have three or four
 - **"Manage sources"** when you have five or more
 

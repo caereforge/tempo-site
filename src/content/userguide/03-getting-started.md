@@ -168,7 +168,7 @@ The source panel lists every source Tempo knows about. Each row shows:
 
 Filtering the timeline to one or more sources happens through the info menu (ⓘ): click it on a source row, then **Show only this source** (or **Add to filter** to combine multiple). A yellow filter banner appears across the top of the event panel listing the active filter; click the banner to clear. The source row itself is not a click target: that's a deliberate choice to keep clicking on the row from feeling like a state change you didn't plan for.
 
-A button at the bottom of the source panel switches the panel into **Manage Sources** mode, a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Get started - add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
+A button at the bottom of the source panel switches the panel into **Manage Sources** mode, a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Add a source" until you reach five sources (highlighted with a sparkles icon when you are just starting out), then "Manage sources" at five or more.
 
 ### Event panel (centre)
 
