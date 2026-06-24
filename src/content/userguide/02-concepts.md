@@ -28,7 +28,7 @@ Every event has a small set of mandatory fields:
 - **Event type** — one of `alert`, `event`, `task`, `reminder`. Affects rendering and a couple of UI behaviours
 - **Payload metadata** — a flexible dict of fields the upstream tool sent: hostname, file size, IP address, status code, whatever
 
-Events also have fields Tempo manages itself: severity, attention state, acknowledgment timestamps, ID. You don't usually think about these.
+Events also have fields Tempo manages itself: severity, state, acknowledgment timestamps, ID. You don't usually think about these. (Whether an event "needs attention" isn't a stored field — Tempo computes it from state, severity, and whether you've acknowledged or dismissed it.)
 
 > 💡 **Note**: an event isn't the same thing as the underlying thing-that-happened. If your Kopia backup runs every night, the backup itself is a process; the event is the *record* of that process completing (or failing) that Kopia sends to Tempo. Events are records, not the things themselves.
 
@@ -106,7 +106,7 @@ Every event in Tempo can carry a set of **actions** — buttons that do somethin
 
 In v1, three action trigger types are supported:
 
-- **Open URL** (`openURL`) — opens any URL the user's Mac knows how to handle. Examples: `https://...` (browser), `ssh://admin@10.0.1.42` (Terminal SSH), `vnc://server.local` (Screen Sharing), `obsidian://open?vault=...` (Obsidian deep link), or any custom app URL scheme
+- **Open URL** (`openURL`) — opens a URL whose scheme is on Tempo's allowlist. Examples: `https://...` (browser), `ssh://admin@10.0.1.42` (Terminal SSH), `obsidian://open?vault=...` (Obsidian deep link), or another allowlisted app scheme (Slack, Things, Todoist, VS Code, Zoom…). Schemes outside the allowlist are blocked at click time
 - **Open Terminal with command** (`openTerminalWith`) — opens Terminal.app and runs the specified command
 - **Copy to clipboard** (`copyToClipboard`) — copies a string to the system clipboard
 

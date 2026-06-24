@@ -23,7 +23,7 @@ Tempo is distributed as a signed and notarised disk image. Download it from:
 - [downloads.tempoapp.app](https://downloads.tempoapp.app) — always the latest release
 - [tempoapp.app/changelog](https://tempoapp.app/changelog) — versioned download links if you want a specific release
 
-The DMG is around **7 MB** depending on the release. Verify the SHA-256 checksum against the value published on the changelog page if you'd like an extra integrity check; this is optional but recommended for tools that talk to the rest of your homelab.
+The DMG is **a few megabytes** depending on the release. Verify the SHA-256 checksum against the value published on the changelog page if you'd like an extra integrity check; this is optional but recommended for tools that talk to the rest of your homelab.
 
 ### Drag to Applications
 
@@ -58,15 +58,15 @@ The cask fetches the exact same signed and notarised DMG from `downloads.tempoap
 
 **Updating**:
 
-Tempo auto-updates via Sparkle by default — same as the DMG flow. New releases are delivered in-app through **Tempo → Check for Updates…** or automatically at the configured interval. If you'd rather drive updates through Homebrew, both options work:
+A cask-installed Tempo updates through Homebrew, not through Sparkle — the cask build disables the in-app updater so the two don't fight over the same `Tempo.app`. To pick up a new release:
 
 ```bash
 brew upgrade --cask tempo
 ```
 
-…fetches the latest cask version and replaces `Tempo.app`. There's no conflict between Sparkle and `brew upgrade` — both point at the same DMG on `downloads.tempoapp.app`. Pick whichever flow fits your routine.
+…fetches the latest cask version and replaces `Tempo.app`. If you'd rather have Tempo update itself in-app via **Tempo → Check for Updates…**, install from the DMG instead — the DMG build keeps Sparkle enabled. Pick whichever flow fits your routine, but don't expect a cask install to also self-update.
 
-> 💡 **Note**: `brew livecheck` reads Tempo's Sparkle appcast directly, so the cask catches up automatically with each release. You don't need to wait for a separate `brew update` cadence — `brew upgrade --cask tempo` always reflects what's live.
+> 💡 **Note**: `brew livecheck` tracks Tempo's releases, so the cask catches up automatically with each one. You don't need to wait for a separate `brew update` cadence — `brew upgrade --cask tempo` always reflects what's live.
 
 **Uninstalling**:
 
@@ -103,6 +103,8 @@ A clock icon appears in the macOS menubar. That's Tempo's menubar item — it st
 Behind the scenes, Tempo also starts its **ingestion server** on first launch. This is a small HTTP server that listens on port `7776` by default, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it. The first time it starts, Tempo generates a default ingestion token and stores it in your macOS Keychain.
 
 You won't see anything in the UI to indicate this — it just runs. To verify it's working, open **Settings → Ingestion**: you'll see the listen address, the active tokens, and a copy-to-clipboard button for each token.
+
+> 💡 **Note**: Tempo can also accept encrypted (TLS) connections on port `8776`. TLS is opt-in per token in **Settings → Ingestion**; see the [Security page](/security) for the cert and per-token `secure` flag details.
 
 > 💡 **Note**: the ingestion server is what lets external sources (Home Assistant, Uptime Kuma, Kopia, GitHub Actions, custom scripts) send events to Tempo via HTTP POST. It's on by default because Tempo without external sources is essentially a viewer for your day's calendar and reminders — useful, but a fraction of the product. Leaving the server running costs ~a kilobyte of memory and one TCP listen socket; the moment you decide to wire up your first source it just works without revisiting Settings. If you genuinely won't use external sources, you can disable it in [§8.2 — Ingestion and tokens](/docs/08-settings-reference#82-ingestion-and-tokens).
 
@@ -166,7 +168,7 @@ The source panel lists every source Tempo knows about. Each row shows:
 
 Filtering the timeline to one or more sources happens through the info menu (ⓘ) — click it on a source row, then **Show only this source** (or **Add to filter** to combine multiple). A yellow filter banner appears across the top of the event panel listing the active filter; click the banner to clear. The source row itself is not a click target — that's a deliberate choice to keep clicking on the row from feeling like a state change you didn't plan for.
 
-A button at the bottom of the source panel switches the panel into **Manage Sources** mode — a different view where you can add new sources, reorder existing ones, and change source-level settings. The button label adapts to your current source count: "Get started — add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
+A button at the bottom of the source panel switches the panel into **Manage Sources** mode — a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Get started — add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
 
 ### Event panel (centre)
 
@@ -177,7 +179,7 @@ This is where the timeline lives. Four things are stacked vertically:
 3. **24-hour activity heatmap** — a horizontal strip of 24 segments, one per hour, coloured by the highest-severity event in that hour. Click a segment to scroll the feed to that hour
 4. **Event feed** — chronological list of events, with day separators ("TODAY", "YESTERDAY", weekday name for older days), each event rendered as a card
 
-The feed is virtualised, so scrolling stays smooth even with thousands of historical events.
+The feed loads a recent window of events (the default is the last 7 days, configurable in **Settings → Maintenance → Database**) plus everything still outstanding — anything firing or needing attention, however old. As you scroll back, older events lazy-load on demand. The net effect is a feed that stays smooth even with thousands of historical events without holding all of history in memory at once.
 
 ### Action panel (right)
 
@@ -241,7 +243,7 @@ Most users connect a real source in this order:
 
 1. **Something you already have running** — your Kopia backups or your Home Assistant instance. Pick whichever is easier to reach (i.e., whichever you have the admin UI open in another tab right now)
 2. **Something with frequent events** — a CI workflow, a noisy monitor — so you see Tempo's grouping and severity behaviour kick in within a few minutes rather than waiting for a daily cron
-3. **A custom script** — once the bundled sources are familiar, the [`tempo_send.sh` helper](/docs/10-sources-reference#1010--tempo_sendsh-helper) makes it trivial to wire any cron job, post-commit hook, or shell script into Tempo
+3. **A custom script** — once the bundled sources are familiar, the [`tempo-post` helper](/docs/10-sources-reference#1010--tempo-post-helper) makes it trivial to wire any cron job, post-commit hook, or shell script into Tempo
 
 Pick one and follow the matching section in [§10 — Sources reference](/docs/10-sources-reference). Each setup section is two to four pages, takes 5-15 minutes end-to-end.
 

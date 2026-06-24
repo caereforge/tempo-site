@@ -36,25 +36,27 @@ Actions are user-triggered in v1 — Tempo never fires one on its own. Auto-firi
 
 ### Action trigger
 
-The technical part of an [action](#action) that says *what* happens when the action is clicked. The three trigger types in v1:
+The technical part of an [action](#action) that says *what* happens when the action is clicked. The five trigger types in v1:
 
-- `openURL` — opens any URL the user's Mac knows how to handle (`https://`, `ssh://`, `vnc://`, custom app schemes)
+- `openURL` — opens a URL whose scheme is on Tempo's allowlist (`https`, `ssh`, `sftp`, `mailto`, and ~20 app schemes); `file://`, `javascript:` and similar are blocked
 - `openTerminalWith` — opens Terminal.app and runs a command
 - `copyToClipboard` — copies a string to the system clipboard
+- `completeReminder` — flips an Apple Reminder's done state to completed (EventKit write-back)
+- `uncompleteReminder` — flips an Apple Reminder back to not-completed (EventKit write-back)
 
-Each trigger can use [interpolation](#interpolation) to pull values from the event's payload at click time.
+The two reminder triggers are the only place Tempo writes back to a source. Each trigger can use [interpolation](#interpolation) to pull values from the event's payload at click time.
 
 **See also**: Chapter 11.4 (Action triggers reference).
 
 ---
 
-### Attention state
+### Needs-attention
 
-Internal field on every event that tracks whether it currently needs the user's attention. Three values: `needsAttention` (default — shown normally), `acked` ([acknowledged](#acked) by user, de-emphasised), `dismissed` ([dismissed](#dismissed), removed from the active feed).
+Not a stored field — a **computed predicate** Tempo evaluates on the fly from three independent axes: an event's [state](#state-firing--resolved) (`firing` / `resolved` / `info`), its [severity](#severity), and whether you've [acked](#acked-acknowledged) or [dismissed](#dismissed) it. An event needs attention roughly when it's `firing`, at `warning` severity or higher, and neither acked nor dismissed.
 
-You don't usually need to think about this — Tempo manages it for you when you click Ack/Dismiss buttons or configure auto-dismiss rules.
+You don't usually need to think about this — Tempo derives it for you, and it shifts automatically when you click Ack/Dismiss buttons, when auto-dismiss rules fire, or when the source reports the condition resolved.
 
-**See also**: Chapter 8.4 (Maintenance settings).
+**See also**: [State (firing / resolved)](#state-firing--resolved), [Acked](#acked-acknowledged), [Dismissed](#dismissed), [Severity](#severity), Chapter 8.4 (Maintenance settings).
 
 ---
 
@@ -62,7 +64,7 @@ You don't usually need to think about this — Tempo manages it for you when you
 
 The trail of what happened on the ingestion side: which payloads arrived, from which IP, with which token, accepted or rejected and why. Useful when a [score](#score) isn't behaving as expected and you need to confirm whether the underlying event even reached Tempo.
 
-Stored locally in `~/Library/Application Support/Tempo/Logs/` and viewable via macOS Console.app or via the diagnostic export from Settings → Help.
+Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (last 500 rows) and surfaced in the Security Audit window (shield icon / Settings → Security). Everything else, accepted events included, lives in OSLog — viewable via macOS Console.app or via the diagnostic export from Settings → Help.
 
 **See also**: Chapter 12.6 (Logs and diagnostic export).
 
@@ -70,7 +72,7 @@ Stored locally in `~/Library/Application Support/Tempo/Logs/` and viewable via m
 
 ### Bundled score
 
-A [score](#score) that ships preconfigured with Tempo for a common source — Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar & Reminders. You don't need to write JSON to use a bundled source: just point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
+A [score](#score) that ships preconfigured with Tempo for a common source. There are 20 bundled scores at launch — common sources such as Kopia, UniFi (Network and Protect), Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, Fastmail (CalDAV), Apple Shortcuts, and more — see Chapter 10 for the full list. (Apple Calendar & Reminders come in via EventKit.) You don't need to write JSON to use a bundled source: just point the upstream tool at Tempo's [ingestion endpoint](#ingestion-server) and the bundled score handles the rest.
 
 Bundled scores are editable. Your edits persist across app restarts and update checks. You can also reset a bundled score to its factory default at any time.
 
@@ -170,7 +172,9 @@ Click any hour segment to scroll the feed to that hour. Two visual styles availa
 
 ### Ingestion server
 
-The HTTP server inside Tempo that listens for incoming events from external sources. Default port `7776`, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it. Authenticates each request via per-provider [tokens](#ingestion-token) stored in the macOS Keychain.
+The HTTP server inside Tempo that listens for incoming events from external sources. Default port `7776`, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it. Authenticates each request via per-provider [tokens](#ingestion-token) stored in the macOS Keychain. `POST` (ingestion) and `DELETE` are authenticated; `GET` is unauthenticated introspection (the `/health` probe).
+
+An optional encrypted listener runs on port `8776` (TLS, self-signed cert, anti-downgrade), opt-in per token via a `secure` flag — shipped in 1.1.
 
 Receives events at `POST /ingest` (generic) and at module-specific paths (`/kopia`, `/ingest/unifi`, `/uptime-kuma`).
 

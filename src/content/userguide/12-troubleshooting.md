@@ -138,7 +138,7 @@ You've created a score (or are using a bundled one) and events from the source a
   - **"Rejected: invalid token"** → token is wrong or revoked. Settings → Ingestion → confirm the token is active and correct
   - **"Rejected: provider mismatch"** → token is bound to a different providerIdentifier than the payload declares. Either change the payload's `providerIdentifier` or rebind the token
   - **"Rejected: schema validation: <field>"** → payload is malformed. The error message names the offending field
-- **Check 2**: rate limiting. If you're sending many events rapidly (a script in a tight loop), the rate limit (600 req/10min/token, 3000 req/10min/IP) may be active. Wait 10 minutes; the limit slides
+- **Check 2**: rate limiting. If you're sending many events rapidly (a script in a tight loop), the rate limit may be active: 120 requests per minute, per token, on a sliding 60-second window. Wait a minute for the window to slide, or split load across more tokens — there is no per-IP limit, so an extra bound token raises your effective ceiling
 
 ### Symptom: score has rules but the wrong rule is firing
 
@@ -149,7 +149,7 @@ You've created a score (or are using a bundled one) and events from the source a
 ### Symptom: bundled score's behaviour seems off after an app update
 
 - **Cause**: an update may have improved a bundled score, but your local edits to that score persist (Tempo doesn't overwrite user edits on update)
-- **Fix**: in the Score Editor, click **Reset to bundled defaults**. This replaces your local copy with the bundled version. You'll lose your customisations — make a copy first if you want to merge them back manually
+- **Fix**: to drop your local edits and pick up the bundled version, quit Tempo, delete `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch — Tempo reseeds that score from the bundle on launch. Duplicate the score first (chip bar → **Duplicate**) if you want to keep your customizations to merge back manually
 
 ---
 
@@ -266,30 +266,37 @@ If a support request needs your scores, attach them separately. The bundle delib
 
 ### Audit log
 
-Every ingestion attempt — accepted or rejected — is captured both in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`) and in the rolling daily file log under `~/Library/Application Support/Tempo/Logs/tempo-YYYY-MM-DD.log` (7-day retention). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
+Every ingestion attempt — accepted or rejected — is captured in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
 
 - Source IP
 - Token name (never the value)
 - Provider identifier
+- Transport (TLS or cleartext)
 - Result + reason on rejection
 
-The audit trail isn't surfaced as a UI in V1 — read it via Console.app filtered on the subsystem, or open the file log directly. The diagnostic bundle bundles the file log automatically. For long-term forensics beyond the 7-day window, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple's `os_log` reference).
+**Rejections** are also written to a CSV file at `~/Library/Application Support/Tempo/rejections.csv` (capped at the last 500 rows). There is no `Logs/` directory and no rolling daily file log — accepted events and the full history live in OSLog only.
+
+Rejections are surfaced as a UI: the **Security Audit window**, reachable from the shield icon or **Settings → Security**. It has **Security** and **All** tabs and shows, per rejected attempt, the status code, source IP, token name (never the value), provider, transport (TLS vs cleartext), and reason; you can mark an entry as handled. The window is backed by `rejections.csv` (last 500 rows).
+
+For accepted events and full history beyond the rejection feed, read OSLog via Console.app filtered on the subsystem. The diagnostic bundle carries roughly the last 24 hours of OSLog automatically. For long-term forensics, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple's `os_log` reference).
 
 ---
 
-## 12.7 — Reset to bundled defaults
+## 12.7 — Resetting scores to bundled defaults
 
-If a bundled score has drifted into a state you don't understand, or you want to undo wholesale customisation:
+If a bundled score has drifted into a state you don't understand, or you want to undo wholesale customization:
 
 ### Reset a single score
 
-- **Score Editor → toolbar → Reset to bundled defaults**
+1. Quit Tempo
+2. Delete `~/Library/Application Support/Tempo/Scores/<provider>.json` (move to Trash to keep a recovery option)
+3. Re-launch Tempo
 
-This replaces your local copy of the score with the version that ships in the app bundle. Your customisations are gone — make a duplicate first via the chip bar's **Duplicate** if you want a backup.
+On launch, Tempo reseeds that score from the version that ships in the app bundle. Your customizations are gone — duplicate the score first via the chip bar's **Duplicate** if you want a backup.
 
 ### Reset all scores
 
-There's no single "reset all" button in V1. To do it manually:
+To reset every bundled score at once:
 
 1. Quit Tempo
 2. Delete the contents of `~/Library/Application Support/Tempo/Scores/` (move to Trash to keep a recovery option)

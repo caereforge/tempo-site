@@ -25,12 +25,12 @@ Tempo writes to one location:
 │   ├── com.kopia.json
 │   ├── com.unifi.json
 │   └── ...
-├── Themes/                     ← user-installed themes (V1.1+)
-├── Sounds/                     ← user-installed sound packs (V1.x)
-└── Logs/                       ← diagnostic log mirror (rolling daily files,
-                                    7-day retention — includes the audit
-                                    trail of every ingestion attempt)
+├── Themes/                     ← drop-in themes (.json, live-reloaded; ships today)
+└── rejections.csv              ← rejected-ingestion audit log (last 500 rows;
+                                    accepted events and full history go to OSLog)
 ```
+
+> 💡 **Note**: there is no `Sounds/` drop-in folder. V1 has a single fixed macOS "Glass" chime with per-source and master on/off toggles — no sound selection and no sound packs.
 
 Plus:
 
@@ -65,8 +65,8 @@ Bundle file name: `tempo-backup-YYYYMMDD-HHmmss.tempobackup`
 ### What's *not* in a backup bundle
 
 - **Ingestion tokens** — handled separately via the Keychain. See the next sub-section
-- **Custom themes and sound packs** — these aren't a V1 feature; drop-in folders for both ship in V1.1+. When they land, they'll be backed up alongside scores
-- **Logs** — diagnostic-only and machine-specific (this includes the audit trail of ingestion attempts; restoring it on a new Mac would be misleading)
+- **Custom themes** — the Themes drop-in folder (`~/Library/Application Support/Tempo/Themes/`, `.json` files, live-reloaded) ships today, but its contents aren't yet folded into the backup bundle; mirror it manually for now. (There is no sound drop-in: V1 has a single fixed chime, not a sound feature.)
+- **Diagnostic logs** — OSLog and the `rejections.csv` audit log are diagnostic-only and machine-specific (restoring the audit trail on a new Mac would be misleading)
 
 ### Tokens are deliberately not in the backup
 
@@ -124,12 +124,12 @@ Configuration is **already inside the `.tempobackup` bundle** the V1 backup tool
 
 Two cases where copying files alongside the bundle is useful:
 
-- **Custom themes and sound packs** (V1.1+) — once these features ship, drop-in folders (`~/Library/Application Support/Tempo/Themes/`, `~/Library/Application Support/Tempo/Sounds/`) can be mirrored manually until they're folded into the bundle
-- **Out-of-band copies** for paranoia — a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite` and `Logs/`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` zip
+- **Custom themes** — the Themes drop-in folder (`~/Library/Application Support/Tempo/Themes/`) ships today but isn't yet folded into the bundle, so mirror it manually until it is
+- **Out-of-band copies** for paranoia — a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite` and `rejections.csv`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` zip
 
 ```bash
 # Snippet for the out-of-band copy approach
-rsync -a --exclude='Tempo.sqlite*' --exclude='Logs/' \
+rsync -a --exclude='Tempo.sqlite*' --exclude='rejections.csv' \
   ~/Library/Application\ Support/Tempo/ \
   ~/iCloud\ Drive/Tempo/Mirror/
 ```
@@ -140,7 +140,7 @@ The bundle remains the canonical, atomic, restore-preview-aware path. The mirror
 
 - **Scores** change when you edit them — typically once after install (during initial setup), then occasionally (a new use case, a rule tweak). Re-backup after every editing session
 - **Preferences** change with every Settings change — mostly stabilises after initial setup
-- **Themes / sounds** are stable once installed
+- **Themes** are stable once installed
 - **Tokens** (Keychain) — you set them once when configuring sources; rarely changes after that
 
 ### What's already in the `.tempobackup` bundle
@@ -255,7 +255,7 @@ A few signs that suggest a backup is healthy:
 Tempo's backup is for *your* data. It's not designed to:
 
 - **Sync state between two running Macs** — backup → restore is a one-way flow at a moment in time. Don't restore the same bundle on a second Mac that's also running Tempo unless you're prepared for both Macs to drift independently after that
-- **Roll back to a previous date** as a routine workflow — restore is for migration and disaster recovery, not "let me undo yesterday's edits". For experimental score editing, use the Score Editor's **Discard** and **Reset to bundled defaults** instead
+- **Roll back to a previous date** as a routine workflow — restore is for migration and disaster recovery, not "let me undo yesterday's edits". For experimental score editing, use the Score Editor's **Discard** to drop unsaved changes; to fully revert a bundled score, duplicate it first as a safety copy, or quit Tempo, delete `Scores/<provider>.json`, and relaunch to reseed it from the bundle
 - **Replace versioned source control for scores** — if you're maintaining custom scores and want history, put your `~/Library/Application Support/Tempo/Scores/` directory under git. Tempo's backup gives you point-in-time bundles; git gives you per-edit history
 
 ---

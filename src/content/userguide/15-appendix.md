@@ -112,7 +112,7 @@ Full license text at [tempoapp.app/license](https://tempoapp.app/license). LICEN
 
 Short version:
 
-- **Tempo v1 is distributed free of charge, forever.** Free for personal and commercial use, no restrictions on what kind of homelab/work/setup you use it in
+- **Tempo 1.x is and will remain freeware** — distributed free of charge, free for personal and commercial use. Existing and future 1.x releases stay free; whether a future major version (2.0) is paid is a data-driven decision (see below)
 - **Provided as-is, without warranty of any kind.** You're responsible for the scores you install and the actions they perform. The license & disclaimer are linked from the About panel in-app
 - **After v2 ships, v1 will continue to receive security fixes only** — no new features, no behavioural changes. Direct support migrates to v2
 
@@ -131,9 +131,9 @@ Notable dependencies:
 - **SwiftUI / EventKit / Foundation** — Apple frameworks
 - **SF Symbols** — Apple's icon library
 
-The bundled scores reference and integrate with many third-party tools — Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology — none of which are dependencies of Tempo itself; they're upstream sources Tempo *receives from*.
+The bundled scores reference and integrate with many third-party tools — Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Beszel, Vaultwarden, Pi-hole, Hazel, Todoist, and more — none of which are dependencies of Tempo itself; they're upstream sources Tempo *receives from*.
 
-The community contributions to the [public score catalog](https://github.com/caereforge/tempo-scores) — Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more — are credited in the catalog repo's CONTRIBUTING.md and at the top of each score file.
+Community-contributed scores beyond the bundled set live in the [public score catalog](https://github.com/caereforge/tempo-scores) and are credited in the catalog repo's CONTRIBUTING.md and at the top of each score file.
 
 ---
 

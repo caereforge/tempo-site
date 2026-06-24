@@ -30,7 +30,7 @@ Reading a "what is X" section is rarely thrilling, but Tempo sits in a category 
 
 - **An aggregator.** Calendar events, reminders, monitoring alerts, backup outcomes, GitHub Actions runs, custom scripts — anything that emits a signal can be funnelled into one timeline. The signals don't change shape on the way in; Tempo just gives them a common surface.
 - **A user-authored display.** You decide what each source looks like in the feed. The mechanism is the [score](/docs/14-glossary#score) system: a small JSON file per source that says "events from this provider should look like this, group like that, offer these actions when clicked."
-- **An action layer.** Every event arrives with the actions you'd reach for: SSH to the host, open the dashboard, copy the IP, run a quick command. One click, no app-switching. The action set for each source is defined in its score, which you can edit yourself — by hand in v1, via a visual editor in a future version. Actions are user-triggered in v1; v2 extends this with auto-firing rules.
+- **An action layer.** Every event arrives with the actions you'd reach for: SSH to the host, open the dashboard, copy the IP, run a quick command. One click, no app-switching. The action set for each source is defined in its score, which you can edit yourself — visually in the built-in Score Editor, or by hand in the JSON (the file stays the source of truth). Actions are user-triggered in v1; v2 extends this with auto-firing rules.
 - **A history.** The feed isn't real-time-only. Events persist; you can scroll back to last Tuesday's alert from your CI pipeline, click it, take action then. The visualisation window is 84 days of [heatmap](/docs/14-glossary#heatmap), but the database keeps everything.
 - **Local.** Your data lives on your Mac, in a SQLite database under `~/Library/Application Support/Tempo/`. Tempo doesn't sync to the cloud, doesn't ship telemetry by default, doesn't talk to a backend you don't control. The ingestion server runs on your LAN so the rest of your stack can reach it; nothing leaves your network because of Tempo.
 
@@ -56,7 +56,7 @@ A few conventions, so the rest of the guide feels predictable.
 
 **We use plain words for technical things, and technical words when nothing else will do.** "The score editor" rather than "the score authoring interface." "Click" rather than "actuate." But "JSON," "regex," and "payload" stay as themselves because pretending otherwise would be condescending.
 
-**Inline code formatting** marks things you'd type, paste, or see in a UI: `${metadata.host}`, `~/Library/Application Support/Tempo/`, `tempo_send.sh`. Code blocks hold longer snippets — JSON examples, terminal commands, configuration.
+**Inline code formatting** marks things you'd type, paste, or see in a UI: `${metadata.host}`, `~/Library/Application Support/Tempo/`, `tempo-post`. Code blocks hold longer snippets — JSON examples, terminal commands, configuration.
 
 **Note, Tip, Warning** boxes flag context worth pausing on:
 
@@ -112,7 +112,7 @@ Replace `$TEMPO_TOKEN` with the token shown in **Tempo Settings → Ingestion**.
 
 ### 4. Connect a real source
 
-Once you've seen an event arrive, you can connect a real source. The bundled scores cover the most common cases — UniFi (Network and Protect), Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Scripts, Synology, and Hazel-via-Mail. Apple Calendar and Reminders are also pre-wired via a built-in EventKit provider (no score installation needed). Each source has its own setup chapter in [§10 Sources reference](/docs/10-sources-reference).
+Once you've seen an event arrive, you can connect a real source. The bundled scores cover the most common cases — UniFi (Network and Protect), Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Scripts, Synology, and Hazel — and more. Apple Calendar and Reminders are also pre-wired via a built-in EventKit provider (no score installation needed). Each source has its own setup chapter in [§10 Sources reference](/docs/10-sources-reference).
 
 If your source isn't on the bundled list, the [generic webhook](/docs/10-sources-reference#102-generic-webhook) covers anything that can POST JSON.
 

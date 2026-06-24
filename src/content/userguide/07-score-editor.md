@@ -67,30 +67,42 @@ The editor has three regions:
 ┌─────────────────────────────────────────────────────┐
 │  [Score chip bar — pick which score to edit]        │
 ├──────────────────────────────────────┬──────────────┤
-│                                      │              │
-│  Editor (scrollable)                  │  Try panel  │
-│  - Header                            │              │
-│  - Severity rules                    │  (preview    │
-│  - Default                           │   on recent  │
-│  - Stack grouping                    │   events)    │
-│  - Aliases (Kopia only)              │              │
+│  [Tab bar: Source · Grouping ·       │              │
+│   Severity · Tags & emoji ·          │  Try panel  │
+│   Ack and dismiss · Actions]          │              │
+│                                      │  (preview    │
+│  Editor (one tab at a time)           │   on recent  │
+│                                      │   events)    │
 │                                      │              │
 └──────────────────────────────────────┴──────────────┘
 ```
 
 - **Score chip bar** at the top — every score Tempo knows about, click one to load it
-- **Editor pane** on the left — scrollable, sectioned (Header, Severity rules, Default, Stack grouping, Aliases when applicable)
+- **Editor pane** on the left — organised into **six tabs**, one shown at a time
 - **Try panel** on the right — picks a recent event from this provider and shows you what the current draft would render for it. Live preview as you edit
+
+> ⚠️ **Try-panel caveat**: the Try panel's severity preview deliberately ignores **Sender severity wins** — it always runs your rules so you can see what they produce. With that toggle on, a live event carrying its own non-`info` severity may resolve differently than the preview shows.
+
+The six tabs, left to right:
+
+- **Source** — the score's overall identity: provider identifier, display name, colour, and (for sources that use them) field **aliases**. This is the tab the editor opens on
+- **Grouping** — whether and how related events from this provider collapse into stacks (template grouping; see §7.5)
+- **Severity** — severity rules, badge labels, pill colours, presentation overrides, and the **Sender severity wins** toggle (the heart of a score; see §7.3)
+- **Tags & emoji** — `indicatorRules` and `tagRules`: payload-driven emoji indicators and tags attached to matching events
+- **Ack and dismiss** — `ackRules` and `dismissRules`: payload conditions that auto-acknowledge or auto-dismiss events. Any matching rule fires (logical OR across rules); when both an ack rule and a dismiss rule match the same event, **dismiss wins**
+- **Actions** — the buttons the action panel offers: add, edit, remove, reorder; pick a trigger type and write its value with `${metadata.xxx}` interpolation (see §7.6)
+
+> 💡 **Agenda scores** (Apple Calendar / Reminders, Todoist, Fastmail and other `surface: "agenda"` sources) show only the **Source** and **Actions** tabs — the severity/grouping/tag/ack machinery doesn't apply to a day-view agenda source.
 
 Edits don't apply to the live feed until you click **Save** in the top toolbar. **Discard** reverts the draft to whatever's currently saved.
 
-> 💡 **Note**: edits persist across app restarts and across Tempo updates. The bundled scores can be reset to their factory defaults via **Reset to bundled defaults** in the toolbar (covered in §7.8). Tempo also keeps the last-saved version in case you want to roll back.
+> 💡 **Note**: edits persist across app restarts and across Tempo updates. Tempo keeps the last-saved version on disk so you can roll back, and you can always recover a bundled score's factory state — see [§7.8](#78--persistence-and-recovery).
 
 ### The score chip bar
 
 The chip bar at the top is your score selector. Each chip shows the provider's display name; click to switch. Edits to one score are scoped to that score — switching scores prompts you to save or discard if there are unsaved changes.
 
-The left of the chip bar has a **+ New** chip for creating a score from scratch (covered in [§11 — Score authoring](/docs/11-score-authoring)). The right end has the file-action icons: **Reveal in Finder**, **Duplicate**, **Delete** (only for user scores; bundled scores can be reset, not deleted).
+The left of the chip bar has a **+ New** chip for creating a score from scratch (covered in [§11 — Score authoring](/docs/11-score-authoring)). The right end carries file-action chips for the selected score — most usefully **Open score location in Finder**, which reveals the score's JSON in `~/Library/Application Support/Tempo/Scores/`, and a shortcut to open the source's README where one exists.
 
 > ⚠️ **V1 sweet spot: ~15 scores**. The current chip-bar design works well up to roughly 15 active scores. Past that, scrolling the strip and switching between scores starts to feel sluggish — at 25–30 scores it becomes a real friction point. A redesigned picker (dropdown with search and category grouping) is on the **V1.x roadmap** and will lift this ceiling significantly. If you find yourself hitting that wall, two interim suggestions: **(a)** keep your active scores trimmed to what you actually edit, and **(b)** if you have a lot of variant-of-one-thing scores (eight different `scripts.*` providers, say), consider whether a single broader score with metadata-driven severity rules can cover them — fewer files, same coverage.
 
@@ -171,7 +183,7 @@ If a referenced field is missing from the payload, Tempo substitutes a placehold
 
 ### The "Sender severity wins" toggle
 
-Above the rule list, in the Header section, there's a toggle: **"Sender severity wins"**.
+At the top of the **Severity** tab, above the rule list, there's a toggle: **"Sender severity wins"**.
 
 - **On** (default) — if the payload includes an explicit non-`info` severity field, that severity short-circuits the rules below. Useful when the upstream tool already classifies events well
 - **Off** — the score's rules always run, regardless of what the payload says
@@ -182,9 +194,9 @@ Turn it off when you have a sender that over-declares severity (every event arri
 
 ## 7.4 — Presentation and custom labels
 
-The presentation aspects of a score are split between the rule's per-match presentation block (covered above) and the score-wide defaults in the Header section.
+The presentation aspects of a score are split between the rule's per-match presentation block (covered above, on the Severity tab) and the score-wide defaults on the **Source** tab.
 
-The Header section gives the score's overall identity:
+The Source tab gives the score's overall identity:
 
 - **Provider identifier** — read-only display of the score's provider ID (`com.kopia`, `com.unifi`, etc.)
 - **Display name** — the human-readable name shown on source rows ("Kopia," "UniFi")
@@ -287,11 +299,11 @@ The Try panel on the right shows you a sample event from this provider and tells
 
 ---
 
-## 7.6 — Default actions
+## 7.6 — Actions
 
-The default-actions block declares the buttons that appear on every event from this provider. **In V1, default actions are edited via the score JSON file, not from inside the Score Editor.** The editor preserves whatever default actions the score already declares — so when you save edits to severity rules, presentation, or grouping, the existing default-actions block carries through unchanged — but it doesn't expose a UI for adding, removing, or reordering them.
+The **Actions** tab declares the buttons that appear on every event from this provider (the score's `defaultActions`). The editor authors them visually: **Add action** creates a new button, each row lets you set the label and SF Symbol, pick the trigger type from a menu, and write the trigger's value (URL, terminal command, or clipboard string) with `${metadata.xxx}` interpolation. You can remove a button with its trash icon and reorder buttons with the up/down arrows.
 
-To author or change default actions, edit the score JSON directly (see [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference) and [§11 — Score authoring](/docs/11-score-authoring)). A visual editor for actions is on the V2 roadmap.
+The JSON file stays a valid alternate surface — the `defaultActions` block you author in the editor is exactly what lands in the file, and hand-editing it produces the same result. Use whichever you prefer. See [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference) for the full trigger and interpolation reference.
 
 ### Order recap
 
@@ -330,7 +342,7 @@ The strip is also a hint for the **completeness** of your score. If your rules r
 
 ---
 
-## 7.8 — Persistence and reset to defaults
+## 7.8 — Persistence and recovery
 
 Score edits persist across app restarts and Tempo updates. Tempo writes the saved score to `~/Library/Application Support/Tempo/Scores/<provider>.json`; the bundled defaults live inside the app bundle and are written to the user-scores directory on first launch (with a version marker so the seeder knows they came from the bundle).
 
@@ -342,29 +354,21 @@ Click **Save** in the toolbar. The draft is written to disk, the file watcher pi
 
 Click **Discard** in the toolbar to revert the draft to whatever's currently saved. Useful when you've gone down a wrong path and want to start from the last good state.
 
-### Reset to bundled defaults
+### Recovering a bundled score
 
-For bundled scores (those Tempo ships with), the toolbar also offers **Reset to bundled defaults**. This:
+If you've edited a bundled score and want the factory version back, recover it from the bundle:
 
-1. Discards the current draft (if any)
-2. Replaces the saved file with the version that ships in the app bundle
-3. Refreshes the editor to show the new state
+1. **Quit Tempo**
+2. Delete the score's file: `~/Library/Application Support/Tempo/Scores/<provider>.json`
+3. **Relaunch Tempo** — on launch it reseeds the missing bundled score from the app bundle, restoring the shipped defaults
 
-Use this when:
-
-- You've edited a bundled score and want to undo your changes wholesale
-- An app update introduced improvements to a bundled score and you want them
-- You're debugging and want to confirm the bundled behaviour as a baseline
-
-> ⚠️ **Warning**: Reset is destructive. Your customisations are gone after a reset. There's no per-edit undo — only "revert all" via Reset.
-
-For user-authored scores (those you created from scratch), Reset isn't available — there's no "factory default" to reset to. Use the chip bar's **Duplicate** if you want to keep the current version as a backup before experimenting.
+This only works for bundled scores (those Tempo ships with). A user-authored score (one you created from scratch) has no factory version to fall back to — if you want a safety copy before experimenting, duplicate the file in Finder first.
 
 ### File-system access
 
 You can also work on score files outside the editor:
 
-- **Reveal in Finder** in the chip bar opens `~/Library/Application Support/Tempo/Scores/` with the score selected
+- **Open score location in Finder** in the chip bar opens `~/Library/Application Support/Tempo/Scores/` with the score selected
 - Open the file in any text editor — it's plain JSON
 - Save changes; Tempo's file watcher reloads automatically
 
@@ -391,9 +395,9 @@ The whole loop took five minutes. No restart, no JSON, no documentation cross-re
 
 ## A note on action buttons
 
-The Score Editor handles colors, severity rules, grouping, and display names — but action **buttons** (the entries in `defaultActions`) are authored directly in the score JSON in V1. The Editor will surface action authoring in a later release; for now, the canonical surface is the file.
+The Score Editor authors action **buttons** (the entries in `defaultActions`) visually on the **Actions** tab — add, edit, reorder, and remove buttons, pick the trigger type, and write its value with `${metadata.xxx}` interpolation. The score JSON stays a valid alternate surface: whatever you author in the editor is exactly what lands in the file, and hand-editing it gives the same result.
 
-If you want to add or change buttons on a source's events, see the walkthrough on the blog: [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) — concrete example, ~5 minutes end to end. The full field reference lives in [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference).
+If you'd rather work in JSON, see the walkthrough on the blog: [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) — concrete example, ~5 minutes end to end. The full field reference lives in [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference).
 
 ---
 

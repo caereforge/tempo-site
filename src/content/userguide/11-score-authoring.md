@@ -73,7 +73,7 @@ Every top-level field other than `providerIdentifier` and `displayName` is optio
 
 User-installed scores live in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads when files change. The file name should match `<providerIdentifier>.json` — Tempo doesn't enforce this strictly, but the convention makes the directory navigable and the score-vs-provider relationship clear at a glance.
 
-Bundled scores ship with the app in `Tempo.app/Contents/Resources/` and are seeded into the user-scores directory on first launch (with a version marker so the seeder doesn't overwrite user edits).
+Bundled scores ship with the app in `Tempo.app/Contents/Resources/Scores/*.json`. Only `scripts.json` auto-seeds into the user-scores directory on first launch (with a version marker so the seeder doesn't overwrite user edits); the rest install on demand from **Manage Sources**.
 
 ---
 
@@ -81,7 +81,9 @@ Bundled scores ship with the app in `Tempo.app/Contents/Resources/` and are seed
 
 ### `providerIdentifier` (required)
 
-A stable, namespaced identifier for the source. Pattern: `^[a-z0-9]+([._-][a-z0-9]+)*$`, minimum length 3.
+A stable, namespaced identifier for the source.
+
+The actual validator is permissive: `^[A-Za-z0-9._\-]{1,128}$` — uppercase is allowed, and the length ceiling is 128 characters. The lowercase reverse-DNS form below is a **catalog naming convention**, not a hard rule; it keeps the public catalog tidy and the directory navigable, but Tempo will accept any identifier that matches the validator.
 
 **Conventions**:
 
@@ -162,7 +164,7 @@ Array of action buttons that appear on every event from this provider. Each acti
 
 - **`label`** (required, ≥1 char) — button text
 - **`systemIcon`** (required, ≥1 char) — SF Symbol name
-- **`trigger`** (required) — an object with one of three shapes (covered in §11.4)
+- **`trigger`** (required) — an object with one of five shapes (covered in §11.4)
 
 ```json
 "defaultActions": [
@@ -175,6 +177,18 @@ Array of action buttons that appear on every event from this provider. Each acti
 ```
 
 Per-event actions sent in the payload itself are *appended* after the default actions, and override defaults of the same label.
+
+### The grown schema — additional top-level blocks
+
+Beyond the basics above, a real bundled score can use the following blocks. They're all optional, and most of them are also editable from the Score Editor (the exceptions are noted). Hitting a shipped score like `com.beszel.json` — which uses `senderSeverityWins`, `groupingRules`, `helper` and `surface` together — these are what you'll find.
+
+- **`senderSeverityWins`** (boolean, default `true`) — when `true`, a payload that carries its own non-`info` severity field short-circuits `severityRules` and uses the sender's severity directly. Set `false` to make your rules authoritative for a source that over-declares severity. Editable on the Severity tab.
+- **`groupingRules`** / **`restStateOverrides`** — *session* grouping, distinct from the template `grouping` above. `groupingRules` assign each event an `opens` / `closes` / `continues` role keyed off `${metadata.x}` values, so a monitor that goes down and later recovers folds into one episode. Used by stateful sources (Uptime Kuma, Beszel, UniFi). `restStateOverrides` adjusts the resting/closed-cycle severity of such an episode. **File-authored and read-only in the editor** — the editor preserves them but does not expose a UI for them.
+- **`indicatorRules`** / **`tagRules`** — payload-driven emoji indicators and tags attached to matching events. Edited on the **Tags & emoji** tab.
+- **`ackRules`** / **`dismissRules`** — payload conditions that auto-acknowledge or auto-dismiss matching events. Evaluation is **any-rule-matches** (logical OR across rules); when both an ack rule and a dismiss rule match the same event, **dismiss wins**. Edited on the **Ack and dismiss** tab.
+- **`helper`** — a short string naming the ingestion helper or adapter associated with the source (informational / catalog metadata).
+- **`surface`** — `"timeline"` (default) or `"agenda"`. An `agenda` score is a day-view source (calendar/reminders-style); it only exposes the Source and Actions tabs in the editor and skips the severity/grouping/tag/ack machinery.
+- **Meta keys** — keys prefixed with `_` are reserved metadata and are ignored by the runtime logic: **`_disabled`** (boolean — ship a score in a dormant state until the user enables it), **`_comment`** (free-text note for authors/reviewers), **`_bundledVersion`** (version marker the seeder uses to track bundled-vs-user state).
 
 ---
 
@@ -190,7 +204,7 @@ A `match` object is a flat key/value map. Each key is a metadata field name; eac
 "match": { "outcome": "error" }
 ```
 
-Matches when `metadata.outcome == "error"` exactly. Case-sensitive.
+Matches when `metadata.outcome` equals `"error"`. Case-insensitive (`error` matches `Error`, `ERROR`).
 
 #### Wildcards
 
@@ -240,7 +254,7 @@ Stringification is implicit: numbers, booleans and strings all collapse to their
 
 ## 11.4 — Action triggers reference
 
-Three trigger types are supported in V1. Each is mutually exclusive — an action has exactly one trigger.
+Five trigger types are supported: `openURL`, `openTerminalWith`, `copyToClipboard`, `completeReminder`, and `uncompleteReminder`. Each is mutually exclusive — an action has exactly one trigger. (`completeReminder` / `uncompleteReminder` flip an Apple Reminder's completed flag and apply only to EventKit reminder sources; the three below are the ones you'll author for ingested sources.)
 
 ### `openURL`
 
@@ -250,11 +264,15 @@ Opens a URL. macOS picks the handler based on the scheme.
 "trigger": { "openURL": "https://example.com/" }
 ```
 
-**Allowed schemes** (per the public catalog schema): `http`, `https`, `ssh`, `mailto`, `tel`, `sms`, `facetime`, `vnc`, `rdp`, plus documented app schemes (`obsidian://`, `things://`, etc.).
+**Allowed schemes** (the complete allowlist):
 
-**Rejected schemes**: `file`, `javascript`, `data`, `vbscript`, anything not whitelisted.
+`http`, `https`, `ssh`, `sftp`, `ftp`, `mailto`, `tel`, `sms`, `facetime`, `facetime-audio`, `obsidian`, `bear`, `things`, `omnifocus`, `ticktick`, `notion`, `todoist`, `slack`, `msteams`, `zoom`, `zoommtg`, `tg`, `discord`, `vscode`, `vscode-insiders`, `cursor`.
 
-The whitelist exists because URL handlers can do anything an app can do — `file://` opens local resources, `javascript:` runs script in the browser context. Restricting to network and communication schemes keeps the action surface contained.
+Anything outside this list is rejected, including `javascript:`, `data:`, `vbscript:`. Note that `vnc` and `rdp` are **not** allowed, and meeting-join schemes like `webex`, `jitsi`, and `gotomeeting` are **not** allowlisted either.
+
+**Two layers for `file://`.** The allowlist above is what a **remote-ingested payload action** is validated against — an action that arrives over `/ingest` from another host. There, `file://` is blocked. A **locally-installed score** (a score file you placed in `~/Library/Application Support/Tempo/Scores/`) additionally permits `file://` at click time, with percent-encoding applied to the path. The distinction is trust: a score on your own disk is your own decision; an action pushed in over the network is not.
+
+The allowlist exists because URL handlers can do anything an app can do. Restricting remote payloads to network and communication schemes keeps the over-the-wire action surface contained.
 
 ### `openTerminalWith`
 
@@ -280,14 +298,14 @@ No scheme restrictions — the value is a string, not a URL.
 
 ### Interpolation
 
-All three triggers support `${metadata.xxx}` placeholder substitution at click time:
+The three string-based triggers (`openURL`, `openTerminalWith`, `copyToClipboard`) support `${metadata.xxx}` placeholder substitution at click time:
 
 - `${metadata.host}` → the value of `metadata.host` from the event payload
 - `${title}` → the event's title
 - `${startDate}` → the event's timestamp (ISO 8601)
 - `${metadata.custom.disk_usage_percent}` → reaches into the custom bucket
 
-If a referenced field is missing from the payload, Tempo substitutes an empty string. The action still fires; the resolved URL or command may be malformed (`ssh://admin@` with no host), in which case macOS will surface the error.
+If a referenced field is missing from the payload, the action does **not** fire with a malformed value. Tempo disables the button — it renders greyed out (about 55% opacity) and unclickable, with a tooltip that names the missing field(s): *"Can't run: the event is missing `host`."* This means an action whose template can't resolve simply can't be invoked, rather than firing a broken `ssh://admin@` with an empty host. Fix the upstream payload or reference a field that's actually present, and the button re-enables.
 
 ### `systemIcon`
 
@@ -351,29 +369,27 @@ Use `.tempo-score` for distribution, `.json` for local editing in `~/Library/App
 
 ---
 
-## 11.6 — `tempo-validate` CLI (V1.x)
+## 11.6 — `tempo-validate` CLI
 
-> 🚧 **V1.x roadmap**: a command-line tool `tempo-validate` will ship in `/contrib/` for offline score linting. Useful for CI pipelines that vet community contributions to the public catalog, or for local sanity-checks before installing a hand-edited score.
+Tempo ships an offline score linter, `tempo-validate`, for sanity-checking a score before you install or distribute it. It's useful for CI pipelines that vet community contributions to the public catalog, and for a quick local check after hand-editing a score.
 
-### Expected behaviour
+### Where to get it
+
+- **Bundled in the app** — `Tempo.app/Contents/Resources/Utilities/shell/tempo-validate`
+- **Downloadable** — from [tempoapp.app/utilities/](https://tempoapp.app/utilities/)
+
+### Usage
 
 ```bash
 tempo-validate path/to/score.json
 ```
 
-Validates the score against the public schema. Exits 0 on valid, non-zero with a descriptive error on invalid.
+It validates the score against the schema and exits `0` on valid, non-zero with a descriptive error on invalid. Point it at a single file or a directory of scores.
 
-Likely extensions in the V1.x version:
+If you'd rather not run the linter, you can also spot-check a score by:
 
-- Lint warnings for rules that reference metadata keys not commonly seen for the provider
-- Suggestions for missing fields (no `color`, no `groupingWindow`)
-- `--strict` mode that enforces the public-catalog rules (`openTerminalWith` rejected, etc.)
-
-For now, you can validate by:
-
-1. Loading the score in Tempo (file watcher picks up changes; parse errors land in OSLog, filterable by `app.tempoapp.Tempo`)
-2. Manually running `jq` to confirm the JSON parses: `jq . path/to/score.json`
-3. Checking the JSON Schema with any standard JSON Schema validator (the canonical schema is at [`schema/score.schema.json`](https://github.com/caereforge/tempo-scores/blob/main/schema/score.schema.json) in the public catalog repo)
+1. Loading it in Tempo (the file watcher picks up changes; parse errors land in OSLog, filterable by `app.tempoapp.Tempo`)
+2. Running `jq . path/to/score.json` to confirm the JSON at least parses
 
 ---
 
@@ -456,7 +472,7 @@ A card that:
 
 - Shows "Log scan · {matches_found} matches" as the title
 - Coloured by severity: 0 matches → ok green, 1-9 → warning yellow, 10+ → error red
-- Has actions: "Open log file" (opens the scanned file in Console.app via `file://` ... wait, that's not whitelisted), "Copy log file path", "SSH to host"
+- Has actions: "Open log file" (opens the scanned file via `file://` — permitted here because this is a locally-installed score; `file://` would be blocked only for a remote-ingested payload action), "Copy log file path", "SSH to host"
 
 ### The score
 
@@ -538,6 +554,6 @@ The score is iterative — you ship the first version, run it for a few days, re
 ## Where to go from here
 
 - **Submitting a score to the public catalog** → [github.com/caereforge/tempo-scores → CONTRIBUTING.md](https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md)
-- **The full webhook payload reference** → [`docs/webhook-reference.md`](https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md)
+- **The full webhook payload reference** → [the Sources reference (§10)](/docs/10-sources-reference)
 - **The Score Editor for hands-on changes** → [§7 — Score Editor](/docs/07-score-editor)
 - **Per-source setup for bundled providers** → [§10 — Sources reference](/docs/10-sources-reference)

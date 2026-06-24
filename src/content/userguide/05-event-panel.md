@@ -128,7 +128,7 @@ Both are reversible. Ack is cosmetic; dismiss removes from the active feed but k
 
 ### Resolved (state) vs. Acked (user action)
 
-For stateful events, there's a related but distinct visual marker: **Resolved**. When a stateful condition (a Uptime Kuma monitor, a Home Assistant alarm) clears, the corresponding event renders with a "Resolved" pill (filled, green) and the severity ramps down to ok.
+For stateful events, there's a related but distinct visual marker: **Resolved**. When a stateful condition (a Uptime Kuma monitor, a Home Assistant alarm) clears, the corresponding event renders with a **Resolved** marker. State and severity are independent axes: the closing event's `state` is *resolved*, but its severity is whatever the source's score assigns to the recovery event (commonly `ok`). The engine doesn't force the severity to ok on resolve — a recovery that the score rates as a warning stays a warning.
 
 A "Resolved" pill is the *system* saying "this fixed itself"; an "Acked" pill is *you* saying "I've seen it." They can coexist on the same event — you can ack a still-firing problem, and you can also see when the problem eventually resolves.
 
@@ -145,7 +145,7 @@ When a source emits multiple events that are conceptually related — same monit
 A stacked card displays:
 
 - The **most recent event** of the stack as the visible card (title, headline, severity all from the latest event)
-- A **count pill** in the rightmost slot — showing the total event count in the stack, coloured by the stack's *worst* severity (so a stack of 5 ok + 1 error is still red)
+- A **count pill** in the rightmost slot — showing how many events are in the stack
 
 ```
 Backup failed ......... 03:14  CRITICAL  | [3]
@@ -163,12 +163,14 @@ Click the parent card again (or anywhere else) to collapse the stack.
 
 ### What "related" means
 
-Stacking is driven by the **score** for the source. Each score declares two things:
+Stacking is driven by the **score** for the source. The legacy mechanism a score can declare is two things:
 
-1. A **grouping key** template — like `${metadata.monitorID}` for Uptime Kuma, or `[${metadata.clientMac}, ${metadata.deviceMac}]` for UniFi (a fallback list is supported, runtime picks the first one that fully resolves). Events with the same resolved key are considered related
+1. A **grouping key** template — like `${metadata.path}` for a backup tool. Events with the same resolved key are considered related
 2. A **grouping window** — `1h`, `6h`, `1d`, `1w`, or no-window. Events outside the window of the most-recent event in a stack don't extend that stack; they start a new one
 
-So if you have an Uptime Kuma monitor that goes down, comes back up, goes down again over the course of three hours with a `1h` grouping window: you'll see two separate stacks (one for the first down/up cycle, one for the second), not one combined stack.
+So if a source emits the same keyed event three times over the course of three hours with a `1h` grouping window: you'll see separate stacks for the runs that fall outside each other's window, not one combined stack.
+
+> 💡 **Note**: the shipped *stateful* scores (Uptime Kuma, Beszel, UniFi) don't use the legacy template-plus-window mechanism above. They group by **session** via `groupingRules` — a down/recovery cycle is one session of opens, continues, and closes. That's a different grouping system from the one this section describes; if you're authoring a stateful score, reach for `groupingRules`, not the key-plus-window pair.
 
 ### Tuning stacks for your taste
 

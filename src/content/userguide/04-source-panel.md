@@ -22,7 +22,7 @@ A source row is a horizontal strip with four parts, left to right:
 ●   Source name              ⚡ 12     ⓘ
 ```
 
-- The **colour dot** on the left identifies the source. It's also the source's accent colour — the tint Tempo applies to event cards from this source in the feed. Click the dot to open the system colour picker. Note that the dot is one role; the **left-edge stripe** on each event card is a separate signal whose meaning you can switch in **Settings → Interface**: by default the stripe reflects *severity* (green / yellow / red), but you can flip it to *source* and have the stripe match this dot instead
+- The **colour dot** on the left identifies the source. It's also the source's accent colour — the tint Tempo applies to event cards from this source in the feed. On a leaf source the dot is a colour picker: click it to open the system colour picker and recolour the source. On an **umbrella parent** (UniFi, Apple, Scripts) the dot is a fixed neutral marker — the parent has no colour of its own, so it can't be recoloured; set colours on its concrete sub-sources instead. Note that the dot is one role; the **left-edge stripe** on each event card is a separate signal whose meaning you can switch in **Settings → Interface**: by default the stripe reflects *severity* (green / yellow / red), but you can flip it to *source* and have the stripe match this dot instead
 - The **source name** is the human-readable label. For bundled sources it defaults to the provider's canonical name ("Kopia", "UniFi", "Home Assistant"). For custom sources you can rename it in Manage Sources
 - The **priority badge** on the right is the at-a-glance status — described in detail below
 - The **info button** (ⓘ) on the far right opens the source actions menu — also described below
@@ -193,9 +193,8 @@ The button at the bottom of the source panel switches the panel into **Manage So
 Manage Sources is its own view — same column, different content. From there you can:
 
 - Add a new source (which mostly means installing or authoring a [score](/docs/14-glossary#score) and pointing the upstream tool at Tempo's ingestion endpoint)
-- Reorder existing sources (drag rows to re-rank them — order in the source panel is purely visual but matters for muscle memory)
-- Edit per-source settings: display name, group membership, auto-dismiss override, liveness override
-- Remove a source entirely (forgets it; events from that source stop being ingested)
+- Edit per-source settings: display name, auto-dismiss override, liveness override
+- Remove a source. This deletes its score and, by default, its stored events and settings — though you can opt to keep the events or keep the settings when you remove it. The source's ingestion token is **kept** by default (deleting it is a separate opt-in); as long as the token survives, the source can still POST new events, so to fully cut it off, delete its token too
 
 A yellow accent line near the button highlights the transition, so when you're switching between the active list and the manage view your eye lands in the same place.
 

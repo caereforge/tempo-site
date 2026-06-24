@@ -41,7 +41,7 @@ Actions are ordered: **score-declared defaults first** (stable across all events
 
 Click a button:
 
-- **`openURL`** triggers — open in the relevant macOS handler (browser for `https://`, Terminal for `ssh://`, Screen Sharing for `vnc://`, the registered app for any custom scheme)
+- **`openURL`** triggers — open in the relevant macOS handler (browser for `https://`, Terminal for `ssh://`, the registered app for `obsidian://` or `slack://`, and so on for any of the allowed schemes). Only allowlisted schemes dispatch; anything outside the allowlist is blocked at click time
 - **`openTerminalWith`** triggers — Terminal.app activates and the command runs in a new window or tab
 - **`copyToClipboard`** triggers — the string lands in your clipboard, and a brief feedback animation fires on the button
 
@@ -68,7 +68,7 @@ A persistent footer pinned to the bottom of the panel holds two universal button
 
 These two buttons apply to *any* event type — alerts, reminders, calendar events alike. They're the universal escape valves: you've seen this thing (Ack), or you've handled it and want it out of your way (Dismiss).
 
-> 💡 **Note**: acknowledging or dismissing a calendar event or a reminder is a *Tempo-side soft mark* — Tempo records you've seen it (or hidden it from the active feed), but never propagates back to Calendar.app or Reminders.app. The original calendar entry stays scheduled and the reminder stays pending in their respective apps. This is deliberate: Tempo isn't your calendar app and isn't your task manager, so it doesn't reach into them. To complete a reminder for real, use Reminders.app — or click the per-event **Mark complete** action in the panel above (when you grant Tempo Reminders write access, that path *does* propagate completion upstream).
+> 💡 **Note**: acknowledging or dismissing a calendar event or a reminder is a *Tempo-side soft mark* — Tempo records you've seen it (or hidden it from the active feed), but never propagates back to Calendar.app or Reminders.app. The original calendar entry stays scheduled and the reminder stays pending in their respective apps. This is deliberate: Tempo isn't your calendar app and isn't your task manager, so it doesn't reach into them. To complete a reminder for real, use Reminders.app — or click the per-event **Mark complete** action in the panel above (once you've granted Tempo access to Reminders, that path *does* propagate completion upstream).
 
 The yellow accent on Acknowledge isn't decorative — it's the colour Tempo uses globally for "user attention" affordances (filter banner, ack pills). Once you've internalised that, the Acknowledge button reads as "this is a user-attention action" rather than just "this is the primary button."
 

@@ -117,7 +117,7 @@ Only `title` and `providerIdentifier` are required. Everything else is optional 
 
 ### Full payload reference
 
-See the canonical reference at [`docs/webhook-reference.md`](https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md) — covers every supported field, bounds, type rules, the reserved metadata keys (`severity`, `label`, `host`, `exit_code`, `duration_ms`, `command`, `run_id`, `source_file`, `trigger_reason`), and the `metadata.custom` sandbox for free-form fields.
+Every supported field, its bounds, type rules, and the reserved metadata keys (`severity`, `label`, `host`, `exit_code`, `duration_ms`, `command`, `run_id`, `source_file`, `trigger_reason`) are covered below, along with the `metadata.custom` sandbox for free-form fields.
 
 A few highlights worth knowing:
 
@@ -133,7 +133,7 @@ A few highlights worth knowing:
 - Unknown top-level fields, unknown metadata keys, unknown action trigger types → `400`
 - URL action with a non-whitelisted scheme (`file://`, `javascript:`, etc.) → `400`
 - Token mismatch (token bound to provider X, payload says provider Y) → `403`
-- Rate limit exceeded (600 requests / 10 min per token, 3000 / 10 min per IP) → `429`
+- Rate limit exceeded (120 requests per minute, per token, on a sliding 60-second window; no per-IP limit) → `429`
 
 ### What you get back
 
@@ -173,9 +173,9 @@ Three ways to make a custom source's card richer, in increasing order of effort:
 
 A useful heuristic: if you'll see this source's events more than once a week, the dedicated score is worth writing. For one-off ad-hoc senders that fire occasionally, option 1 or 2 is enough indefinitely.
 
-### `tempo_send.sh` helper
+### `tempo-post` helper
 
-For shell scripts in particular, Tempo ships a helper script (`tempo_send.sh`) that wraps the curl call. See §10.10 below.
+For shell scripts in particular, Tempo ships a helper (`tempo-post`) that wraps the curl call. See §10.10 below.
 
 ---
 
@@ -576,64 +576,71 @@ If you find yourself doing the same thing across several scripts (same kinds of 
 
 ---
 
-## 10.10 — `tempo_send.sh` helper
+## 10.10 — `tempo-post` helper
 
-A wrapper script that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. Distributed in the `contrib/` folder of the public score catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores).
+A wrapper that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. It ships bundled with Tempo.app as `tempo-post`, a macOS binary. For homelab hosts that aren't Macs — Linux boxes, a NAS, a Raspberry Pi — download the portable versions from the utilities page at [tempoapp.app/utilities/](https://tempoapp.app/utilities/): `tempo-post.sh` (bash/curl) and `tempo-post.ps1` (PowerShell).
 
 ### Installation
 
-Download `tempo_send.sh` from the public catalog repo and put it on your `$PATH`:
+Download `tempo-post.sh` from the utilities page and put it on your `$PATH`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/caereforge/tempo-scores/main/contrib/tempo_send.sh \
-  -o ~/.local/bin/tempo_send
-chmod +x ~/.local/bin/tempo_send
+curl -fsSL https://tempoapp.app/utilities/tempo-post.sh \
+  -o ~/.local/bin/tempo-post.sh
+chmod +x ~/.local/bin/tempo-post.sh
 ```
 
-Set environment variables in your shell profile:
+Set environment variables in your shell profile so you don't repeat them on every call:
 
 ```bash
-export TEMPO_HOST="localhost:7776"
+export TEMPO_HOST="http://127.0.0.1:7776"
 export TEMPO_TOKEN="<your-token>"
 ```
 
+The token is resolved in precedence order: `--token`, then `TEMPO_TOKEN`, then `TEMPO_TOKEN_FILE` (a path to a `chmod 600` file holding the token), then an interactive hidden prompt when the helper is run from a terminal. Without a terminal — under cron or launchd — it fails fast rather than hanging on a prompt, so set `TEMPO_TOKEN` or `TEMPO_TOKEN_FILE` for unattended jobs.
+
 ### Basic usage
 
-`tempo_send` takes the provider identifier and title as positional arguments, with options after:
+`tempo-post.sh` is flag-based; only `--title` is required:
 
 ```bash
-tempo_send local.check_disk "check_disk · root volume 78%" \
+tempo-post.sh --title "check_disk · root volume 78%" \
+  --provider local.check_disk \
   --severity warning \
-  --meta host="$(hostname)" \
-  --meta usage_percent=78
+  --metadata host="$(hostname)" \
+  --metadata usage_percent=78
 ```
 
-The helper:
+The helper builds the JSON payload from your flags, POSTs to `/ingest`, and exits `0` when the event is accepted (HTTP 2xx), `1` on a runtime error (network, auth, or a server rejection), and `2` on a usage error.
 
-- Reads `TEMPO_HOST` / `TEMPO_TOKEN` from environment (or `--host` / `--token` flags)
-- Builds the JSON payload from your flags
-- POSTs to `/ingest`
-- Returns 0 on accept, 2 on usage error, 3 on missing token, 4 on network/HTTP error
-
-### Available flags
+### Common flags
 
 | Flag | Purpose |
 |---|---|
-| `--severity info\|warning\|error` | sets severity (default `info`); also drives default colour and event type |
-| `--event-type event\|task\|reminder\|alert` | overrides the severity-derived event type |
-| `--color #RRGGBB` | overrides the severity-derived colour |
-| `--external-id ID` | stable key for upserts (re-posts replace in place) |
-| `--grouping-key KEY` | UI-level grouping of repeated firings |
-| `--start ISO8601` | event start timestamp (defaults to server time) |
-| `--end ISO8601` | event end timestamp |
-| `--recurrence-rule RRULE` | iCal RRULE string (e.g. `FREQ=WEEKLY;BYDAY=MO`) |
-| `--meta KEY=VALUE` | repeatable; adds a metadata field |
-| `--terminal LABEL=COMMAND` | repeatable; adds an "open Terminal" action button |
-| `--url LABEL=URL` | repeatable; adds an "open URL" action button |
-| `--copy LABEL=TEXT` | repeatable; adds a "copy to clipboard" action button |
-| `--host HOST:PORT` | overrides `TEMPO_HOST` |
-| `--token TOKEN` | overrides `TEMPO_TOKEN` |
-| `--dry-run` | print the payload to stdout instead of POSTing |
+| `--title <text>` | event title (**required**) |
+| `--provider <id>` | provider identifier (default `scripts.shell`) |
+| `--severity <info\|ok\|warning\|error\|critical>` | event severity |
+| `--event-type <alert\|event\|task\|reminder>` | event type (default `alert`) |
+| `--metadata KEY=VALUE` | repeatable; adds a metadata field |
+| `--hostname <name>` | shortcut for `--metadata hostname=<name>` |
+| `--host <url>` | server URL (default `$TEMPO_HOST` or `http://127.0.0.1:7776`) |
+| `--token <text>` | token (overrides `TEMPO_TOKEN` / `TEMPO_TOKEN_FILE`) |
+| `--insecure` | skip TLS verification (passes `-k`) |
+| `--cacert <path>` | verify TLS against a pinned certificate (for port `:8776`) |
+| `--dry-run` | print the payload instead of POSTing |
+| `--verbose`, `-v` | verbose output |
+| `--help`, `-h` | usage |
+
+### Run-bound stacking
+
+For a multi-step job that should collapse into a single growing card rather than scatter across the timeline, give every step the same `--run-id`. Pass `auto` to have the helper generate one, or set your own. `--run-total <N>` declares how many steps to expect, `--status <text>` sets the current step's status line, and the terminal step carries `--final` (success) or `--final-failure` (failure). `--run-timeout <seconds>` bounds how long the run stays open:
+
+```bash
+RUN=$(uuidgen | cut -c1-12)
+tempo-post.sh --title "Build started" --run-id "$RUN" --run-total 3 --status "compiling"
+tempo-post.sh --title "Tests passed"  --run-id "$RUN" --status "all green"
+tempo-post.sh --title "Release done"  --run-id "$RUN" --final --status "completed"
+```
 
 ### Example: cron job that reports backup results
 
@@ -644,16 +651,18 @@ The helper:
 START=$(date +%s)
 if rsync -az ~/Documents user@nas.local:/backups/laptop/; then
     DURATION=$(( $(date +%s) - START ))
-    tempo_send local.nightly_backup "nightly_backup · OK in ${DURATION}s" \
+    tempo-post.sh --provider local.nightly_backup \
+      --title "nightly_backup · OK in ${DURATION}s" \
       --severity info \
-      --meta host="$(hostname)" \
-      --meta duration_s=$DURATION
+      --hostname "$(hostname)" \
+      --metadata duration_s=$DURATION
 else
     EXIT=$?
-    tempo_send local.nightly_backup "nightly_backup · failed (exit ${EXIT})" \
+    tempo-post.sh --provider local.nightly_backup \
+      --title "nightly_backup · failed (exit ${EXIT})" \
       --severity error \
-      --meta host="$(hostname)" \
-      --meta exit_code=$EXIT
+      --hostname "$(hostname)" \
+      --metadata exit_code=$EXIT
 fi
 ```
 
@@ -665,6 +674,6 @@ Schedule with launchd or cron; the helper handles the rest.
 
 - **Writing a custom score for a source not bundled** → [§11 — Score authoring](/docs/11-score-authoring)
 - **Customising one of the bundled scores** → [§7 — Score Editor](/docs/07-score-editor)
-- **The full webhook payload reference** → [`docs/webhook-reference.md`](https://github.com/caereforge/tempo-scores/blob/main/docs/webhook-reference.md)
+- **The full webhook payload reference** → see [**§10.2 — Generic webhook → Full payload reference**](#full-payload-reference) above
 - **Troubleshooting "my events aren't arriving"** → [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion) and [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing)
 - **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores) — Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more

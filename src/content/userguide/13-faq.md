@@ -220,7 +220,7 @@ Second most common: token mismatch — token bound to the wrong provider, or wro
 
 ### A bundled score's behaviour seems wrong after an update
 
-Tempo doesn't overwrite your local edits to bundled scores when the app updates. If a bundled score improved in the update and you want the new behaviour, use **Reset to bundled defaults** in the Score Editor.
+Tempo doesn't overwrite your local edits to bundled scores when the app updates. If a bundled score improved in the update and you want the new behaviour, quit Tempo, delete that score's file from `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch — Tempo reseeds the bundled version on startup. (Duplicate the score first if you want to keep your customizations.)
 
 See [§7.8 — Persistence and reset to defaults](/docs/07-score-editor#78-persistence-and-reset-to-defaults).
 
