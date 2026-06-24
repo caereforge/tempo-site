@@ -12,23 +12,23 @@ pubDate: 2026-04-28
 downloadable: true
 ---
 
-Hazel doesn't ship a webhook transport, but every rule can run an embedded **Run shell script** action — and that's enough. A four-line shell command in your rule POSTs to Tempo with the matched file path, the rule name, and the source / destination folders. Tempo renders the event with five clickable actions (open file, open destination, open source, copy path, copy rule name).
+Hazel doesn't ship a webhook transport, but every rule can run an embedded **Run shell script** action, and that's enough. A four-line shell command in your rule POSTs to Tempo with the matched file path, the rule name, and the source / destination folders. Tempo renders the event with five clickable actions (open file, open destination, open source, copy path, copy rule name).
 
-No adapter on the Tempo side — `/ingest` accepts the JSON the script emits.
+No adapter on the Tempo side: `/ingest` accepts the JSON the script emits.
 
 ---
 
 ## Install
 
 1. Download `hazel.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet — click **Install**. The score is saved to `~/Library/Application Support/Tempo/Scores/hazel.tempo-score`.
-3. In Tempo **Settings → Ingestion**, add a token named `hazel` bound to `com.noodlesoft.hazel`. Copy the token — you'll paste it into the shell script in step 5.
+2. Double-click it. Tempo opens a review sheet, then click **Install**. The score is saved to `~/Library/Application Support/Tempo/Scores/hazel.tempo-score`.
+3. In Tempo **Settings → Ingestion**, add a token named `hazel` bound to `com.noodlesoft.hazel`. Copy the token; you'll paste it into the shell script in step 5.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case).
 5. Configure the Hazel rule (see below).
 
-## Hazel side — add the shell action
+## Hazel side: add the shell action
 
-In Hazel, edit the rule you want Tempo to receive notifications for. Add a new action: **Run shell script** → **Embedded script**. Paste this template:
+In Hazel, edit the rule you want Tempo to receive notifications for. Add a new action: **Run shell script** then **Embedded script**. Paste this template:
 
 ```bash
 #!/bin/bash
@@ -82,7 +82,7 @@ EOF
 
 Replace `TEMPO_TOKEN` with the value you copied in step 3 above. If Hazel runs on a different Mac than Tempo, replace `127.0.0.1` with your Tempo Mac's hostname (`tempo-mac.local`, your IP, etc.).
 
-You can attach the same action to as many rules as you want — `$HAZEL_RULE_NAME` differentiates them in Tempo's feed.
+You can attach the same action to as many rules as you want: `$HAZEL_RULE_NAME` differentiates them in Tempo's feed.
 
 ## What Hazel actually sends
 
@@ -92,7 +92,7 @@ Each event Tempo receives looks like this in the feed:
 Sort photos by date — IMG_4521.HEIC
 ```
 
-with metadata carrying the file path, rule name, source folder, and destination folder. The five default actions interpolate those values: clicking *Open file* runs `open file:///Users/.../IMG_4521.HEIC`; *Open destination folder* runs `open file:///Users/.../Sorted/2026-04`; etc.
+with metadata carrying the file path, rule name, source folder, and destination folder. The five default actions interpolate those values: clicking *Open file* runs `open file:///Users/.../IMG_4521.HEIC`, *Open destination folder* runs `open file:///Users/.../Sorted/2026-04`, etc.
 
 ## Umbrella source and sub-sources
 
@@ -101,28 +101,28 @@ them appear together as a single **Hazel** row in Tempo's source panel,
 distinguished only by event title (the rule name). That works well for
 one or two rules; it gets crowded once you have a dozen.
 
-Tempo also recognises **sub-source** provider identifiers of the form
+Tempo also recognizes **sub-source** provider identifiers of the form
 `com.noodlesoft.hazel.<suffix>`. Each sub-source appears as a child row
-visually nested under the **Hazel** parent — same pattern as Apple
+visually nested under the **Hazel** parent, the same pattern as Apple
 Calendar/Reminders under Apple, or UniFi Network/Protect under UniFi.
-The shell template above shows several commented examples — uncomment
+The shell template above shows several commented examples: uncomment
 one to make a specific rule emit under its own sub-source.
 
 ### Bundled sub-scores
 
 Tempo ships two sub-scores out of the box that override the parent's
-file-pattern actions with semantically appropriate ones — install them
+file-pattern actions with semantically appropriate ones. Install them
 and Hazel rules POSTing under those sub-sources get the right buttons
 without any score authoring:
 
-- **`com.noodlesoft.hazel.mail`** — when Hazel hands off an email
+- **`com.noodlesoft.hazel.mail`**: when Hazel hands off an email
   (carrier delivery notification, parsed receipt, price-drop alert,
   third-party notification forwarded into a folder), actions are
   *Open in Mail*, *Open link*, *Copy sender*, *Copy rule name*. The
   metadata Hazel sends should include `sender`, `messageID`, and
   ideally a primary `url` from the email body.
 
-Seeds automatically on first launch — no separate install step.
+Seeds automatically on first launch, no separate install step.
 
 ### Custom sub-sources
 
@@ -132,21 +132,21 @@ without a dedicated sub-score, it falls back to the parent Hazel
 score's five default actions (Open file / Open destination folder /
 Open source folder / Copy file path / Copy rule name).
 
-Naming convention is yours — a few examples:
+Naming convention is yours. A few examples:
 
-- `com.noodlesoft.hazel.photos` — `~/Pictures` import / organisation rules
-- `com.noodlesoft.hazel.downloads` — `~/Downloads` cleanup / triage rules
-- `com.noodlesoft.hazel.<anything>` — your own categories
+- `com.noodlesoft.hazel.photos`: `~/Pictures` import / organization rules
+- `com.noodlesoft.hazel.downloads`: `~/Downloads` cleanup / triage rules
+- `com.noodlesoft.hazel.<anything>`: your own categories
 
 ## Actions provided
 
-- **Open file** — opens the matched file in the default app for its type
-- **Open destination folder** — opens the folder Hazel moved/copied the file to (if applicable)
-- **Open source folder** — opens the folder Hazel was watching
-- **Copy file path** — full path to clipboard
-- **Copy rule name** — rule name to clipboard
+- **Open file**: opens the matched file in the default app for its type
+- **Open destination folder**: opens the folder Hazel moved/copied the file to (if applicable)
+- **Open source folder**: opens the folder Hazel was watching
+- **Copy file path**: full path to clipboard
+- **Copy rule name**: rule name to clipboard
 
-`Open destination folder` shows greyed-out for rules that don't move files (no `dest` in metadata) — that's the score doing the right thing: it knows the action would be a dead button, so it tells you instead of silently opening nothing.
+`Open destination folder` shows grayed-out for rules that don't move files (no `dest` in metadata). That's the score doing the right thing: it knows the action would be a dead button, so it tells you instead of silently opening nothing.
 
 ## Troubleshooting
 
@@ -185,5 +185,5 @@ log show --predicate 'subsystem == "app.tempoapp.Tempo" AND category == "Ingesti
 Common failure modes:
 
 - **HTTP 403** from Tempo: the token isn't authorized for `com.noodlesoft.hazel`. In Tempo Settings → Ingestion, edit the token and bind it to that exact provider, or to a parent prefix.
-- **HTTP 422**: the JSON payload is malformed (commonly: a path with embedded quotes that broke the heredoc). Wrap `$1` as written in the template — the heredoc handles escaping cleanly.
-- **No event at all**: Hazel didn't run the script. Check the rule preview in Hazel ("If: …, then: Run shell script") — Hazel only fires actions for rules whose conditions match the event.
+- **HTTP 422**: the JSON payload is malformed (commonly: a path with embedded quotes that broke the heredoc). Wrap `$1` as written in the template; the heredoc handles escaping cleanly.
+- **No event at all**: Hazel didn't run the script. Check the rule preview in Hazel ("If: …, then: Run shell script"). Hazel only fires actions for rules whose conditions match the event.

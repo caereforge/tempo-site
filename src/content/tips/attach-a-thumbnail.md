@@ -25,7 +25,7 @@ A Hazel rule that grabs a frame, a script that snapshots a screen, a webhook fro
 
 ## Pick images that read at a glance
 
-In v1.1 the thumbnail is **not clickable** (there is no zoom yet). Tempo shows it scaled to the width of the actions panel, so it is a *preview*, not a viewer. That makes it perfect for things you recognize instantly:
+In v1.1 the thumbnail is **not clickable** (there is no zoom yet). Tempo shows it scaled to the width of the actions panel, so it is a *preview*, not a viewer. That makes it a good fit for things you recognize instantly:
 
 - a face or a scene (who is at the door)
 - a chart or a status screen

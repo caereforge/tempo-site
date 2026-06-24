@@ -1,6 +1,6 @@
 ---
 title: "Vaultwarden"
-description: "Vaultwarden auth activity in Tempo's timeline — failed/successful logins, admin access, vault exports and a brute-force burst signal, grouped per source IP. Log-driven, your secrets stay local."
+description: "Vaultwarden auth activity in Tempo's timeline: failed/successful logins, admin access, vault exports and a brute-force burst signal, grouped per source IP. Log-driven, your secrets stay local."
 providerIdentifier: "com.vaultwarden"
 color: "#175DDC"
 version: "1.1.0"
@@ -15,7 +15,7 @@ Surface Vaultwarden auth activity in Tempo with five read-only actions (open vau
 
 Vaultwarden has **no native outbound webhook**, so this integration is **log-driven**: a small watcher tails the Vaultwarden container's log (`docker logs -f`) and POSTs to Tempo whenever it sees an auth-relevant line, extracting the source IP and user email.
 
-The integration intentionally keeps the source's secrets local — your admin token and vault data **never leave the machine running the watcher**. Only the parsed event, source IP and user email go to Tempo.
+The integration keeps the source's secrets local: your admin token and vault data **never leave the machine running the watcher**. Only the parsed event, source IP and user email go to Tempo.
 
 Tested against live Vaultwarden 1.32+ in a standard Docker setup.
 
@@ -24,8 +24,8 @@ Tested against live Vaultwarden 1.32+ in a standard Docker setup.
 ## Install
 
 1. Download `vaultwarden.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet — click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
-3. In Tempo **Settings → Ingestion**, add a token named `vaultwarden` bound to `com.vaultwarden`. Copy the token — you'll paste it into the watcher's env in the next step.
+2. Double-click it. Tempo opens a review sheet, then click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
+3. In Tempo **Settings → Ingestion**, add a token named `vaultwarden` bound to `com.vaultwarden`. Copy the token; you'll paste it into the watcher's env in the next step.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
 5. Install the log watcher (below) on the host running Vaultwarden.
 
@@ -77,12 +77,12 @@ while true; do
 done
 ```
 
-> **Bare-metal install?** Replace `docker logs -f --since 0s "$VW_CONTAINER"` with `tail -F /path/to/vaultwarden.log` — the `case` parser is the same.
-> **Wording caveat.** The `login_failed`, `user_login`, `admin_login_failed` and `admin_login` patterns are validated against real 1.32–1.34 logs. `vault_exported` and `user_created` wordings vary by version — confirm with `docker logs <container>` and adapt the branch if needed.
+> **Bare-metal install?** Replace `docker logs -f --since 0s "$VW_CONTAINER"` with `tail -F /path/to/vaultwarden.log`; the `case` parser is the same.
+> **Wording caveat.** The `login_failed`, `user_login`, `admin_login_failed` and `admin_login` patterns are validated against real 1.32–1.34 logs. `vault_exported` and `user_created` wordings vary by version: confirm with `docker logs <container>` and adapt the branch if needed.
 
 ## Run it persistently (flock keepalive)
 
-The watcher is a long-lived stream, so keep it alive with a single-instance flock cron — it restarts within 5 minutes if it dies and starts on boot:
+The watcher is a long-lived stream, so keep it alive with a single-instance flock cron. It restarts within 5 minutes if it dies and starts on boot:
 
 ```sh
 # vaultwarden.env  (chmod 600)
@@ -116,22 +116,22 @@ exec bash /path/to/vaultwarden-tempo.sh >> /path/to/vw-watcher.log 2>&1
 | `Event: user_login`           | `info`   | Login          |
 | _(default)_                   | `info`   | Info           |
 
-`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes — the brute-force signal. `user_created` is a **warning** on purpose: on a personal vault with signups disabled, a new account means someone bypassed registration. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate.
+`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes, the brute-force signal. `user_created` is a **warning** on purpose: on a personal vault with signups disabled, a new account means someone bypassed registration. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate.
 
 ## Required `metadata` fields
 
-- **`Event`** — drives severity (values above).
-- **`ServerUrl`** — base URL of Vaultwarden (powers the open-vault / open-admin actions).
-- **`IP`** — source IP of the auth line; the **grouping key** (all activity from one IP is one stack) and the most actionable field for a brute-force alert.
-- **`UserEmail`** — set when the event involves a user.
+- **`Event`**: drives severity (values above).
+- **`ServerUrl`**: base URL of Vaultwarden (powers the open-vault / open-admin actions).
+- **`IP`**: source IP of the auth line; the **grouping key** (all activity from one IP is one stack) and the most actionable field for a brute-force alert.
+- **`UserEmail`**: set when the event involves a user.
 
 ## Hardening (recommended before storing real secrets)
 
 The score gives you **visibility**; pair it with source-side hardening:
-- `SIGNUPS_ALLOWED=false` once your account exists — then a `user_created` event is genuinely suspicious.
+- `SIGNUPS_ALLOWED=false` once your account exists; then a `user_created` event is genuinely suspicious.
 - `INVITATIONS_ALLOWED=false` unless you actively invite others.
-- Strong `ADMIN_TOKEN` — an Argon2 hash (`docker exec <container> /vaultwarden hash`), not a plaintext string; or leave it unset to disable the admin panel.
-- A reverse proxy + fail2ban if it's internet-reachable — the watcher **reports** brute-force, it does not block it.
+- Strong `ADMIN_TOKEN`: an Argon2 hash (`docker exec <container> /vaultwarden hash`), not a plaintext string; or leave it unset to disable the admin panel.
+- A reverse proxy + fail2ban if it's internet-reachable. The watcher **reports** brute-force, it does not block it.
 
 ## Notes
 

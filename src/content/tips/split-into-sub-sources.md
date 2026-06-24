@@ -13,10 +13,10 @@ Sometimes one source produces a few distinct kinds of event you would like to se
 
 For Hazel, instead of everything under `com.noodlesoft.hazel`, post email-rule events under `com.noodlesoft.hazel.email` and scanner-rule events under `com.noodlesoft.hazel.scanner`. Each becomes its own row grouped under the Hazel parent, and you can hide or auto-dismiss them independently.
 
-It all just works, because:
+This works because:
 
 - the **token** bound to `com.noodlesoft.hazel` already accepts any `com.noodlesoft.hazel.*` sub-source,
 - the **single score** covers every sub-source (Tempo walks up the dotted name to find it),
 - the **source panel** groups them under one parent row.
 
-One score, one token, as many logical rows as you want. It fits naturally for the sources you author yourself, like Hazel and your own scripts.
+One score, one token, as many logical rows as you want. It works well for the sources you author yourself, like Hazel and your own scripts.

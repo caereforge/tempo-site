@@ -16,21 +16,21 @@ Surface Pi-hole health and configuration changes in Tempo's timeline with five d
 
 Pi-hole has no native push webhook out of the box, so this integration is **poll-driven**: a small bash script runs on cron, checks Pi-hole's state via its HTTP API, and POSTs an event to Tempo when something interesting changes.
 
-Tested with Pi-hole **v6** (FTL HTTP API). v5 with the legacy PHP API also works with minor URL adjustments — see the v5 note at the bottom.
+Tested with Pi-hole **v6** (FTL HTTP API). v5 with the legacy PHP API also works with minor URL adjustments; see the v5 note at the bottom.
 
 ---
 
 ## Install
 
 1. Download `pi-hole.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet — click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
+2. Double-click it. Tempo opens a review sheet, then click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
 3. In Tempo **Settings → Ingestion**, add a token named `pi-hole` bound to `net.pi-hole.pi-hole`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
 5. Install the polling script (below).
 
 ## Polling script
 
-Save as `pihole-tempo.sh`, edit the four config values, run on cron every 5–10 minutes. The script tracks state across runs so it only POSTs to Tempo when something **changes** (no spam).
+Save as `pihole-tempo.sh`, edit the four config values, and run on cron every 5–10 minutes. The script tracks state across runs so it only POSTs to Tempo when something **changes** (no spam).
 
 ```sh
 #!/usr/bin/env bash
@@ -128,9 +128,9 @@ Disable Pi-hole blocking from the admin UI for 30s, then run the script manually
 
 ## Required `metadata` fields
 
-- **`ServerUrl`** — base URL of the Pi-hole. Used by every action.
-- **`Status`** or **`Action`** — drives severity. At least one should be present.
-- **`Domain`** — only when the event is about a specific domain (e.g. unblock action). Used by the "Copy domain" action; optional otherwise.
+- **`ServerUrl`**: base URL of the Pi-hole. Used by every action.
+- **`Status`** or **`Action`**: drives severity. At least one should be present.
+- **`Domain`**: only when the event is about a specific domain (e.g. unblock action). Used by the "Copy domain" action; optional otherwise.
 
 ## Pi-hole v5 note
 
@@ -169,7 +169,7 @@ The rest of the script is identical.
 
 ## Notes
 
-- The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable` — a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end — Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval — a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
-- `high_load` and `gravity_update` from the severity table are left as optional extensions (CPU load is noisy on a DNS resolver; gravity has no clean status endpoint) — add them with the same `metadata` keys if you want them.
-- The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score — explicitly trusted by you.
-- For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS` — Tempo lists them as the same source but each event carries its own URL.
+- The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable`, where a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end: Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval; a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
+- `high_load` and `gravity_update` from the severity table are left as optional extensions (CPU load is noisy on a DNS resolver; gravity has no clean status endpoint). Add them with the same `metadata` keys if you want them.
+- The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score, explicitly trusted by you.
+- For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS`. Tempo lists them as the same source but each event carries its own URL.
