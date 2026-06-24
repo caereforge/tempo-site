@@ -6,15 +6,15 @@ order: 11
 draft: false
 pubDate: 2026-05-05
 ---
-# 11 — Score authoring
+# 11 - Score authoring
 
-This chapter is the developer reference for writing Tempo scores from scratch. It assumes you've read [§2.3 — Scores](/docs/02-concepts#23--scores) and [§7 — Score Editor](/docs/07-score-editor). The Score Editor covers most use cases without you ever opening a JSON file; this chapter is for the cases where you want to author a score the editor can't fully express, or you want to share a score with the community via the public catalog.
+This chapter is the developer reference for writing Tempo scores from scratch. It assumes you've read [§2.3 - Scores](/docs/02-concepts#23---scores) and [§7 - Score Editor](/docs/07-score-editor). The Score Editor covers most use cases without you ever opening a JSON file; this chapter is for the cases where you want to author a score the editor can't fully express, or you want to share a score with the community via the public catalog.
 
 The canonical machine-readable schema lives at [`schema/score.schema.json`](https://github.com/caereforge/tempo-scores/blob/main/schema/score.schema.json) in the public catalog repo. This chapter is the prose narration of that schema, plus the unwritten rules of "what makes a good score."
 
 ---
 
-## 11.1 — JSON schema overview
+## 11.1 - JSON schema overview
 
 A score is a single JSON object. The minimum viable score:
 
@@ -77,7 +77,7 @@ Bundled scores ship with the app in `Tempo.app/Contents/Resources/Scores/*.json`
 
 ---
 
-## 11.2 — Field reference
+## 11.2 - Field reference
 
 ### `providerIdentifier` (required)
 
@@ -142,7 +142,7 @@ Evaluation: top-to-bottom, first match wins. Order matters: put more specific ru
 
 ### `grouping` and `groupingWindow`
 
-Stack grouping configuration. See [§2.6 — Stack and grouping](/docs/02-concepts#26--stack-and-grouping) and [§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping).
+Stack grouping configuration. See [§2.6 - Stack and grouping](/docs/02-concepts#26---stack-and-grouping) and [§7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping).
 
 - **`grouping`**: array of templates, with `${metadata.xxx}` placeholders. Tempo picks the first one that fully resolves
 - **`groupingWindow`**: duration string: `15m`, `30m`, `1h`, `6h`, `1d`, `1w`, or empty (no cutoff)
@@ -178,7 +178,7 @@ Array of action buttons that appear on every event from this provider. Each acti
 
 Per-event actions sent in the payload itself are *appended* after the default actions, and override defaults of the same label.
 
-### The grown schema — additional top-level blocks
+### The grown schema - additional top-level blocks
 
 Beyond the basics above, a real bundled score can use the following blocks. They're all optional, and most of them are also editable from the Score Editor (the exceptions are noted). A shipped score like `com.beszel.json` uses `senderSeverityWins`, `groupingRules`, `helper` and `surface` together; these are what you'll find.
 
@@ -192,7 +192,7 @@ Beyond the basics above, a real bundled score can use the following blocks. They
 
 ---
 
-## 11.3 — Severity rule syntax
+## 11.3 - Severity rule syntax
 
 ### Match conditions
 
@@ -252,7 +252,7 @@ Stringification is implicit: numbers, booleans and strings all collapse to their
 
 ---
 
-## 11.4 — Action triggers reference
+## 11.4 - Action triggers reference
 
 Five trigger types are supported: `openURL`, `openTerminalWith`, `copyToClipboard`, `completeReminder`, and `uncompleteReminder`. Each is mutually exclusive: an action has exactly one trigger. (`completeReminder` / `uncompleteReminder` flip an Apple Reminder's completed flag and apply only to EventKit reminder sources; the three below are the ones you'll author for ingested sources.)
 
@@ -329,7 +329,7 @@ The full SF Symbols catalog is browsable in the **SF Symbols** app from Apple. P
 
 ---
 
-## 11.5 — `.tempo-score` installer file
+## 11.5 - `.tempo-score` installer file
 
 A `.tempo-score` file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognises the extension via Tempo's UTI registration; double-clicking a `.tempo-score` file opens Tempo and triggers the **Score Review Sheet**, a preview UI showing what's about to be installed:
 
@@ -369,7 +369,7 @@ Use `.tempo-score` for distribution, `.json` for local editing in `~/Library/App
 
 ---
 
-## 11.6 — `tempo-validate` CLI
+## 11.6 - `tempo-validate` CLI
 
 Tempo ships an offline score linter, `tempo-validate`, for sanity-checking a score before you install or distribute it. It's useful for CI pipelines that vet community contributions to the public catalog, and for a quick local check after hand-editing a score.
 
@@ -393,7 +393,7 @@ If you'd rather not run the linter, you can also spot-check a score by:
 
 ---
 
-## 11.7 — Best practices
+## 11.7 - Best practices
 
 A score that's good to use is a score that's been thought about. A few patterns worth following:
 
@@ -441,7 +441,7 @@ If you need a secret in an action, the right pattern is:
 
 ---
 
-## 11.8 — Worked example
+## 11.8 - Worked example
 
 Let's write a score from scratch for a fictional tool: a custom log-scanning script that POSTs results.
 
@@ -555,5 +555,5 @@ The score is iterative: you ship the first version, run it for a few days, then 
 
 - **Submitting a score to the public catalog** → [github.com/caereforge/tempo-scores → CONTRIBUTING.md](https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md)
 - **The full webhook payload reference** → [the Sources reference (§10)](/docs/10-sources-reference)
-- **The Score Editor for hands-on changes** → [§7 — Score Editor](/docs/07-score-editor)
-- **Per-source setup for bundled providers** → [§10 — Sources reference](/docs/10-sources-reference)
+- **The Score Editor for hands-on changes** → [§7 - Score Editor](/docs/07-score-editor)
+- **Per-source setup for bundled providers** → [§10 - Sources reference](/docs/10-sources-reference)

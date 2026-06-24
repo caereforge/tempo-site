@@ -37,7 +37,7 @@ Save as `vaultwarden-tempo.sh`:
 
 ```sh
 #!/usr/bin/env bash
-# vaultwarden-tempo.sh — stream Vaultwarden auth events to Tempo
+# vaultwarden-tempo.sh - stream Vaultwarden auth events to Tempo
 set -uo pipefail
 
 : "${VW_URL:?set VW_URL}"               # https://<vaultwarden-host>:8443

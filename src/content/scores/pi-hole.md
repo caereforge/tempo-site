@@ -34,7 +34,7 @@ Save as `pihole-tempo.sh`, edit the four config values, and run on cron every 5�
 
 ```sh
 #!/usr/bin/env bash
-# pihole-tempo.sh — emit Pi-hole state + update-available to Tempo
+# pihole-tempo.sh - emit Pi-hole state + update-available to Tempo
 set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────
@@ -61,7 +61,7 @@ changed() {
     [ "$2" != "$last" ]
 }
 
-# ── Auth (Pi-hole v6). IMPORTANT: delete the session at the end — auth on
+# ── Auth (Pi-hole v6). IMPORTANT: delete the session at the end - auth on
 #    every run WITHOUT deleting exhausts Pi-hole's API seats (api_seats_exceeded).
 SID=$(curl -s --max-time 5 -X POST -H "Content-Type: application/json" \
     -d "{\"password\":\"${PIHOLE_PASS}\"}" "${PIHOLE_URL}/api/auth" \
@@ -81,8 +81,8 @@ else
 fi
 if changed status "$STATUS"; then
     case "$STATUS" in
-        up)          emit "Pi-hole — blocking enabled"  "up"          "blocking_enabled" ;;
-        disabled)    emit "Pi-hole — blocking disabled" "disabled"    "blocking_disabled" ;;
+        up)          emit "Pi-hole - blocking enabled"  "up"          "blocking_enabled" ;;
+        disabled)    emit "Pi-hole - blocking disabled" "disabled"    "blocking_disabled" ;;
         unreachable) emit "Pi-hole unreachable"         "unreachable" "" ;;
     esac
 fi
@@ -92,7 +92,7 @@ if [ -n "$SID" ]; then
     UPD=$(curl -s --max-time 5 -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/info/version" \
         | jq -r '[.version.core, .version.web, .version.ftl] | map(select(.local.version != .remote.version)) | length')
     if changed update "${UPD:-0}" && [ "${UPD:-0}" -gt 0 ]; then
-        emit "Pi-hole — update available" "up" "update_available"
+        emit "Pi-hole - update available" "up" "update_available"
     fi
 fi
 
@@ -110,7 +110,7 @@ crontab -e
 
 ## Verify
 
-Disable Pi-hole blocking from the admin UI for 30s, then run the script manually. You should see a `Pi-hole — blocking disabled` event in Tempo within a couple of seconds, marked **warning**.
+Disable Pi-hole blocking from the admin UI for 30s, then run the script manually. You should see a `Pi-hole - blocking disabled` event in Tempo within a couple of seconds, marked **warning**.
 
 ## Severity rules
 
@@ -156,7 +156,7 @@ The rest of the script is identical.
 ```json
 {
   "providerIdentifier": "net.pi-hole.pi-hole",
-  "title": "Pi-hole — blocking disabled",
+  "title": "Pi-hole - blocking disabled",
   "startDate": "2026-04-29T10:00:00Z",
   "eventType": "alert",
   "metadata": {

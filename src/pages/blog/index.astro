@@ -18,7 +18,7 @@ const announcements = allPosts.filter((p) =>
   (p.data.tags ?? []).includes(ANNOUNCEMENT_TAG),
 );
 
-// Tag cloud excludes the announcement tag itself — it already has its own section.
+// Tag cloud excludes the announcement tag itself - it already has its own section.
 const tagCounts = new Map<string, number>();
 for (const post of allPosts) {
   for (const tag of post.data.tags ?? []) {
@@ -32,7 +32,7 @@ const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 ---
 <BaseLayout
-  title="Blog — Tempo"
+  title="Blog - Tempo"
   description="Notes on building Tempo, the macOS event hub for your homelab."
 >
   <header class="page-header">

@@ -6,15 +6,15 @@ order: 3
 draft: false
 pubDate: 2026-05-05
 ---
-# 3 — Getting started
+# 3 - Getting started
 
 This chapter takes you from a downloaded DMG to a Mac with Tempo running, ingestion ready to receive events, and a clear picture of what the three panels do. The whole thing should take about ten minutes.
 
-If you just want events in the feed, [§1.4 — Tempo in five minutes](/docs/01-introduction#14--tempo-in-five-minutes) is the abbreviated version.
+If you just want events in the feed, [§1.4 - Tempo in five minutes](/docs/01-introduction#14---tempo-in-five-minutes) is the abbreviated version.
 
 ---
 
-## 3.1 — Install Tempo
+## 3.1 - Install Tempo
 
 ### Get the DMG
 
@@ -86,7 +86,7 @@ The tap source is public at [github.com/caereforge/homebrew-tap](https://github.
 
 ---
 
-## 3.2 — First launch and permissions
+## 3.2 - First launch and permissions
 
 ### What you'll see at first
 
@@ -106,7 +106,7 @@ You won't see anything in the UI to indicate this; it runs in the background. To
 
 > 💡 **Note**: Tempo can also accept encrypted (TLS) connections on port `8776`. TLS is opt-in per token in **Settings → Ingestion**; see the [Security page](/security) for the cert and per-token `secure` flag details.
 
-> 💡 **Note**: the ingestion server is what lets external sources (Home Assistant, Uptime Kuma, Kopia, GitHub Actions, custom scripts) send events to Tempo via HTTP POST. It's on by default because Tempo without external sources is essentially a viewer for your day's calendar and reminders: useful, but a fraction of the product. Leaving the server running costs ~a kilobyte of memory and one TCP listen socket; the moment you decide to wire up your first source it works without revisiting Settings. If you won't use external sources, you can disable it in [§8.2 — Ingestion and tokens](/docs/08-settings-reference#82-ingestion-and-tokens).
+> 💡 **Note**: the ingestion server is what lets external sources (Home Assistant, Uptime Kuma, Kopia, GitHub Actions, custom scripts) send events to Tempo via HTTP POST. It's on by default because Tempo without external sources is essentially a viewer for your day's calendar and reminders: useful, but a fraction of the product. Leaving the server running costs ~a kilobyte of memory and one TCP listen socket; the moment you decide to wire up your first source it works without revisiting Settings. If you won't use external sources, you can disable it in [§8.2 - Ingestion and tokens](/docs/08-settings-reference#82---ingestion-and-tokens).
 
 ### macOS firewall
 
@@ -116,7 +116,7 @@ If you have **System Settings → Network → Firewall** turned on, macOS may pr
 
 Click **Allow**. Without this, only `localhost` (your own Mac) can talk to Tempo's ingestion endpoint, and the rest of your homelab can't reach it.
 
-> ⚠️ **Warning**: if you're testing Tempo and the firewall prompt didn't appear but external sources can't connect, see [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion). Common culprits in order: macOS Application Firewall, Little Snitch / LuLu deny-incoming rules, third-party VPN clients that re-route LAN traffic.
+> ⚠️ **Warning**: if you're testing Tempo and the firewall prompt didn't appear but external sources can't connect, see [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion). Common culprits in order: macOS Application Firewall, Little Snitch / LuLu deny-incoming rules, third-party VPN clients that re-route LAN traffic.
 
 ### Network firewall and VLANs
 
@@ -134,7 +134,7 @@ If your homelab is on a flat network (everything on one subnet, no VLANs), this 
 
 Keep firewall rules narrow: specific source IP, specific destination IP, specific port. Tempo's ingestion is token-authenticated, so the firewall isn't your only line of defence, but a tight rule is good hygiene.
 
-> 💡 **Note**: this is only the headline. The full troubleshooting walk-through with five scenarios (Mac-local firewall, VLAN routing, hostname resolution, client isolation, server-not-listening) is in [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion). If first-source setup gets stuck, that's the page to reach for.
+> 💡 **Note**: this is only the headline. The full troubleshooting walk-through with five scenarios (Mac-local firewall, VLAN routing, hostname resolution, client isolation, server-not-listening) is in [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion). If first-source setup gets stuck, that's the page to reach for.
 
 ### Optional: Calendar and Reminders
 
@@ -150,7 +150,7 @@ If you keep it on, your calendar entries and reminders appear as an "Apple Calen
 
 ---
 
-## 3.3 — A tour of the three panels
+## 3.3 - A tour of the three panels
 
 The Tempo window is a fixed three-column layout. Each column is resizable by dragging the divider between them, but you can't reorder them: left is always sources, centre is always the timeline, right is always the action panel. The aim is muscle memory: after a few days, your eyes know where to look without thinking.
 
@@ -168,7 +168,7 @@ The source panel lists every source Tempo knows about. Each row shows:
 
 Filtering the timeline to one or more sources happens through the info menu (ⓘ): click it on a source row, then **Show only this source** (or **Add to filter** to combine multiple). A yellow filter banner appears across the top of the event panel listing the active filter; click the banner to clear. The source row itself is not a click target: that's a deliberate choice to keep clicking on the row from feeling like a state change you didn't plan for.
 
-A button at the bottom of the source panel switches the panel into **Manage Sources** mode, a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Get started — add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
+A button at the bottom of the source panel switches the panel into **Manage Sources** mode, a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Get started - add a source" with one or two sources, "Add a source" with three or four, "Manage sources" with five or more.
 
 ### Event panel (centre)
 
@@ -195,7 +195,7 @@ Clicking an action button resolves any `${...}` placeholders in the trigger and 
 
 ---
 
-## 3.4 — Connect your first source
+## 3.4 - Connect your first source
 
 Every source needs a small amount of setup on the *upstream* side: telling Home Assistant or Kopia or your custom script where to send events. (The exception is the optional Apple Calendar / Reminders utility covered in §3.2, which is purely on the Mac side.)
 
@@ -209,7 +209,7 @@ Every source follows the same conceptual pattern:
 4. **Tempo's ingestion server validates** the token, parses the JSON, runs it through the bundled or user-authored score for that provider, and writes the resulting event to the database
 5. **The event appears in the feed** within a second
 
-Bundled scores ship for the providers most homelab users have: Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology. For each, [§10 — Sources reference](/docs/10-sources-reference) has a per-source setup section: where to point the webhook in the upstream tool, what payload fields the score expects, what to expect in the timeline.
+Bundled scores ship for the providers most homelab users have: Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology. For each, [§10 - Sources reference](/docs/10-sources-reference) has a per-source setup section: where to point the webhook in the upstream tool, what payload fields the score expects, what to expect in the timeline.
 
 ### A two-minute test before connecting anything real
 
@@ -235,7 +235,7 @@ If everything's set up correctly, the response is:
 { "status": "accepted", "id": "<some-uuid>" }
 ```
 
-…and within a second, an event titled "First test event" appears in your timeline with `com.test` as the source. If that doesn't happen, jump to [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion).
+…and within a second, an event titled "First test event" appears in your timeline with `com.test` as the source. If that doesn't happen, jump to [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion).
 
 ### Picking your first real source
 
@@ -243,9 +243,9 @@ Most users connect a real source in this order:
 
 1. **Something you already have running**: your Kopia backups or your Home Assistant instance. Pick whichever is easier to reach (i.e., whichever you have the admin UI open in another tab right now)
 2. **Something with frequent events**, like a CI workflow or a noisy monitor, so you see Tempo's grouping and severity behaviour kick in within a few minutes rather than waiting for a daily cron
-3. **A custom script**: once the bundled sources are familiar, the [`tempo-post` helper](/docs/10-sources-reference#1010--tempo-post-helper) makes it easy to wire any cron job, post-commit hook, or shell script into Tempo
+3. **A custom script**: once the bundled sources are familiar, the [`tempo-post` helper](/docs/10-sources-reference#1010---tempo-post-helper) makes it easy to wire any cron job, post-commit hook, or shell script into Tempo
 
-Pick one and follow the matching section in [§10 — Sources reference](/docs/10-sources-reference). Each setup section is two to four pages, takes 5-15 minutes end-to-end.
+Pick one and follow the matching section in [§10 - Sources reference](/docs/10-sources-reference). Each setup section is two to four pages, takes 5-15 minutes end-to-end.
 
 ### When something doesn't work
 
@@ -264,9 +264,9 @@ Tempo's audit log records every payload that hits the ingestion endpoint, accept
 
 You have Tempo installed, the ingestion server ready to accept events, and a sense of what each panel does. From here:
 
-- **Customise how a source looks** in the feed → [§7 — Score Editor](/docs/07-score-editor): assign different colours, custom labels, group repeated events, define action buttons
-- **Connect more sources** → [§10 — Sources reference](/docs/10-sources-reference) for the bundled set; [§10.2 — Generic webhook](/docs/10-sources-reference#102-generic-webhook) for anything else
-- **Adjust visual preferences** → [§8.1 — Interface](/docs/08-settings-reference#81-interface): appearance, footer toggle, heatmap colours, badge contrast
-- **Set up automatic housekeeping** → [§8.4 — Maintenance](/docs/08-settings-reference#84-maintenance): auto-ack, auto-dismiss, retention
+- **Customise how a source looks** in the feed → [§7 - Score Editor](/docs/07-score-editor): assign different colours, custom labels, group repeated events, define action buttons
+- **Connect more sources** → [§10 - Sources reference](/docs/10-sources-reference) for the bundled set; [§10.2 - Generic webhook](/docs/10-sources-reference#102---generic-webhook) for anything else
+- **Adjust visual preferences** → [§8.1 - Interface](/docs/08-settings-reference#81---interface): appearance, footer toggle, heatmap colours, badge contrast
+- **Set up automatic housekeeping** → [§8.4 - Maintenance](/docs/08-settings-reference#84---maintenance): auto-ack, auto-dismiss, retention
 
-If anything along the way didn't behave the way this chapter described, [§12 — Troubleshooting](/docs/12-troubleshooting) covers the failure modes we've seen.
+If anything along the way didn't behave the way this chapter described, [§12 - Troubleshooting](/docs/12-troubleshooting) covers the failure modes we've seen.

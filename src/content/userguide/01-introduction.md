@@ -6,9 +6,9 @@ order: 1
 draft: false
 pubDate: 2026-05-05
 ---
-# 1 — Introduction
+# 1 - Introduction
 
-## 1.1 — Welcome to Tempo
+## 1.1 - Welcome to Tempo
 
 Tempo is a native macOS event hub.
 
@@ -22,7 +22,7 @@ This guide covers what Tempo does, how to set it up, how to make it your own, an
 
 ---
 
-## 1.2 — What Tempo is, what it isn't
+## 1.2 - What Tempo is, what it isn't
 
 Reading a "what is X" section is rarely thrilling, but Tempo sits in a category that's still forming. A few minutes here saves you from building a wrong mental model that you'd then have to unlearn.
 
@@ -46,7 +46,7 @@ The shorthand: Tempo is the funnel. Your existing tools each do their own job, a
 
 ---
 
-## 1.3 — A note on how we write these docs
+## 1.3 - A note on how we write these docs
 
 A few conventions, so the rest of the guide feels predictable.
 
@@ -76,7 +76,7 @@ A few conventions, so the rest of the guide feels predictable.
 
 ---
 
-## 1.4 — Tempo in five minutes
+## 1.4 - Tempo in five minutes
 
 If you'd rather see Tempo work than read about it, here's the shortest path from "downloaded" to "events in the timeline."
 
@@ -106,7 +106,7 @@ curl -X POST http://localhost:7776/ingest \
   }'
 ```
 
-Replace `$TEMPO_TOKEN` with the token shown in **Tempo Settings → Ingestion**. The event shows up in the feed within a second. (If it doesn't, see [Troubleshooting, Networking](/docs/12-troubleshooting#121-networking-lan-ingestion).)
+Replace `$TEMPO_TOKEN` with the token shown in **Tempo Settings → Ingestion**. The event shows up in the feed within a second. (If it doesn't, see [Troubleshooting, Networking](/docs/12-troubleshooting#121---networking-lan-ingestion).)
 
 > 💡 **Note**: that endpoint is `http://localhost:7776` because you're testing from the same machine. From another host on your LAN, replace `localhost` with your Mac's LAN IP. The ingestion server is LAN-reachable by design, since the things sending events to it usually live on other machines (your NAS, your Home Assistant box, your monitoring server).
 
@@ -114,7 +114,7 @@ Replace `$TEMPO_TOKEN` with the token shown in **Tempo Settings → Ingestion**.
 
 Once you've seen an event arrive, you can connect a real source. The bundled scores cover the most common cases: UniFi (Network and Protect), Kopia, Uptime Kuma, Home Assistant, GitHub Actions, Scripts, Synology, Hazel, and more. Apple Calendar and Reminders are also pre-wired via a built-in EventKit provider (no score installation needed). Each source has its own setup chapter in [§10 Sources reference](/docs/10-sources-reference).
 
-If your source isn't on the bundled list, the [generic webhook](/docs/10-sources-reference#102-generic-webhook) covers anything that can POST JSON.
+If your source isn't on the bundled list, the [generic webhook](/docs/10-sources-reference#102---generic-webhook) covers anything that can POST JSON.
 
 ### 5. (Recommended) Read chapter 2
 

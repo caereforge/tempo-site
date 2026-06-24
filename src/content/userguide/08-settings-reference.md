@@ -6,7 +6,7 @@ order: 8
 draft: false
 pubDate: 2026-05-05
 ---
-# 8 — Settings reference
+# 8 - Settings reference
 
 Tempo's Settings window has five tabs: **Interface**, **Agenda**, **Ingestion**, **Maintenance**, **Help**. This chapter walks each tab section by section, explaining what every control does and when you'd use it.
 
@@ -14,7 +14,7 @@ Open Settings via **Cmd-,** or via the menubar icon → **Settings…**.
 
 ---
 
-## 8.1 — Interface
+## 8.1 - Interface
 
 The Interface tab covers visual preferences: appearance, layout toggles, badge contrast, heatmap rendering.
 
@@ -67,7 +67,7 @@ Defaults are tuned to be legible in both light and dark modes; override only if 
 
 ---
 
-## 8.2 — Ingestion and tokens
+## 8.2 - Ingestion and tokens
 
 The Ingestion tab is where you configure the HTTP server that receives events from external sources.
 
@@ -127,7 +127,7 @@ Every ingestion attempt, accepted or rejected, is logged via Apple's unified log
 - Provider identifier
 - Accept / reject result, with reason on rejection (invalid token, malformed JSON, rate-limited, etc.)
 
-Useful for diagnosing "why didn't my event arrive?" See [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing).
+Useful for diagnosing "why didn't my event arrive?" See [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing).
 
 In V1 the audit log is not exposed inside the Ingestion tab itself. To inspect it live, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. To share it with support, use **Help → Export diagnostics bundle…**: the bundle includes the last 24 hours of OSLog output (no token values, no payload contents).
 
@@ -143,7 +143,7 @@ Loading your own certificate in place of the self-signed one is planned for a la
 
 ---
 
-## 8.3 — Agenda
+## 8.3 - Agenda
 
 The Agenda tab controls how Apple Calendar entries and Reminders flow into Tempo.
 
@@ -171,11 +171,11 @@ Calendar and reminder data flows through Apple's EventKit framework. A few cavea
 - **iCloud sync delays compound**: if your reminders sync from another device via iCloud, EventKit waits for the iCloud sync before notifying Tempo. A reminder you complete on iPhone might take 10-30 seconds to reflect in Tempo, depending on iCloud's batch interval
 - **Edge cases with task manager bridges**: if you use a task manager (Todoist, OmniFocus, Things, TickTick) that syncs to a calendar app via iCal subscription, Tempo reflects only what EventKit sees. Latency depends on the subscription refresh frequency and the task manager's export cadence
 
-For a more thorough discussion, see [§12.2 — Apple Calendar sync issues](/docs/12-troubleshooting#122-apple-calendar-sync-issues) and [§10.1 — Apple Calendar and Reminders](/docs/10-sources-reference#101-apple-calendar-and-reminders).
+For a more thorough discussion, see [§12.2 - Apple Calendar sync issues](/docs/12-troubleshooting#122---apple-calendar-sync-issues) and [§10.1 - Apple Calendar and Reminders](/docs/10-sources-reference#101---apple-calendar-and-reminders).
 
 ---
 
-## 8.4 — Maintenance
+## 8.4 - Maintenance
 
 The Maintenance tab is the umbrella for housekeeping behaviors: rules that fire on a schedule (auto-ack, auto-dismiss), the source liveness threshold, and the database (retention, backups).
 
@@ -268,11 +268,11 @@ The interval picker offers: **Off, every 6 hours, every 12 hours, every 18 hours
 
 #### Restore from backup
 
-A **Restore from backup…** button lives in the Database tab next to the backup destination controls. It opens a file picker scoped to `.tempobackup` bundles, previews what's inside, and applies the bundle atomically with a relaunch. Detailed walkthrough in [§9.4 — Restore from a backup](/docs/09-backup-restore#94--restore-from-a-backup).
+A **Restore from backup…** button lives in the Database tab next to the backup destination controls. It opens a file picker scoped to `.tempobackup` bundles, previews what's inside, and applies the bundle atomically with a relaunch. Detailed walkthrough in [§9.4 - Restore from a backup](/docs/09-backup-restore#94---restoring-on-a-new-mac).
 
 ---
 
-## 8.5 — Help
+## 8.5 - Help
 
 The Help tab is the support handoff surface. Two main jobs: explain the source-panel badge legend in detail, and let you export a diagnostic bundle.
 
@@ -314,7 +314,7 @@ The Settings → Help tab is intentionally narrow: badge legend and diagnostics 
 
 ## Where to go from here
 
-- **Backing up properly before a migration** → [§9 — Backup and restore](/docs/09-backup-restore)
-- **Tuning a noisy source** → [§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping) for grouping; **Auto-ack** in this chapter for severity-aware aging
-- **Troubleshooting unexpected behavior** → [§12 — Troubleshooting](/docs/12-troubleshooting)
-- **Per-source color and display name overrides** → [§4 — Source panel](/docs/04-source-panel)
+- **Backing up properly before a migration** → [§9 - Backup and restore](/docs/09-backup-restore)
+- **Tuning a noisy source** → [§7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping) for grouping; **Auto-ack** in this chapter for severity-aware aging
+- **Troubleshooting unexpected behavior** → [§12 - Troubleshooting](/docs/12-troubleshooting)
+- **Per-source color and display name overrides** → [§4 - Source panel](/docs/04-source-panel)

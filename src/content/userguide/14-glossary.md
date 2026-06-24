@@ -104,7 +104,7 @@ Custom labels often use [interpolation](#interpolation) so the label includes a 
 
 A user action that removes an event from the active feed. The event isn't deleted (it's still in the database and you can find it via source history) but it stops appearing in the main timeline.
 
-Dismissing is the right move for events you've handled and don't want cluttering your view. For events you've seen but want to leave visible, [ack](#acked) instead.
+Dismissing is the right move for events you've handled and don't want cluttering your view. For events you've seen but want to leave visible, [ack](#acked-acknowledged) instead.
 
 **See also**: Chapter 6.3 (Bulk acknowledge and dismiss).
 
@@ -216,7 +216,7 @@ V1 only does passive liveness (silence detection). Active liveness (Tempo pingin
 
 A separate view that replaces the source panel's normal contents, accessed via the button at the top of the source panel. From Manage Sources you can: add a new source, reorder existing ones, edit per-source settings (display name, group membership, auto-dismiss override, liveness override), or remove a source entirely.
 
-The button label adapts to your current source count: "Get started — add a source" / "Add a source" / "Manage sources".
+The button label adapts to your current source count: "Get started - add a source" / "Add a source" / "Manage sources".
 
 **See also**: Chapter 4 (Source panel).
 

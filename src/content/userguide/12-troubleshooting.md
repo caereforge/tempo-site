@@ -6,7 +6,7 @@ order: 12
 draft: false
 pubDate: 2026-05-05
 ---
-# 12 — Troubleshooting
+# 12 - Troubleshooting
 
 Tempo has only a few moving parts: the macOS app, the SQLite database, the HTTP ingestion server, EventKit for calendars, score JSON files. When something feels wrong, the failure is almost always in one of these, and the patterns repeat.
 
@@ -14,7 +14,7 @@ This chapter walks the failures we've seen, in rough order of "how often it bite
 
 ---
 
-## 12.1 — Networking (LAN ingestion)
+## 12.1 - Networking (LAN ingestion)
 
 By far the most common class of problem: a source is configured, a webhook fires, but Tempo's feed stays silent. The source app reports "webhook delivered successfully," but Tempo never received it.
 
@@ -60,7 +60,7 @@ Attach this to a Discord support thread or GitHub issue. The bundle is usually 5
 
 ---
 
-## 12.2 — Apple Calendar sync issues
+## 12.2 - Apple Calendar sync issues
 
 Calendar entries or reminders aren't appearing in Tempo, or they appear but reflect stale state (you marked a reminder done on iPhone, but it's still showing as open in Tempo). A few common patterns:
 
@@ -115,7 +115,7 @@ EventKit's notification system isn't comprehensive. Some kinds of changes (a cal
 
 ---
 
-## 12.3 — A score isn't appearing
+## 12.3 - A score isn't appearing
 
 You've created a score (or are using a bundled one) and events from the source aren't being styled the way you expected.
 
@@ -153,7 +153,7 @@ You've created a score (or are using a bundled one) and events from the source a
 
 ---
 
-## 12.4 — DMG won't open / Gatekeeper warning
+## 12.4 - DMG won't open / Gatekeeper warning
 
 You downloaded the DMG and macOS refuses to open Tempo.
 
@@ -175,7 +175,7 @@ You downloaded the DMG and macOS refuses to open Tempo.
 
 ---
 
-## 12.5 — Performance with many sources
+## 12.5 - Performance with many sources
 
 If your timeline has tens of thousands of events and Tempo feels sluggish:
 
@@ -218,7 +218,7 @@ Open a Discord support thread with your diagnostic bundle (Settings → Help →
 
 ---
 
-## 12.6 — Logs and diagnostic export
+## 12.6 - Logs and diagnostic export
 
 ### OSLog (Console.app)
 
@@ -282,7 +282,7 @@ For accepted events and full history beyond the rejection feed, read OSLog via C
 
 ---
 
-## 12.7 — Resetting scores to bundled defaults
+## 12.7 - Resetting scores to bundled defaults
 
 If a bundled score has drifted into a state you don't understand, or you want to undo wholesale customization:
 

@@ -6,13 +6,13 @@ order: 15
 draft: false
 pubDate: 2026-05-05
 ---
-# 15 — Appendix
+# 15 - Appendix
 
 Reference material that didn't fit cleanly into the chapter flow but is worth having as a single page.
 
 ---
 
-## 15.1 — Keyboard shortcuts
+## 15.1 - Keyboard shortcuts
 
 V1 inherits the standard macOS shortcuts and adds a small set for the timeline. Most of what you'd expect from a Mac app works the way you'd expect.
 
@@ -65,7 +65,7 @@ The Score Editor uses on-screen buttons for Save and Reset rather than dedicated
 
 ---
 
-## 15.2 — macOS native integrations
+## 15.2 - macOS native integrations
 
 A few standard macOS surfaces Tempo participates in:
 
@@ -90,7 +90,7 @@ Spotlight indexing, Quick Look previews for `.tempo-score`, and a Share Extensio
 
 ---
 
-## 15.3 — Privacy
+## 15.3 - Privacy
 
 Full privacy notice at [tempoapp.app/privacy](https://tempoapp.app/privacy).
 
@@ -106,7 +106,7 @@ If you have specific concerns about what Tempo does with a particular kind of da
 
 ---
 
-## 15.4 — License
+## 15.4 - License
 
 Full license text at [tempoapp.app/license](https://tempoapp.app/license). LICENSE.txt in the application bundle is the same.
 
@@ -120,7 +120,7 @@ The licensing approach is meant to be transparent: V1 is freeware-with-no-warran
 
 ---
 
-## 15.5 — Credits
+## 15.5 - Credits
 
 Tempo is built on the shoulders of a great deal of open-source software. The full credits live in the **About** panel in-app and in the LICENSE.txt of the application bundle.
 
@@ -145,4 +145,4 @@ If something didn't land (a chapter that left you confused, a section that shoul
 
 Documentation is the surface that compensates for V1 not having a Visual Action Builder yet. We take it seriously, and we'd rather hear that something didn't work than have you struggle through it alone.
 
-— *the Tempo docs*
+- *the Tempo docs*

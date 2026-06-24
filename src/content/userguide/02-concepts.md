@@ -6,15 +6,15 @@ order: 2
 draft: false
 pubDate: 2026-05-05
 ---
-# 2 — Concepts
+# 2 - Concepts
 
 > If you came in from chapter 1 and the words *score*, *severity*, *stack* feel abstract, this chapter is for you. We define the small vocabulary Tempo uses, explain how the parts connect, and hand you the mental model that makes the rest of the guide make sense.
 >
-> If you'd rather start hands-on and pick up the concepts as you go, skip to [chapter 3 — Getting started](/docs/03-getting-started). You can always come back. Each concept here links to the chapter that goes deeper.
+> If you'd rather start hands-on and pick up the concepts as you go, skip to [chapter 3 - Getting started](/docs/03-getting-started). You can always come back. Each concept here links to the chapter that goes deeper.
 
 ---
 
-## 2.1 — Events
+## 2.1 - Events
 
 The atomic unit Tempo deals with is the **event**.
 
@@ -32,11 +32,11 @@ Events also have fields Tempo manages itself: severity, state, acknowledgment ti
 
 > 💡 **Note**: an event isn't the same thing as the underlying thing-that-happened. If your Kopia backup runs every night, the backup itself is a process; the event is the *record* of that process completing (or failing) that Kopia sends to Tempo. Events are records, not the things they describe.
 
-**Where to learn more**: [chapter 5 — Event panel](/docs/05-event-panel) covers how events render in the UI; [glossary entry for event](/docs/14-glossary#event) is the quick reference.
+**Where to learn more**: [chapter 5 - Event panel](/docs/05-event-panel) covers how events render in the UI; [glossary entry for event](/docs/14-glossary#event) is the quick reference.
 
 ---
 
-## 2.2 — Sources and providers
+## 2.2 - Sources and providers
 
 Tempo uses two related but distinct words: **source** and **provider**.
 
@@ -58,11 +58,11 @@ The provider/source distinction matters because:
 
 > 🛠 **Tip**: if you have a vendor that sells multiple distinct products, the convention is one provider with a `sourceGroup` metadata field distinguishing products, rather than one provider per product. For example, Synology has DSM (NAS), Surveillance Station, and various others, all under provider `com.synology` with `sourceGroup: "DSM"`, `sourceGroup: "SurveillanceStation"`, etc.
 
-**Where to learn more**: [chapter 4 — Source panel](/docs/04-source-panel) covers the UI; [glossary entries for source and provider](/docs/14-glossary#provider) are the quick reference.
+**Where to learn more**: [chapter 4 - Source panel](/docs/04-source-panel) covers the UI; [glossary entries for source and provider](/docs/14-glossary#provider) are the quick reference.
 
 ---
 
-## 2.3 — Scores
+## 2.3 - Scores
 
 The word **score** is borrowed from music. A musical score tells the orchestra what notes to play, when, and how loud. A Tempo score tells Tempo what an event from a provider should look like, what severity to assign, and what actions to offer when you click on it.
 
@@ -94,13 +94,13 @@ Scores live as files in `~/Library/Application Support/Tempo/Scores/`. Tempo loa
 
 The score system is the canonical configuration surface between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source (different colours, different labels, different action buttons), the answer is almost always "edit the score."
 
-> 💡 **Note**: scores are the V1 way to customise Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) that covers severity rules, presentation, and grouping for hands-on editing without touching JSON. The Score Editor's **Actions** tab lets you add, edit, and reorder the buttons themselves; see [§7.6](/docs/07-score-editor#76-default-actions). The score JSON stays a valid alternate surface if you prefer to edit it by hand.
+> 💡 **Note**: scores are the V1 way to customise Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) that covers severity rules, presentation, and grouping for hands-on editing without touching JSON. The Score Editor's **Actions** tab lets you add, edit, and reorder the buttons themselves; see [§7.6](/docs/07-score-editor#76---actions). The score JSON stays a valid alternate surface if you prefer to edit it by hand.
 
-**Where to learn more**: [chapter 7 — Score Editor](/docs/07-score-editor) for hands-on editing; [chapter 11 — Score authoring](/docs/11-score-authoring) for the full JSON reference; [glossary entry for score](/docs/14-glossary#score).
+**Where to learn more**: [chapter 7 - Score Editor](/docs/07-score-editor) for hands-on editing; [chapter 11 - Score authoring](/docs/11-score-authoring) for the full JSON reference; [glossary entry for score](/docs/14-glossary#score).
 
 ---
 
-## 2.4 — Actions
+## 2.4 - Actions
 
 Every event in Tempo can carry a set of **actions**: buttons that do something useful when clicked. The action set is declared in the source's score; click an event in the timeline and the action panel on the right shows the buttons.
 
@@ -125,11 +125,11 @@ Actions in v1 are **always user-triggered**. Tempo never fires an action on its 
 
 > 🛑 **Critical**: actions you write yourself can do anything those three trigger types can do. `openTerminalWith` runs a shell command, so be careful with payload-interpolated content from untrusted sources, since a compromised upstream tool could craft a payload that injects a malicious command. Treat payloads from your LAN as you treat any LAN-reachable input: verify the source, use per-provider tokens, audit unexpected events.
 
-**Where to learn more**: [chapter 6 — Action panel](/docs/06-action-panel) for UI; [chapter 11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference) for trigger syntax.
+**Where to learn more**: [chapter 6 - Action panel](/docs/06-action-panel) for UI; [chapter 11.4 - Action triggers reference](/docs/11-score-authoring#114---action-triggers-reference) for trigger syntax.
 
 ---
 
-## 2.5 — Severity, state, acknowledgment, dismissal
+## 2.5 - Severity, state, acknowledgment, dismissal
 
 These four words together describe how Tempo characterises and manages events through their lifecycle.
 
@@ -171,11 +171,11 @@ You can also configure **per-source auto-dismiss**: events from a chosen source 
 
 > 💡 **Note**: ack and dismiss are user-side state. They don't write back to the source app. Tempo doesn't tell Kopia "the user has seen this backup result" or tell Kuma "the user has acknowledged this monitor outage." They only affect Tempo's local view.
 
-**Where to learn more**: [chapter 5.3 — Acknowledged events](/docs/05-event-panel#53-acknowledged-events); [chapter 8.4 — Maintenance settings](/docs/08-settings-reference#84-maintenance) for auto-dismiss; [glossary entries](/docs/14-glossary#severity).
+**Where to learn more**: [chapter 5.3 - Acknowledged events](/docs/05-event-panel#53---acknowledged-events); [chapter 8.4 - Maintenance settings](/docs/08-settings-reference#84---maintenance) for auto-dismiss; [glossary entries](/docs/14-glossary#severity).
 
 ---
 
-## 2.6 — Stack and grouping
+## 2.6 - Stack and grouping
 
 Some sources are chatty. A Uptime Kuma monitor that's down doesn't send one alert and stop; it re-notifies every 60 seconds. A Home Assistant alarm in a fault loop can send 30 events in five minutes. A Hazel rule processing a folder full of files generates a stream of "moved" events.
 
@@ -203,7 +203,7 @@ The result: instead of seven separate cards for seven Kopia runs of the same pat
 
 > 💡 **Note**: grouping is configured per-score, in the Score Editor's Stack grouping section. If you find a source generates too many cards, check whether its score declares grouping. If it doesn't, you can add one, or pick a smaller grouping window if it does and you want stacks to close more aggressively.
 
-**Where to learn more**: [chapter 5.4 — Stacked events](/docs/05-event-panel#54-stacked-events) for UI; [chapter 7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping) for editor.
+**Where to learn more**: [chapter 5.4 - Stacked events](/docs/05-event-panel#54---stacked-events) for UI; [chapter 7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping) for editor.
 
 ---
 
@@ -211,8 +211,8 @@ The result: instead of seven separate cards for seven Kopia runs of the same pat
 
 If the concepts feel solid:
 
-- Hands-on: [chapter 3 — Getting started](/docs/03-getting-started)
-- Customisation: [chapter 7 — Score Editor](/docs/07-score-editor)
-- Adding a source you don't have bundled: [chapter 10 — Sources reference](/docs/10-sources-reference)
+- Hands-on: [chapter 3 - Getting started](/docs/03-getting-started)
+- Customisation: [chapter 7 - Score Editor](/docs/07-score-editor)
+- Adding a source you don't have bundled: [chapter 10 - Sources reference](/docs/10-sources-reference)
 
 If a concept didn't quite land, the [glossary](/docs/14-glossary) has tighter one-paragraph definitions for each term used here. Open it in a separate tab and use it as a quick lookup while you read the rest of the guide.

@@ -52,7 +52,7 @@ Tempo expects this shape. Fields marked **required** are the minimum; everything
 
 ```json
 {
-  "title": "string — human-readable title (required; overridden by score rules)",
+  "title": "string - human-readable title (required; overridden by score rules)",
   "providerIdentifier": "com.home-assistant",
   "eventType": "alert",
   "metadata": {
@@ -61,7 +61,7 @@ Tempo expects this shape. Fields marked **required** are the minimum; everything
     "friendly_name": "Kitchen smoke detector",
     "area":          "Kitchen",
     "device_class":  "smoke",
-    "automation":    "optional — set this instead of entity_id for automation triggers"
+    "automation":    "optional - set this instead of entity_id for automation triggers"
   }
 }
 ```
@@ -73,7 +73,7 @@ Tempo expects this shape. Fields marked **required** are the minimum; everything
 Drop this automation into **Settings → Automations & Scenes**. It fires on any state change for any entity in the domains you care about (smoke, leak, door, window, motion, battery, climate), builds the Tempo payload with interpolated values, and POSTs it.
 
 ```yaml
-alias: "Tempo — forward state changes"
+alias: "Tempo - forward state changes"
 mode: queued
 max: 25
 trigger:
@@ -106,7 +106,7 @@ action:
 For automation events (e.g. a scene firing), use a separate automation that sets `metadata.automation` instead of `metadata.entity_id`:
 
 ```yaml
-alias: "Tempo — forward automation fires"
+alias: "Tempo - forward automation fires"
 trigger:
   - platform: event
     event_type: automation_triggered

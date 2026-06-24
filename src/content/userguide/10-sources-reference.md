@@ -6,7 +6,7 @@ order: 10
 draft: false
 pubDate: 2026-05-05
 ---
-# 10 — Sources reference
+# 10 - Sources reference
 
 This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline.
 
@@ -18,7 +18,7 @@ The sources are presented in a stable order (calendar first, then generic webhoo
 
 ---
 
-## 10.1 — Apple Calendar and Reminders
+## 10.1 - Apple Calendar and Reminders
 
 **Provider identifiers**: `com.apple.calendar` for calendar events and `com.apple.reminders` for reminders, sharing an **Apple** umbrella in the source panel
 
@@ -63,7 +63,7 @@ Slower paths:
 - **Google Calendar via macOS Internet Accounts**: Google's push-vs-poll behaviour determines latency. Often 1-5 minutes to fan out
 - **CalDAV servers**: varies by server; macOS polls, so latency depends on the configured poll interval (typically 15 minutes)
 
-For more on troubleshooting calendar sync issues, see [§12.2 — Apple Calendar sync issues](/docs/12-troubleshooting#122-apple-calendar-sync-issues).
+For more on troubleshooting calendar sync issues, see [§12.2 - Apple Calendar sync issues](/docs/12-troubleshooting#122---apple-calendar-sync-issues).
 
 ### Task managers via iCal subscription
 
@@ -85,7 +85,7 @@ The intrinsic limits of this pattern:
 
 ---
 
-## 10.2 — Generic webhook
+## 10.2 - Generic webhook
 
 **Provider identifier**: anything you choose, conventionally:
 - `local.<name>` for senders running on the Mac that hosts Tempo (`local.check_disk`, `local.backup_notify`)
@@ -150,7 +150,7 @@ Any payload whose `providerIdentifier` starts with `scripts.` is rendered throug
 
 **Why only one level?** It lets you split your scripts logically (shell checks apart from Python pollers) without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
 
-The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider. See [§11 — Score authoring](/docs/11-score-authoring).
+The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider. See [§11 - Score authoring](/docs/11-score-authoring).
 
 ### What your card looks like without a score
 
@@ -179,7 +179,7 @@ For shell scripts in particular, Tempo ships a helper (`tempo-post`) that wraps 
 
 ---
 
-## 10.3 — Kopia
+## 10.3 - Kopia
 
 **Provider identifier**: `com.kopia`
 **Endpoint**: `POST http://<your-mac>:7776/kopia`
@@ -212,8 +212,8 @@ duration: 1.2s
 The bundled score reads:
 
 - **`status`** → severity (success → ok, error/failed → error, warning → warning)
-- **`repository`** → source group label (lets you tell `Kopia — pCloud` from `Kopia — Backblaze`)
-- **`path`** → tail used for the title (`Kopia — Documents`); `aliases` in the score can map the full path to a friendlier display name
+- **`repository`** → source group label (lets you tell `Kopia - pCloud` from `Kopia - Backblaze`)
+- **`path`** → tail used for the title (`Kopia - Documents`); `aliases` in the score can map the full path to a friendlier display name
 - **`size`** → headline metric, with a "no change" detection that softens the severity when the snapshot uploaded zero bytes
 
 ### Per-path aliases
@@ -244,7 +244,7 @@ Each Kopia snapshot is a discrete event. The bundled score uses **no externalID*
 
 ---
 
-## 10.4 — UniFi
+## 10.4 - UniFi
 
 **Provider identifier**: `com.ubiquiti.unifi`
 **Endpoint**: `POST http://<your-mac>:7776/ingest/unifi`
@@ -304,7 +304,7 @@ So client-association events group by client+AP, device-status events group by A
 
 ---
 
-## 10.5 — Home Assistant
+## 10.5 - Home Assistant
 
 **Provider identifier**: `com.home-assistant`
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
@@ -379,7 +379,7 @@ If your HA isn't at `homeassistant.local`, edit the actions in the Score Editor 
 
 ---
 
-## 10.6 — Uptime Kuma
+## 10.6 - Uptime Kuma
 
 **Provider identifier**: `com.uptime-kuma`
 **Endpoint**: `POST http://<your-mac>:7776/uptime-kuma`
@@ -418,7 +418,7 @@ This is the canonical example of **stateful** event handling in Tempo.
 
 ---
 
-## 10.7 — GitHub Actions
+## 10.7 - GitHub Actions
 
 **Provider identifier**: `com.github.actions`
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
@@ -463,7 +463,7 @@ GitHub events come in different shapes (issues, PRs, workflow runs each have dif
 
 ---
 
-## 10.8 — Synology
+## 10.8 - Synology
 
 **Provider identifier**: `com.synology` (umbrella; sub-products distinguished via `metadata.sourceGroup` like `DSM`, `SurveillanceStation`)
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
@@ -501,7 +501,7 @@ If you have DSM + Surveillance Station + Photos + Drive, they all live under `co
 
 ---
 
-## 10.9 — Shell scripts (`scripts.shell`)
+## 10.9 - Shell scripts (`scripts.shell`)
 
 **Provider identifier**: `scripts.shell` (or `scripts.<language>` like `scripts.python`, `scripts.ruby`)
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
@@ -572,11 +572,11 @@ Schedule this in `crontab` or `launchd`; results land in Tempo automatically.
 
 ### When to write a dedicated score
 
-If you find yourself doing the same thing across several scripts (same kinds of severity rules, same kinds of actions), it's worth writing a dedicated score for the shared pattern. See [§11 — Score authoring](/docs/11-score-authoring).
+If you find yourself doing the same thing across several scripts (same kinds of severity rules, same kinds of actions), it's worth writing a dedicated score for the shared pattern. See [§11 - Score authoring](/docs/11-score-authoring).
 
 ---
 
-## 10.10 — `tempo-post` helper
+## 10.10 - `tempo-post` helper
 
 A wrapper that handles the curl boilerplate so custom scripts can emit events without hand-writing JSON and HTTP headers. It ships bundled with Tempo.app as `tempo-post`, a macOS binary. For homelab hosts that aren't Macs (Linux boxes, a NAS, a Raspberry Pi), download the portable versions from the utilities page at [tempoapp.app/utilities/](https://tempoapp.app/utilities/): `tempo-post.sh` (bash/curl) and `tempo-post.ps1` (PowerShell).
 
@@ -672,8 +672,8 @@ Schedule with launchd or cron; the helper handles the rest.
 
 ## Where to go from here
 
-- **Writing a custom score for a source not bundled** → [§11 — Score authoring](/docs/11-score-authoring)
-- **Customising one of the bundled scores** → [§7 — Score Editor](/docs/07-score-editor)
-- **The full webhook payload reference** → see [**§10.2 — Generic webhook → Full payload reference**](#full-payload-reference) above
-- **Troubleshooting "my events aren't arriving"** → [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion) and [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing)
+- **Writing a custom score for a source not bundled** → [§11 - Score authoring](/docs/11-score-authoring)
+- **Customising one of the bundled scores** → [§7 - Score Editor](/docs/07-score-editor)
+- **The full webhook payload reference** → see [**§10.2 - Generic webhook → Full payload reference**](#full-payload-reference) above
+- **Troubleshooting "my events aren't arriving"** → [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion) and [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing)
 - **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores): Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more

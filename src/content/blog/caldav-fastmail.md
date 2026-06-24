@@ -1,5 +1,5 @@
 ---
-title: "CalDAV is here — starting with Fastmail"
+title: "CalDAV is here - starting with Fastmail"
 description: "Tempo now speaks CalDAV natively, experimentally. Your Fastmail calendars show up in the Agenda without going through Apple's Internet Accounts."
 pubDate: 2026-05-27
 tags: ["how-to", "caldav", "calendar"]

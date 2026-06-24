@@ -42,12 +42,12 @@ In Hazel, edit the rule you want Tempo to receive notifications for. Add a new a
 TEMPO_HOST="127.0.0.1:7776"
 TEMPO_TOKEN="paste-your-hazel-token-here"
 
-# Default provider — every Hazel rule POSTs under the umbrella id and
+# Default provider - every Hazel rule POSTs under the umbrella id and
 # the score above renders all of them with the same five actions. Good
 # when you have one or two Hazel rules and want them grouped together.
 PROVIDER="com.noodlesoft.hazel"
 
-# Optional — turn this rule into its own sub-source under the Hazel
+# Optional - turn this rule into its own sub-source under the Hazel
 # umbrella. Pick a short stable suffix (scanner, mail, photos,
 # downloads, ...) and uncomment the line below. Use ONE level only:
 # the suffix is the sub-source row, and anything deeper rolls up into
@@ -66,7 +66,7 @@ curl -sS -X POST "http://$TEMPO_HOST/ingest" \
   -H "Content-Type: application/json" \
   -d "$(cat <<EOF
 {
-  "title": "$HAZEL_RULE_NAME — $(basename "$1")",
+  "title": "$HAZEL_RULE_NAME - $(basename "$1")",
   "providerIdentifier": "$PROVIDER",
   "eventType": "alert",
   "metadata": {
@@ -89,7 +89,7 @@ You can attach the same action to as many rules as you want: `$HAZEL_RULE_NAME` 
 Each event Tempo receives looks like this in the feed:
 
 ```
-Sort photos by date — IMG_4521.HEIC
+Sort photos by date - IMG_4521.HEIC
 ```
 
 with metadata carrying the file path, rule name, source folder, and destination folder. The five default actions interpolate those values: clicking *Open file* runs `open file:///Users/.../IMG_4521.HEIC`, *Open destination folder* runs `open file:///Users/.../Sorted/2026-04`, etc.
@@ -153,12 +153,12 @@ Naming convention is yours. A few examples:
 If Hazel rules fire but no event reaches Tempo, run these in Terminal in order until something fails:
 
 ```bash
-# 1. Reachability — does Tempo's port respond?
+# 1. Reachability - does Tempo's port respond?
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:7776/health
 ```
 
 ```bash
-# 2. Token + payload — does a manual POST land in Tempo?
+# 2. Token + payload - does a manual POST land in Tempo?
 curl -sS -X POST http://127.0.0.1:7776/ingest \
   -H "X-Tempo-Token: paste-token" \
   -H "Content-Type: application/json" \
@@ -166,7 +166,7 @@ curl -sS -X POST http://127.0.0.1:7776/ingest \
 ```
 
 ```bash
-# 3. tcpdump — confirm Hazel's POST is leaving the Mac on the right port
+# 3. tcpdump - confirm Hazel's POST is leaving the Mac on the right port
 sudo tcpdump -i lo0 -A 'tcp port 7776' &
 # Trigger your Hazel rule, then:
 sudo killall tcpdump

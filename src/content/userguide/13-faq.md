@@ -6,7 +6,7 @@ order: 13
 draft: false
 pubDate: 2026-05-05
 ---
-# 13 — FAQ
+# 13 - FAQ
 
 The questions that come up most. Each answer is short; the deeper material is in the rest of the User Guide.
 
@@ -40,7 +40,7 @@ Tempo shows and proposes; in V1 it never acts on its own.
 - **Not Notification Center.** Persistent, semantic, agentic: a different shape entirely
 - **Not IFTTT or Zapier.** V1 is human-in-the-loop; V2 will support some automations, but Tempo isn't a generic flow engine
 
-See [§1.2](/docs/01-introduction#12--what-tempo-is-what-it-isnt) for the longer treatment.
+See [§1.2](/docs/01-introduction#12---what-tempo-is-what-it-isnt) for the longer treatment.
 
 ### How is Tempo different from a Home Assistant dashboard?
 
@@ -90,7 +90,7 @@ No account, no cloud sync, no third-party telemetry. Everything lives in a local
 
 The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet. It accepts only authenticated requests from per-provider tokens stored in the macOS Keychain.
 
-Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN by default; a native TLS listener (opt-in, port `8776`, with a per-token *Require TLS* flag) shipped in 1.1. See [§8 — Settings](/docs/08-settings-reference#secure-tls) and the [security page](/security/#tls).
+Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN by default; a native TLS listener (opt-in, port `8776`, with a per-token *Require TLS* flag) shipped in 1.1. See [§8 - Settings](/docs/08-settings-reference#secure-tls) and the [security page](/security/#tls).
 
 ### Where exactly does my data live?
 
@@ -102,7 +102,7 @@ Tempo does not collect or transmit telemetry of any kind in V1. The ingestion se
 
 Plus `~/Library/Preferences/app.tempoapp.Tempo.plist` for settings, and macOS Keychain for ingestion tokens.
 
-See [§9.1](/docs/09-backup-restore#91--where-your-data-lives) for the full breakdown.
+See [§9.1](/docs/09-backup-restore#91---where-your-data-lives) for the full breakdown.
 
 ### Can I take Tempo's events with me?
 
@@ -126,7 +126,7 @@ V2 roadmap includes potential native OAuth integration for Google Calendar / Out
 
 ### Can I add a custom source not in the bundled list?
 
-Yes. Anything that can POST JSON can send events. See [§10.2 — Generic webhook](/docs/10-sources-reference#102-generic-webhook) and [§11 — Score authoring](/docs/11-score-authoring).
+Yes. Anything that can POST JSON can send events. See [§10.2 - Generic webhook](/docs/10-sources-reference#102---generic-webhook) and [§11 - Score authoring](/docs/11-score-authoring).
 
 ### Can I use Tempo for non-homelab things like work alerts or personal automations?
 
@@ -152,15 +152,15 @@ Each source, built-in or downloadable, has its own page in the [Scores catalog](
 
 Yes. This is the core of Tempo. Every event type has its own action set, defined in the source's [score](/docs/14-glossary#score). You can edit bundled scores in the Score Editor or write your own from scratch.
 
-See [§7 — Score Editor](/docs/07-score-editor) for hands-on; [§11 — Score authoring](/docs/11-score-authoring) for the developer reference.
+See [§7 - Score Editor](/docs/07-score-editor) for hands-on; [§11 - Score authoring](/docs/11-score-authoring) for the developer reference.
 
 ### Can I add a custom button to events?
 
-Yes, by editing the source's score file directly. The Score Editor handles colors, severity rules, and display names; action buttons are authored as JSON in V1. The blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) walks through the full flow with a concrete example. See also [§11 — Score authoring](/docs/11-score-authoring) for the reference.
+Yes, by editing the source's score file directly. The Score Editor handles colors, severity rules, and display names; action buttons are authored as JSON in V1. The blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) walks through the full flow with a concrete example. See also [§11 - Score authoring](/docs/11-score-authoring) for the reference.
 
 ### Can I write my own scores?
 
-Yes. The score system is the canonical configuration surface. Documented end-to-end in [§11 — Score authoring](/docs/11-score-authoring), with a worked example.
+Yes. The score system is the canonical configuration surface. Documented end-to-end in [§11 - Score authoring](/docs/11-score-authoring), with a worked example.
 
 ### Can I share my scores with other Tempo users?
 
@@ -176,7 +176,7 @@ Light / Dark / System theme switching is in V1. Custom themes (drop-in JSON in `
 
 ### How do I migrate to a new Mac?
 
-See [§9.4 — Restoring on a new Mac](/docs/09-backup-restore#94--restoring-on-a-new-mac). Short version: take a backup before the move, install Tempo on the new Mac, restore the backup, recreate ingestion tokens.
+See [§9.4 - Restoring on a new Mac](/docs/09-backup-restore#94---restoring-on-a-new-mac). Short version: take a backup before the move, install Tempo on the new Mac, restore the backup, recreate ingestion tokens.
 
 ### How do I keep my feed quiet?
 
@@ -187,13 +187,13 @@ Several levers:
 - **Hide** sources you don't currently care about (source row → ⓘ → Hide from timeline)
 - **Tighter grouping** in the Score Editor for noisy sources
 
-See [§8.4 — Maintenance](/docs/08-settings-reference#84-maintenance).
+See [§8.4 - Maintenance](/docs/08-settings-reference#84---maintenance).
 
 ### How do I bulk-acknowledge or bulk-dismiss?
 
 Cmd-click multiple events to multi-select, or Shift-click for a range. The action panel switches to multi-select mode with "Acknowledge all (N)" and "Dismiss all (N)" buttons.
 
-See [§6 — Action panel](/docs/06-action-panel).
+See [§6 - Action panel](/docs/06-action-panel).
 
 ### Why is the heatmap unfiltered?
 
@@ -206,7 +206,7 @@ The feed itself is filtered, the heatmap isn't.
 - **Acked** = "I've seen this, I'm leaving it in the feed." Cosmetic state; event stays visible
 - **Dismissed** = "I've handled this, get it out of my way." Event drops off the active feed but stays in the database
 
-Both are reversible. See [§5.3 — Acknowledged events](/docs/05-event-panel#53-acknowledged-events) and [§2.5 — Severity, state, acknowledgment, dismissal](/docs/02-concepts#25--severity-state-acknowledgment-dismissal).
+Both are reversible. See [§5.3 - Acknowledged events](/docs/05-event-panel#53---acknowledged-events) and [§2.5 - Severity, state, acknowledgment, dismissal](/docs/02-concepts#25---severity-state-acknowledgment-dismissal).
 
 ---
 
@@ -214,7 +214,7 @@ Both are reversible. See [§5.3 — Acknowledged events](/docs/05-event-panel#53
 
 ### Events aren't arriving from a source I just configured
 
-Most common cause: networking. See [§12.1 — Networking](/docs/12-troubleshooting#121-networking-lan-ingestion).
+Most common cause: networking. See [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion).
 
 Second most common: token mismatch, token bound to the wrong provider, or wrong token in the upstream config. Check Settings → Ingestion → Tokens.
 
@@ -222,11 +222,11 @@ Second most common: token mismatch, token bound to the wrong provider, or wrong 
 
 Tempo doesn't overwrite your local edits to bundled scores when the app updates. If a bundled score improved in the update and you want the new behaviour, quit Tempo, delete that score's file from `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch. Tempo reseeds the bundled version on startup. (Duplicate the score first if you want to keep your customizations.)
 
-See [§7.8 — Persistence and reset to defaults](/docs/07-score-editor#78-persistence-and-reset-to-defaults).
+See [§7.8 - Persistence and reset to defaults](/docs/07-score-editor#78---persistence-and-recovery).
 
 ### My Mac is slow with Tempo running
 
-A few common causes and fixes in [§12.5 — Performance with many sources](/docs/12-troubleshooting#125-performance-with-many-sources). Usually retention or noisy-source grouping.
+A few common causes and fixes in [§12.5 - Performance with many sources](/docs/12-troubleshooting#125---performance-with-many-sources). Usually retention or noisy-source grouping.
 
 ### How do I report a bug?
 

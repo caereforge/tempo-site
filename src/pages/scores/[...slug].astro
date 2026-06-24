@@ -14,7 +14,7 @@ const { score } = Astro.props;
 const { Content } = await render(score);
 ---
 <BaseLayout
-  title={`${score.data.title} — Tempo score`}
+  title={`${score.data.title} - Tempo score`}
   description={score.data.description}
 >
   <header class="page-header">
@@ -46,9 +46,9 @@ const { Content } = await render(score);
         <div class="download-builtin">
           <span class="btn-icon" aria-hidden="true">★</span>
           <div>
-            <span class="btn-text">Built into Tempo — no download needed</span>
+            <span class="btn-text">Built into Tempo - no download needed</span>
             <p class="pending-note">
-              This source ships with Tempo. The score is bundled with the app and registered automatically on first launch — there's no <code>.tempo-score</code> file to install. You can edit or override the bundled score from <strong>Settings → Score Editor</strong>.
+              This source ships with Tempo. The score is bundled with the app and registered automatically on first launch - there's no <code>.tempo-score</code> file to install. You can edit or override the bundled score from <strong>Settings → Score Editor</strong>.
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ const { Content } = await render(score);
           <div>
             <span class="btn-text">Download coming with Tempo v1</span>
             <p class="pending-note">
-              The score is ready. It will be downloadable the day Tempo v1 is released — because a <code>.tempo-score</code> file has nothing to install into until then.
+              The score is ready. It will be downloadable the day Tempo v1 is released - because a <code>.tempo-score</code> file has nothing to install into until then.
             </p>
           </div>
         </div>

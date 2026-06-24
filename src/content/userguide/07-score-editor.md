@@ -6,17 +6,17 @@ order: 7
 draft: false
 pubDate: 2026-05-05
 ---
-# 7 — Score Editor
+# 7 - Score Editor
 
 The Score Editor is where you teach Tempo about a source. Open it once and you can decide, in five minutes, what every event from a given provider should look like: its color, its severity, the headline metric it surfaces, the actions it offers, and how it groups with related events. Save, and the changes apply to the next event that arrives. No restart, no re-deploy, no JSON file you forgot to format.
 
-This chapter walks the editor section by section. It assumes you've read [§2.3 — Scores](/docs/02-concepts#23--scores) for the conceptual framing.
+This chapter walks the editor section by section. It assumes you've read [§2.3 - Scores](/docs/02-concepts#23---scores) for the conceptual framing.
 
-> 🛠 **Tip**: the editor is the *hands-on* surface. Every score is also a JSON file you can edit by hand or contribute back to the public catalog. The editor is built so you don't *have* to touch JSON; the JSON is there if you want it. See [§11 — Score authoring](/docs/11-score-authoring) for the deeper dive.
+> 🛠 **Tip**: the editor is the *hands-on* surface. Every score is also a JSON file you can edit by hand or contribute back to the public catalog. The editor is built so you don't *have* to touch JSON; the JSON is there if you want it. See [§11 - Score authoring](/docs/11-score-authoring) for the deeper dive.
 
 ---
 
-## 7.1 — What a score does for you
+## 7.1 - What a score does for you
 
 Without a score, an event from your homelab is raw payload: a JSON blob with whatever fields the upstream tool decided to send. Tempo can still display it (title + timestamp + provider + raw metadata), but it won't know what the event *means*. Severity is unset. There's no headline metric. There are no useful actions. Repeated events from the same source don't stack. Cards look bland because the score system is the layer that *interprets* payloads.
 
@@ -55,7 +55,7 @@ The payload didn't change. The score did.
 
 ---
 
-## 7.2 — Editor overview
+## 7.2 - Editor overview
 
 The Score Editor lives as one of the **tabs in the center panel**, alongside Timeline (the default) and Search. Click the **Score Editor** tab to switch into it; click **Timeline** to switch back. The source panel on the left and the action panel on the right stay in place: the editor only takes over the center column.
 
@@ -65,7 +65,7 @@ The editor has three regions:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  [Score chip bar — pick which score to edit]        │
+│  [Score chip bar - pick which score to edit]        │
 ├──────────────────────────────────────┬──────────────┤
 │  [Tab bar: Source · Grouping ·       │              │
 │   Severity · Tags & emoji ·          │  Try panel  │
@@ -96,19 +96,19 @@ The six tabs, left to right:
 
 Edits don't apply to the live feed until you click **Save** in the top toolbar. **Discard** reverts the draft to whatever's currently saved.
 
-> 💡 **Note**: edits persist across app restarts and across Tempo updates. Tempo keeps the last-saved version on disk so you can roll back, and you can always recover a bundled score's factory state. See [§7.8](#78--persistence-and-recovery).
+> 💡 **Note**: edits persist across app restarts and across Tempo updates. Tempo keeps the last-saved version on disk so you can roll back, and you can always recover a bundled score's factory state. See [§7.8](#78---persistence-and-recovery).
 
 ### The score chip bar
 
 The chip bar at the top is your score selector. Each chip shows the provider's display name; click to switch. Edits to one score are scoped to that score; switching scores prompts you to save or discard if there are unsaved changes.
 
-The left of the chip bar has a **+ New** chip for creating a score from scratch (covered in [§11 — Score authoring](/docs/11-score-authoring)). The right end carries file-action chips for the selected score, most usefully **Open score location in Finder**, which reveals the score's JSON in `~/Library/Application Support/Tempo/Scores/`, and a shortcut to open the source's README where one exists.
+The left of the chip bar has a **+ New** chip for creating a score from scratch (covered in [§11 - Score authoring](/docs/11-score-authoring)). The right end carries file-action chips for the selected score, most usefully **Open score location in Finder**, which reveals the score's JSON in `~/Library/Application Support/Tempo/Scores/`, and a shortcut to open the source's README where one exists.
 
 > ⚠️ **V1 sweet spot: ~15 scores**. The current chip-bar design works well up to roughly 15 active scores. Past that, scrolling the strip and switching between scores starts to feel sluggish; at 25–30 scores it becomes a real friction point. A redesigned picker (dropdown with search and category grouping) is on the **V1.x roadmap** and will lift this ceiling. If you find yourself hitting that wall, two interim suggestions: **(a)** keep your active scores trimmed to what you actually edit, and **(b)** if you have a lot of variant-of-one-thing scores (eight different `scripts.*` providers, say), consider whether a single broader score with metadata-driven severity rules can cover them: fewer files, same coverage.
 
 ---
 
-## 7.3 — Severity rules
+## 7.3 - Severity rules
 
 The Severity rules section is the heart of a score. It's where you decide what each kind of event from this provider gets tagged with.
 
@@ -192,7 +192,7 @@ Turn it off when you have a sender that over-declares severity (every event arri
 
 ---
 
-## 7.4 — Presentation and custom labels
+## 7.4 - Presentation and custom labels
 
 The presentation aspects of a score are split between the rule's per-match presentation block (covered above, on the Severity tab) and the score-wide defaults on the **Source** tab.
 
@@ -234,9 +234,9 @@ The override is per-rule. Different severities of the same kind of event can hav
 
 ---
 
-## 7.5 — Stack grouping
+## 7.5 - Stack grouping
 
-The Stack grouping section configures whether and how related events from this provider collapse into stacks (see [§5.4 — Stacked events](/docs/05-event-panel#54-stacked-events)).
+The Stack grouping section configures whether and how related events from this provider collapse into stacks (see [§5.4 - Stacked events](/docs/05-event-panel#54---stacked-events)).
 
 ### The toggle
 
@@ -299,11 +299,11 @@ The Try panel on the right shows you a sample event from this provider and tells
 
 ---
 
-## 7.6 — Actions
+## 7.6 - Actions
 
 The **Actions** tab declares the buttons that appear on every event from this provider (the score's `defaultActions`). The editor authors them visually: **Add action** creates a new button, each row lets you set the label and SF Symbol, pick the trigger type from a menu, and write the trigger's value (URL, terminal command, or clipboard string) with `${metadata.xxx}` interpolation. You can remove a button with its trash icon and reorder buttons with the up/down arrows.
 
-The JSON file stays a valid alternate surface: the `defaultActions` block you author in the editor is exactly what lands in the file, and hand-editing it produces the same result. Use whichever you prefer. See [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference) for the full trigger and interpolation reference.
+The JSON file stays a valid alternate surface: the `defaultActions` block you author in the editor is exactly what lands in the file, and hand-editing it produces the same result. Use whichever you prefer. See [§11.4 - Action triggers reference](/docs/11-score-authoring#114---action-triggers-reference) for the full trigger and interpolation reference.
 
 ### Order recap
 
@@ -313,7 +313,7 @@ The convention: defaults are stable across events of the same provider (build mu
 
 ---
 
-## 7.7 — Available keys strip
+## 7.7 - Available keys strip
 
 The Available keys strip is a small but high-leverage feature: it shows you which metadata keys this provider actually emits, sampled from the last 10 events.
 
@@ -342,7 +342,7 @@ The strip is also a hint for the **completeness** of your score. If your rules r
 
 ---
 
-## 7.8 — Persistence and recovery
+## 7.8 - Persistence and recovery
 
 Score edits persist across app restarts and Tempo updates. Tempo writes the saved score to `~/Library/Application Support/Tempo/Scores/<provider>.json`; the bundled defaults live inside the app bundle and are written to the user-scores directory on first launch (with a version marker so the seeder knows they came from the bundle).
 
@@ -372,7 +372,7 @@ You can also work on score files outside the editor:
 - Open the file in any text editor: it's plain JSON
 - Save changes; Tempo's file watcher reloads automatically
 
-If your hand edits produce invalid JSON, Tempo logs a parse error to OSLog and falls back to the previous valid version. The audit log captures the error. See [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing).
+If your hand edits produce invalid JSON, Tempo logs a parse error to OSLog and falls back to the previous valid version. The audit log captures the error. See [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing).
 
 > 💡 **Note**: hand-editing is fully supported, not a workaround. The editor and the JSON file are two surfaces over the same underlying data; whichever you prefer for a given task is the right one. Some users do conditions in the editor and presentation in the JSON; that's fine.
 
@@ -397,15 +397,15 @@ The whole loop took five minutes. No restart, no JSON, no documentation cross-re
 
 The Score Editor authors action **buttons** (the entries in `defaultActions`) visually on the **Actions** tab: add, edit, reorder, and remove buttons, pick the trigger type, and write its value with `${metadata.xxx}` interpolation. The score JSON stays a valid alternate surface: whatever you author in the editor is exactly what lands in the file, and hand-editing it gives the same result.
 
-If you'd rather work in JSON, see the walkthrough on the blog: [Adding a button to Tempo events](/blog/adding-a-custom-action-button/), a concrete example, ~5 minutes end to end. The full field reference lives in [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference).
+If you'd rather work in JSON, see the walkthrough on the blog: [Adding a button to Tempo events](/blog/adding-a-custom-action-button/), a concrete example, ~5 minutes end to end. The full field reference lives in [§11.4 - Action triggers reference](/docs/11-score-authoring#114---action-triggers-reference).
 
 ---
 
 ## Where to go from here
 
 - **Adding a custom button via JSON** → blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/)
-- **Writing a brand-new score from scratch** → [§11 — Score authoring](/docs/11-score-authoring)
-- **The JSON schema underneath the editor** → [§11.1 — JSON schema overview](/docs/11-score-authoring#111-json-schema-overview)
-- **The action triggers reference** → [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference)
-- **Troubleshooting a score that isn't behaving** → [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing)
+- **Writing a brand-new score from scratch** → [§11 - Score authoring](/docs/11-score-authoring)
+- **The JSON schema underneath the editor** → [§11.1 - JSON schema overview](/docs/11-score-authoring#111---json-schema-overview)
+- **The action triggers reference** → [§11.4 - Action triggers reference](/docs/11-score-authoring#114---action-triggers-reference)
+- **Troubleshooting a score that isn't behaving** → [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing)
 - **Sharing or installing community scores** → the public catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores)

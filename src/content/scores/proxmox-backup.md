@@ -151,6 +151,6 @@ Every PBS event Tempo has touched appears here with timestamp and outcome. This 
 
 ## References
 
-- [PBS notification targets — official docs](https://pbs.proxmox.com/docs/notifications.html)
+- [PBS notification targets - official docs](https://pbs.proxmox.com/docs/notifications.html)
 - [PBS webhook template reference](https://pbs.proxmox.com/docs/notifications.html#notification-targets-webhook)
 - [Proxmox community forum](https://forum.proxmox.com/)

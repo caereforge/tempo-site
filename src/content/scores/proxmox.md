@@ -182,7 +182,7 @@ ssh root@your-proxmox.lan "journalctl -u pve-cluster -n 200 | grep -i webhook"
 
 ## References
 
-- [Proxmox VE notification system — official docs](https://pve.proxmox.com/wiki/Notifications)
-- [Webhook notification target — wiki](https://pve.proxmox.com/wiki/Notifications#_webhook)
+- [Proxmox VE notification system - official docs](https://pve.proxmox.com/wiki/Notifications)
+- [Webhook notification target - wiki](https://pve.proxmox.com/wiki/Notifications#_webhook)
 - [Tera template language reference](https://keats.github.io/tera/docs/)
 - [Proxmox community forum](https://forum.proxmox.com/)

@@ -75,7 +75,7 @@ Tempo carries the *signal* of detections forward in time (timestamp + camera + a
 
 ## Known limitations
 
-**Use the plain `:7776` endpoint, not the TLS `:8776` port.** UniFi's webhook client (both Network and Protect) must POST to Tempo's plain-HTTP endpoint as shown in Setup above, not the encrypted TLS port. The TLS handshake itself succeeds (UniFi accepts Tempo's self-signed certificate), but UniFi's HTTPS request framing is not parsed correctly by Tempo's TLS listener: the request line and body arrive empty, so the events are dropped (you'll see them as `400 — empty body` in **Settings → Security → audit**). This is a UniFi-side framing quirk, not a certificate problem. Because the traffic stays on your LAN and every webhook is bound to a per-provider token, plain HTTP here is a deliberate, supported setup, not a security gap. (Improving TLS compatibility for UniFi is tracked for a later release.)
+**Use the plain `:7776` endpoint, not the TLS `:8776` port.** UniFi's webhook client (both Network and Protect) must POST to Tempo's plain-HTTP endpoint as shown in Setup above, not the encrypted TLS port. The TLS handshake itself succeeds (UniFi accepts Tempo's self-signed certificate), but UniFi's HTTPS request framing is not parsed correctly by Tempo's TLS listener: the request line and body arrive empty, so the events are dropped (you'll see them as `400 - empty body` in **Settings → Security → audit**). This is a UniFi-side framing quirk, not a certificate problem. Because the traffic stays on your LAN and every webhook is bound to a per-provider token, plain HTTP here is a deliberate, supported setup, not a security gap. (Improving TLS compatibility for UniFi is tracked for a later release.)
 
 ## V2 outlook
 

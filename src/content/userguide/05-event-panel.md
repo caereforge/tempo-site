@@ -6,13 +6,13 @@ order: 5
 draft: false
 pubDate: 2026-05-05
 ---
-# 5 — Event panel
+# 5 - Event panel
 
 The event panel, the center column, is where the timeline lives. Most of the time you spend in Tempo is spent looking at this panel. This chapter walks through every piece of it: the card layout, what the meta-text means, how acknowledged events render, how stacks expand, the activity heatmap above the feed, and the day separators that break the scroll into recognizable chunks.
 
 ---
 
-## 5.1 — The event card
+## 5.1 - The event card
 
 Every event shows as a card. Cards have a deliberately fixed slot layout, which means once your eyes have learned the structure, scanning a long feed is fast: your gaze always lands in the same place for the same kind of information.
 
@@ -64,7 +64,7 @@ The compact rendering keeps your calendar from drowning out actionable monitorin
 
 ---
 
-## 5.2 — Severity meta-text
+## 5.2 - Severity meta-text
 
 The severity badge at the rightmost edge of every alert card uses a shared visual vocabulary across all sources. The same color and label conventions apply whether the event is a Kopia backup result, a UniFi alarm, or a custom webhook from a script you wrote yesterday.
 
@@ -100,7 +100,7 @@ This separation matters: in a feed with many sources, the *card background* tell
 
 ---
 
-## 5.3 — Acknowledged events
+## 5.3 - Acknowledged events
 
 Acknowledging ("ack-ing") an event is a soft state change: the event stays in the feed, but its appearance softens so it no longer competes for your attention.
 
@@ -132,11 +132,11 @@ For stateful events, there's a related but distinct visual marker: **Resolved**.
 
 A "Resolved" pill is the *system* saying "this fixed itself"; an "Acked" pill is *you* saying "I've seen it." They can coexist on the same event: you can ack a still-firing problem, and you can also see when the problem eventually resolves.
 
-> 🛠 **Tip**: bulk acknowledge via the action panel. Cmd-click multiple cards (or Shift-click for a range), then click "Acknowledge all (N)". See [§6.3 — Bulk acknowledge and dismiss](/docs/06-action-panel#63-bulk-acknowledge-and-dismiss).
+> 🛠 **Tip**: bulk acknowledge via the action panel. Cmd-click multiple cards (or Shift-click for a range), then click "Acknowledge all (N)". See [§6.3 - Bulk acknowledge and dismiss](/docs/06-action-panel#63---bulk-acknowledge-and-dismiss).
 
 ---
 
-## 5.4 — Stacked events
+## 5.4 - Stacked events
 
 When a source emits multiple events that are conceptually related (same monitor flapping, same backup running multiple times, same UniFi client reconnecting), Tempo collapses them into a **stack**: a single card with a count pill on the right, instead of N separate cards.
 
@@ -185,11 +185,11 @@ If a source over-stacks (events you wanted separate get clumped together):
 - The grouping template might be too coarse: use a more specific key combination (e.g., `${metadata.host}/${metadata.path}` instead of `${metadata.host}`)
 - Shrink the grouping window so older events no longer extend the stack
 
-[§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping) covers the editor mechanics.
+[§7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping) covers the editor mechanics.
 
 ---
 
-## 5.5 — The heatmap
+## 5.5 - The heatmap
 
 The horizontal strip above the event feed is the **24-hour activity heatmap**. It shows your day at a glance: 24 hour-segments, each colored by the highest-severity activity in that hour.
 
@@ -242,7 +242,7 @@ Toggle **Settings → Interface → Heatmap colorblind mode** to add a vertical-
 
 ---
 
-## 5.6 — Day separators
+## 5.6 - Day separators
 
 The event feed scrolls chronologically with **day separators** breaking the stream into one-day chunks. Each separator is a horizontal divider with a label:
 
@@ -282,7 +282,7 @@ Each empty state is intentional UX: the panel never shows a blank rectangle. The
 
 ## Where to go from here
 
-- **What happens when you click an event** → [§6 — Action panel](/docs/06-action-panel)
-- **Customizing how events look** → [§7 — Score Editor](/docs/07-score-editor)
-- **Understanding stacking and grouping deeper** → [§2.6 — Stack and grouping](/docs/02-concepts#26--stack-and-grouping) (concept), [§7.5 — Stack grouping](/docs/07-score-editor#75-stack-grouping) (editor)
-- **Making your feed quieter** → [§8.4 — Maintenance settings](/docs/08-settings-reference#84-maintenance) for auto-ack and auto-dismiss
+- **What happens when you click an event** → [§6 - Action panel](/docs/06-action-panel)
+- **Customizing how events look** → [§7 - Score Editor](/docs/07-score-editor)
+- **Understanding stacking and grouping deeper** → [§2.6 - Stack and grouping](/docs/02-concepts#26---stack-and-grouping) (concept), [§7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping) (editor)
+- **Making your feed quieter** → [§8.4 - Maintenance settings](/docs/08-settings-reference#84---maintenance) for auto-ack and auto-dismiss

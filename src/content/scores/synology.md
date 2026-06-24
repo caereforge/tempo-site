@@ -153,5 +153,5 @@ Every Synology event Tempo has touched appears here with timestamp and outcome. 
 
 ## References
 
-- [DSM Webhooks — Synology Knowledge Center](https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook)
+- [DSM Webhooks - Synology Knowledge Center](https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook)
 - [DSM Notification overview](https://kb.synology.com/en-global/DSM/tutorial/How_to_receive_Synology_DSM_notifications)

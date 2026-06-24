@@ -6,7 +6,7 @@ order: 4
 draft: false
 pubDate: 2026-05-05
 ---
-# 4 — Source panel
+# 4 - Source panel
 
 The source panel (the leftmost column in the Tempo window) lists every source Tempo knows about and gives you the controls for showing, hiding, filtering, and re-colouring each one. It's the closest thing Tempo has to a global navigator: where the event panel shows *what's happening*, the source panel shows *who's talking*.
 
@@ -14,7 +14,7 @@ This chapter walks through the UI element by element and explains what each one 
 
 ---
 
-## 4.1 — Source rows and badges
+## 4.1 - Source rows and badges
 
 A source row is a horizontal strip with four parts, left to right:
 
@@ -62,7 +62,7 @@ The row stays visible so you can un-hide easily; it isn't *gone*, just muted.
 
 ---
 
-## 4.2 — Liveness signal
+## 4.2 - Liveness signal
 
 The bolt ⚡ icon on the badge answers a simple question: *is this source still talking to me, or has it gone silent?*
 
@@ -96,7 +96,7 @@ If a source goes silent and the bolt disappears, that's the source telling you s
 
 ---
 
-## 4.3 — Source filtering and the filter banner
+## 4.3 - Source filtering and the filter banner
 
 Filtering goes through the source's **info menu** (ⓘ), not by clicking the row. Open the menu and pick **"Show only this source"** to filter the timeline down to that one source. Two visual changes happen:
 
@@ -129,7 +129,7 @@ The heatmap intentionally ignores the filter. The reasoning: the heatmap is your
 
 ---
 
-## 4.4 — Source actions menu
+## 4.4 - Source actions menu
 
 The info button (ⓘ) on each source row opens a context menu with the controls that aren't worth taking up permanent UI real estate:
 
@@ -186,7 +186,7 @@ For sources organised under an **umbrella** parent (UniFi grouping Network and P
 
 The button at the bottom of the source panel switches the panel into **Manage Sources** mode. The label adapts:
 
-- **"Get started — add a source"** when you have one or two sources (you've just installed Tempo)
+- **"Get started - add a source"** when you have one or two sources (you've just installed Tempo)
 - **"Add a source"** when you have three or four
 - **"Manage sources"** when you have five or more
 
@@ -202,7 +202,7 @@ A yellow accent line near the button highlights the transition, so when you're s
 
 ## Where to go from here
 
-- **Customising what events look like in the feed** → [§5 — Event panel](/docs/05-event-panel)
-- **Editing the score for a source** → [§7 — Score Editor](/docs/07-score-editor)
-- **Tuning auto-rules per source** → [§8.4 — Maintenance settings](/docs/08-settings-reference#84-maintenance)
-- **Adding a new source from scratch** → [§10 — Sources reference](/docs/10-sources-reference)
+- **Customising what events look like in the feed** → [§5 - Event panel](/docs/05-event-panel)
+- **Editing the score for a source** → [§7 - Score Editor](/docs/07-score-editor)
+- **Tuning auto-rules per source** → [§8.4 - Maintenance settings](/docs/08-settings-reference#84---maintenance)
+- **Adding a new source from scratch** → [§10 - Sources reference](/docs/10-sources-reference)

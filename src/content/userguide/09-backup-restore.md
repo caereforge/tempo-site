@@ -6,7 +6,7 @@ order: 9
 draft: false
 pubDate: 2026-05-05
 ---
-# 9 — Backup and restore
+# 9 - Backup and restore
 
 This chapter covers what's worth backing up, how Tempo's built-in backup tools work, what they include and exclude, and how to move your Tempo state to a new Mac.
 
@@ -14,7 +14,7 @@ This chapter covers what's worth backing up, how Tempo's built-in backup tools w
 
 ---
 
-## 9.1 — Where your data lives
+## 9.1 - Where your data lives
 
 Tempo writes to one location:
 
@@ -47,7 +47,7 @@ The events database is the heaviest item (typically a few MB to a few hundred MB
 
 ---
 
-## 9.2 — Database backup
+## 9.2 - Database backup
 
 The Database backup lives in **Settings → Maintenance → Database**. It is the V1 automated path.
 
@@ -74,7 +74,7 @@ Ingestion tokens, both their values *and* their names, are never written to the 
 
 If you want your tokens to survive a Mac swap, the path is **Settings → Ingestion**, click the **Save in Keychain** button on each token you care about. That mirrors the token to a per-token Keychain item with `kSecAttrSynchronizable=true`, which iCloud Keychain replicates to your other Macs. On a fresh Mac, after iCloud Keychain has synced (give it a minute), the tokens are reachable from the Keychain Access app under the service `app.tempo.tempo.publictoken` (one entry per token; the token name lives in the account field).
 
-A V1.1+ panel will let you re-import these synced Keychain entries back into Tempo automatically. For V1, the import is manual: see [§9.4 — Step 4](#step-4--recreate-or-import-your-ingestion-tokens) below for the procedure.
+A V1.1+ panel will let you re-import these synced Keychain entries back into Tempo automatically. For V1, the import is manual: see [§9.4 - Step 4](#step-4---recreate-or-import-your-ingestion-tokens) below for the procedure.
 
 > 🛑 **Critical**: this exclusion is a security feature, not an oversight. If a backup bundle could be exfiltrated and contained your tokens, an attacker could ingest events posing as your sources, or worse, read your sources' identity surface. Keep tokens in the Keychain (encrypted, sandboxed, optionally synced via iCloud), and keep backup bundles for the rest.
 
@@ -116,7 +116,7 @@ Other options that work fine:
 
 ---
 
-## 9.3 — Configuration backup
+## 9.3 - Configuration backup
 
 Configuration is **already inside the `.tempobackup` bundle** the V1 backup tool produces: scores, curated settings, rule blobs, and source overrides all ride alongside the database (see §9.2 for the full inventory). You don't need a separate manual step for the V1 launch set; one bundle covers both database and configuration.
 
@@ -149,17 +149,17 @@ The V1 bundle covers all four categories above (scores, curated preferences, rul
 
 ---
 
-## 9.4 — Restoring on a new Mac
+## 9.4 - Restoring on a new Mac
 
 The path from "blank Mac" to "Tempo running with your old setup":
 
-### Step 1 — Install Tempo
+### Step 1 - Install Tempo
 
 Download the same DMG you'd use on any new install: `downloads.tempoapp.app`. Drag to Applications. Open Tempo and grant the calendar/reminders permissions when prompted.
 
 At this point you have a Tempo running with empty database, default scores, no custom rules.
 
-### Step 2 — Locate your most recent backup
+### Step 2 - Locate your most recent backup
 
 Two paths depending on how you backed up:
 
@@ -167,7 +167,7 @@ Two paths depending on how you backed up:
 
 **If your destination is a local folder or external drive**: copy the bundle onto the new Mac via USB, AirDrop, network share, whatever's convenient.
 
-### Step 3 — Restore
+### Step 3 - Restore
 
 1. **Settings → Maintenance → Database → Restore from backup…**
 2. A file picker opens, scoped to `.tempobackup` bundles
@@ -177,11 +177,11 @@ Two paths depending on how you backed up:
 
 After relaunch, Tempo opens with your old database, your scores, and your curated preferences in place. The source panel should look the way it did on the old Mac.
 
-### Step 4 — Recreate (or import) your ingestion tokens
+### Step 4 - Recreate (or import) your ingestion tokens
 
 Tokens didn't ride the backup bundle (see §9.2). Two paths to bring them onto the new Mac:
 
-#### A — You used "Save in Keychain" with iCloud Keychain sync enabled (recommended)
+#### A - You used "Save in Keychain" with iCloud Keychain sync enabled (recommended)
 
 1. Wait a minute or two after the new Mac signs into your Apple ID, since iCloud Keychain needs time to replicate
 2. Open **Keychain Access** (Spotlight → "Keychain Access")
@@ -191,13 +191,13 @@ Tokens didn't ride the backup bundle (see §9.2). Two paths to bring them onto t
 
 A V1.1+ release will collapse this into a single **Import from Keychain** button so the manual copy/paste loop goes away.
 
-#### B — You didn't save tokens to Keychain
+#### B - You didn't save tokens to Keychain
 
 The original token values are gone with the source Mac. Generate fresh tokens in **Settings → Ingestion → + Add token**, then update each upstream sender (Kopia, UniFi, Home Assistant, …) with the new values. Tedious, but correct: a Mac migration is also a perfectly fine moment to rotate tokens you no longer fully trust or to drop tokens for sources you no longer use.
 
 > 🛠 **Tip**: regardless of which path you used last time, keep a list of which sources use which token names somewhere outside Tempo (Notes.app, a file in your password manager). Token names are descriptive ("Kopia NAS", "GitHub Actions relay"); a list of names is enough to systematically recreate everything without forgetting a source.
 
-### Step 5 — Verify
+### Step 5 - Verify
 
 Walk through your sources one at a time:
 
@@ -205,11 +205,11 @@ Walk through your sources one at a time:
 - Trigger an event (run a backup, click a test in Uptime Kuma, send a curl)
 - Confirm the event arrives in the timeline with the right severity, label, actions
 
-If something looks off, [§12.3 — A score isn't appearing](/docs/12-troubleshooting#123-a-score-isnt-appearing) covers the common failure modes after a restore.
+If something looks off, [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing) covers the common failure modes after a restore.
 
 ---
 
-## 9.5 — Verifying a backup
+## 9.5 - Verifying a backup
 
 A backup is only as good as your confidence that it'll actually restore. A few sanity checks worth running periodically:
 
@@ -262,7 +262,7 @@ Tempo's backup is for *your* data. It's not designed to:
 
 ## Where to go from here
 
-- **Adjusting backup cadence and destination** → [§8.4 — Maintenance](/docs/08-settings-reference#84-maintenance)
-- **Recreating ingestion tokens after a migration** → [§8.2 — Ingestion and tokens](/docs/08-settings-reference#82-ingestion-and-tokens)
+- **Adjusting backup cadence and destination** → [§8.4 - Maintenance](/docs/08-settings-reference#84---maintenance)
+- **Recreating ingestion tokens after a migration** → [§8.2 - Ingestion and tokens](/docs/08-settings-reference#82---ingestion-and-tokens)
 - **Understanding what's stored where** → §9.1 above
-- **Troubleshooting after a restore** → [§12 — Troubleshooting](/docs/12-troubleshooting)
+- **Troubleshooting after a restore** → [§12 - Troubleshooting](/docs/12-troubleshooting)

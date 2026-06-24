@@ -34,7 +34,7 @@ These sit at the top level of the JSON body, next to `title`:
 
 | Field | Required | Value |
 |---|---|---|
-| `title` | yes | the headline text, e.g. `iPhone 13 Pro — Sleep on` |
+| `title` | yes | the headline text, e.g. `iPhone 13 Pro - Sleep on` |
 | `providerIdentifier` | yes | `com.shortcuts` |
 | `eventType` | yes | `alert` |
 | `severity` | no | `info` (default) · `ok` · `warning` · `error` · `critical` |
@@ -55,7 +55,7 @@ The complete, correct payload looks like this. Note `severity` **outside** `meta
 
 ```json
 {
-  "title": "iPhone 13 Pro — Sleep on",
+  "title": "iPhone 13 Pro - Sleep on",
   "providerIdentifier": "com.shortcuts",
   "eventType": "alert",
   "severity": "info",

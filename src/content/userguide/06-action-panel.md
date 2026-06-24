@@ -6,7 +6,7 @@ order: 6
 draft: false
 pubDate: 2026-05-05
 ---
-# 6 — Action panel
+# 6 - Action panel
 
 The action panel, the rightmost column, is where you do something about what you see in the feed. Click an event, the action panel populates with everything Tempo knows about it: the score-defined buttons, the metadata payload, the buttons to ack or dismiss. Click multiple events, the panel switches into bulk mode.
 
@@ -14,7 +14,7 @@ This chapter covers all three states: nothing selected, one event selected, many
 
 ---
 
-## 6.1 — What appears when you select an event
+## 6.1 - What appears when you select an event
 
 When you click a single event in the feed, the action panel renders the **event detail view**, top to bottom:
 
@@ -76,7 +76,7 @@ The yellow accent on Acknowledge isn't decorative: it's the color Tempo uses glo
 
 ---
 
-## 6.2 — Multi-select mode
+## 6.2 - Multi-select mode
 
 Tempo supports macOS-standard multi-selection in the event feed. The modifier keys behave the way they do everywhere else on the Mac:
 
@@ -114,7 +114,7 @@ Multi-select is *not* the right tool for:
 
 ---
 
-## 6.3 — Bulk acknowledge and dismiss
+## 6.3 - Bulk acknowledge and dismiss
 
 When two or more events are selected, the action panel switches modes entirely. The single-event detail view is replaced by the **multi-select detail**, a deliberately distinct visual signature so you can't confuse "Acknowledge" (single-event button) with "Acknowledge all" (bulk button).
 
@@ -167,6 +167,6 @@ This isn't an empty-state to be embarrassed about; it's a deliberate breath in t
 
 ## Where to go from here
 
-- **Customizing the action set for a source** → [§7.6 — Default actions](/docs/07-score-editor#76-default-actions) (in the Score Editor)
-- **Writing a score from scratch with custom actions** → [§11.4 — Action triggers reference](/docs/11-score-authoring#114-action-triggers-reference)
-- **Per-source auto-rules so you don't have to bulk-ack every day** → [§8.4 — Maintenance settings](/docs/08-settings-reference#84-maintenance)
+- **Customizing the action set for a source** → [§7.6 - Default actions](/docs/07-score-editor#76---actions) (in the Score Editor)
+- **Writing a score from scratch with custom actions** → [§11.4 - Action triggers reference](/docs/11-score-authoring#114---action-triggers-reference)
+- **Per-source auto-rules so you don't have to bulk-ack every day** → [§8.4 - Maintenance settings](/docs/08-settings-reference#84---maintenance)
