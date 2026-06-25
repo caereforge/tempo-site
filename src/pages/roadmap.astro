@@ -41,9 +41,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           event to Tempo. These workflows are personal by nature (a Mail
           rule for one sender, a Focus-mode trigger, an arrival automation)
           and too specific to ship ready-made, so you compose
-          the one that fits your setup. The one ready-to-use example, a
-          Shortcut that copies a <code>message://</code> link from Apple
-          Mail, is on the <a href="/downloads">downloads page</a>.
+          the one that fits your setup.
         </li>
         <li>
           <strong>iOS geofence shortcut</strong>: a Personal Automation
@@ -70,8 +68,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </li>
         <li>
           <strong>Todoist score</strong>: pulled forward from the
-          continuous pool. Tasks, comments, and completions surfaced on the
-          timeline next to everything else.
+          continuous pool. Tasks and completions surfaced on the timeline
+          next to everything else.
         </li>
         <li>
           <strong>TLS-encrypted ingestion</strong>: an opt-in second
@@ -79,12 +77,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           a per-token <em>secure</em> / <em>Require-TLS</em> flag, and
           anti-downgrade protection. Loopback and plain HTTP keep working;
           TLS is there when you want LAN traffic encrypted.
-        </li>
-        <li>
-          <strong>In-memory feed window + lazy-load</strong>: the live
-          timeline renders a recent window and loads older blocks on
-          scroll, so the feed stays fast even with a large history while
-          badge counts still reflect the full set.
         </li>
         <li>
           <strong>Two heatmaps, two jobs</strong>: a 24-hour bar across the
@@ -119,9 +111,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           folding away when the view isn't chronological.
         </li>
         <li>
-          <strong>Inline map preview</strong> for Calendar events with a
-          location, rendered via <code>MKMapSnapshotter</code> as a
-          thumbnail on the event row, same pattern as Protect snapshots.
+          <strong>Inline map preview</strong> for any event that carries a
+          location, whether a Calendar event or a Shortcut posting your
+          current position, rendered via <code>MKMapSnapshotter</code> as a
+          thumbnail on the event row.
         </li>
         <li>
           <strong>Date markers and weekend tinting in the 84-day heatmap</strong>:
@@ -129,10 +122,10 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           patterns over a quarter read at a glance.
         </li>
         <li>
-          <strong>Personal tag per source</strong>: a per-source tag (or
-          two) you define in the Score Editor from event metadata, rendered
-          as a badge and usable as a new axis for sort, filter, and search.
-          Free-form: you pick whatever labels work for your stack.
+          <strong>Personal tag enhancements</strong>: per-source tags
+          already exist (defined in the Score Editor from event metadata,
+          shown as badges, usable for sort, filter, and search). We'd like
+          to make them richer visually.
         </li>
         <li>
           <strong>Source view groups</strong>: named groups of sources you
@@ -155,19 +148,15 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           <code>com.apple.backupd</code> notifications so Time Machine
           successes and failures land on the timeline with no user setup.
         </li>
-        <li>
-          <strong>Source liveness detection</strong>: each source declares
-          an expected liveness window; Tempo flags it as silent when it's
-          been quiet past its threshold.
-        </li>
       </ul>
 
       <h3 class="catalog-sub">Scores &amp; actions</h3>
       <ul class="items">
         <li>
-          <strong>In-app score browser</strong>: install scores from inside
-          Tempo, browse the catalog with search and filters, manage
-          versions, with no browser hop to GitHub.
+          <strong>Richer in-app score management</strong>: scores are
+          already bundled and managed inside Tempo. We'd like to add catalog
+          search and filters, version management, and one-click install of
+          new community scores without the GitHub hop.
         </li>
         <li>
           <strong>Action panel improvements</strong>: label interpolation
@@ -198,6 +187,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           Obsidian that POSTs daily-note edits, new files, mentions, or tag
           activity back to Tempo. We're up for writing it; what's missing is
           concrete use-case feedback to make it useful rather than generic.
+        </li>
+        <li>
+          <strong>DEVONthink score + plugin</strong>: the same idea for
+          DEVONthink: new or imported documents, OCR completions, or
+          smart-group changes surfaced on the timeline. Same condition, we
+          build it when there's a concrete workflow to aim at.
         </li>
         <li>
           <strong>Thumbnail click-to-zoom + full-resolution storage</strong>:
@@ -257,13 +252,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <h3 class="catalog-sub">Upcoming (community-signal)</h3>
       <p>
         Grouped by where each tool lives in your stack. Sequence is driven
-        by community signal: most-requested gets prioritized.
+        by community signal: most-requested gets prioritized. And, honestly:
+        I can't run all of these myself, so scores for tools I don't have are
+        built and verified together with people who do. If you use one of
+        these, a sample payload or a round of testing from you is often what
+        moves a score from "planned" to "shipped".
       </p>
       <ul class="cluster-list">
         <li>
           <em>Homelab &amp; infra:</em>
           Proxmox, Tailscale, Grafana, TrueNAS, pfSense / OPNsense,
-          AdGuard Home, Portainer, Docker, qBittorrent, Zabbix,
+          AdGuard Home, Portainer, Docker, qBittorrent,
           Prometheus Alertmanager, Smokeping
         </li>
         <li>
@@ -272,17 +271,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         </li>
         <li>
           <em>Self-hosted apps:</em>
-          Nextcloud, Gitea / Forgejo, GitLab, Paperless-ngx, Immich,
+          Nextcloud, Gitea / Forgejo, Paperless-ngx, Immich,
           Bookstack, FreshRSS, Drone CI, Woodpecker
         </li>
         <li>
           <em>Mac power-user tools:</em>
           Keyboard Maestro, Alfred, Raycast, BetterTouchTool,
-          Karabiner-Elements
+          Karabiner-Elements, Hammerspoon
         </li>
         <li>
           <em>Cloud and managed services:</em>
-          Cloudflare Notifications, AWS CloudWatch, DigitalOcean,
+          Cloudflare Notifications, DigitalOcean,
           Hetzner / OVH status
         </li>
         <li>
@@ -302,14 +301,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <section class="utilities-box">
       <h2>Tempo utilities</h2>
       <p>
-        Alongside the app, Tempo ships a small catalog of <strong>utilities</strong>:
+        Alongside the app, we also ship a small catalog of <strong>utilities</strong>:
         macOS Shortcuts, AppleScript snippets, helper scripts, and lightweight
-        plugins that sit beside Tempo and fill workflow gaps the app itself
-        doesn't try to solve. The first entry is already on
-        <a href="/downloads">the downloads page</a> (a Shortcut to copy
-        <code>message://</code> deep links from Apple Mail). More land as
-        the catalog grows: small Shortcuts for daily flows, helper
-        plugins for Obsidian and similar, CLI scripts for power users.
+        plugins. Some feed events into Tempo; others are just handy on their
+        own and not tied to Tempo at all. The first entry is the latter kind,
+        a small convenience on <a href="/downloads">the downloads page</a> (a
+        Shortcut to copy <code>message://</code> deep links from Apple Mail).
+        More land over time as the catalog grows.
       </p>
       <p class="utilities-link">
         Catalog source: <a href="https://github.com/caereforge/tempo-utilities">github.com/caereforge/tempo-utilities</a>.
