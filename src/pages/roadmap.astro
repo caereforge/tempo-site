@@ -21,12 +21,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </p>
     </section>
     <p class="lede-secondary">
-      The first block below is what already shipped in 1.1. After that,
-      items are grouped by release window (V1.2, V1.3, V1.4), then a
-      continuous "later" pool plus a dedicated section for the score
-      catalog. This roadmap is a forecast, not a contract: once V1 is
-      in the hands of the community, real-world feedback will reshape
-      what lands when, and bugs always jump the queue.
+      The first block below is what already shipped in 1.1. After that
+      comes what we'd like to build before V2, grouped by theme rather
+      than by version number, since real-world feedback will reshape the
+      order once V1 is in the community's hands, and bugs always jump the
+      queue. The score catalog and utilities close the page.
     </p>
   </header>
 
@@ -36,27 +35,31 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <h2>Done: shipped in 1.1</h2>
       <ul class="items">
         <li>
-          <strong>Apple Shortcuts integration</strong>
-          <em>(any workflow, any cadence)</em>:
-          a <code>SendEventToTempoIntent</code> App Intent and Spotlight
-          quick-entry via AppShortcuts, plus a starter set of
-          <code>.shortcut</code> demos covering Mail rules, voice memos,
-          Focus modes, SSH health checks, generic URL endpoints, and
-          Wake-on-LAN. AppleScript snippets for DEVONthink and OmniFocus
-          on the side.
+          <strong>Apple Shortcuts support</strong>: a
+          <code>SendEventToTempoIntent</code> App Intent plus Spotlight
+          quick-entry, so any Shortcut or Mail rule you build can post an
+          event to Tempo. These workflows are personal by nature (a Mail
+          rule for one sender, a Focus-mode trigger, an arrival automation)
+          and too specific to ship ready-made, so you compose
+          the one that fits your setup. The one ready-to-use example, a
+          Shortcut that copies a <code>message://</code> link from Apple
+          Mail, is on the <a href="/downloads">downloads page</a>.
         </li>
         <li>
           <strong>iOS geofence shortcut</strong>: a Personal Automation
           recipe ("when I arrive home", "when I leave home") that POSTs to
-          Tempo running on the Mac. No companion app required; works as
-          long as the iPhone can reach the Mac on the LAN (or via a VPN or
-          Tailscale tail when away from home).
+          Tempo on the Mac. No companion app. Stated plainly so there's no
+          surprise: it needs the iPhone to reach the Mac. That means the
+          same Wi-Fi at home, or a VPN or Tailscale when you're away. That
+          step is required, so away-from-home use is not zero-config.
         </li>
         <li>
-          <strong>Timeline filtering</strong>: a quick toggle to switch
-          between <em>all events</em> and <em>only those needing attention</em>.
-          Sits in the toolbar and composes with search (AND), orthogonal
-          to source hide.
+          <strong>Timeline toolbar controls</strong>: a new toolbar section
+          with three buttons: <em>collapse / expand</em> (fold the
+          grouped event stacks open or shut), <em>needs attention</em>
+          (narrow the feed to events still waiting on a decision), and
+          <em>security</em> (open the audit of rejected and blocked
+          ingestion requests).
         </li>
         <li>
           <strong>Conditional action visibility</strong>: when an action's
@@ -84,15 +87,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           badge counts still reflect the full set.
         </li>
         <li>
-          <strong>Activity heatmap aggregate</strong>: a pre-summarized
-          per-day activity table (<code>activityByDay</code>) feeds the
-          historical heatmap, so it reads a handful of rows instead of
-          scanning thousands of events on the main thread.
-        </li>
-        <li>
-          <strong>Interactive search</strong>: click a search result and
-          the event opens with its action panel, the same as clicking it on
-          the timeline.
+          <strong>Two heatmaps, two jobs</strong>: a 24-hour bar across the
+          top of the feed (one segment per hour, tinted by the worst
+          severity in it, click to jump there) for "how has today gone",
+          and an 84-day grid in the source panel (a GitHub-style history of
+          daily activity) for reading patterns over the last few months.
         </li>
         <li>
           <strong>Source removal in Manage Sources</strong>. Remove a
@@ -103,70 +102,119 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </section>
 
     <section class="group">
-      <h2>V1.2</h2>
+      <h2>What we'd like to build before V2</h2>
+      <p>
+        Grouped by theme, not by version number. This is what we want to
+        build; what actually lands next, and in what order, is shaped by
+        what the community asks for once V1 is in real use. Bug fixes and
+        community-response polish are a fixed slot in every release, and
+        well-argued requests can jump ahead of anything below.
+      </p>
+
+      <h3 class="catalog-sub">Timeline &amp; navigation</h3>
       <ul class="items">
         <li>
           <strong>Sorting toggle (by severity)</strong>: companion to the
-          filtering toggle. Toolbar UI is shared; day headers fold away
-          when the view isn't chronological.
+          needs-attention control; shared toolbar UI, with day headers
+          folding away when the view isn't chronological.
         </li>
         <li>
-          <strong>Sound customization</strong>: drop-in folder for your
-          own alert sounds, sitting alongside the bundled set.
-        </li>
-        <li>
-          <strong>Map preview inline</strong> for Calendar events with a
+          <strong>Inline map preview</strong> for Calendar events with a
           location, rendered via <code>MKMapSnapshotter</code> as a
           thumbnail on the event row, same pattern as Protect snapshots.
         </li>
-      </ul>
-    </section>
-
-    <section class="group">
-      <h2>V1.3</h2>
-      <ul class="items">
         <li>
-          <strong>Proxmox native adapter</strong>: a built-in
-          ingestion endpoint for Proxmox VE webhooks (PVE 8.1+), in
-          addition to the downloadable score.
+          <strong>Date markers and weekend tinting in the 84-day heatmap</strong>:
+          month labels, weekend tinting, and month-boundary dividers, so
+          patterns over a quarter read at a glance.
         </li>
         <li>
-          <strong>Source liveness detection</strong>: each source
-          declares an expected liveness window; Tempo flags
-          the source as silent when it's been quiet past its threshold.
+          <strong>Personal tag per source</strong>: a per-source tag (or
+          two) you define in the Score Editor from event metadata, rendered
+          as a badge and usable as a new axis for sort, filter, and search.
+          Free-form: you pick whatever labels work for your stack.
+        </li>
+        <li>
+          <strong>Source view groups</strong>: named groups of sources you
+          create in Settings ("Work", "Lab", "Media"). Pick one from the
+          top-bar selector and the timeline narrows to those sources; "All
+          sources" stays the default. Sources can belong to more than one
+          group: convenience views, not partitions.
+        </li>
+      </ul>
+
+      <h3 class="catalog-sub">New providers &amp; integrations</h3>
+      <ul class="items">
+        <li>
+          <strong>Proxmox native adapter</strong>: a built-in ingestion
+          endpoint for Proxmox VE webhooks (PVE 8.1+), in addition to the
+          downloadable score.
+        </li>
+        <li>
+          <strong>Time Machine built-in provider</strong>: listens to
+          <code>com.apple.backupd</code> notifications so Time Machine
+          successes and failures land on the timeline with no user setup.
+        </li>
+        <li>
+          <strong>Source liveness detection</strong>: each source declares
+          an expected liveness window; Tempo flags it as silent when it's
+          been quiet past its threshold.
+        </li>
+      </ul>
+
+      <h3 class="catalog-sub">Scores &amp; actions</h3>
+      <ul class="items">
+        <li>
+          <strong>In-app score browser</strong>: install scores from inside
+          Tempo, browse the catalog with search and filters, manage
+          versions, with no browser hop to GitHub.
         </li>
         <li>
           <strong>Action panel improvements</strong>: label interpolation
-          (e.g. <code>{'"Copy ${metadata.ip}"'}</code> renders the
-          value on the button), multi-segment
-          <code>copyToClipboard</code>, a new <code>revealInFinder</code>
-          action trigger, and visual section dividers in long action
+          (e.g. <code>{'"Copy ${metadata.ip}"'}</code> renders the value on
+          the button), multi-segment <code>copyToClipboard</code>, a new
+          <code>revealInFinder</code> trigger, and section dividers in long
           panels.
         </li>
+      </ul>
+
+      <h3 class="catalog-sub">Personalization &amp; data</h3>
+      <ul class="items">
         <li>
-          <strong>Time Machine, built-in provider</strong>: listens to
-          <code>com.apple.backupd</code> notifications so Time Machine
-          successes and failures land on the timeline like any other
-          event, without any user setup.
+          <strong>Sound customization</strong>: a drop-in folder for your
+          own alert sounds, alongside the bundled set.
+        </li>
+        <li>
+          <strong>External archive</strong>: a per-source archive file
+          whose schema adapts to the payload, so events can be retained
+          indefinitely outside the working DB without losing structure.
+        </li>
+      </ul>
+
+      <h3 class="catalog-sub">On request (community-driven)</h3>
+      <ul class="items">
+        <li>
+          <strong>Obsidian score + plugin</strong>: a Tempo plugin for
+          Obsidian that POSTs daily-note edits, new files, mentions, or tag
+          activity back to Tempo. We're up for writing it; what's missing is
+          concrete use-case feedback to make it useful rather than generic.
+        </li>
+        <li>
+          <strong>Thumbnail click-to-zoom + full-resolution storage</strong>:
+          for forensic inspection on a small (1-8 camera) homelab.
+          Conditional on demand: 50+ cameras is enterprise NVR territory,
+          not Tempo.
         </li>
       </ul>
     </section>
 
     <section class="group">
-      <h2>V1.4</h2>
-      <ul class="items">
-        <li>
-          <strong>In-app score browser</strong>: install scores from
-          inside Tempo, browse the catalog with search and filters,
-          manage versions, no more browser hop to GitHub.
-        </li>
-        <li>
-          <strong>Date markers and weekend tinting in the heatmap</strong>:
-          month labels, weekend tinting, and month-boundary dividers in the
-          historical heatmap. Patterns over a quarter become readable at a
-          glance.
-        </li>
-      </ul>
+      <h2>Beyond V1</h2>
+      <p>
+        V2 plans aren't published. They'll come into focus once V1 has a
+        few months of community use behind it. That feedback is what
+        shapes the V2 pitch, so committing now would be premature.
+      </p>
     </section>
 
     <section class="group">
@@ -248,82 +296,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <a href="https://github.com/caereforge/tempo-scores">caereforge/tempo-scores</a>,
         or starting the discussion on the
         <a href="/community/">community</a>.
-      </p>
-    </section>
-
-    <section class="group">
-      <h2>V1.5 and later, continuous</h2>
-      <p>
-        Architecture and UX items that ship as they're ready, without a
-        fixed release-window commitment. Sequencing is driven by community
-        feedback after launch.
-      </p>
-      <ul class="items">
-        <li>
-          <strong>Personal tag per source</strong>: a per-source tag
-          (or two) you define in the Score Editor, built from
-          event metadata via template. Renders as a badge on the event
-          card and becomes a new axis for sort, filter, and search
-          alongside severity and date. Free-form: you pick whatever
-          labels work for your stack.
-        </li>
-        <li>
-          <strong>Source view groups</strong>: named groups of sources
-          you create in Settings ("Work", "Lab", "Media", whatever
-          you need). Pick one from the top-bar selector and the timeline
-          narrows to just those sources; "All sources" stays the default
-          and the fallback. Sources can belong to more than one group:
-          these are convenience views, not partitions.
-        </li>
-        <li>
-          <strong>External archive</strong>: per-source archive file with
-          a schema that adapts to the payload, so events can be retained
-          indefinitely outside the working DB without losing structure.
-        </li>
-        <li>
-          <strong>User-requested features</strong>: driven by Discord
-          beta feedback and GitHub Issues after launch. Some of these will
-          jump ahead of items listed above.
-        </li>
-        <li>
-          <strong>Bug fixes and community-response polish</strong>: a
-          mandatory slot in every release. The list of "what's currently
-          rough" is a moving target by design.
-        </li>
-      </ul>
-    </section>
-
-    <section class="group">
-      <h2>On-demand possibilities</h2>
-      <p>
-        Ideas worth building when the community asks for them concretely.
-        Listed here for transparency; if any of these matter to you, say
-        so on the <a href="/community/">Tempo community</a>. That's how
-        they jump up the list.
-      </p>
-      <ul class="items">
-        <li>
-          <strong>Obsidian score + plugin</strong>: a Tempo plugin for
-          Obsidian that POSTs daily-note edits, new files, mentions, or
-          tag activity back to Tempo. We're up for writing the plugin
-          ourselves; what's missing is concrete use-case feedback to make
-          it useful instead of generic.
-        </li>
-        <li>
-          <strong>Thumbnail click-to-zoom + full-resolution storage</strong>:
-          conditional on community demand. Use case: 1–8-camera homelab
-          forensic inspection. Power-users with 50+ cameras are enterprise
-          NVR territory, not Tempo.
-        </li>
-      </ul>
-    </section>
-
-    <section class="group">
-      <h2>Beyond V1</h2>
-      <p>
-        V2 plans aren't published. They'll come into focus once V1 has a
-        few months of community use behind it. That feedback is what
-        shapes the V2 pitch, so committing now would be premature.
       </p>
     </section>
 
