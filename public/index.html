@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tempo — For tinkerers, from a Mac to a rack.</title>
-<meta name="description" content="Every signal from every source — Home Assistant, Kuma, Kopia, GitHub — on one Mac-native timeline. Yours to shape. Local-first, never to the cloud.">
+<title>Tempo - For tinkerers, from a Mac to a rack.</title>
+<meta name="description" content="Every signal from every source (Home Assistant, Kuma, Kopia, GitHub) on one Mac-native timeline. Yours to shape. Local-first, never to the cloud.">
 
 <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
@@ -13,8 +13,8 @@
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tempoapp.app/">
-<meta property="og:title" content="Tempo — For tinkerers, from a Mac to a rack.">
-<meta property="og:description" content="Every signal from every source on one Mac-native timeline — Home Assistant, Uptime Kuma, Kopia backups, GitHub deploys. Yours to shape, ready to act. Local-first, LAN-reachable.">
+<meta property="og:title" content="Tempo - For tinkerers, from a Mac to a rack.">
+<meta property="og:description" content="Every signal from every source on one Mac-native timeline: Home Assistant, Uptime Kuma, Kopia backups, GitHub deploys. Yours to shape, ready to act. Local-first, LAN-reachable.">
 <meta property="og:image" content="https://tempoapp.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -576,15 +576,15 @@ footer {
 
   <h1>Every signal from every source on one Mac-native timeline.<br><em>Yours to shape. Ready to act.</em></h1>
   <p class="hero-sub">
-    One Mac-native timeline for everything your stack does. If it can POST, Tempo can hear it —
+    One Mac-native timeline for everything your stack does. If it can POST, Tempo can hear it:
     from rack-side monitoring to Mac-side automations, from third-party services to your own scripts.
     Every event arrives in context, with the next move one click away. You stay the conductor;
-    Tempo holds the score — and never acts on its own. Local-first, no cloud, no telemetry.
+    Tempo holds the score, and never acts on its own. Local-first, no cloud, no telemetry.
   </p>
 
   <div class="primary-cta-wrap">
     <a href="https://downloads.tempoapp.app/Tempo-latest.dmg" class="primary-cta">Download Tempo</a>
-    <p class="cta-note">7 MB · macOS 15+ · Signed &amp; notarized · v1 free, forever</p>
+    <p class="cta-note">8 MB · macOS 15+ · Signed &amp; notarized · freeware</p>
     <p class="cta-alt">Or via Homebrew: <code>brew install --cask caereforge/tap/tempo</code></p>
   </div>
   <a href="#demo" class="secondary-cta">See how it works ↓</a>
@@ -606,17 +606,17 @@ footer {
     <div class="feat">
       <div class="feat-icon">⚡</div>
       <div class="feat-title">Every signal, one feed</div>
-      <div class="feat-body">Homelab monitoring, backups, deploys, network and file events, Mac-side automations, your own scripts — and Apple Calendar and Reminders. One chronological timeline, no dashboard juggling.</div>
+      <div class="feat-body">Homelab monitoring, backups, deploys, network and file events, Mac-side automations, your own scripts, plus your Mac's own calendar and tasks. One chronological timeline, no dashboard juggling.</div>
     </div>
     <div class="feat">
       <div class="feat-icon">↗</div>
       <div class="feat-title">Actions, ready to go</div>
-      <div class="feat-body">SSH to a flagged host, open a HA dashboard, restart a container, ack an incident — every event ships with the buttons you'd reach for.</div>
+      <div class="feat-body">SSH to a flagged host, open a HA dashboard, restart a container, ack an incident: every event ships with the buttons you'd reach for.</div>
     </div>
     <div class="feat">
       <div class="feat-icon">🔒</div>
       <div class="feat-title">Local-first, LAN-reachable</div>
-      <div class="feat-body">Local SQLite. No account, no cloud, no telemetry. The HTTP ingestion endpoint binds your LAN with per-provider tokens — your NAS, HA, and monitoring stack post directly.</div>
+      <div class="feat-body">Local SQLite. No account, no cloud, no telemetry. The HTTP ingestion endpoint binds your LAN with per-provider tokens, so your NAS, HA, and monitoring stack post directly.</div>
     </div>
   </div>
 </div>
@@ -628,12 +628,12 @@ footer {
       <h2>If it speaks HTTP,<br>it works with Tempo.</h2>
       <p>
         Modules ship for the usual homelab stack. Anything else just <span class="highlight">POSTs JSON</span>
-        to Tempo's LAN endpoint — Home Assistant automation, n8n flow, bash one-liner with curl,
+        to Tempo's LAN endpoint: Home Assistant automation, n8n flow, bash one-liner with curl,
         Grafana webhook. No plugin SDK, no rebuild.
       </p>
       <p>
         Each event carries its own action set, declared in a small JSON
-        <span class="highlight">score</span>. Drop one in or write your own —
+        <span class="highlight">score</span>. Drop one in or write your own, and
         Tempo reads the fields and builds the buttons. Use payload tokens like
         <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>
         so each click already knows the context.
@@ -650,7 +650,7 @@ footer {
   <span class="ec-key">"metadata"</span>: { <span class="ec-key">"host"</span>: <span class="ec-val">"web-01"</span>, <span class="ec-key">"ip"</span>: <span class="ec-val">"10.0.1.42"</span> },
   <span class="ec-key">"actions"</span>: [
     { <span class="ec-key">"label"</span>: <span class="ec-val">"SSH"</span>,  <span class="ec-key">"trigger"</span>: <span class="ec-label">"openURL"</span> },
-    { <span class="ec-key">"label"</span>: <span class="ec-val">"Ping"</span>, <span class="ec-key">"trigger"</span>: <span class="ec-label">"terminal"</span> }
+    { <span class="ec-key">"label"</span>: <span class="ec-val">"Ping"</span>, <span class="ec-key">"trigger"</span>: <span class="ec-label">"openTerminalWith"</span> }
   ]
 }
     </div>
@@ -661,13 +661,12 @@ footer {
 <div class="sources-strip">
   <div class="section-title">Works with your tools</div>
   <div class="sources-list">
-    <div class="src-chip"><div class="src-dot" style="background:#0a84ff"></div>Apple Calendar</div>
-    <div class="src-chip"><div class="src-dot" style="background:#34c759"></div>Apple Reminders</div>
     <div class="src-chip"><div class="src-dot" style="background:#41bdf5"></div>Home Assistant</div>
     <div class="src-chip"><div class="src-dot" style="background:#5cdd8b"></div>Uptime Kuma</div>
     <div class="src-chip"><div class="src-dot" style="background:#ff9f0a"></div>Kopia</div>
     <div class="src-chip"><div class="src-dot" style="background:#0559c9"></div>UniFi</div>
     <div class="src-chip"><div class="src-dot" style="background:#bf5af2"></div>GitHub Actions</div>
+    <div class="src-chip"><div class="src-dot" style="background:#ff375f"></div>Shortcuts</div>
     <div class="src-chip any">+ any tool with webhooks</div>
   </div>
 </div>
@@ -676,9 +675,9 @@ footer {
 <div class="story-wrap" id="story">
   <div class="section-title">Why Tempo exists</div>
   <div class="story-prose">
-    <p>I've spent most of my career as a Unix sysadmin — the kind of work where you learn, over time, that the machine doesn't care how pretty your dashboard is. It cares whether you notice the thing that matters, in time.</p>
-    <p>Eventually I came home from that and kept doing the same thing for myself. A homelab grew. Home Assistant, a UniFi stack, Uptime Kuma, Kopia backups, a couple of always-on services, GitHub Actions for side projects, the calendar and reminders that actually run my life. Seven browser tabs every morning, each speaking its own language, none of them talking to each other.</p>
-    <p>Dashboards didn't solve it — dashboards ask you to look at them. What I wanted was the Unix instinct expressed through the Mac: <strong>the power of the terminal and the craft of native macOS design</strong>, in one surface. One timeline, everything that happened, in order, with the right action one click away. Local-first, because the data stays on my machines. LAN-reachable, because the services don't run on the Mac. Never acts on its own, because silent automations are how you lose trust in your own system.</p>
+    <p>I've spent most of my career as a Unix sysadmin, the kind of work where you learn, over time, that the machine doesn't care how pretty your dashboard is. It cares whether you notice the thing that matters, in time.</p>
+    <p>Eventually I came home from that and kept doing the same thing for myself. A homelab grew. Home Assistant, a UniFi stack, Uptime Kuma, Beszel, my backup tool of choice (Kopia), a couple of always-on services, GitHub Actions for side projects, the schedule that actually runs my life. So many browser tabs to monitor every morning, each speaking its own language, none of them talking to each other.</p>
+    <p>Dashboards didn't solve it: dashboards ask you to look at them. What I wanted was the Unix instinct expressed through the Mac: <strong>the power of the terminal and the craft of native macOS design</strong>, in one surface. One timeline, everything that happened, in order, with the right action one click away. Local-first, because the data stays on my machines. LAN-reachable, because the services don't run on the Mac. Never acts on its own, because silent automations are how you lose trust in your own system.</p>
     <p><em>You stay the conductor. Tempo is the score.</em></p>
     <p>Tempo is that tool.</p>
   </div>
@@ -695,7 +694,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Two senses, both intentional. <em>Tempo</em> is the musical term for the pace of a piece — which is what your homelab has, whether you notice it or not: a pulse of events across machines, some steady, some spiking. And a conductor doesn't play the instruments. They give the ensemble a shared sense of time, and they decide when something needs attention. That's the posture Tempo is built around: you stay the conductor. Tempo is the score in front of you.
+        Two senses, both intentional. <em>Tempo</em> is the musical term for the pace of a piece, which is what your homelab has, whether you notice it or not: a pulse of events across machines, some steady, some spiking. And a conductor doesn't play the instruments. They give the ensemble a shared sense of time, and they decide when something needs attention. That's the posture Tempo is built around: you stay the conductor. Tempo is the score in front of you.
       </div>
     </div>
 
@@ -705,7 +704,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        A native macOS app that pulls every signal from your homelab — Home Assistant, Uptime Kuma, Kopia, UniFi, CI/CD, custom scripts — into one chronological timeline, alongside your calendar and tasks. Each event ships with the actions you'd reach for: SSH, dashboard, terminal command, Apple Shortcut. One place to see what's going on across machines. Tempo shows and proposes; it never acts on its own.
+        A native macOS app that receives every signal from your homelab (Home Assistant, Uptime Kuma, Kopia, UniFi, CI/CD, custom scripts) and brings it onto one chronological timeline, alongside your schedule. Each event ships with the actions you'd reach for: SSH, dashboard, terminal command, Shortcut. One place to see what's going on across machines. Tempo shows and proposes; it never acts on its own.
       </div>
     </div>
 
@@ -715,7 +714,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        HA is great inside its own world. But your homelab isn't only HA — it's also your NAS backups, monitoring stack, GitHub Actions, network gear, and the calendar/tasks on your Mac. Tempo isn't trying to replace any of those dashboards; it sits on top, surfaces the events that need your attention, and gives you one place to act on them.
+        HA is great inside its own world. But your homelab isn't only HA: it's also your NAS backups, monitoring stack, GitHub Actions, network gear, and the calendar and tasks on your Mac. Tempo isn't trying to replace any of those dashboards; it sits on top, surfaces the events that need your attention, and gives you one place to act on them.
       </div>
     </div>
 
@@ -725,7 +724,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Tempo runs an HTTP ingestion server on your Mac, reachable from your local network. Each provider (HA, Uptime Kuma, Kopia, your bash script) gets its own token; every remote ingestion is logged. Optional TLS. The endpoint is LAN-only by default — it never exposes your data to the internet. Anything that can <code style="font-family:monospace;font-size:11px;color:var(--blue)">curl</code> can post to Tempo.
+        Tempo runs an HTTP ingestion server on your Mac, reachable from your local network. Each provider (HA, Uptime Kuma, Kopia, your bash script) gets its own token; every remote ingestion is logged. Optional TLS. The endpoint is LAN-only by default and never exposes your data to the internet. Anything that can <code style="font-family:monospace;font-size:11px;color:var(--blue)">curl</code> can post to Tempo. Need events from an internet source, like a cloud webhook? Optional helpers can relay them in to Tempo, so it receives remote events without its endpoint ever being exposed online.
       </div>
     </div>
 
@@ -735,7 +734,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Yes — this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger Apple Shortcut), and the labels. Tempo ships bundled scores for common sources (Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar &amp; Reminders) and you can drop in more from the public catalog or write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code> — so each button already knows the context. A visual score editor is on the V2 roadmap.
+        Yes, this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger a Shortcut), and the labels. Tempo ships bundled scores for common sources (Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology, Apple Calendar &amp; Reminders) and you can drop in more from the public catalog or write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code>, so each button already knows the context. Tempo also includes a built-in visual score editor, if you'd rather not touch JSON.
       </div>
     </div>
 
@@ -745,7 +744,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Those automate server-side workflows. Tempo centralizes <em>visibility and decision</em> on your Mac. It reads your local calendar, tasks, and reminders (things server-side tools can't touch), puts them alongside infra signals, and lets <em>you</em> decide what to do. They're complementary — Tempo can be the human-facing surface in front of an n8n flow.
+        Those automate server-side workflows. Tempo centralizes <em>visibility and decision</em> on your Mac. It reads your local Mac context (things server-side tools can't touch), puts it alongside infra signals, and lets <em>you</em> decide what to do. They're complementary: Tempo can be the human-facing surface in front of an n8n flow.
       </div>
     </div>
 
@@ -755,7 +754,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        No account, no cloud sync, no third-party telemetry. Everything lives in a local SQLite database on your Mac. The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet — it accepts only signed requests from per-provider tokens stored in the macOS Keychain. Optional TLS.
+        No account, no cloud sync, no third-party telemetry. Everything lives in a local SQLite database on your Mac. The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet: it accepts only signed requests from per-provider tokens stored in the macOS Keychain. Optional TLS.
       </div>
     </div>
 
@@ -765,7 +764,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        <strong style="color:var(--text)">Tempo v1 is free, forever.</strong> No trial, no Free/Pro tiers, no subscription, no account required. A future v2 may be a paid one-time purchase — details are in the <a href="/blog/tempo-goes-freeware/" style="color:var(--blue)">freeware announcement</a>.
+        <strong style="color:var(--text)">Tempo v1.x is freeware, and will stay that way.</strong> No trial, no Free/Pro tiers, no subscription, no account required. A future v2 may be a paid one-time purchase; details are in the <a href="/blog/tempo-goes-freeware/" style="color:var(--blue)">freeware announcement</a>.
       </div>
     </div>
 
@@ -775,7 +774,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        No — distributed as a signed and notarized DMG (Developer ID), with auto-update via Sparkle. Outside the App Store sandbox so the LAN ingestion server, terminal commands, and AppleScript hooks all work without restrictions.
+        No, distributed as a signed and notarized DMG (Developer ID), with auto-update via Sparkle. Outside the App Store sandbox so the LAN ingestion server, terminal commands, and AppleScript hooks all work without restrictions.
       </div>
     </div>
 
@@ -785,7 +784,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Yes. Tempo reads from Apple Calendar via EventKit, which natively syncs CalDAV accounts. If a calendar shows up in the Apple Calendar app, it shows up in Tempo.
+        Yes. Tempo reads from Apple Calendar via EventKit, which natively syncs CalDAV accounts: if a calendar shows up in the Apple Calendar app, it shows up in Tempo. And if an account isn't set up in macOS, Tempo also has an experimental native CalDAV provider that connects to the server directly.
       </div>
     </div>
 
@@ -795,7 +794,7 @@ footer {
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted with Claude Code. More on how it works in <a href="/blog/is-tempo-vibecoded/" style="color:var(--blue)">Is Tempo vibe-coded?</a>.
+        Tempo's author and architect is me. Design, architecture, and testing are mine; implementation is AI-assisted. More on how it works in <a href="/blog/is-tempo-vibecoded/" style="color:var(--blue)">Is Tempo vibe-coded?</a>.
       </div>
     </div>
 
@@ -805,7 +804,7 @@ footer {
 <!-- Footer -->
 <footer>
   <div class="footer-left">
-    <strong>Tempo</strong> for macOS &nbsp;·&nbsp; tempoapp.app &nbsp;·&nbsp; v1 free, forever<br>
+    <strong>Tempo</strong> for macOS &nbsp;·&nbsp; tempoapp.app &nbsp;·&nbsp; v1.x freeware<br>
     <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
     <a href="/license">Terms</a> &nbsp;·&nbsp;
     <a href="/docs">Docs</a> &nbsp;·&nbsp;
