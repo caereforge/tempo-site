@@ -28,7 +28,7 @@ Tempo ingestion server  on <your-mac>:7776
 
 The helper posts only on transitions (an alert triggered, then later resolved). It does not stream the raw telemetry, and it does not post on a heartbeat. The score handles what happens after the event lands: the severity, the grouping, and the action buttons.
 
-Run the helper on a host that can reach the Beszel hub, typically the hub box itself. Once the helper runs, **disable Beszel's native Tempo webhook**, or you get duplicate and thin events for the same alert.
+Run the helper on a host that can reach the Beszel hub, typically the hub box itself. This guide does not use Beszel's own notifications. If you had already pointed a Beszel `generic://` notification at Tempo before setting up the helper, remove it, so the same alert does not arrive twice.
 
 ## What you need
 
