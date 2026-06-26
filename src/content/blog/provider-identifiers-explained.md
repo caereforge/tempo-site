@@ -66,14 +66,14 @@ Tempo ships with twenty bundled scores out of the box and growing. If you're con
 
 The vendor matters. UniFi is sold by Ubiquiti, so the ID is `com.ubiquiti.unifi.network`, not `com.unifi.network` (which would say "UniFi makes a product called Network"). Hazel is made by Noodlesoft, so it's `com.noodlesoft.hazel.*`. The reverse-DNS namespace points at the **company that ships the tool**, then the tool, then the module.
 
-## Downloadable scores from the catalog
+## More scores from the catalog
 
-Beyond the bundled set, the [score catalog at tempoapp.app/scores](/scores/) hosts a growing list of `.tempo-score` files you can download and double-click to install. Once installed they behave exactly like bundled scores: you still need a token in Settings → Ingestion bound to the provider identifier below, and your sender POSTs the same way:
+The [score catalog at tempoapp.app/scores](/scores/) documents a growing set of sources, all of them built into Tempo. You enable a score from **Manage Sources**, add a token in Settings → Ingestion bound to the provider identifier below, and your sender POSTs the same way:
 
 | Source | Provider identifier |
 |---|---|
-| Proxmox VE | `com.proxmox` |
-| Proxmox Backup Server | `com.proxmox.backup` |
+| UniFi Network | `com.ubiquiti.unifi.network` |
+| UniFi Protect | `com.ubiquiti.unifi.protect` |
 | Pi-hole | `net.pi-hole.pi-hole` |
 | Jellyfin | `org.jellyfin` |
 | Vaultwarden | `com.vaultwarden` |
