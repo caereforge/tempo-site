@@ -1,6 +1,6 @@
 ---
 title: "Pi-hole"
-description: "Pi-hole health and configuration changes in Tempo's timeline. Poll-driven from cron, native API, no plugins."
+description: "Pi-hole DNS blocking state, reachability, updates, blocklist (gravity) refreshes, and host load on the Tempo timeline, delivered by a small polling helper."
 providerIdentifier: "net.pi-hole.pi-hole"
 color: "#A52B2B"
 version: "1.0.0"
@@ -11,163 +11,191 @@ pubDate: 2026-04-30
 builtIn: true
 ---
 
-Surface Pi-hole health and configuration changes in Tempo's timeline with four default actions (open admin, open query log, open settings, copy server URL).
+This score renders Pi-hole state on the Tempo timeline: whether DNS blocking is enabled or disabled, whether Pi-hole is reachable, and, optionally, whether a component update is available, whether the blocklist ("gravity") was refreshed, and whether the host is under high load. It is read-only. The actions open the admin pages or copy the server URL, and nothing writes back to Pi-hole.
 
-Pi-hole has no native push webhook out of the box, so this integration is **poll-driven**: a small bash script runs on cron, checks Pi-hole's state via its HTTP API, and POSTs an event to Tempo when something interesting changes.
+Pi-hole has no outbound webhook, so it cannot push to Tempo on its own. A small helper script polls Pi-hole's API and posts an event to Tempo when something changes. Most of the work below is setting up that helper once.
 
-Tested with Pi-hole **v6** (FTL HTTP API). v5 with the legacy PHP API also works with minor URL adjustments; see the v5 note at the bottom.
+## How it works
 
----
-
-## Install
-
-1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
-2. In Tempo, open **Manage Sources** and enable **Pi-hole** (built-in scores are activated there; only the generic Scripts source auto-installs).
-3. In Tempo **Settings → Ingestion**, add a token named `pi-hole` bound to `net.pi-hole.pi-hole`. Copy the token.
-4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
-5. Install the polling script (below).
-
-## Polling script
-
-Save as `pihole-tempo.sh`, edit the four config values, and run on cron every 5–10 minutes. The script tracks state across runs so it only POSTs to Tempo when something **changes** (no spam).
-
-```sh
-#!/usr/bin/env bash
-# pihole-tempo.sh - emit Pi-hole state + update-available to Tempo
-set -uo pipefail
-
-# ── Config ────────────────────────────────────────────────────────────────
-PIHOLE_URL="http://pi.hole"        # base URL of your Pi-hole
-PIHOLE_PASS="your-admin-password"  # admin password (v6)
-TEMPO_URL="http://your-mac.local:7776/ingest"
-TEMPO_TOKEN="paste-tempo-token-here"
-STATE_DIR="${HOME}/.local/state/pihole-tempo"
-# ──────────────────────────────────────────────────────────────────────────
-
-mkdir -p "$STATE_DIR"
-
-emit() { # title status action
-    curl -sS --max-time 5 -X POST \
-        -H "X-Tempo-Token: ${TEMPO_TOKEN}" -H "Content-Type: application/json" \
-        -d "{\"providerIdentifier\":\"net.pi-hole.pi-hole\",\"title\":\"$1\",\"startDate\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"eventType\":\"alert\",\"metadata\":{\"Status\":\"$2\",\"Action\":\"$3\",\"ServerUrl\":\"${PIHOLE_URL}\"}}" \
-        "${TEMPO_URL}" >/dev/null
-}
-# returns success only when the value for <key> differs from the last run
-changed() {
-    local f="${STATE_DIR}/last_$1" last
-    last=$( [ -f "$f" ] && cat "$f" || echo "" )
-    echo "$2" > "$f"
-    [ "$2" != "$last" ]
-}
-
-# ── Auth (Pi-hole v6). IMPORTANT: delete the session at the end - auth on
-#    every run WITHOUT deleting exhausts Pi-hole's API seats (api_seats_exceeded).
-SID=$(curl -s --max-time 5 -X POST -H "Content-Type: application/json" \
-    -d "{\"password\":\"${PIHOLE_PASS}\"}" "${PIHOLE_URL}/api/auth" \
-    | jq -r '.session.sid // empty')
-
-# ── 1. Blocking status + reachability (the high-value signal: DNS down) ────
-if [ -z "$SID" ]; then
-    STATUS="unreachable"
-else
-    BLOCKING=$(curl -s --max-time 5 -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/dns/blocking" \
-               | jq -r '.blocking // "unknown"')
-    case "$BLOCKING" in
-        enabled)  STATUS="up" ;;
-        disabled) STATUS="disabled" ;;
-        *)        STATUS="unreachable" ;;
-    esac
-fi
-if changed status "$STATUS"; then
-    case "$STATUS" in
-        up)          emit "Pi-hole - blocking enabled"  "up"          "blocking_enabled" ;;
-        disabled)    emit "Pi-hole - blocking disabled" "disabled"    "blocking_disabled" ;;
-        unreachable) emit "Pi-hole unreachable"         "unreachable" "" ;;
-    esac
-fi
-
-# ── 2. Update available (local vs remote per component: core / web / ftl) ──
-if [ -n "$SID" ]; then
-    UPD=$(curl -s --max-time 5 -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/info/version" \
-        | jq -r '[.version.core, .version.web, .version.ftl] | map(select(.local.version != .remote.version)) | length')
-    if changed update "${UPD:-0}" && [ "${UPD:-0}" -gt 0 ]; then
-        emit "Pi-hole - update available" "up" "update_available"
-    fi
-fi
-
-# ── Clean up the session (prevents api_seats_exceeded over time) ───────────
-[ -n "$SID" ] && curl -s --max-time 5 -X DELETE -H "X-FTL-SID: $SID" "${PIHOLE_URL}/api/auth" >/dev/null 2>&1
+```
+Pi-hole  (FTL HTTP API, v6)
+      |  POST /api/auth  ->  session id (SID)
+      |  GET  /api/dns/blocking, /api/info/version, ...
+helper  on a host near Pi-hole   (reads state, builds a Tempo event)
+      |  HTTP POST, LAN
+Tempo ingestion server  on <mac>:7776
+      |  DELETE /api/auth   (frees the API session)
 ```
 
-## Schedule
+The helper is an API poller. On each run it authenticates once with `POST /api/auth`, reads the current state, posts a Tempo event only when the state changed since the last run, then deletes its session with `DELETE /api/auth`. Authenticating every run without deleting the session eventually exhausts Pi-hole's API seats and returns `api_seats_exceeded`, so the cleanup matters.
+
+The helper is stateful. It keeps the last reported value on disk (under `$XDG_STATE_HOME/pihole-tempo/`, or `~/.local/state/pihole-tempo/`) and posts only on a transition, so a steady Pi-hole produces no feed noise. Tempo collapses the events into one row per signal through grouping.
+
+## What you need
+
+- A host that can reach both Pi-hole and Tempo, typically the machine next to Pi-hole. Linux or macOS both work; the secrets live in a local `.env` file, so the helper is not tied to a Mac.
+- `python3`, `curl`, and `jq` on that host.
+- Pi-hole **v6** (the `/api/*` endpoints). See the v5 note at the end for the legacy PHP API.
+- Tempo running, with the **Pi-hole** score enabled in **Manage Sources**.
+
+The Pi-hole password is used only against Pi-hole to open a session. Tempo receives only the parsed state, never the password.
+
+## 1. Create the Tempo token
+
+In Tempo, open **Settings > Ingestion** and create a token bound to `net.pi-hole.pi-hole`. Copy it. Note your Tempo endpoint: `http://<mac-running-tempo>:7776/ingest`.
+
+The host running the helper must reach the Mac on port **7776**. Allow it in the macOS firewall (or Little Snitch), and optionally restrict the token to that host's IP with its allowlist in **Settings > Ingestion**.
+
+## 2. Get the helper
+
+In the score's **Source** tab (Score Editor), the **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the helper package to `~/Library/Application Support/Tempo/Integrations/net.pi-hole.pi-hole/` and reveals it. Copy that folder to the host that will run the poller, then follow its **Open README** or the steps below.
+
+The package contains `pihole-tempo.sh` (one poll, posts on a state change) and `pihole-run.sh` (loads `pihole.env` and runs the watcher once, for cron or a service).
+
+## 3. Configure `pihole.env`
+
+Create `pihole.env` next to the scripts:
 
 ```sh
-crontab -e
-# Run every 5 minutes
-*/5 * * * * /path/to/pihole-tempo.sh >> /tmp/pihole-tempo.log 2>&1
+export TEMPO_URL="http://<mac-running-tempo>:7776/ingest"
+export TEMPO_TOKEN="<the token from step 1>"
+export PIHOLE_URL="http://<pihole-host>"
+export PIHOLE_PASS="<your Pi-hole web/app password>"
 ```
 
-## Verify
+Prefer a Pi-hole app-password over the admin password.
 
-Disable Pi-hole blocking from the admin UI for 30s, then run the script manually. You should see a `Pi-hole - blocking disabled` event in Tempo within a couple of seconds, marked **warning**.
+### Optional signals
 
-## Severity rules
+Blocking state and reachability are always reported. Three more signals are on by default and each can be switched off independently:
 
-| Match                              | Severity   | Badge        |
-| ---------------------------------- | ---------- | ------------ |
-| `Status: down`                     | `critical` | Down         |
-| `Status: unreachable`              | `critical` | Unreachable  |
-| `Status: high_load`                | `warning`  | High load    |
-| `Status: disabled`                 | `warning`  | Disabled     |
-| `Action: blocking_disabled`        | `warning`  | Blocking off |
-| `Action: update_available`         | `info`     | Update       |
-| `Action: gravity_update`           | `info`     | Gravity      |
-| `Action: blocking_enabled`         | `info`     | Blocking on  |
-| _(default)_                        | `info`     | Info         |
+| Signal | Env flag (default on) | What triggers it |
+|---|---|---|
+| Update available | `PIHOLE_EMIT_UPDATE` | any component (core / web / FTL / docker) has `local != remote` |
+| Blocklist (gravity) updated | `PIHOLE_EMIT_GRAVITY` | gravity's blocked-domain count changes |
+| High load | `PIHOLE_EMIT_LOAD` | 15-minute CPU load over `PIHOLE_LOAD_THRESHOLD` (percent of one core, default `200`) |
 
-## Required `metadata` fields
+Set a flag to `0` to silence that signal. Load is kept ignorable on purpose: CPU load is noisy on a DNS resolver, so set `PIHOLE_EMIT_LOAD=0` if you already watch host load with another tool such as Beszel.
 
-- **`ServerUrl`**: base URL of the Pi-hole. Used by every action.
-- **`Status`** or **`Action`**: drives severity. At least one should be present.
+### Keeping secrets out of plaintext (`*_FILE`)
+
+You do not have to leave the token or the Pi-hole password in a plaintext `.env`. Each secret also resolves from a file: set `TEMPO_TOKEN_FILE` and `PIHOLE_PASS_FILE` to paths and the helper reads them from there, so the values never enter the environment. Point them at a Docker secret (`/run/secrets/...`, on tmpfs), a `systemd-creds` encrypted credential, or any `chmod 600` file. Resolution order per secret is file, then environment variable.
+
+## 4. Run the helper as a daemon
+
+`pihole-run.sh` performs one poll. Run it on a roughly 15-second cadence so transitions are caught quickly. Keep `pihole.env`, the log, and the state file out of version control.
+
+### macOS (launchd)
+
+Run the watcher in a loop under a `LaunchAgent` and let launchd restart it on logout or reboot. A minimal agent that keeps a sleep loop alive:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>app.tempo.pihole</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>while true; do /path/to/pihole-run.sh; sleep 15; done</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+</dict>
+</plist>
+```
+
+Save it as `~/Library/LaunchAgents/app.tempo.pihole.plist`, then load it:
+
+```bash
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/app.tempo.pihole.plist
+launchctl list | grep app.tempo.pihole
+```
+
+### Linux (systemd)
+
+Create `/etc/systemd/system/tempo-pihole.service`:
+
+```ini
+[Unit]
+Description=Tempo Pi-hole poller
+After=network-online.target
+
+[Service]
+EnvironmentFile=/opt/tempo-pihole/pihole.env
+ExecStart=/bin/sh -c 'while true; do /opt/tempo-pihole/pihole-run.sh; sleep 15; done'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then `sudo systemctl enable --now tempo-pihole`.
+
+Without systemd, a `flock` keepalive cron works. The runner is idempotent, so staggering four runs per minute gives roughly a 15-second cadence:
+
+```cron
+* * * * * for i in 0 15 30 45; do (sleep $i; flock -n /tmp/pihole-tempo.lock /opt/tempo-pihole/pihole-run.sh) & done
+```
+
+### Windows
+
+The helper is a POSIX shell script and is not cross-platform on its own. Run it under WSL or a POSIX shell with `python3`, `curl`, and `jq` available, then keep the loop alive with a process supervisor (a Scheduled Task that runs at logon and restarts on failure, or a service wrapper such as NSSM).
+
+## What you'll see
+
+- One row that flips between blocking **enabled**, blocking **disabled**, and **unreachable** as the state changes.
+- **Update available** when a Pi-hole component is behind its latest release.
+- **Blocklist updated** when gravity's domain count changes.
+- **High load** when the host's 15-minute CPU load crosses the threshold.
+
+A Pi-hole that is down or unreachable means your network's DNS is down, which is the highest-value signal here.
+
+## Grouping and severity
+
+Events stack within a 6-hour window, keyed by `${metadata.ServerUrl}/${metadata.Action}`. Each signal from one Pi-hole reads as a single entry rather than one row per poll. For a multi-instance setup (primary plus secondary Pi-hole), run one helper per instance with its own `PIHOLE_URL` and `PIHOLE_PASS`. Tempo lists them under the same source, but each event carries its own `ServerUrl`, so they group separately.
+
+Severity comes from the score's rules on the `Status` and `Action` metadata:
+
+| Match | Severity | Badge |
+|---|---|---|
+| `Status: down` | critical | Down |
+| `Status: unreachable` | critical | Unreachable |
+| `Status: high_load` | warning | High load |
+| `Status: disabled` | warning | Disabled |
+| `Action: blocking_disabled` | warning | Blocking off |
+| `Action: update_available` | info | Update |
+| `Action: gravity_update` | info | Gravity |
+| `Action: blocking_enabled` | info | Blocking on |
+| _(default)_ | info | Info |
+
+### Metadata the score reads
+
+- **`ServerUrl`**: base URL of the Pi-hole. Used by every action and by grouping.
+- **`Status`** or **`Action`**: drives severity and the badge. At least one should be present.
+
+## Actions
+
+Four actions are attached to every event:
+
+- **Open admin**: opens `${metadata.ServerUrl}/admin/`.
+- **Open query log**: opens `${metadata.ServerUrl}/admin/queries`.
+- **Open settings**: opens `${metadata.ServerUrl}/admin/settings`.
+- **Copy server URL**: copies `${metadata.ServerUrl}` to the clipboard.
+
+The score uses only `openURL` and `copyToClipboard`. Terminal-based actions (for example `pihole disable 30m`) would require a local drop-in score that you author and trust yourself.
+
+## Troubleshooting and limitations
+
+- **`api_seats_exceeded` from Pi-hole**: a previous run did not delete its session. The shipped helper always deletes it at the end; if you poll very frequently, raise `webserver.api.max_sessions` in Pi-hole.
+- **Nothing arrives in Tempo**: confirm the host can reach the Mac on port 7776 (firewall, Little Snitch, token IP allowlist), that the token is bound to `net.pi-hole.pi-hole`, and that the **Pi-hole** score is enabled in **Manage Sources**.
+- **Events arrive but render without styling**: the Pi-hole score is not enabled. Enable it in **Manage Sources**.
+- **Polling misses quick toggles**: a state change shorter than the poll interval can be missed. A ~15-second cadence catches sustained states (down, blocking left off, an available update), not brief flips.
+- **Scope**: the helper reports blocking state, reachability, updates, gravity refreshes, and host load. It does not report individual DNS queries.
 
 ## Pi-hole v5 note
 
-For v5, replace the auth/blocking calls with the legacy PHP API:
-
-```sh
-# v5 auth: API token (web admin → Settings → API → "Show API token")
-PIHOLE_TOKEN="your-api-token-here"
-
-BLOCKING=$(curl -s "${PIHOLE_URL}/admin/api.php?status&auth=${PIHOLE_TOKEN}" \
-           | jq -r '.status // "unknown"')
-case "$BLOCKING" in
-    enabled)  STATUS="up" ;;
-    disabled) STATUS="disabled" ;;
-    *)        STATUS="unreachable" ;;
-esac
-```
-
-The rest of the script is identical.
-
-## Sample event payload
-
-```json
-{
-  "providerIdentifier": "net.pi-hole.pi-hole",
-  "title": "Pi-hole - blocking disabled",
-  "startDate": "2026-04-29T10:00:00Z",
-  "eventType": "alert",
-  "metadata": {
-    "Status": "disabled",
-    "Action": "blocking_disabled",
-    "ServerUrl": "http://pi.hole"
-  }
-}
-```
-
-## Notes
-
-- The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable`, where a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end: Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval; a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
-- The inline script above is a **minimal teaching version** (reachability + blocking + update). The full helper bundled with Tempo (`pihole-tempo.sh`, reachable from the score's **Source** tab in the Score Editor) also emits **gravity** (blocklist) updates and **high load**, each individually switchable with env flags (`PIHOLE_EMIT_UPDATE`, `PIHOLE_EMIT_GRAVITY`, `PIHOLE_EMIT_LOAD`, default on). Load is kept ignorable on purpose: CPU load is noisy on a DNS resolver, so silence it with `PIHOLE_EMIT_LOAD=0` if you already watch it elsewhere.
-- The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score, explicitly trusted by you.
-- For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS`. Tempo lists them as the same source but each event carries its own URL.
+v6 is the target. v5 works with adjustments: it uses the legacy PHP API (`/admin/api.php`) authenticated with the web API token (admin **Settings > API > Show API token**) rather than `POST /api/auth`, and the admin URL paths differ slightly. The signals and the score are otherwise the same.
