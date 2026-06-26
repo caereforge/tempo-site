@@ -58,12 +58,14 @@ Create `pihole.env` next to the scripts:
 
 ```sh
 export TEMPO_URL="http://<mac-running-tempo>:7776/ingest"
-export TEMPO_TOKEN="<the token from step 1>"
 export PIHOLE_URL="http://<pihole-host>"
-export PIHOLE_PASS="<your Pi-hole web/app password>"
+
+# Secrets read from their own chmod 600 files, not stored in this env file:
+export TEMPO_TOKEN_FILE="$HOME/.pihole-tempo/tempo-token"
+export PIHOLE_PASS_FILE="$HOME/.pihole-tempo/pihole-pass"
 ```
 
-Prefer a Pi-hole app-password over the admin password.
+Use a Pi-hole app-password rather than the admin password. To keep it simple you can set `TEMPO_TOKEN` and `PIHOLE_PASS` inline instead, since the env file is `chmod 600` (see below).
 
 ### Optional signals
 

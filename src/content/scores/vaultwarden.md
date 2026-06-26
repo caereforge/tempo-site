@@ -55,14 +55,16 @@ Create a `vaultwarden.env` file next to the scripts (`chmod 600`):
 # vaultwarden.env  (chmod 600)
 export VW_URL=https://<vaultwarden-host>:8443
 export TEMPO_URL=http://<mac-ip>:7776/ingest
-export TEMPO_TOKEN=<com.vaultwarden token>
 export VW_CONTAINER=vaultwarden
 export STATE_DIR=$HOME/.local/state/vaultwarden-tempo
+
+# Tempo token read from its own chmod 600 file, not stored in this env file:
+export TEMPO_TOKEN_FILE=$STATE_DIR/tempo-token
 ```
 
 - `VW_URL`: the Vaultwarden base URL. It powers the open-vault and open-admin actions, and it is the host the `/alive` liveness poll checks.
 - `TEMPO_URL`: your Tempo ingestion endpoint, `http://<mac-running-tempo>:7776/ingest` (use `127.0.0.1` only if Tempo and the helper run on the same machine).
-- `TEMPO_TOKEN`: the token from step 1.
+- `TEMPO_TOKEN_FILE`: a path to a `chmod 600` file holding the token from step 1. To keep it simple you can set `TEMPO_TOKEN` inline instead, since the env file is already `chmod 600` (see below).
 - `VW_CONTAINER`: the container name (default `vaultwarden`).
 
 Liveness controls:
