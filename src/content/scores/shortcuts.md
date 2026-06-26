@@ -1,6 +1,6 @@
 ---
 title: "Apple Shortcuts"
-description: "Turn any Apple Shortcut into a Tempo event with the native \"Send Event to Tempo\" action. No token and no endpoint when the Shortcut runs on the same Mac."
+description: "Turn any Apple Shortcut into a Tempo event with the native \"Send Event to Tempo\" action. No URL or webhook to wire up when it runs on the same Mac — just a token bound to com.shortcuts."
 providerIdentifier: "com.shortcuts"
 color: "#E0457B"
 version: "1.0.0"
@@ -10,13 +10,15 @@ builtIn: true
 
 Apple Shortcuts is the most direct way to put your own events on the Tempo timeline. Tempo ships a native App Intent, **Send Event to Tempo**, that appears in the Shortcuts app alongside every other action. Any Shortcut you build — manual, scheduled, or automation-triggered — can call it to push an event straight into Tempo.
 
-Because this is a local App Intent, there is **no ingestion token, no webhook, and no network endpoint** to configure when the Shortcut runs on the same Mac as Tempo. The same Shortcut also runs on iOS through your shared iCloud Shortcuts; from a phone it reaches your Mac the way any cross-device Shortcut does.
+Because the action talks to Tempo's ingestion server on the loopback address, there is **no URL, webhook, or network endpoint to configure** when the Shortcut runs on the same Mac as Tempo — it posts to `127.0.0.1` on Tempo's port automatically. You do still need a **token bound to `com.shortcuts`**, created in Tempo **Settings → Ingestion**: the action's **Source** field selects the matching token, and if none exists it asks you to create one.
 
 This score is built in and seeded on first launch. It classifies events Tempo receives from Shortcuts and attaches a default action — nothing to install.
 
 ---
 
 ## Build a Shortcut
+
+First, in Tempo **Settings → Ingestion**, create a token bound to `com.shortcuts` — the action needs it to post (you do this once). Then:
 
 1. Open the **Shortcuts** app on your Mac.
 2. Add the **Send Event to Tempo** action (search "Tempo" in the action list).
