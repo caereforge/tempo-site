@@ -91,8 +91,6 @@ action:
       old_state: "{{ trigger.event.data.old_state.state }}"
 ```
 
-<!-- SCREENSHOT: Home Assistant automation editor in YAML mode showing the forwarding automation -->
-
 Trigger a labeled entity. The event reaches Tempo's feed within about a second.
 
 ## How the score classifies events
