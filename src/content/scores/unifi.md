@@ -11,12 +11,12 @@ pubDate: 2026-05-07
 builtIn: true
 ---
 
-UniFi is a **built-in source** in Tempo, bundled with the app and registered automatically on first launch. There's no `.tempo-score` file to download. The umbrella `com.ubiquiti.unifi` covers two siblings out of the box:
+**UniFi Network** and **UniFi Protect** are two **independent built-in sources** in Tempo, bundled with the app and registered automatically on first launch. There's no `.tempo-score` file to download. Out of the box they cover:
 
 - **UniFi Network**: alarms from your controller (clients connecting / disconnecting, devices losing contact, port events, threats, …)
 - **UniFi Protect**: events from your camera stack (motion, smart-detect person/vehicle/package, doorbell ring), with the camera thumbnail rendered inline when *Use Thumbnails* is enabled controller-side
 
-Both surface as siblings in the Source panel under a single **UniFi** parent row, mirroring the **Apple → Calendar/Reminders** pattern. The room left in the umbrella is intentional: future Ubiquiti products (Talk, Access, Connect, InnerSpace) can be added as siblings if community interest justifies the work.
+The two are **separate providers** (`com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect`), each with its own ingestion token and score. Tempo simply groups them under a single **UniFi** row in the Source panel for tidiness — that row is a **semantic container, not a true umbrella source** like Scripts or Hazel: it carries no token of its own and registers no events, it just gathers the `com.ubiquiti.unifi.*` providers under one label. It's the same way Apple groups Calendar and Reminders. The room beside them is intentional: future Ubiquiti products (Talk, Access, Connect, InnerSpace) could join the same row if community interest justifies the work.
 
 ---
 
@@ -95,7 +95,7 @@ If you need accurate "really off" detection for a specific device, the workaroun
 
 ### Can I get Talk / Access / Connect / InnerSpace events into Tempo?
 
-Not yet. UniFi Network and UniFi Protect are the two products bundled at launch. The umbrella identifier `com.ubiquiti.unifi` is set up to host more siblings whenever community interest, available webhook surface, and our time line up. If you'd like one of those to land sooner, drop a note on Discord.
+Not yet. UniFi Network and UniFi Protect are the two products bundled at launch. The `com.ubiquiti.unifi` container is set up to gather more `com.ubiquiti.unifi.*` providers under the same UniFi row whenever community interest, available webhook surface, and our time line up. If you'd like one of those to land sooner, drop a note on Discord.
 
 ### My UniFi alarm doesn't appear in Tempo at all
 
