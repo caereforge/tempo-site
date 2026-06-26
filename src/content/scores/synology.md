@@ -1,114 +1,116 @@
 ---
 title: "Synology"
-description: "DSM notifications in your Tempo timeline, with one-click actions for Storage Manager, Log Center, Security Advisor, and SSH. Built-in: nothing to install."
+description: "DSM notifications on the Tempo timeline, with one-click actions for Storage Manager, Log Center, Security Advisor, and SSH. Built-in, nothing to install."
 providerIdentifier: "com.synology"
 color: "#0070D1"
 version: "1.0.0"
 compatibility:
-  - "DSM 7.0+"
-  - "DSM 7.1"
-  - "DSM 7.2"
+  - "DSM 7.x"
 pubDate: 2026-04-23
 builtIn: true
 ---
 
-Synology is a **built-in source** in Tempo, bundled with the app and registered automatically on first launch. There's no `.tempo-score` file to download. DSM 7 and later support **Custom Webhook** as a notification transport out of the box; this score gives Tempo a place to receive those notifications and attaches 10 one-click actions on each event: open DSM, jump straight into Storage Manager or Log Center, SSH to the NAS, ping it, copy details for an incident ticket.
+This score renders Synology DSM notifications on the Tempo timeline: storage, security, system, and backup events. It is read-only. The actions open DSM and its applications, SSH or ping the NAS, copy details for a ticket, or open Synology's documentation. Nothing writes back to the NAS.
 
-No adapter on the Tempo side is required. You configure DSM to POST to Tempo.
+Synology is a built-in source. It ships with Tempo and registers on first launch, so there is no `.tempo-score` file to download and no helper to run. DSM 7 includes a Custom Webhook notification transport, and DSM posts to Tempo directly over the LAN. The work below is configuring that webhook once.
 
-> **Experimental: built from the docs, not yet tested on hardware.** This score was written against Synology's official Custom Webhook documentation. The Synology unit it was meant to be tested on has since died and been disposed of, so it has **not been verified end-to-end on a live DSM**. The payload shape and actions should be correct, but treat it as a starting point and adjust the templates to your DSM version.
+> **Experimental.** This score was built from Synology's official Custom Webhook documentation and has not been verified end-to-end on live hardware. The test unit died and was disposed of before verification. Treat the body template and the field mapping as a starting point and adjust them to your DSM version if events arrive looking wrong.
 
----
+## How it works
+
+DSM's Custom Webhook posts a JSON body straight to Tempo's ingestion server on the LAN. No relay or adapter sits in between.
+
+The important constraint is what DSM puts in that body. The Custom Webhook exposes a single reliable substitution token, `@@TEXT@@`, which expands to the rendered notification body as a human-readable string, already localized to your DSM language. DSM does not send structured fields (no severity, no event category, no machine identifier). So the body template you author in DSM hardcodes the NAS hostname and copies the `@@TEXT@@` string into the metadata keys the score reads.
+
+Because the only real signal is that localized string, the score derives severity by keyword-matching the subject text rather than reading a severity field. This is covered under [What you'll see](#what-youll-see).
 
 ## Setup
 
-1. In Tempo **Settings → Ingestion**, add a token named `synology` bound to `com.synology`. Copy the token; you'll paste it into DSM in step 3.
-2. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/events` (or `127.0.0.1` if Tempo is loopback-only).
-3. Configure DSM (see below).
+1. In Tempo, open **Settings → Ingestion** and add a token bound to `com.synology`. Copy it; you will paste it into DSM in step 3.
+2. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (use `127.0.0.1` only if Tempo is loopback-only and DSM runs on the same Mac, which is unusual).
+3. Configure the DSM webhook (below).
 
-## DSM side: configure the webhook
+### DSM side: configure the Custom Webhook
 
-**Control Panel → Notification → Push Service → Webhooks → Add → Custom**
+Open **Control Panel → Notification → Push Service → Webhooks → Add → Custom**.
 
-| Field             | Value                                             |
-|-------------------|---------------------------------------------------|
-| Provider Name     | `Tempo`                                           |
-| Subject Prefix    | (leave blank, Tempo will use `@@PREFIX@@` itself) |
-| Subject           | `Synology notification`                           |
-| URL               | `http://your-mac.local:7776/events`               |
-| HTTP Method       | `POST`                                            |
+| Field         | Value                                  |
+|---------------|----------------------------------------|
+| Provider Name | `Tempo`                                |
+| URL           | `http://your-mac.local:7776/ingest`    |
+| HTTP Method   | `POST`                                 |
 
-In **HTTP Headers**:
+Under **HTTP Headers**, add:
 
-| Key              | Value                                 |
-|------------------|---------------------------------------|
-| `Content-Type`   | `application/json`                    |
-| `X-Tempo-Token`  | `<paste token from Tempo>`            |
+| Key             | Value                       |
+|-----------------|-----------------------------|
+| `Content-Type`  | `application/json`          |
+| `X-Tempo-Token` | `<paste token from Tempo>`  |
 
-In **HTTP Body**, paste this template. The three lines marked with `// CHANGE ME` are the values you adjust for your setup; nothing else needs to change.
+Under **HTTP Body**, paste this template. The only value you change is `hostname`.
 
 ```json
 {
-  "title": "@@PREFIX@@",
+  "title": "@@TEXT@@",
   "providerIdentifier": "com.synology",
   "eventType": "alert",
   "metadata": {
     "hostname": "nas.home.arpa",
-    "subject": "@@PREFIX@@",
+    "subject": "@@TEXT@@",
     "message": "@@TEXT@@"
   }
 }
 ```
 
-- `hostname`: the hostname or IP of your NAS. Used by every "Open DSM" / "SSH" / "Ping" action. The DSM webhook UI does **not** reliably substitute `%HOSTNAME%` in JSON body content, so the cleanest approach is to hardcode your NAS hostname here, a one-time edit per NAS.
+- `hostname`: the hostname or IP of your NAS. Every "Open DSM", "SSH", and "Ping" action builds on it. The webhook UI does not reliably substitute a host placeholder inside JSON body content, so hardcode the value here. It is a one-time edit per NAS.
+- `subject`: the text the severity rules match against. It is set to `@@TEXT@@` because that string is all DSM sends.
+- `message`: the text the "Copy message" action copies. Also `@@TEXT@@`.
 
-In **Events to notify**, enable the categories you want Tempo to receive (we recommend: System, Storage, Security, Backup). Save.
+Under **Events to notify**, enable the categories you want Tempo to receive. System, Storage, Security, and Backup are the useful ones. Save.
 
-## What DSM actually sends
+<!-- SCREENSHOT: DSM Control Panel → Notification → Push Service → Webhooks, the Custom webhook editor showing the URL field, the X-Tempo-Token HTTP header, and the JSON body template -->
 
-DSM's custom webhook exposes only three usable placeholders:
+To confirm delivery, select the **Tempo** row and use **Send Test Message**. A new alert should appear in Tempo's feed within a second or two.
 
-- `@@TEXT@@`: the rendered notification body (a human-readable string, already localized to your DSM language)
-- `@@PREFIX@@`: the prefix you configured
-- `%HOSTNAME%`: substituted in *some* fields (not reliably in JSON body)
+## What you'll see
 
-This means Tempo receives a short summary string like *"Drive 3 on DS920+ has been disabled"* rather than a structured payload. The score is designed around this reality: actions use `${metadata.hostname}` (which you provided in the template above) and `${metadata.message}` (the `@@TEXT@@` blob).
+Tempo receives a short summary string per notification, for example *"Drive 3 on DS920+ has been disabled"*, rather than structured data. The score matches that string against 15 keyword rules, in order, and assigns the first match. Anything that matches nothing defaults to **info**.
 
-Because DSM sends only that human-readable string, the score derives severity by **keyword-matching the subject text** (15 rules): subjects containing *Critical* map to `critical`; *Error*, *Failed*, *Crashed*, *Degraded*, or *Disabled* map to `error`; warning-class keywords map to `warning`; everything else defaults to `info`. It's best-effort pattern matching on localized text, not a structured severity field, so results depend on your DSM language and the exact wording DSM uses.
+| Severity     | Subject contains                                          |
+|--------------|----------------------------------------------------------|
+| **critical** | `Critical`, `Attack`, `Intrusion`                        |
+| **error**    | `Error`, `Failed`, `Crashed`, `Degraded`, `Disabled`     |
+| **warning**  | `Warning`, `Full`, `SMART`                               |
+| **info**     | `Backup`, `Snapshot`, `Login`                            |
+| **ok**       | `Completed`                                              |
+| **info**     | (default, no keyword matched)                            |
 
-If you want stricter severity per event type, you can duplicate the webhook in DSM, point each copy at a different matcher, and hardcode different `title`/`eventType` fields in each body template.
+This is best-effort pattern matching on localized text, not a structured severity field. The keywords are English, so results depend on your DSM display language and the exact wording DSM uses. If your DSM runs in another language, the matches will be less accurate and most events will land as info. The audit (the shield icon) shows the raw payload if you need to verify what arrived.
 
-## Actions provided (10 total)
+## Grouping and actions
 
-| Group          | Actions                                                                      |
-|----------------|------------------------------------------------------------------------------|
-| **DSM UI**     | Open DSM · Open Storage Manager · Open Log Center · Open Security Advisor    |
-| **Shell**      | SSH to NAS · Ping NAS                                                        |
-| **Clipboard**  | Copy hostname · Copy message                                                 |
-| **Docs**       | DSM notifications docs · Synology Knowledge Center                           |
+Events stack within a 6-hour window. The primary grouping key is the NAS hostname plus the subject text, so repeated notifications about the same condition read as one entry. The fallback key is the hostname alone.
 
-## Customizing
+Ten actions are attached to every event:
 
-- **Non-default DSM port**: if you've changed DSM's HTTPS port from 5001, edit the `openURL` in each "Open ..." action.
-- **Non-admin SSH user**: replace `admin@` with `youruser@` in the SSH action, or parametrize it with a custom metadata field.
-- **Multiple NAS**: create one webhook per NAS in DSM, each with its own `hostname` in the body template. All events land in the same Tempo score; the per-event hostname drives the actions.
-- **Cluster / Synology Hybrid Share**: point `hostname` at your primary NAS. Use a secondary webhook for the secondary node with its own hostname.
+| Group        | Actions                                                                   |
+|--------------|---------------------------------------------------------------------------|
+| **DSM apps** | Open DSM, Open Storage Manager, Open Log Center, Open Security Advisor     |
+| **Shell**    | SSH to NAS, Ping NAS                                                       |
+| **Clipboard**| Copy hostname, Copy message                                               |
+| **Docs**     | DSM notifications docs, Synology Knowledge Center                          |
 
-## Verifying
+The DSM application actions open `https://${metadata.hostname}:5001/` with a `launchApp` parameter for Storage Manager, Log Center, and Security Advisor. "SSH to NAS" opens `ssh://admin@${metadata.hostname}`. "Ping NAS" opens Terminal with `ping ${metadata.hostname}`.
 
-After step 5, trigger a test notification:
-**Control Panel → Notification → Push Service → Webhooks → [Tempo row] → Send Test Message**
+### Customizing the actions
 
-Tempo's live feed should show a new alert within a second or two. If not:
-
-- **Settings → Help → Export diagnostics bundle** → inspect `logs.txt` for `Ingestion` entries. A 401 means the `X-Tempo-Token` header is wrong; a 422 means the body template is malformed JSON (DSM's UI doesn't validate JSON for you).
-- Confirm the Mac running Tempo is reachable from the NAS on port 7776: `curl http://your-mac.local:7776/health` from an SSH session on the NAS.
-
----
+- **Non-default DSM port**: if DSM's HTTPS port is not 5001, edit the `openURL` in each "Open" action.
+- **Non-admin SSH user**: replace `admin@` in the SSH action with your username.
+- **Multiple NAS**: create one webhook per NAS in DSM, each with its own `hostname` in the body template. All events land in this score, and the per-event hostname drives the actions.
 
 ## Troubleshooting
 
-If the test notification doesn't land in Tempo's feed, run these five checks in order. Each narrows the problem to a specific layer (reachability, token, payload, process, history).
+If a test notification does not appear in Tempo, work through these checks in order. Each isolates a different layer.
 
 **1. Is Tempo reachable from the NAS?** SSH to the NAS and run:
 
@@ -116,46 +118,38 @@ If the test notification doesn't land in Tempo's feed, run these five checks in 
 curl -v http://your-mac.local:7776/health
 ```
 
-A `200 OK` means reachability is fine. A timeout or "No route to host" is a network problem (firewall on the Mac, WiFi isolation, VPN routing); nothing after this point will work until it's fixed.
+A `200 OK` means reachability is fine. A timeout or "No route to host" is a network problem (a firewall on the Mac, Wi-Fi client isolation, or VPN routing). Nothing else works until this passes.
 
-**2. Does the token work and does Tempo accept your payload shape?** Still on the NAS, send a synthetic event that mimics the DSM body template exactly:
+**2. Does the token work and is the payload accepted?** Still on the NAS, send a synthetic event that mirrors the body template:
 
 ```sh
-curl -X POST http://your-mac.local:7776/events \
+curl -X POST http://your-mac.local:7776/ingest \
   -H 'Content-Type: application/json' \
   -H 'X-Tempo-Token: YOUR_TOKEN_HERE' \
-  -d '{"title":"synology probe","providerIdentifier":"com.synology","eventType":"alert","metadata":{"hostname":"nas.home.arpa","subject":"probe","message":"manual troubleshooting"}}'
+  -d '{"title":"synology probe","providerIdentifier":"com.synology","eventType":"alert","metadata":{"hostname":"nas.home.arpa","subject":"probe","message":"manual test"}}'
 ```
 
-A `200` or `202` with "synology probe" appearing in Tempo's feed means ingestion works end-to-end. A `401` means the token is wrong or not bound to `com.synology`; a `422` means the JSON is malformed (the real DSM webhook has the same bug, same fix).
+The event appearing in Tempo's feed means ingestion works end-to-end. A `401` means the token is wrong or not bound to `com.synology`. A `422` means the JSON is malformed; the DSM webhook editor does not validate JSON, so this is a common cause.
 
-**3. Are the packets actually reaching the Mac?** Open Terminal on the Mac and watch inbound traffic:
+**3. Are packets reaching the Mac?** Watch inbound traffic on the Mac, then send a DSM test message:
 
 ```sh
 sudo tcpdump -i any -A 'tcp port 7776 and src host your-nas.home.arpa'
 ```
 
-Then send a test message from DSM. You should see HTTP POST traffic with the JSON body visible. If nothing appears, DSM is failing to reach the Mac even though step 1 succeeded, usually because DSM's webhook URL is typo'd or uses the wrong hostname.
+You should see the HTTP POST with the JSON body. If nothing arrives even though step 1 passed, the webhook URL in DSM is typed wrong or points at the wrong host.
 
-**4. What is Tempo doing right now?** Stream Tempo's live logs:
-
-```sh
-log stream --predicate 'subsystem == "app.tempoapp.Tempo"' --level debug
-```
-
-Useful to watch the ingestion decision in real time: token lookup, validation, DB write.
-
-**5. What did Tempo see historically?** Grep the rolling file log:
+**4. What did Tempo record?** Grep the rolling file log:
 
 ```sh
 grep -h com.synology ~/Library/Application\ Support/Tempo/Logs/tempo-*.log | tail -50
 ```
 
-Every Synology event Tempo has touched appears here with timestamp and outcome. This is also what `Settings → Help → Export diagnostics bundle` packages up; if you're asking for support, run step 5 first and attach the output.
+Every Synology event Tempo has handled appears here with a timestamp and outcome. **Settings → Help → Export diagnostics bundle** packages the same logs for support.
 
----
+**Events arrive but every severity is info.** The subject string did not match any keyword. Check your DSM display language; the keywords are English. Inspect the raw payload in the audit to see the exact text DSM sent.
 
 ## References
 
-- [DSM Webhooks - Synology Knowledge Center](https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook)
-- [DSM Notification overview](https://kb.synology.com/en-global/DSM/tutorial/How_to_receive_Synology_DSM_notifications)
+- [DSM Webhooks, Synology Knowledge Center](https://kb.synology.com/en-global/DSM/help/DSM/AdminCenter/system_notification_webhook)
+- [How to receive Synology DSM notifications](https://kb.synology.com/en-global/DSM/tutorial/How_to_receive_Synology_DSM_notifications)

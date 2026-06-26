@@ -1,6 +1,6 @@
 ---
 title: "UniFi"
-description: "Bring UniFi Network alarms and UniFi Protect events (motion, smart-detect, doorbell) into your Tempo timeline. Built-in: ships with Tempo, nothing to install."
+description: "Setup and reference for the two built-in UniFi sources: UniFi Network controller alarms and UniFi Protect camera detections."
 providerIdentifier: "com.ubiquiti.unifi"
 color: "#0559C9"
 version: "1.0.0"
@@ -11,96 +11,181 @@ pubDate: 2026-05-07
 builtIn: true
 ---
 
-**UniFi Network** and **UniFi Protect** are two **independent built-in sources** in Tempo, bundled with the app and registered automatically on first launch. There's no `.tempo-score` file to download. Out of the box they cover:
+Tempo ships with two separate UniFi sources: **UniFi Network** for controller alarms (clients connecting and disconnecting, devices losing contact, threats) and **UniFi Protect** for camera detections (motion, smart detect, doorbell ring). Both are built in. There is no `.tempo-score` file to download and no Tempo-side helper to run. The UniFi controller posts to Tempo directly through its own webhook actions.
 
-- **UniFi Network**: alarms from your controller (clients connecting / disconnecting, devices losing contact, port events, threats, …)
-- **UniFi Protect**: events from your camera stack (motion, smart-detect person/vehicle/package, doorbell ring), with the camera thumbnail rendered inline when *Use Thumbnails* is enabled controller-side
+This guide covers how the two sources relate, how to configure each one, what lands on the timeline, the actions each event carries, and the one networking limitation to know about.
 
-The two are **separate providers** (`com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect`), each with its own ingestion token and score. Tempo simply groups them under a single **UniFi** row in the Source panel for tidiness. That row is a **semantic container, not a true umbrella source** like Scripts or Hazel: it carries no token of its own and registers no events, it just gathers the `com.ubiquiti.unifi.*` providers under one label. It's the same way Apple groups Calendar and Reminders. The room beside them is intentional: future Ubiquiti products (Talk, Access, Connect, InnerSpace) could join the same row if community interest justifies the work.
+## How the two sources relate
 
----
+UniFi Network and UniFi Protect are two **independent sources**, with two distinct provider identifiers:
+
+- `com.ubiquiti.unifi.network`
+- `com.ubiquiti.unifi.protect`
+
+Each has its own ingestion token and its own score. They are not a single feed split in two. In the Source panel they appear together under one **UniFi** row, but that row is a **semantic container, not a true umbrella source** like Scripts or Hazel. It holds no token of its own and produces no events. It only gathers the `com.ubiquiti.unifi.*` providers under one label, the same way Apple groups Calendar and Reminders under one row. You configure, token, and toggle each UniFi source separately.
+
+The shared `#0559C9` color is what visually ties the two together in the timeline.
 
 ## Setup: UniFi Network
 
-1. In Tempo **Settings → Ingestion**, add a token named `unifi-network` bound to `com.ubiquiti.unifi.network`. Copy the token.
-2. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest/unifi` (replace `<your-mac-hostname>` with the hostname or LAN IP of the Mac running Tempo; the controller is almost always on a different host than your Mac).
-3. In the UniFi controller UI, go to **Settings → System → Notifications → Webhooks** (path varies slightly across Network app versions). Add a webhook with:
-   - **URL**: the endpoint from step 2
-   - **Method**: POST
-   - **Authentication**: Bearer with the token from step 1
-4. Enable the alarm categories you care about (client connect/disconnect, device lost contact, etc.).
+### 1. Create the token
 
-The next alarm the controller fires will land in Tempo's feed.
+In Tempo, open **Settings → Ingestion** and add a token bound to `com.ubiquiti.unifi.network`. Copy it.
+
+### 2. Note the endpoint
+
+The controller posts to:
+
+```
+http://<your-mac-ip>:7776/ingest/unifi/network
+```
+
+Replace `<your-mac-ip>` with the hostname or LAN IP of the Mac running Tempo. The controller is almost always on a different host than your Mac, so use the LAN address, not `localhost`. Use the plain `:7776` port, not the TLS `:8776` port (see Known limitations).
+
+### 3. Add the controller webhook
+
+In the UniFi Network controller, add an alert webhook with:
+
+- **URL**: the endpoint from step 2
+- **Method**: POST
+- **Header**: `X-Tempo-Token: <token>` (the token from step 1)
+- A custom field setting `providerIdentifier` to `com.ubiquiti.unifi.network`
+
+Enable the alarm categories you care about. Client connect and disconnect can fire constantly on a busy network. If the feed gets noisy, scope the webhook to device and uplink events, or to a few specific clients, rather than every client on the LAN.
+
+<!-- SCREENSHOT: UniFi Network controller, the alert webhook configuration page, showing the URL field set to the :7776/ingest/unifi/network endpoint and the X-Tempo-Token header -->
+
+The next alarm the controller fires lands in Tempo's feed.
 
 ## Setup: UniFi Protect
 
-1. In Tempo **Settings → Ingestion**, add a token named `unifi-protect` bound to `com.ubiquiti.unifi.protect`. Copy the token.
-2. Tempo endpoint for Protect: `http://<your-mac-hostname>:7776/ingest/unifi/protect`.
-3. In Protect's UI, edit the alarm whose webhook should reach Tempo: **Action → Webhook → Custom Webhook**. Set:
-   - **Delivery URL**: the endpoint from step 2
-   - **Method**: POST
-   - **Authentication**: Bearer with the token from step 1
-   - **Use Thumbnails**: on (recommended). Protect attaches a base64 JPEG to the body and Tempo renders it inline in the action panel
-4. Repeat for any other alarm rules you've defined in Protect.
+### 1. Create the token
 
-## What Tempo receives
+In **Settings → Ingestion**, add a second token bound to `com.ubiquiti.unifi.protect`. Copy it. This is a different token from the Network one.
 
-**Network alarms** auto-extract:
+### 2. Note the endpoint
 
-- Client identity (MAC, hostname, IP) for client-centric alarms (Connected/Disconnected/Roam)
-- Device identity (switch / AP / gateway) for device-level alarms (Lost Contact, Restart)
-- Severity from UniFi's `key` field: most alarms route to *info*, `Lost_Contact` and similar to *warning* / *alert*
+Protect posts to a dedicated path handled by Tempo's built-in Protect parser:
 
-**Protect events** auto-extract:
+```
+http://<your-mac-ip>:7776/ingest/unifi/protect
+```
 
-- Camera identity (MAC) and the user-named alarm
-- Detection type: `motion`, smart-detect classes (`smartdetect_person`, `smartdetect_vehicle`, …), doorbell ring
-- Severity: *info* by default for plain motion, *warning* for smart-detect classes, *critical* for intruder/alarm signals
-- The Protect event's native UUID as `externalID` so re-deliveries de-dupe cleanly
-- The base64 thumbnail (when *Use Thumbnails* is on), rendered inline above the action list
+The parser reads Protect's alarm payload and the attached snapshot, so there is nothing to map by hand. Use the plain `:7776` port here too.
 
-Stacking groups bursts of the same client (Network) or same camera (Protect) into one row.
+### 3. Add the Protect webhook
 
-## Default actions
+In **UniFi Protect**, create an alarm and add a **Webhook** action (a **Custom Webhook**):
 
-**UniFi Network**: Open dashboard, Open client in controller, Open UniFi cloud, SSH to controller, Copy device name / MAC, UniFi docs.
+- **Delivery URL**: the endpoint from step 2
+- **Method**: POST
+- **Authentication**: `bearer`, with the Protect token from step 1
+- **Use Thumbnails**: on, if you want the camera snapshot rendered on the event (see Thumbnails below)
 
-**UniFi Protect**: Open in Protect (deep-link to the event page in the controller), Open Protect cloud, Copy event ID, Copy camera MAC, UniFi Protect docs.
+Scope the alarm to the cameras and detection types you want, so the timeline stays focused.
 
-You can edit, remove, or add actions in **Settings → Score Editor**. Your local edits override the bundled defaults; **Reset to bundled defaults** in the editor brings them back.
+<!-- SCREENSHOT: UniFi Protect Alarm Manager, the Custom Webhook action configuration, showing the Delivery URL set to /ingest/unifi/protect, bearer authentication, and the Use Thumbnails toggle -->
 
-## On thumbnails: Tempo is the funnel, Protect is the cistern
+### Thumbnails
 
-Tempo carries the *signal* of detections forward in time (timestamp + camera + alarm name + event link) for as long as your event-retention setting says. The *images* are kept short (a few days by default) because they're bandwidth-class data and Protect's own dashboard is the canonical archive for them. The bundled Protect score includes an **Open in Protect** action that deep-links to the event page in Protect's web UI, so you always have a path back to the cistern when you need the older clip.
+Tempo renders the camera snapshot inline on the event when **Use Thumbnails** is enabled controller-side. Protect attaches the snapshot as a base64 JPEG to the webhook body, and Tempo shows it above the action list.
+
+Two things to keep in mind:
+
+- **Thumbnails are large** (roughly 10 to 60 KB each). Tempo keeps them for the period set in **Settings → Database / Maintenance**, then strips the image from the row to keep the database small. The event itself stays.
+- **High-motion cameras flood faster with thumbnails on.** A camera pointed at a busy street can post constantly, and each event then also carries an image. Scope the alarm to specific detection types and cameras.
+
+The Protect dashboard remains the archive for the clips themselves. The bundled **Open in Protect** action deep-links back to the event page when you need the original footage.
+
+## What you'll see: UniFi Network
+
+Client connect and disconnect events and device events, with the device name and MAC. The score reads UniFi's `alarmName` and `alarmKey` fields to set severity:
+
+| Alarm | Severity | Badge |
+|---|---|---|
+| Lost Contact / device down | error | Down |
+| Disconnected (device) | error | Disconnected |
+| Offline | error | Offline |
+| Threat / IPS / IDS | critical | Threat |
+| Intrusion | critical | Intrusion |
+| Honeypot | critical | Honeypot |
+| Rogue AP | critical | Rogue AP |
+| Failed / Error | error | Failed / Error |
+| Critical | critical | Critical |
+| Upgrade failed / scheduled | warning | Upgrade failed / scheduled |
+| Restart / Reboot | warning | Restart / Reboot |
+| Speedtest failed | warning | Speedtest failed |
+| Client Connected / Disconnected | info | Connected / Disconnected |
+| Login / Adopted / Roam | info | Login / Adopted / Roamed |
+
+Anything the score does not recognize falls through to the default: **info**, label **Info**.
+
+Grouping: a client Disconnected event opens a group keyed on `clientMac` (2 hour window), and a matching Connected event closes it, so a disconnect and its reconnect read as one entry. Other device alarms repeat-group on `deviceMac` over a 1 hour window, so a flapping device stays one row.
+
+## What you'll see: UniFi Protect
+
+Camera detections, with the camera name and a link back into Protect. The score reads Protect's `detectionType` to set severity:
+
+| Detection | Severity | Badge |
+|---|---|---|
+| Intruder | critical | Intruder |
+| Alarm | critical | Alarm |
+| Smart detect (`smartdetect_*`) | warning | Smart detect |
+| Person | warning | Person |
+| Vehicle | warning | Vehicle |
+| Package | warning | Package |
+| Face | warning | Face |
+| Doorbell ring | warning | Doorbell |
+| Motion | info | Motion |
+
+The default is **info**, label **Motion**.
+
+Grouping: events repeat-group on `cameraMac` over a 5 minute window, so a burst of detections from one camera collapses into a single entry.
+
+## Actions
+
+### UniFi Network
+
+- **Open dashboard**: opens `https://<controller>/network/default/dashboard`
+- **Open client in controller**: opens the client page for `deviceMac`
+- **Open UniFi dashboard (cloud)**: opens `https://unifi.ui.com/`
+- **SSH to controller**: opens `ssh://root@<controller>`
+- **Copy device name**: copies `device`
+- **Copy MAC address**: copies `deviceMac`
+- **UniFi docs**: opens the UniFi help center
+
+The controller-relative actions use the `senderAddress` recorded with the event, so they resolve to the controller that sent the alarm.
+
+### UniFi Protect
+
+- **Open in Protect**: opens the event's local deep link (`eventLocalLink`)
+- **Open Protect cloud**: opens `https://unifi.ui.com/`
+- **Copy event ID**: copies `eventId`
+- **Copy camera MAC**: copies `cameraMac`
+- **UniFi Protect docs**: opens the UniFi help center
+
+You can edit, remove, or add actions in **Settings → Score Editor**. Local edits override the bundled defaults; **Reset to bundled defaults** brings them back.
 
 ## Known limitations
 
-**Use the plain `:7776` endpoint, not the TLS `:8776` port.** UniFi's webhook client (both Network and Protect) must POST to Tempo's plain-HTTP endpoint as shown in Setup above, not the encrypted TLS port. The TLS handshake itself succeeds (UniFi accepts Tempo's self-signed certificate), but UniFi's HTTPS request framing is not parsed correctly by Tempo's TLS listener: the request line and body arrive empty, so the events are dropped (you'll see them as `400 - empty body` in **Settings → Security → audit**). This is a UniFi-side framing quirk, not a certificate problem. Because the traffic stays on your LAN and every webhook is bound to a per-provider token, plain HTTP here is a deliberate, supported setup, not a security gap. (Improving TLS compatibility for UniFi is tracked for a later release.)
+**Use the plain `:7776` endpoint, not the TLS `:8776` port.** UniFi's webhook client (both Network and Protect) must POST over plain HTTP. The TLS handshake itself succeeds, but UniFi's HTTPS request framing is not parsed by Tempo's TLS listener: the request line and body arrive empty, so the events are dropped. You will see them as `400 - empty body` in **Settings → Security → audit**. This is a UniFi-side framing quirk, not a certificate problem. Because the traffic stays on your LAN and every webhook is bound to a per-provider token, plain HTTP here is a deliberate, supported setup, not a security gap.
 
-## V2 outlook
-
-UniFi Network ships a Network Integration API in addition to webhooks. For V1 we use webhooks exclusively (push, no polling, no API key custody). V2 may add an opt-in Integration API path for write actions (today: client guest-authorization and device restart only). The webhook path will remain the default; the API is additive when there's a use case the webhook can't cover.
-
----
+UniFi's webhook payloads also vary by controller version. If events are rejected, open the audit (the shield icon in Settings → Security) to see the raw payload, and adjust the score's field mapping if a key has moved.
 
 ## FAQ
 
 ### Why don't I see disconnect events for some wired devices (smart TVs, set-top boxes, NAS)?
 
-Because the controller doesn't always send them.
+Because the controller does not always send them. Many devices keep the Ethernet PHY active in standby (smart TVs with Quick Start, streaming sticks waiting for Wake-on-LAN, NAS in low-power mode). The switch sees the link as up, so the controller generates no disconnect event until the device is fully powered off or unplugged. To detect real unreachability for a specific device, add an Uptime Kuma monitor pointed at its IP. Kuma emits a Down event that Tempo can stack alongside the UniFi connect.
 
-Many modern devices keep the Ethernet PHY active when in standby: smart TVs with Quick Start, streaming sticks waiting for Wake-on-LAN, NAS in low-power mode, set-top boxes that update overnight. The switch sees the link as still up, so the controller doesn't generate a disconnect event. The corresponding disconnect arrives only when the device is fully powered off or unplugged, which is why you'll often see UniFi reporting *Time Connected: 8h 13m* or longer for these devices: it's not a bug, it's the device holding its link up across what looked to you like off-time.
+### Can I get Talk, Access, Connect, or InnerSpace events into Tempo?
 
-If you need accurate "really off" detection for a specific device, the workaround is to add an Uptime Kuma (or similar) monitor pointed at the device's IP. Kuma will detect actual unreachability and emit a Down event Tempo can stack alongside the UniFi connect.
-
-### Can I get Talk / Access / Connect / InnerSpace events into Tempo?
-
-Not yet. UniFi Network and UniFi Protect are the two products bundled at launch. The `com.ubiquiti.unifi` container is set up to gather more `com.ubiquiti.unifi.*` providers under the same UniFi row whenever community interest, available webhook surface, and our time line up. If you'd like one of those to land sooner, drop a note on Discord.
+Not at launch. UniFi Network and UniFi Protect are the two products bundled today. The `com.ubiquiti.unifi` container can gather more `com.ubiquiti.unifi.*` providers under the same UniFi row when the available webhooks and demand line up.
 
 ### My UniFi alarm doesn't appear in Tempo at all
 
-Three things to check, in order:
+Check three things, in order:
 
-1. **Token binding**: Settings → Ingestion → confirm the token exists, is bound to `com.ubiquiti.unifi.network` (or `.protect` for Protect), and the controller is sending it as `Authorization: Bearer <token>`.
-2. **Reachability**: from the controller host, `curl -v http://<your-mac>:7776/health` should return 200. If it times out, the Mac's firewall or the LAN segmentation between controller and Mac is blocking. See [troubleshooting networking](/scores/troubleshooting-networking).
-3. **Alarm category enabled**: UniFi only sends what you've toggled on in **Notifications → Alarms** (Network) or per-rule in Protect. The category settings are independent from the webhook delivery itself.
+1. **Token binding**: in Settings → Ingestion, confirm the token exists, is bound to `com.ubiquiti.unifi.network` (or `.protect`), and the controller sends it (header for Network, bearer for Protect).
+2. **Reachability**: from the controller host, `curl -v http://<your-mac>:7776/health` should return 200. A timeout points to the Mac's firewall or LAN segmentation between the controller and the Mac.
+3. **Alarm category enabled**: UniFi only sends what you toggled on, in Notifications → Alarms (Network) or per rule in Protect. That setting is independent from the webhook delivery itself.

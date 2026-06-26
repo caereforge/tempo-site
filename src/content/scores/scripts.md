@@ -1,6 +1,6 @@
 ---
 title: "Scripts"
-description: "The generic catch-all source: any script, cron job, or webhook that can POST JSON lands on your Tempo timeline. The embodiment of \"if it can POST, Tempo can hear it.\""
+description: "The generic catch-all source: any script, cron job, or webhook that can POST JSON lands on your Tempo timeline. The embodiment of \"if it can POST, Tempo can read it.\""
 providerIdentifier: "scripts"
 color: "#C9A35C"
 version: "1.0.0"
@@ -8,15 +8,19 @@ pubDate: 2026-06-26
 builtIn: true
 ---
 
-Scripts is the open door into Tempo. There is no integration to install on the other end and no payload contract to match a vendor's API: you decide what to send. Any of your own shell scripts, cron jobs, backup hooks, CI steps, or one-off webhooks can POST a JSON event to Tempo's ingest endpoint, and it shows up on the timeline.
+Scripts is the generic source: the open door into Tempo. There is no integration to install on the other end and no vendor payload contract to match. You decide what to send. Any of your own shell scripts, cron jobs, backup hooks, CI steps, or one-off webhooks can POST a JSON event to Tempo's ingest endpoint, and it lands on the timeline. This is the score that embodies the rule of entry: if it can POST, Tempo can read it.
 
-This score is built in and **auto-installs on first launch**. It is the one source that's ready before you configure anything else.
+## How it works
 
-It is an **umbrella** source. The parent `providerIdentifier` is `scripts`, and individual senders post under child identifiers like `scripts.backup` or `scripts.deploy`. Those children appear as siblings under a single **Scripts** row in the Source panel, so a dozen small scripts stay tidy under one parent instead of cluttering the list.
+A sender (any script, scheduled job, or service that can make an HTTP request) POSTs a JSON event to Tempo's ingest endpoint with a bearer token. There is nothing to install on the sending side beyond the ability to run `curl` or an equivalent.
+
+This score is built in and **auto-installs on first launch**. It is the only score that does so; every other score installs from Manage Sources. Scripts is ready before you configure anything else.
+
+It is an **umbrella** source. The parent `providerIdentifier` is `scripts`, and individual senders post under child identifiers like `scripts.backup` or `scripts.deploy`. The children appear as siblings under a single **Scripts** row in the Source panel, so a dozen small scripts stay tidy under one parent instead of cluttering the list. A token can be bound to the parent `scripts` or to a specific child like `scripts.backup`.
 
 ## Post an event
 
-Add a token in Tempo **Settings → Ingestion** bound to `scripts` (or to a specific child like `scripts.backup`), copy it, then POST JSON with a bearer token:
+Create a token in Tempo **Settings → Ingestion** bound to `scripts` (or to a specific child), copy it, then POST JSON to the ingest endpoint with the token in an `Authorization: Bearer` header:
 
 ```sh
 curl -X POST http://your-mac.local:7776/ingest \
@@ -38,15 +42,13 @@ curl -X POST http://your-mac.local:7776/ingest \
   }'
 ```
 
-The only required field is `title`. `eventType` is one of `event`, `task`, `reminder`, `alert`. Everything under `metadata` is yours to define and can be referenced from the score with `${metadata.xxx}`.
+Replace `your-mac.local` with the host name or LAN address of the Mac running Tempo. The ingest port is `7776`. The only required field is `title`. `eventType` is one of `event`, `task`, `reminder`, or `alert`. Everything under `metadata` is yours to define and can be referenced from the score with `${metadata.xxx}`.
 
 The bundled **`tempo-post`** helper wraps this same call: it reads the token from the Keychain and builds the JSON for you, so a script can emit an event in one line instead of a full `curl`. It ships in the app under `Resources/Utilities/shell/` and is also downloadable from the website utilities page.
 
 ## What you'll see
 
-Events grouped under the **Scripts** parent, with children keyed first by `${metadata.script_name}` and then by `${providerIdentifier}` (grouping window: one day). So every firing of `nightly-backup` collapses together rather than flooding the feed.
-
-Severity is **metadata-driven**. The score reads a `label` in `metadata` and maps it to a badge. By default everything is `info`, and these labels are recognized out of the box:
+Severity is **label-based**. The score reads `metadata.label` and maps it to a badge. If `label` is absent or unrecognized, the event is `info`. These labels are recognized out of the box:
 
 | `metadata.label`                       | Badge      |
 |----------------------------------------|------------|
@@ -55,7 +57,9 @@ Severity is **metadata-driven**. The score reads a `label` in `metadata` and map
 | `Elevated errors`                      | `warning`: Elevated |
 | `Low space`, `High`, `Warning`         | `warning`: Warning |
 | `OK`                                   | `ok`: OK |
-| anything else / omitted                | `info`: Info |
+| anything else or omitted               | `info`: Info |
+
+The matching is on the exact label string, not on keywords found in the title or body. Note that `Critical` maps to the `error` severity; this score has no separate critical tier.
 
 Three actions come attached to every event by default, resolved from your metadata at click time:
 
@@ -63,4 +67,8 @@ Three actions come attached to every event by default, resolved from your metada
 - **Copy host**: copies `${metadata.host}` to the clipboard
 - **Copy title**: copies the event title
 
-Add your own actions in the payload (as in the curl above), or open the score in Tempo's **Score Editor** to add severity rules, grouping, tags, and actions of your own. The harmless action primitives are open URL, open Terminal, and copy to clipboard.
+Add your own actions in the payload (as in the `curl` above), or open the score in Tempo's **Score Editor** to add severity rules, grouping, tags, and actions of your own. The harmless action primitives are open URL, open Terminal, and copy to clipboard.
+
+## Grouping
+
+Events stack by `["${metadata.script_name}", "${providerIdentifier}"]` within a **one-day window**. Every firing of `nightly-backup` collapses into one entry for the day rather than flooding the feed with a row per run. Include a stable `script_name` in the metadata of each sender so its events group correctly.
