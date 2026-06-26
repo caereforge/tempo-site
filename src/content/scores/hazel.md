@@ -107,35 +107,29 @@ Calendar/Reminders under Apple, or UniFi Network/Protect under UniFi.
 The shell template above shows several commented examples: uncomment
 one to make a specific rule emit under its own sub-source.
 
-### Bundled sub-scores
+### You choose the sub-sources
 
-Tempo ships two sub-scores out of the box that override the parent's
-file-pattern actions with semantically appropriate ones. Install them
-and Hazel rules POSTing under those sub-sources get the right buttons
-without any score authoring:
-
-- **`com.noodlesoft.hazel.mail`**: when Hazel hands off an email
-  (carrier delivery notification, parsed receipt, price-drop alert,
-  third-party notification forwarded into a folder), actions are
-  *Open in Mail*, *Open link*, *Copy sender*, *Copy rule name*. The
-  metadata Hazel sends should include `sender`, `messageID`, and
-  ideally a primary `url` from the email body.
-
-Seeds automatically on first launch, no separate install step.
-
-### Custom sub-sources
-
-You can also pick your own suffix for any rule that doesn't fit the
-bundled scenarios. The sub-source row appears with the suffix as label;
-without a dedicated sub-score, it falls back to the parent Hazel
-score's five default actions (Open file / Open destination folder /
-Open source folder / Copy file path / Copy rule name).
+There are **no bundled sub-scores**: Tempo does not ship pre-made
+`com.noodlesoft.hazel.<suffix>` children. You decide how to split your
+Hazel rules by picking the suffix yourself, and the **single Hazel score
+styles all of them**. Every `com.noodlesoft.hazel.*` sub-source inherits
+its five default actions (Open file / Open destination folder / Open
+source folder / Copy file path / Copy rule name) and its severity, so
+there is nothing extra to install or author. The token bound to
+`com.noodlesoft.hazel` already accepts every sub-source too.
 
 Naming convention is yours. A few examples:
 
+- `com.noodlesoft.hazel.mail`: rules that hand off email (receipts, shipping notices, price drops)
 - `com.noodlesoft.hazel.photos`: `~/Pictures` import / organization rules
 - `com.noodlesoft.hazel.downloads`: `~/Downloads` cleanup / triage rules
 - `com.noodlesoft.hazel.<anything>`: your own categories
+
+**Use one level only.** The sub-source is the first segment after
+`com.noodlesoft.hazel`: `…hazel.scanner` is **Scanner**. Anything deeper
+rolls up into it (`…hazel.scanner.invoices` still shows under **Scanner**,
+with the deeper name kept for the action panel). Make as many first-level
+sub-sources as you like; just don't nest past one.
 
 ## Actions provided
 
