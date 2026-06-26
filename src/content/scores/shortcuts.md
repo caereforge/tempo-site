@@ -50,25 +50,39 @@ Two pairs also fold into a single grouped entry: `sleep` `on`/`off` open and clo
 
 ## From iOS
 
-The **Send Event to Tempo** action is a macOS App Intent: it talks to Tempo on `127.0.0.1`, so it only works on the Mac running Tempo. From an iPhone or iPad, send the event over the network instead, with a webhook Shortcut:
+The **Send Event to Tempo** action is a macOS App Intent: it talks to Tempo on `127.0.0.1`, so it only runs on the Mac itself. From an iPhone or iPad, post the event over the network instead, with a **Get Contents of URL** action. The same webhook Shortcut also runs on the Mac, so you can build and test it there first.
+
+![A webhook Shortcut: Get Contents of URL set to POST to Tempo's ingest endpoint, with the token header and a JSON body](/scores/img/shortcuts-webhook.png)
 
 1. Add a **Get Contents of URL** action.
-2. **URL**: `http://<your-mac-lan-ip>:7776/ingest`. The Mac must be reachable from the phone (same LAN, or a VPN / Tailscale).
+2. **URL**: `http://<your-mac-lan-ip>:7776/ingest`. The phone must reach the Mac: same LAN, or a VPN such as Tailscale when you are away (see below).
 3. **Method**: `POST`.
-4. **Headers**: add `X-Tempo-Token` set to a token bound to `com.shortcuts` (the same token the Mac action uses).
-5. **Request Body** → **JSON**:
+4. **Headers**: `X-Tempo-Token` set to a token bound to `com.shortcuts`, and `Content-Type` set to `application/json`.
+5. **Request Body**: switch it to **JSON** and add the fields:
 
 ```json
 {
-  "title": "Arrived home",
-  "eventType": "alert",
+  "title": "Your title here",
   "providerIdentifier": "com.shortcuts",
-  "startDate": "<current date, ISO-8601>",
-  "metadata": { "category": "location", "state": "arrived" }
+  "eventType": "alert",
+  "severity": "info",
+  "metadata": {
+    "category": "location",
+    "state": "arrived",
+    "device": "iPhone"
+  }
 }
 ```
 
-This is the same ingestion contract any script uses (see [Scripts](/scores/scripts/)), so the score classifies an iOS event exactly like a Mac one. The `category` / `state` table above still applies. A geofence trigger that fires when you arrive at or leave home is a natural fit for this pattern.
+`severity` is read directly, because Tempo honors a sender-provided severity, so `info`, `warning`, `error`, or `critical` set the badge with no score rule needed. `category` and `state` drive the label and indicator from the table above. The `metadata` block is optional: a minimal body with `title`, `providerIdentifier`, `eventType`, and `severity` also works.
+
+![A minimal "Leaving home" webhook Shortcut with a four-field JSON body](/scores/img/shortcuts-webhook-example.png)
+
+This is the same ingestion contract any script uses (see [Scripts](/scores/scripts/)), so an iOS event is classified exactly like a Mac one. A geofence trigger that fires when you arrive at or leave home fits this pattern.
+
+### Reaching the Mac when you are away
+
+On the same Wi-Fi, the Mac's LAN IP is enough. To send from outside the home network, the phone needs a route back to the Mac. **Tailscale** is the simplest: install it on both the Mac and the phone, sign both into the same tailnet, and use the Mac's Tailscale address (the `100.x.y.z` IP) as the URL host. The traffic stays inside your tailnet, so no port is exposed to the public internet. A traditional VPN back to the home network works the same way.
 
 ## What you'll see
 
