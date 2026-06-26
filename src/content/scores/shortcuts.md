@@ -63,9 +63,15 @@ The score reads a `category` key, and sometimes a `state` key, to assign a sever
 
 Anything that does not match a rule lands with the default **Shortcut** label at `info` severity, so events are never lost, just unclassified. Two pairs fold into a single grouped entry: `sleep` `on`/`off` open and close one sleep span, and `focus` `on`/`off` open and close a focus span keyed by `metadata.focus`. The closing event resolves the one it opened instead of stacking a second row.
 
-### Reaching the Mac when you are away
+These indicator emojis are not fixed. Change any of them, and the tags, in the Score Editor's **Tags & emoji** tab.
 
-On the same Wi-Fi, the Mac's LAN IP is enough. To send from outside the home network, the device needs a route back to the Mac. **Tailscale** is the simplest: install it on both the Mac and the device, sign both into the same tailnet, and use the Mac's Tailscale address (the `100.x.y.z` IP) as the URL host. The traffic stays inside your tailnet, so no port is exposed to the public internet. A traditional VPN back to the home network works the same way.
+### Reaching the Mac from anywhere
+
+Use the Mac's **LAN IP** as the URL host, for example `192.168.1.20`. At home it connects directly, with or without a VPN running.
+
+To make the same Shortcut work when you are away, set up **Tailscale with subnet routing**: install it on the device, and run it on a machine on your LAN (the Mac itself, or a small always-on host) that advertises the local subnet as a route. The device then reaches the Mac's LAN IP through the tailnet, with no change to the Shortcut. Prefer this over hardcoding the Mac's `100.x.y.z` Tailscale address: that address stops working at home the moment Tailscale is off, while the LAN IP keeps working in both cases. The traffic stays inside your tailnet, so no port is exposed to the public internet. A traditional VPN back to the home network behaves the same way.
+
+If you restrict the `com.shortcuts` token with an IP allowlist in **Settings → Ingestion**, allow your LAN subnet, for example `192.168.1.0/24`. A subnet router often rewrites the source to a LAN address, so the subnet range covers both the local and the remote case; if yours forwards the original tailnet address instead, also allow Tailscale's `100.64.0.0/10` range.
 
 ## What you'll see
 
