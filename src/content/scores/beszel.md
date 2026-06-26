@@ -65,19 +65,21 @@ In the Score Editor, select **Beszel** and open the **Source** tab. The **Helper
 
 ## 4. Configure the helper
 
-Create an environment file next to the script, for example `~/tempo-beszel/beszel.env`, readable only by you (`chmod 600`):
+Create an environment file next to the script, for example `~/tempo-beszel/beszel.env`, readable only by you (`chmod 600`). Keep the two secrets, the Tempo token and the Beszel password, in their own files rather than inline:
 
 ```sh
 export BESZEL_URL=http://127.0.0.1:8090
 export BESZEL_USER=tempo-poller@your-domain
-export BESZEL_PASS=<read-only poller password>
 export TEMPO_URL=http://<your-mac-ip>:7776/ingest
-export TEMPO_TOKEN=<com.beszel token>
 export STATE_FILE=/home/<you>/tempo-beszel/beszel-state.json
 export POLL_SECONDS=30
+
+# Secrets, read from their own chmod 600 files, not stored in this env file:
+export TEMPO_TOKEN_FILE=/home/<you>/tempo-beszel/tempo-token
+export BESZEL_PASS_FILE=/home/<you>/tempo-beszel/beszel-pass
 ```
 
-To keep secrets out of the environment, do not put `BESZEL_PASS` or `TEMPO_TOKEN` inline. Set `BESZEL_PASS_FILE` and `TEMPO_TOKEN_FILE` to file paths instead, and the poller reads each secret from the file (a Docker secret on tmpfs, a `systemd-creds` credential, or any `chmod 600` file). Resolution order per secret is file first, then environment variable. The Beszel password is used only against the hub and is never sent to Tempo.
+The poller resolves each secret from `${VAR}_FILE` first, then from a plain `${VAR}` environment variable. Pointing at a file keeps the `com.beszel` token and the Beszel password out of the env file: use any `chmod 600` file, a Docker secret on tmpfs, or a `systemd-creds` credential. If you would rather keep it simple, you can set `TEMPO_TOKEN` and `BESZEL_PASS` inline in the env file instead, since it is already `chmod 600`. The Beszel password is used only against the hub and is never sent to Tempo.
 
 On first run the poller seeds its state silently, so historical alerts already in `alerts_history` do not flood the timeline. Only new transitions after that produce events.
 
