@@ -4,11 +4,10 @@ description: "Jellyfin server events in Tempo's timeline, with one-click actions
 providerIdentifier: "org.jellyfin"
 color: "#AA5CC3"
 version: "1.1.0"
-file: "/scores/jellyfin.tempo-score"
 compatibility:
   - "Jellyfin 10.9+ + Webhook plugin"
 pubDate: 2026-04-30
-downloadable: true
+builtIn: true
 ---
 
 Surface Jellyfin server events in Tempo's timeline with five default actions (open Jellyfin web, open item details, open admin dashboard, copy server URL, copy item ID).
@@ -19,8 +18,8 @@ Tested with Jellyfin 10.9 + the official **Webhook plugin**.
 
 ## Install
 
-1. Download `jellyfin.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet, then click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
+1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+2. In Tempo, open **Manage Sources** and enable **Jellyfin** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `jellyfin` bound to `org.jellyfin`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
 5. Configure Jellyfin (below).

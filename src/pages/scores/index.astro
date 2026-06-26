@@ -5,22 +5,44 @@ import { getCollection } from "astro:content";
 const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sort(
   (a, b) => a.data.title.localeCompare(b.data.title),
 );
+
+// Sources that can't POST to Tempo on their own use a small open-source
+// companion helper you run next to the source. Listed below the catalog so
+// it's clear which entries need one and why. Helper code lives in the
+// tempo-scores repo (a second source, populated at launch).
+const repo = "https://github.com/caereforge/tempo-scores";
+const helpers = [
+  { score: "Beszel", dir: "com.beszel", helper: "API poller", why: "Beszel's hub exposes no outbound webhook", sends: "Triggered hub alerts" },
+  { score: "GitHub Actions", dir: "com.github.actions", helper: "Webhook relay", why: "GitHub posts from the public internet — the relay verifies the HMAC signature and forwards to your LAN", sends: "Workflow run results" },
+  { score: "Pi-hole", dir: "net.pi-hole.pi-hole", helper: "API poller", why: "Pi-hole has no push webhook", sends: "Blocking state, reachability, updates, gravity, load" },
+  { score: "Prowlarr", dir: "arr", helper: "Custom Script", why: "*arr apps run a script per event instead of posting a webhook", sends: "Health & update events" },
+  { score: "Radarr", dir: "arr", helper: "Custom Script", why: "*arr apps run a script per event instead of posting a webhook", sends: "Grab, download, import & health events" },
+  { score: "Sonarr", dir: "arr", helper: "Custom Script", why: "*arr apps run a script per event instead of posting a webhook", sends: "Grab, download, import & health events" },
+  { score: "Todoist", dir: "com.todoist", helper: "API poller", why: "Todoist is a cloud API, not a LAN webhook source", sends: "Due & updated tasks" },
+  { score: "Vaultwarden", dir: "com.vaultwarden", helper: "Log watcher", why: "Vaultwarden has no outbound webhook", sends: "Auth events from the log, plus /alive reachability" },
+];
 ---
 <BaseLayout
   title="Scores - Tempo"
-  description="Preconfigured Tempo scores for your homelab: Home Assistant, Uptime Kuma, Kopia, UniFi, and more, all bundled into the app."
+  description="Preconfigured Tempo scores for your homelab: Home Assistant, Uptime Kuma, Kopia, UniFi, and more, all built into the app."
 >
   <header class="page-header">
     <h1>Scores</h1>
     <p class="lede">
-      Small declarative files that teach Tempo how to read events from a specific source and which one-click actions to attach. Drop one into Tempo, and the source is wired up.
+      A score is a small declarative file that teaches Tempo how to read events from one source: which fields mean what, how to set severity, how to group, and which one-click actions to attach. Drop one in, and the source is wired up. <a href="/blog/why-we-call-them-scores/">Why we call them scores →</a>
     </p>
-    <p class="lede-secondary">
-      Tempo v1 ships with several scores <strong>built-in</strong>: they don't need to be downloaded, just configured. Apple Calendar and Reminders are sources too, surfaced via a dedicated EventKit integration. The other entries here are <strong>downloadable add-ons</strong> for sources outside the bundled set, with the catalog growing over time.
-    </p>
-    <p class="lede-secondary">
-      Score installed but nothing lands in the feed? See <a href="/scores/troubleshooting-networking">troubleshooting networking</a>: five patterns cover almost every case.
-    </p>
+
+    <div class="callout">
+      <p>
+        <strong>Every score here ships built into Tempo — there's nothing to download.</strong> They're seeded into <code>~/Library/Application&nbsp;Support/Tempo/Scores/</code> on first launch; you enable the ones you want from <strong>Manage Sources</strong> (only the generic Scripts source auto-installs). Apple Calendar and Reminders are sources too, surfaced via the EventKit integration.
+      </p>
+      <p>
+        The <a href={repo}>tempo-scores repository on GitHub</a> is a <strong>second source</strong>, not the primary one. Use it to re-install a score you removed (removing a built-in score also drops it from the bundled set — the repo is the safety net) and to read the open-source helper code. You never need it for a fresh install.
+      </p>
+      <p class="callout-aside">
+        Score enabled but nothing lands in the feed? Nine times out of ten it's networking — see <a href="/docs/12-troubleshooting">Troubleshooting</a>.
+      </p>
+    </div>
   </header>
 
   <main class="scores-list">
@@ -54,19 +76,44 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     ))}
   </main>
 
-  <footer class="contribute-callout">
-    <h2>Contribute your own</h2>
-    <p>
-      Got a tool that should be in the catalog? Scores are JSON files. Open a
-      pull request at <a href="https://github.com/caereforge/tempo-scores">github.com/caereforge/tempo-scores</a>
-      and follow the <a href="https://github.com/caereforge/tempo-scores/blob/main/CONTRIBUTING.md">CONTRIBUTING guide</a>.
-      The review rubric is public so you can self-check before submitting.
+  <section class="helpers">
+    <h2>Which scores need a companion helper?</h2>
+    <p class="helpers-intro">
+      Most sources reach Tempo on their own — a native webhook, a notification action, or your own script POSTing to the LAN. A handful have no way to push events out, so they use a small open-source <strong>companion helper</strong> you run next to the source. Tempo never runs it for you, and the code is open for inspection.
     </p>
+    <div class="helpers-table-wrap">
+      <table class="helpers-table">
+        <thead>
+          <tr>
+            <th>Score</th>
+            <th>Helper</th>
+            <th>Why it's needed</th>
+            <th>What it sends</th>
+            <th>Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          {helpers.map((h) => (
+            <tr>
+              <td>{h.score}</td>
+              <td>{h.helper}</td>
+              <td>{h.why}</td>
+              <td>{h.sends}</td>
+              <td><a href={`${repo}/tree/main/integrations/${h.dir}`}>view</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="helpers-note">
+      Helper code is published with the catalog at launch. Each score's page has the full setup, and the files are reachable in-app from the score's <strong>Source</strong> tab in the Score Editor.
+    </p>
+  </section>
+
+  <footer class="roadmap-callout">
+    <h2>More on the way</h2>
     <p>
-      Not ready for a PR? Discuss the score idea first in the
-      <a href="/community/">the Tempo community (Discord)</a>
-      or the <a href="/community">Tempo Discord</a>. Both threads stay searchable
-      so later contributors can build on your work.
+      The catalog grows continuously, and new sources arrive in Tempo's free updates. See what's queued on the <a href="/roadmap">roadmap</a> — and if the source you want isn't here yet, that's the most common request and where it gets prioritized.
     </p>
   </footer>
 </BaseLayout>
@@ -77,13 +124,6 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     margin: 0 auto;
     padding: 2rem 1.25rem 1.5rem;
   }
-  .page-nav {
-    font-size: 0.875rem;
-    margin-bottom: 2rem;
-  }
-  .page-nav a { color: var(--text2); }
-  .page-nav a:hover { color: var(--text); }
-
   .page-header h1 {
     font-size: 2rem;
     letter-spacing: -0.02em;
@@ -91,50 +131,43 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
   }
   .lede {
     color: var(--text2);
-    margin-bottom: 0.75rem;
-    max-width: 60ch;
+    margin-bottom: 1.25rem;
+    max-width: 62ch;
   }
-  .lede-secondary {
-    color: var(--text3);
-    font-size: 0.95rem;
-    max-width: 60ch;
-  }
+  .lede a { color: var(--blue); white-space: nowrap; }
 
-  .contribute-callout {
-    max-width: var(--measure);
-    margin: 3rem auto 0;
-    padding: 2rem 1.25rem 4rem;
-    border-top: 1px solid var(--border);
+  .callout {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg2);
+    padding: 1.1rem 1.25rem;
   }
-  .contribute-callout h2 {
-    font-size: 1.3rem;
-    letter-spacing: -0.015em;
-    margin: 0 0 0.75rem 0;
-  }
-  .contribute-callout p {
+  .callout p {
     color: var(--text2);
-    max-width: 60ch;
-    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    max-width: 64ch;
+    margin: 0 0 0.7rem 0;
     line-height: 1.55;
   }
-  .contribute-callout a { color: var(--blue); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout a { color: var(--blue); }
+  .callout code { font-size: 0.85em; white-space: nowrap; }
+  .callout-aside {
+    color: var(--text3) !important;
+    font-size: 0.875rem !important;
+    border-top: 1px solid var(--border);
+    padding-top: 0.7rem;
+  }
 
   .scores-list {
     max-width: var(--measure);
     margin: 0 auto;
-    padding: 1rem 1.25rem 4rem;
+    padding: 1.5rem 1.25rem 1rem;
   }
-  .empty {
-    color: var(--text2);
-    padding: 2rem 0;
-  }
+  .empty { color: var(--text2); padding: 2rem 0; }
 
-  .score-row {
-    border-bottom: 1px solid var(--border);
-  }
-  .score-row:first-child {
-    border-top: 1px solid var(--border);
-  }
+  .score-row { border-bottom: 1px solid var(--border); }
+  .score-row:first-child { border-top: 1px solid var(--border); }
 
   .score-link {
     display: grid;
@@ -145,9 +178,7 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     color: inherit;
     text-decoration: none;
   }
-  .score-link:hover h2 {
-    color: var(--blue);
-  }
+  .score-link:hover h2 { color: var(--blue); }
 
   .score-swatch {
     background: var(--swatch, var(--border));
@@ -197,4 +228,74 @@ const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sor
     color: var(--text);
     font-weight: 600;
   }
+
+  /* Helper table */
+  .helpers {
+    max-width: var(--measure);
+    margin: 2rem auto 0;
+    padding: 2rem 1.25rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .helpers h2 {
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.6rem 0;
+  }
+  .helpers-intro {
+    color: var(--text2);
+    max-width: 64ch;
+    line-height: 1.55;
+    margin: 0 0 1.25rem 0;
+  }
+  .helpers-table-wrap { overflow-x: auto; }
+  .helpers-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  .helpers-table th,
+  .helpers-table td {
+    text-align: left;
+    padding: 0.7rem 0.9rem 0.7rem 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .helpers-table th {
+    color: var(--text3);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .helpers-table td { color: var(--text2); }
+  .helpers-table td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+  .helpers-table a { color: var(--blue); }
+  .helpers-note {
+    color: var(--text3);
+    font-size: 0.875rem;
+    max-width: 64ch;
+    margin: 1rem 0 0 0;
+    line-height: 1.5;
+  }
+  .helpers-note a { color: var(--blue); }
+
+  .roadmap-callout {
+    max-width: var(--measure);
+    margin: 2.5rem auto 0;
+    padding: 2rem 1.25rem 4rem;
+    border-top: 1px solid var(--border);
+  }
+  .roadmap-callout h2 {
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.75rem 0;
+  }
+  .roadmap-callout p {
+    color: var(--text2);
+    max-width: 64ch;
+    margin: 0;
+    line-height: 1.55;
+  }
+  .roadmap-callout a { color: var(--blue); }
 </style>

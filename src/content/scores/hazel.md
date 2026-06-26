@@ -4,12 +4,11 @@ description: "Bring Hazel rule fires into your Tempo timeline. Each firing becom
 providerIdentifier: "com.noodlesoft.hazel"
 color: "#C77B30"
 version: "1.0.0"
-file: "/scores/hazel.tempo-score"
 compatibility:
   - "Hazel 5"
   - "Hazel 6"
 pubDate: 2026-04-28
-downloadable: true
+builtIn: true
 ---
 
 Hazel doesn't ship a webhook transport, but every rule can run an embedded **Run shell script** action, and that's enough. A four-line shell command in your rule POSTs to Tempo with the matched file path, the rule name, and the source / destination folders. Tempo renders the event with five clickable actions (open file, open destination, open source, copy path, copy rule name).
@@ -20,8 +19,8 @@ No adapter on the Tempo side: `/ingest` accepts the JSON the script emits.
 
 ## Install
 
-1. Download `hazel.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet, then click **Install**. The score is saved to `~/Library/Application Support/Tempo/Scores/hazel.tempo-score`.
+1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+2. In Tempo, open **Manage Sources** and enable **Hazel** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `hazel` bound to `com.noodlesoft.hazel`. Copy the token; you'll paste it into the shell script in step 5.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case).
 5. Configure the Hazel rule (see below).

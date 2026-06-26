@@ -4,14 +4,13 @@ description: "Vaultwarden auth activity in Tempo's timeline: logins, admin acces
 providerIdentifier: "com.vaultwarden"
 color: "#175DDC"
 version: "1.1.0"
-file: "/scores/vaultwarden.tempo-score"
 compatibility:
   - "Vaultwarden 1.32+"
 pubDate: 2026-04-30
-downloadable: true
+builtIn: true
 ---
 
-Surface Vaultwarden auth activity in Tempo with five read-only actions (open vault, open admin, copy source IP, check IP reputation, copy user email). Built for the security angle: every event from one **source IP** collapses into a single stack, so a brute-force run reads as one entry instead of a flood.
+Surface Vaultwarden auth activity in Tempo with five read-only actions (open vault, open admin, copy server URL, copy user email, copy source IP). Built for the security angle: every event from one **source IP** collapses into a single stack, so a brute-force run reads as one entry instead of a flood.
 
 Vaultwarden has **no native outbound webhook**, so this integration is **log-driven**: a small watcher tails the Vaultwarden container's log (`docker logs -f`) and POSTs to Tempo whenever it sees an auth-relevant line, extracting the source IP and user email.
 
@@ -23,8 +22,8 @@ Tested against live Vaultwarden 1.32+ in a standard Docker setup.
 
 ## Install
 
-1. Download `vaultwarden.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet, then click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
+1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+2. In Tempo, open **Manage Sources** and enable **Vaultwarden** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `vaultwarden` bound to `com.vaultwarden`. Copy the token; you'll paste it into the watcher's env in the next step.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
 5. Install the log watcher (below) on the host running Vaultwarden.
@@ -105,18 +104,21 @@ exec bash /path/to/vaultwarden-tempo.sh >> /path/to/vw-watcher.log 2>&1
 
 ## Severity rules
 
-| Match                         | Severity | Badge          |
-| ----------------------------- | -------- | -------------- |
-| `Event: login_failed_burst`   | `error`  | Brute-force?   |
-| `Event: admin_login_failed`   | `warning`| Admin probe    |
-| `Event: user_created`         | `warning`| New user       |
-| `Event: vault_exported`       | `warning`| Vault export   |
-| `Event: admin_login`          | `info`   | Admin          |
-| `Event: login_failed`         | `info`   | Login fail     |
-| `Event: user_login`           | `info`   | Login          |
-| _(default)_                   | `info`   | Info           |
+| Match                         | Severity   | Badge          |
+| ----------------------------- | ---------- | -------------- |
+| `Status: down`                | `critical` | Down           |
+| `Status: unreachable`         | `critical` | Unreachable    |
+| `Event: login_failed_burst`   | `warning`  | Brute-force?   |
+| `Event: admin_login_failed`   | `warning`  | Admin fail     |
+| `Event: vault_exported`       | `warning`  | Vault export   |
+| `Event: login_failed`         | `info`     | Login fail     |
+| `Event: user_login`           | `info`     | Login          |
+| `Event: user_created`         | `info`     | New user       |
+| `Event: user_invited`         | `info`     | Invite         |
+| `Event: admin_login`          | `info`     | Admin          |
+| _(default)_                   | `info`     | Info           |
 
-`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes, the brute-force signal. `user_created` is a **warning** on purpose: on a personal vault with signups disabled, a new account means someone bypassed registration. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate.
+`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes — the brute-force signal. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate, and `admin_login_failed` flags a failed admin-panel login. A separate liveness watch polls Vaultwarden's `/alive`, so a stopped or unreachable server surfaces as `critical` even though the log tail alone can't see "down".
 
 ## Required `metadata` fields
 

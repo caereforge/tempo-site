@@ -4,15 +4,14 @@ description: "Pi-hole health and configuration changes in Tempo's timeline. Poll
 providerIdentifier: "net.pi-hole.pi-hole"
 color: "#A52B2B"
 version: "1.0.0"
-file: "/scores/pi-hole.tempo-score"
 compatibility:
   - "Pi-hole v6 (FTL HTTP API)"
   - "v5 with adjustments"
 pubDate: 2026-04-30
-downloadable: true
+builtIn: true
 ---
 
-Surface Pi-hole health and configuration changes in Tempo's timeline with five default actions (open admin, open query log, open settings, copy server URL, copy domain).
+Surface Pi-hole health and configuration changes in Tempo's timeline with four default actions (open admin, open query log, open settings, copy server URL).
 
 Pi-hole has no native push webhook out of the box, so this integration is **poll-driven**: a small bash script runs on cron, checks Pi-hole's state via its HTTP API, and POSTs an event to Tempo when something interesting changes.
 
@@ -22,8 +21,8 @@ Tested with Pi-hole **v6** (FTL HTTP API). v5 with the legacy PHP API also works
 
 ## Install
 
-1. Download `pi-hole.tempo-score` from the button above.
-2. Double-click it. Tempo opens a review sheet, then click **Install**. The score lands in `~/Library/Application Support/Tempo/Scores/`.
+1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+2. In Tempo, open **Manage Sources** and enable **Pi-hole** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `pi-hole` bound to `net.pi-hole.pi-hole`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
 5. Install the polling script (below).
@@ -130,7 +129,6 @@ Disable Pi-hole blocking from the admin UI for 30s, then run the script manually
 
 - **`ServerUrl`**: base URL of the Pi-hole. Used by every action.
 - **`Status`** or **`Action`**: drives severity. At least one should be present.
-- **`Domain`**: only when the event is about a specific domain (e.g. unblock action). Used by the "Copy domain" action; optional otherwise.
 
 ## Pi-hole v5 note
 
@@ -170,6 +168,6 @@ The rest of the script is identical.
 ## Notes
 
 - The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable`, where a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end: Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval; a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
-- `high_load` and `gravity_update` from the severity table are left as optional extensions (CPU load is noisy on a DNS resolver; gravity has no clean status endpoint). Add them with the same `metadata` keys if you want them.
+- The inline script above is a **minimal teaching version** (reachability + blocking + update). The full helper bundled with Tempo (`pihole-tempo.sh`, reachable from the score's **Source** tab in the Score Editor) also emits **gravity** (blocklist) updates and **high load**, each individually switchable with env flags (`PIHOLE_EMIT_UPDATE`, `PIHOLE_EMIT_GRAVITY`, `PIHOLE_EMIT_LOAD`, default on). Load is kept ignorable on purpose — CPU load is noisy on a DNS resolver, so silence it with `PIHOLE_EMIT_LOAD=0` if you already watch it elsewhere.
 - The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score, explicitly trusted by you.
 - For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS`. Tempo lists them as the same source but each event carries its own URL.
