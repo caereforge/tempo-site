@@ -2,7 +2,7 @@
 title: "Hazel"
 description: "Bring Hazel rule fires into your Tempo timeline. Each firing becomes an event with one-click actions to open the file, jump to a folder, or copy the path."
 providerIdentifier: "com.noodlesoft.hazel"
-color: "#C77B30"
+color: "#C9A35C"
 version: "1.0.0"
 compatibility:
   - "Hazel 5"
@@ -11,54 +11,48 @@ pubDate: 2026-04-28
 builtIn: true
 ---
 
-Hazel doesn't ship a webhook transport, but every rule can run an embedded **Run shell script** action, and that's enough. A four-line shell command in your rule POSTs to Tempo with the matched file path, the rule name, and the source / destination folders. Tempo renders the event with five clickable actions (open file, open destination, open source, copy path, copy rule name).
+[Hazel](https://www.noodlesoft.com/) is a macOS file automation tool: it watches folders and runs rules when files match conditions. This score brings each rule fire onto your Tempo timeline as an event, with buttons to open the matched file, jump to the source or destination folder, or copy the path. It is read-only: Tempo shows what a rule did and never moves files back.
 
-No adapter on the Tempo side: `/ingest` accepts the JSON the script emits.
+Hazel does not ship a webhook transport, and it does not need one. Every rule can run an embedded shell script, and a few lines of `curl` are enough to POST a Tempo event. There is no daemon and no relay: the script runs inside Hazel each time the rule fires, and posts straight to Tempo's ingestion server.
 
----
+## How it works
 
-## Install
+```
+Hazel rule fires
+      |  Run shell script action (embedded), runs once per matched file
+curl POST  to Tempo's /ingest, with the per-provider token
+      |  HTTP, LAN or loopback
+Tempo ingestion server  on <your-mac>:7776
+```
 
-1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
-2. In Tempo, open **Manage Sources** and enable **Hazel** (built-in scores are activated there; only the generic Scripts source auto-installs).
-3. In Tempo **Settings → Ingestion**, add a token named `hazel` bound to `com.noodlesoft.hazel`. Copy the token; you'll paste it into the shell script in step 5.
-4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case).
-5. Configure the Hazel rule (see below).
+Hazel passes the matched file path to the script as `$1` and exposes the rule name, watched folder, and destination folder as environment variables. The script packs those into a JSON payload and POSTs it. Tempo's `/ingest` endpoint accepts that JSON directly, so there is nothing to install on the Tempo side beyond enabling the score. The score handles everything after the event lands: the color, the grouping, and the five action buttons.
 
-## Hazel side: add the shell action
+## Setup
 
-In Hazel, edit the rule you want Tempo to receive notifications for. Add a new action: **Run shell script** then **Embedded script**. Paste this template:
+1. Tempo ships this score built-in. It is seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there is nothing to download.
+2. In Tempo, open **Manage Sources** and enable **Hazel**. Built-in scores are activated there; only the generic Scripts source auto-installs.
+3. In Tempo **Settings → Ingestion**, add a token bound to `com.noodlesoft.hazel`. Copy the token; you will paste it into the shell script. A token bound to that identifier also accepts every `com.noodlesoft.hazel.*` sub-source, so one token covers all of your Hazel rules.
+4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest`, or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case.
+5. Add the shell action to a rule, as described next.
+
+### Add the shell action in Hazel
+
+Edit the rule you want Tempo to receive notifications for. Add an action of type **Run shell script**, set it to **Embedded script**, and paste this template:
+
+<!-- SCREENSHOT: Hazel rule editor with a "Run shell script" action selected, set to "Embedded script", showing the curl template pasted in -->
 
 ```bash
 #!/bin/bash
 # Notify Tempo whenever this Hazel rule fires.
 # Hazel exposes:
-#   $1                 → matched file path
-#   $HAZEL_RULE_NAME   → rule name
-#   $HAZEL_FOLDER      → folder being watched
-#   $HAZEL_DEST_FOLDER → destination folder (when the rule moves files)
+#   $1                 -> matched file path
+#   $HAZEL_RULE_NAME   -> rule name
+#   $HAZEL_FOLDER      -> folder being watched
+#   $HAZEL_DEST_FOLDER -> destination folder (when the rule moves files)
 
 TEMPO_HOST="127.0.0.1:7776"
 TEMPO_TOKEN="paste-your-hazel-token-here"
-
-# Default provider - every Hazel rule POSTs under the umbrella id and
-# the score above renders all of them with the same five actions. Good
-# when you have one or two Hazel rules and want them grouped together.
 PROVIDER="com.noodlesoft.hazel"
-
-# Optional - turn this rule into its own sub-source under the Hazel
-# umbrella. Pick a short stable suffix (scanner, mail, photos,
-# downloads, ...) and uncomment the line below. Use ONE level only:
-# the suffix is the sub-source row, and anything deeper rolls up into
-# it (com.noodlesoft.hazel.scanner.invoices still shows under Scanner).
-# The same Tempo token works for any com.noodlesoft.hazel.* sub-source
-# as long as it's bound to the parent prefix in Settings → Ingestion.
-#
-# Examples (uncomment ONE):
-#   PROVIDER="com.noodlesoft.hazel.scanner"   # ~/Scans → invoice PDFs
-#   PROVIDER="com.noodlesoft.hazel.mail"      # Mail rule export → receipts, shipping, price drops
-#   PROVIDER="com.noodlesoft.hazel.downloads" # ~/Downloads → cleanup, sorting
-#   PROVIDER="com.noodlesoft.hazel.photos"    # ~/Pictures import → organising shots
 
 curl -sS -X POST "http://$TEMPO_HOST/ingest" \
   -H "X-Tempo-Token: $TEMPO_TOKEN" \
@@ -79,79 +73,65 @@ EOF
 )"
 ```
 
-Replace `TEMPO_TOKEN` with the value you copied in step 3 above. If Hazel runs on a different Mac than Tempo, replace `127.0.0.1` with your Tempo Mac's hostname (`tempo-mac.local`, your IP, etc.).
+Replace `TEMPO_TOKEN` with the value you copied in step 3. If Hazel runs on a different Mac than Tempo, replace `127.0.0.1` with the Tempo Mac's hostname or IP.
 
-You can attach the same action to as many rules as you want: `$HAZEL_RULE_NAME` differentiates them in Tempo's feed.
+The script runs once per matched file, so a rule that touches several files posts one event each. You can attach the same action to as many rules as you want: `$HAZEL_RULE_NAME` differentiates them in the feed. To keep the token out of every rule, store it in the macOS Keychain once and read it at run time:
 
-## What Hazel actually sends
+```bash
+security add-generic-password -s tempo-ingestion -a com.noodlesoft.hazel -w '<token>'
+# then in the script:
+TEMPO_TOKEN="$(security find-generic-password -s tempo-ingestion -a com.noodlesoft.hazel -w)"
+```
 
-Each event Tempo receives looks like this in the feed:
+The metadata keys the score reads are `path`, `dest`, `folder`, and `rule`. Each one feeds an action button, so include them when the rule has them.
+
+## Sub-sources
+
+Tempo recognizes provider identifiers of the form `com.noodlesoft.hazel.<suffix>` and nests each one as a child row under the **Hazel** parent in the source panel, the same way Apple Calendar and Reminders nest under Apple. By default every rule POSTs under the bare `com.noodlesoft.hazel`, so all rules appear together as a single Hazel row, distinguished only by event title. That works for one or two rules and gets crowded with a dozen.
+
+There are **no bundled sub-scores**. Tempo ships only this one Hazel score, and it does not create any `com.noodlesoft.hazel.<suffix>` children for you. You make your own sub-sources by choosing a suffix and posting under it, for example:
+
+- `com.noodlesoft.hazel.mail`: rules that hand off email (receipts, shipping notices)
+- `com.noodlesoft.hazel.photos`: `~/Pictures` import and organization rules
+- `com.noodlesoft.hazel.downloads`: `~/Downloads` cleanup and triage rules
+
+To use one, set `PROVIDER` in the script to the dotted identifier instead of the bare one. The single Hazel score styles all of them: every `com.noodlesoft.hazel.*` sub-source inherits the same five actions and the same severity, so there is nothing extra to install or author, and the token bound to the parent already accepts them.
+
+**Use one level only.** The sub-source is the first segment after `com.noodlesoft.hazel`: `com.noodlesoft.hazel.scanner` is **Scanner**. Anything deeper rolls up into it, so `com.noodlesoft.hazel.scanner.invoices` still shows under Scanner, with the deeper name kept for the action panel. Make as many first-level sub-sources as you like, but do not nest past one.
+
+## What you'll see
+
+Each event reads as the rule name plus the file, for example:
 
 ```
 Sort photos by date - IMG_4521.HEIC
 ```
 
-with metadata carrying the file path, rule name, source folder, and destination folder. The five default actions interpolate those values: clicking *Open file* runs `open file:///Users/.../IMG_4521.HEIC`, *Open destination folder* runs `open file:///Users/.../Sorted/2026-04`, etc.
+The score sets the **Info** severity by default. Because the score has `senderSeverityWins` set, a `metadata.severity` value in your POST overrides that default, so a rule can mark a particular fire as `warning` or `error` if you want it to stand out. Events carry the metadata that the script sent: the file path, the rule name, the watched folder, and the destination folder.
 
-## Umbrella source and sub-sources
+## Grouping and actions
 
-By default every Hazel rule POSTs under `com.noodlesoft.hazel`, so all of
-them appear together as a single **Hazel** row in Tempo's source panel,
-distinguished only by event title (the rule name). That works well for
-one or two rules; it gets crowded once you have a dozen.
+Events stack within a one-day window. The score groups on `${metadata.runID}` first, then `${metadata.rule}`, then `${metadata.folder}`. The `runID` key takes priority so that a single rule run, even one that posts several steps, collapses into one entry rather than scattering down the timeline. If your script does not send a `runID`, events fall back to grouping by rule, then by watched folder. To collapse a multi-step rule into one stack, generate a run id once at the start of the rule and pass the same value on every post.
 
-Tempo also recognizes **sub-source** provider identifiers of the form
-`com.noodlesoft.hazel.<suffix>`. Each sub-source appears as a child row
-visually nested under the **Hazel** parent, the same pattern as Apple
-Calendar/Reminders under Apple, or UniFi Network/Protect under UniFi.
-The shell template above shows several commented examples: uncomment
-one to make a specific rule emit under its own sub-source.
+Five actions are attached to every event. Each interpolates a metadata value, and an action whose value is missing renders disabled rather than opening nothing:
 
-### You choose the sub-sources
-
-There are **no bundled sub-scores**: Tempo does not ship pre-made
-`com.noodlesoft.hazel.<suffix>` children. You decide how to split your
-Hazel rules by picking the suffix yourself, and the **single Hazel score
-styles all of them**. Every `com.noodlesoft.hazel.*` sub-source inherits
-its five default actions (Open file / Open destination folder / Open
-source folder / Copy file path / Copy rule name) and its severity, so
-there is nothing extra to install or author. The token bound to
-`com.noodlesoft.hazel` already accepts every sub-source too.
-
-Naming convention is yours. A few examples:
-
-- `com.noodlesoft.hazel.mail`: rules that hand off email (receipts, shipping notices, price drops)
-- `com.noodlesoft.hazel.photos`: `~/Pictures` import / organization rules
-- `com.noodlesoft.hazel.downloads`: `~/Downloads` cleanup / triage rules
-- `com.noodlesoft.hazel.<anything>`: your own categories
-
-**Use one level only.** The sub-source is the first segment after
-`com.noodlesoft.hazel`: `…hazel.scanner` is **Scanner**. Anything deeper
-rolls up into it (`…hazel.scanner.invoices` still shows under **Scanner**,
-with the deeper name kept for the action panel). Make as many first-level
-sub-sources as you like; just don't nest past one.
-
-## Actions provided
-
-- **Open file**: opens the matched file in the default app for its type
-- **Open destination folder**: opens the folder Hazel moved/copied the file to (if applicable)
-- **Open source folder**: opens the folder Hazel was watching
-- **Copy file path**: full path to clipboard
-- **Copy rule name**: rule name to clipboard
-
-`Open destination folder` shows grayed-out for rules that don't move files (no `dest` in metadata). That's the score doing the right thing: it knows the action would be a dead button, so it tells you instead of silently opening nothing.
+- **Open file**: opens the matched file at `file://${metadata.path}` in its default app.
+- **Open destination folder**: opens `file://${metadata.dest}`, the folder Hazel moved or copied the file to. Disabled for rules that do not move files, since they send no `dest`.
+- **Open source folder**: opens `file://${metadata.folder}`, the folder Hazel was watching.
+- **Copy file path**: copies `${metadata.path}` to the clipboard.
+- **Copy rule name**: copies `${metadata.rule}` to the clipboard.
 
 ## Troubleshooting
 
-If Hazel rules fire but no event reaches Tempo, run these in Terminal in order until something fails:
+If Hazel rules fire but no event reaches Tempo, run these in Terminal in order until one fails:
 
 ```bash
-# 1. Reachability - does Tempo's port respond?
+# 1. Reachability: does Tempo's port respond?
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1:7776/health
 ```
 
 ```bash
-# 2. Token + payload - does a manual POST land in Tempo?
+# 2. Token and payload: does a manual POST land in Tempo?
 curl -sS -X POST http://127.0.0.1:7776/ingest \
   -H "X-Tempo-Token: paste-token" \
   -H "Content-Type: application/json" \
@@ -159,24 +139,18 @@ curl -sS -X POST http://127.0.0.1:7776/ingest \
 ```
 
 ```bash
-# 3. tcpdump - confirm Hazel's POST is leaving the Mac on the right port
-sudo tcpdump -i lo0 -A 'tcp port 7776' &
-# Trigger your Hazel rule, then:
-sudo killall tcpdump
-```
-
-```bash
-# 4. Hazel's own log
+# 3. Hazel's own log: confirm the rule and script ran
 log stream --predicate 'process == "Hazel"' --info --last 5m
 ```
 
 ```bash
-# 5. Tempo's ingestion log
+# 4. Tempo's ingestion log
 log show --predicate 'subsystem == "app.tempoapp.Tempo" AND category == "Ingestion"' --info --last 5m | grep -i hazel
 ```
 
 Common failure modes:
 
-- **HTTP 403** from Tempo: the token isn't authorized for `com.noodlesoft.hazel`. In Tempo Settings → Ingestion, edit the token and bind it to that exact provider, or to a parent prefix.
-- **HTTP 422**: the JSON payload is malformed (commonly: a path with embedded quotes that broke the heredoc). Wrap `$1` as written in the template; the heredoc handles escaping cleanly.
-- **No event at all**: Hazel didn't run the script. Check the rule preview in Hazel ("If: …, then: Run shell script"). Hazel only fires actions for rules whose conditions match the event.
+- **HTTP 403** from Tempo: the token is not authorized for `com.noodlesoft.hazel`. In **Settings → Ingestion**, edit the token and bind it to that exact identifier, or to the `com.noodlesoft.hazel` prefix so sub-sources are covered too.
+- **HTTP 422**: the JSON payload is malformed, commonly a path with embedded quotes that broke the heredoc. Keep `$1` wrapped as written in the template; the heredoc handles escaping.
+- **No event at all**: Hazel did not run the script. Check the rule preview in Hazel and confirm the conditions match. Hazel fires actions only for rules whose conditions match the file.
+- **Event arrives without styling**: the Hazel score is not enabled. Turn it on in **Manage Sources**.
