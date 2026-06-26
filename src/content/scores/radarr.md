@@ -16,13 +16,13 @@ The sender carries only data (title + metadata); the score owns the presentation
 
 ## Install
 
-This score ships **built-in** and is seeded on first launch — nothing to download.
+This score ships **built-in** and is seeded on first launch, nothing to download.
 
 1. In Tempo, open **Manage Sources** and install **Radarr** if it isn't already active.
 2. In Tempo **Settings → Tokens**, create a token bound to `com.radarr`. A token bound to a provider only accepts events declaring that provider, so leaking one app's token can't spoof another. If you post over TLS (recommended), mark the token **secure**.
 3. Note your Tempo endpoint: `https://<mac-ip>:8776/ingest` (encrypted), or `http://<mac-ip>:7776/ingest` (plain HTTP).
 
-Radarr forwards events by running a small **Custom Script** connection. Tempo does **not** run it for you — you install `tempo-notify.sh` on the Radarr host and register it under Radarr's settings. See the next section.
+Radarr forwards events by running a small **Custom Script** connection. Tempo does **not** run it for you. You install `tempo-notify.sh` on the Radarr host and register it under Radarr's settings. See the next section.
 
 ## Radarr side
 
@@ -41,7 +41,7 @@ printf '%s' '<com.radarr token>' > /mnt/storage/arr/radarr/tempo-token
 chmod 600 /mnt/storage/arr/radarr/tempo-token
 ```
 
-Inside the container these are `/config/scripts/tempo-notify.sh`, `/config/tempo-cert.pem`, and `/config/tempo-token` — the paths the script expects. Download the Tempo TLS cert from **Settings → Security**; drop the `--cacert` flag and leave the token non-secure if you post to plain `:7776`.
+Inside the container these are `/config/scripts/tempo-notify.sh`, `/config/tempo-cert.pem`, and `/config/tempo-token`, the paths the script expects. Download the Tempo TLS cert from **Settings → Security**; drop the `--cacert` flag and leave the token non-secure if you post to plain `:7776`.
 
 ### 2. Register the Custom Script connection
 
@@ -49,10 +49,10 @@ In Radarr: **Settings → Connect → + → Custom Script**.
 
 - **Name**: `Tempo`
 - **Path**: `/config/scripts/tempo-notify.sh`
-- **Triggers**: enable the ones you want — On Grab, On Import, On Health Issue, On Health Restored, On Manual Interaction Required.
+- **Triggers**: enable the ones you want: On Grab, On Import, On Health Issue, On Health Restored, On Manual Interaction Required.
 - **Test**: Tempo should receive a test event and the button turns green.
 
-The Custom Script runs **inside** the container and depends on `curl` being present (the LinuxServer image ships it). The script has no retry/queue: if Tempo is unreachable when an event fires, that event is lost — for health state you still get the next transition.
+The Custom Script runs **inside** the container and depends on `curl` being present (the LinuxServer image ships it). The script has no retry/queue: if Tempo is unreachable when an event fires, that event is lost. For health state you still get the next transition.
 
 ## What you'll see
 
@@ -70,4 +70,4 @@ Anything else falls through to the default (`info`).
 
 Each entry carries one action:
 
-- **Open Radarr** — opens `http://<sender>:7878`, resolved to the Radarr host's own address at click time.
+- **Open Radarr**: opens `http://<sender>:7878`, resolved to the Radarr host's own address at click time.

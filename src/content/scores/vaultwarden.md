@@ -22,7 +22,7 @@ Tested against live Vaultwarden 1.32+ in a standard Docker setup.
 
 ## Install
 
-1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Vaultwarden** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `vaultwarden` bound to `com.vaultwarden`. Copy the token; you'll paste it into the watcher's env in the next step.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
@@ -118,7 +118,7 @@ exec bash /path/to/vaultwarden-tempo.sh >> /path/to/vw-watcher.log 2>&1
 | `Event: admin_login`          | `info`     | Admin          |
 | _(default)_                   | `info`     | Info           |
 
-`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes — the brute-force signal. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate, and `admin_login_failed` flags a failed admin-panel login. A separate liveness watch polls Vaultwarden's `/alive`, so a stopped or unreachable server surfaces as `critical` even though the log tail alone can't see "down".
+`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes, the brute-force signal. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate, and `admin_login_failed` flags a failed admin-panel login. A separate liveness watch polls Vaultwarden's `/alive`, so a stopped or unreachable server surfaces as `critical` even though the log tail alone can't see "down".
 
 ## Required `metadata` fields
 

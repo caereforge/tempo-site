@@ -18,7 +18,7 @@ Tested with Jellyfin 10.9 + the official **Webhook plugin**.
 
 ## Install
 
-1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Jellyfin** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `jellyfin` bound to `org.jellyfin`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).

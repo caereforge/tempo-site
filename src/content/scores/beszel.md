@@ -44,5 +44,5 @@ Severity follows the alert:
 
 Two action buttons are attached to every event:
 
-- **Open Beszel** — opens the Beszel hub in your browser. It targets the helper host's address from the event metadata (port 8090), not an arbitrary URL.
-- **Copy system name** — copies the affected host's name to the clipboard.
+- **Open Beszel**: opens the Beszel hub in your browser. It targets the helper host's address from the event metadata (port 8090), not an arbitrary URL.
+- **Copy system name**: copies the affected host's name to the clipboard.

@@ -10,7 +10,7 @@ builtIn: true
 
 Prowlarr is the indexer manager for the *arr stack: it manages your Usenet and torrent indexers and feeds them to Sonarr, Radarr, and friends. It isn't a downloader and has no media library of its own, so the events worth surfacing are operational: indexer/health problems and application updates. This score gives those events their color and severity and attaches an action that opens Prowlarr.
 
-This score ships built-in and is seeded on first launch. It shares one helper kit with Sonarr and Radarr — the *arr integration — because all three wire to Tempo the same way: a **Custom Script** connection that POSTs a Tempo-shaped event on each notification.
+This score ships built-in and is seeded on first launch. It shares one helper kit with Sonarr and Radarr (the *arr integration) because all three wire to Tempo the same way: a **Custom Script** connection that POSTs a Tempo-shaped event on each notification.
 
 ## Install
 
@@ -36,13 +36,13 @@ Prowlarr runs the script inside its container, so the script and secrets go into
    chmod 600 /path/to/prowlarr/tempo-token
    ```
 
-   Inside the container these are `/config/scripts/tempo-notify.sh`, `/config/tempo-cert.pem`, and `/config/tempo-token`. The script posts to `https://<mac-ip>:8776/ingest` (or plain `http://<mac-ip>:7776/ingest` if you skip TLS — then drop the cert and leave the token non-secure).
+   Inside the container these are `/config/scripts/tempo-notify.sh`, `/config/tempo-cert.pem`, and `/config/tempo-token`. The script posts to `https://<mac-ip>:8776/ingest` (or plain `http://<mac-ip>:7776/ingest` if you skip TLS, then drop the cert and leave the token non-secure).
 
 2. **Register the connection.** In Prowlarr: **Settings → Connect → + → Custom Script**.
    - Name: `Tempo`
    - Path: `/config/scripts/tempo-notify.sh`
    - Triggers: enable **On Health Issue**, **On Health Restored**, and **On Application Update**.
-   - **Test** the connection — Tempo should receive a test event and the button goes green.
+   - **Test** the connection: Tempo should receive a test event and the button goes green.
 
 Tempo does not run the script for you. It lives on the Prowlarr host and fires whenever Prowlarr raises a notification. See the *arr integration README for the full reference.
 
@@ -58,6 +58,6 @@ The score classifies on the `event` field Prowlarr sends:
 
 Every event carries one action:
 
-- **Open Prowlarr** — opens `http://<sender>:9696`, resolved to the host that sent the event at click time.
+- **Open Prowlarr**: opens `http://<sender>:9696`, resolved to the host that sent the event at click time.
 
-There are no library or download events here — Prowlarr manages indexers, not media. If an indexer fails or Prowlarr flags a health problem you get a warning to act on; when it clears, a resolved entry closes the loop.
+There are no library or download events here. Prowlarr manages indexers, not media. If an indexer fails or Prowlarr flags a health problem you get a warning to act on; when it clears, a resolved entry closes the loop.

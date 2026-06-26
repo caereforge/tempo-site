@@ -21,7 +21,7 @@ Tested with Pi-hole **v6** (FTL HTTP API). v5 with the legacy PHP API also works
 
 ## Install
 
-1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Pi-hole** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `pi-hole` bound to `net.pi-hole.pi-hole`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
@@ -168,6 +168,6 @@ The rest of the script is identical.
 ## Notes
 
 - The script surfaces three things: **reachability** (`up` / `disabled` / `unreachable`, where a Pi-hole that's down means your network's DNS is down, the highest-value signal here), the **blocking toggle**, and **update available** (compares local vs remote `core`/`web`/`ftl` versions). It always **deletes its API session** at the end: Pi-hole v6 caps concurrent API sessions, and authenticating on every run *without* deleting eventually triggers `api_seats_exceeded` (raise `webserver.api.max_sessions` if you poll very frequently). Polling can miss state changes shorter than the interval; a 5-minute interval catches sustained states (down, blocking left off, update available), not quick toggles.
-- The inline script above is a **minimal teaching version** (reachability + blocking + update). The full helper bundled with Tempo (`pihole-tempo.sh`, reachable from the score's **Source** tab in the Score Editor) also emits **gravity** (blocklist) updates and **high load**, each individually switchable with env flags (`PIHOLE_EMIT_UPDATE`, `PIHOLE_EMIT_GRAVITY`, `PIHOLE_EMIT_LOAD`, default on). Load is kept ignorable on purpose — CPU load is noisy on a DNS resolver, so silence it with `PIHOLE_EMIT_LOAD=0` if you already watch it elsewhere.
+- The inline script above is a **minimal teaching version** (reachability + blocking + update). The full helper bundled with Tempo (`pihole-tempo.sh`, reachable from the score's **Source** tab in the Score Editor) also emits **gravity** (blocklist) updates and **high load**, each individually switchable with env flags (`PIHOLE_EMIT_UPDATE`, `PIHOLE_EMIT_GRAVITY`, `PIHOLE_EMIT_LOAD`, default on). Load is kept ignorable on purpose: CPU load is noisy on a DNS resolver, so silence it with `PIHOLE_EMIT_LOAD=0` if you already watch it elsewhere.
 - The catalog score uses only `openURL` and `copyToClipboard`. Terminal-based actions (e.g. `pihole disable 30m`) require a **local drop-in** score, explicitly trusted by you.
 - For multi-instance setups (primary + secondary Pi-hole), run one script per instance with its own `ServerUrl` and `PIHOLE_PASS`. Tempo lists them as the same source but each event carries its own URL.

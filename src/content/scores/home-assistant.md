@@ -20,7 +20,7 @@ No adapter on the Tempo side is required.
 
 ## Install
 
-1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Home Assistant** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `home-assistant` bound to `com.home-assistant`. Copy the token.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/events`.
@@ -161,7 +161,7 @@ The legacy entity_id rules are kept as a fallback, for users who haven't set dev
 
 ## Customizing
 
-- **HA URL**: the actions target `http://${metadata.senderAddress}:8123` — the address Home Assistant posted from, resolved automatically, so there's nothing to hardcode. If you reach HA on a custom port or over HTTPS with a custom domain, edit the `openURL` in each action.
+- **HA URL**: the actions target `http://${metadata.senderAddress}:8123`, the address Home Assistant posted from, resolved automatically, so there's nothing to hardcode. If you reach HA on a custom port or over HTTPS with a custom domain, edit the `openURL` in each action.
 - **More entity types**: add rules to the score via the in-app **Score editor** (Timeline tab). Click **+ Add rule**, add your match conditions, pick a severity, and optionally write a title template. The Try panel on the right lets you drop a recent event against the rule and preview the badge + resolved title before saving.
 - **Hide noisy entities**: either drop them from the automation's `entity_id` list (don't send at all), or write a rule that matches them and tag it with `severity: info` + no title override so they're visible but quiet.
 

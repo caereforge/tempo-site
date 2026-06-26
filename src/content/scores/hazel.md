@@ -19,7 +19,7 @@ No adapter on the Tempo side: `/ingest` accepts the JSON the script emits.
 
 ## Install
 
-1. Tempo ships this score **built-in** — it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
+1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Hazel** (built-in scores are activated there; only the generic Scripts source auto-installs).
 3. In Tempo **Settings → Ingestion**, add a token named `hazel` bound to `com.noodlesoft.hazel`. Copy the token; you'll paste it into the shell script in step 5.
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case).

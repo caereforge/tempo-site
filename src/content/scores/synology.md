@@ -16,7 +16,7 @@ Synology is a **built-in source** in Tempo, bundled with the app and registered 
 
 No adapter on the Tempo side is required. You configure DSM to POST to Tempo.
 
-> **Experimental — built from the docs, not yet tested on hardware.** This score was written against Synology's official Custom Webhook documentation. The Synology unit it was meant to be tested on has since died and been disposed of, so it has **not been verified end-to-end on a live DSM**. The payload shape and actions should be correct, but treat it as a starting point and adjust the templates to your DSM version.
+> **Experimental: built from the docs, not yet tested on hardware.** This score was written against Synology's official Custom Webhook documentation. The Synology unit it was meant to be tested on has since died and been disposed of, so it has **not been verified end-to-end on a live DSM**. The payload shape and actions should be correct, but treat it as a starting point and adjust the templates to your DSM version.
 
 ---
 
@@ -74,7 +74,7 @@ DSM's custom webhook exposes only three usable placeholders:
 
 This means Tempo receives a short summary string like *"Drive 3 on DS920+ has been disabled"* rather than a structured payload. The score is designed around this reality: actions use `${metadata.hostname}` (which you provided in the template above) and `${metadata.message}` (the `@@TEXT@@` blob).
 
-Because DSM sends only that human-readable string, the score derives severity by **keyword-matching the subject text** (15 rules): subjects containing *Critical* map to `critical`; *Error*, *Failed*, *Crashed*, *Degraded*, or *Disabled* map to `error`; warning-class keywords map to `warning`; everything else defaults to `info`. It's best-effort pattern matching on localized text — not a structured severity field — so results depend on your DSM language and the exact wording DSM uses.
+Because DSM sends only that human-readable string, the score derives severity by **keyword-matching the subject text** (15 rules): subjects containing *Critical* map to `critical`; *Error*, *Failed*, *Crashed*, *Degraded*, or *Disabled* map to `error`; warning-class keywords map to `warning`; everything else defaults to `info`. It's best-effort pattern matching on localized text, not a structured severity field, so results depend on your DSM language and the exact wording DSM uses.
 
 If you want stricter severity per event type, you can duplicate the webhook in DSM, point each copy at a different matcher, and hardcode different `title`/`eventType` fields in each body template.
 

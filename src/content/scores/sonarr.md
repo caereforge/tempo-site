@@ -28,16 +28,16 @@ The Sonarr score is **built in**. Tempo seeds it on first launch; install it fro
 
 Tempo does **not** run anything for you. Sonarr posts to Tempo by running a small **Custom Script** connection (`tempo-notify.sh`) on each event; the script POSTs a Tempo-shaped payload.
 
-Get the script from the shared \*arr kit. Open the score in Tempo's **Score Editor → Source** tab for the package, or download it from the Tempo website. (Because Sonarr, Radarr, and Prowlarr share one helper kit, the Source tab shows no "Get the helper" button for these three — pull the files from the package.) Then follow the kit's README:
+Get the script from the shared \*arr kit. Open the score in Tempo's **Score Editor → Source** tab for the package, or download it from the Tempo website. (Because Sonarr, Radarr, and Prowlarr share one helper kit, the Source tab shows no "Get the helper" button for these three, pull the files from the package.) Then follow the kit's README:
 
-1. **Drop the script into the container.** Sonarr's `/config` is a host bind mount; copy `tempo-notify-sonarr.sh` there as `/config/scripts/tempo-notify.sh` and `chmod +x` it. Place the Tempo cert (`/config/tempo-cert.pem`) and your `com.sonarr` token (`/config/tempo-token`, mode 600) alongside it — the paths the script expects.
+1. **Drop the script into the container.** Sonarr's `/config` is a host bind mount; copy `tempo-notify-sonarr.sh` there as `/config/scripts/tempo-notify.sh` and `chmod +x` it. Place the Tempo cert (`/config/tempo-cert.pem`) and your `com.sonarr` token (`/config/tempo-token`, mode 600) alongside it, the paths the script expects.
 2. **Register the connection.** In Sonarr: **Settings → Connect → + → Custom Script**.
    - Name: `Tempo`
    - Path: `/config/scripts/tempo-notify.sh`
    - Triggers: enable On Grab, On Import, On Health Issue, On Health Restored, On Manual Interaction Required (and others as you like).
-   - **Test** — Tempo should receive a test event and the button goes green.
+   - **Test**: Tempo should receive a test event and the button goes green.
 
-The script depends on `curl` being present in the container (the LinuxServer images ship it). It has no retry queue: if Tempo is unreachable when an event fires, that event is lost — but for health state you'll still get the next transition.
+The script depends on `curl` being present in the container (the LinuxServer images ship it). It has no retry queue: if Tempo is unreachable when an event fires, that event is lost, but for health state you'll still get the next transition.
 
 ## What you'll see
 
@@ -55,4 +55,4 @@ Anything else lands at the default `info` severity.
 
 Every event carries one action:
 
-- **Open Sonarr** — opens `http://<sender>:8989`, resolved to the host that sent the event at click time.
+- **Open Sonarr**: opens `http://<sender>:8989`, resolved to the host that sent the event at click time.

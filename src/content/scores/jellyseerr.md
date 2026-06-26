@@ -8,7 +8,7 @@ pubDate: 2026-06-26
 builtIn: true
 ---
 
-[Jellyseerr](https://github.com/Fallenbagel/jellyseerr) is a media request manager for Jellyfin, Emby, and Plex: users request movies and shows, and the requests flow through approval, download, and availability — with an issue tracker for things that go wrong after the fact.
+[Jellyseerr](https://github.com/Fallenbagel/jellyseerr) is a media request manager for Jellyfin, Emby, and Plex: users request movies and shows, and the requests flow through approval, download, and availability, with an issue tracker for things that go wrong after the fact.
 
 This score surfaces those notifications on your Tempo timeline. It reads Jellyseerr's webhook `notification_type` and assigns a severity per state, groups every event by its media title so a single request stays one line as it progresses, and attaches a one-click action to open Jellyseerr.
 
@@ -47,9 +47,9 @@ In Jellyseerr, go to **Settings → Notifications → Webhook** and enable the a
 
 The score reads three metadata keys:
 
-- **`event`** — Jellyseerr's `{{notification_type}}` (e.g. `MEDIA_PENDING`, `MEDIA_AVAILABLE`, `ISSUE_CREATED`). This drives the severity label.
-- **`subject`** — the media title; the score groups events by this value, so one request stays one line as it moves through its states.
-- **`senderAddress`** — the host where Jellyseerr runs. The **Open Jellyseerr** action builds `http://<senderAddress>:5055` from it, so set it to your Jellyseerr machine's address.
+- **`event`**: Jellyseerr's `{{notification_type}}` (e.g. `MEDIA_PENDING`, `MEDIA_AVAILABLE`, `ISSUE_CREATED`). This drives the severity label.
+- **`subject`**: the media title; the score groups events by this value, so one request stays one line as it moves through its states.
+- **`senderAddress`**: the host where Jellyseerr runs. The **Open Jellyseerr** action builds `http://<senderAddress>:5055` from it, so set it to your Jellyseerr machine's address.
 
 Save, then use Jellyseerr's **Test** button to send a sample event.
 
@@ -73,4 +73,4 @@ Anything else falls through to the default `info` severity.
 
 Every event carries one action:
 
-- **Open Jellyseerr** — opens `http://<senderAddress>:5055` in your browser.
+- **Open Jellyseerr**: opens `http://<senderAddress>:5055` in your browser.

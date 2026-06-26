@@ -16,7 +16,7 @@ builtIn: true
 - **UniFi Network**: alarms from your controller (clients connecting / disconnecting, devices losing contact, port events, threats, …)
 - **UniFi Protect**: events from your camera stack (motion, smart-detect person/vehicle/package, doorbell ring), with the camera thumbnail rendered inline when *Use Thumbnails* is enabled controller-side
 
-The two are **separate providers** (`com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect`), each with its own ingestion token and score. Tempo simply groups them under a single **UniFi** row in the Source panel for tidiness — that row is a **semantic container, not a true umbrella source** like Scripts or Hazel: it carries no token of its own and registers no events, it just gathers the `com.ubiquiti.unifi.*` providers under one label. It's the same way Apple groups Calendar and Reminders. The room beside them is intentional: future Ubiquiti products (Talk, Access, Connect, InnerSpace) could join the same row if community interest justifies the work.
+The two are **separate providers** (`com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect`), each with its own ingestion token and score. Tempo simply groups them under a single **UniFi** row in the Source panel for tidiness. That row is a **semantic container, not a true umbrella source** like Scripts or Hazel: it carries no token of its own and registers no events, it just gathers the `com.ubiquiti.unifi.*` providers under one label. It's the same way Apple groups Calendar and Reminders. The room beside them is intentional: future Ubiquiti products (Talk, Access, Connect, InnerSpace) could join the same row if community interest justifies the work.
 
 ---
 
