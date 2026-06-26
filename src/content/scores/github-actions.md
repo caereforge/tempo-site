@@ -96,7 +96,7 @@ cloudflared tunnel --url http://localhost:7777
 
 It prints a `https://<random>.trycloudflare.com` address. That address is ephemeral: it changes every time `cloudflared` restarts, so you would have to update the GitHub webhook each time. It suits a quick test, not a permanent setup.
 
-<!-- SCREENSHOT: terminal running cloudflared, showing the public hostname -->
+![A quick tunnel started with cloudflared, printing its public trycloudflare.com hostname](/scores/img/github-cloudflared.png)
 
 ### Alternatives
 
@@ -194,7 +194,7 @@ On the repository or organization, open **Settings → Webhooks → Add webhook*
 - **Which events**: pick from the table below, or "Send me everything". Unhandled events are acknowledged and dropped.
 - **Active**: on
 
-<!-- SCREENSHOT: GitHub repo Settings > Webhooks > Add webhook form, filled in -->
+![The GitHub webhook form: payload URL ending in /gh, content type application/json, a secret set, SSL verification on, and individual events selected](/scores/img/github-webhook.png)
 
 GitHub sends a `ping` immediately. A healthy setup shows an event in Tempo titled `<repo>: webhook ping`. For an organization, a single org-level webhook covers every repository, under `https://github.com/organizations/<org>/settings/hooks`.
 
