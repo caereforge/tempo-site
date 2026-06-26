@@ -41,7 +41,7 @@ The relay can run on the Mac that runs Tempo, or on any always-on machine on the
 
 In the score's **Source** tab (Score Editor), the **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the relay package (`relay.py` plus a `launchd` plist) to `~/Library/Application Support/Tempo/Integrations/com.github.actions/` and reveals it. Copy that folder to the host that will run the relay.
 
-<!-- SCREENSHOT: Score Editor, Source tab, Helper section showing Open in Finder / Open README -->
+![GitHub selected in the Score Editor: the Source tab shows the Helper section with Open in Finder and Open README](/scores/img/github-helper.png)
 
 ## 2. Expose the relay with a tunnel
 
