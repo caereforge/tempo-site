@@ -31,7 +31,7 @@ Hazel passes the matched file path to the script as `$1` and exposes the rule na
 
 1. Tempo ships this score built-in. It is seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there is nothing to download.
 2. In Tempo, open **Manage Sources** and enable **Hazel**. Built-in scores are activated there; only the generic Scripts source auto-installs.
-3. In Tempo **Settings → Ingestion**, add a token bound to `com.noodlesoft.hazel`. Copy the token; you will paste it into the shell script. A token bound to that identifier also accepts every `com.noodlesoft.hazel.*` sub-source, so one token covers all of your Hazel rules.
+3. In Tempo **Settings → Ingestion**, add a token bound to `com.noodlesoft.hazel`. Copy the token; you will paste it into the shell script. A token bound to that identifier accepts every `com.noodlesoft.hazel.*` provider, including deeper ones like `com.noodlesoft.hazel.scanner.office`, so one token covers all of your Hazel rules. The score still caps a sub-source at one level below `com.noodlesoft.hazel`, so `com.noodlesoft.hazel.scanner.office` is accepted but grouped under `scanner` (the Sub-sources section below explains this).
 4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest`, or `127.0.0.1` if Hazel runs on the same Mac as Tempo, which is the common case.
 5. Add the shell action to a rule, as described next.
 
