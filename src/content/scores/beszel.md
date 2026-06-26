@@ -61,9 +61,7 @@ In Tempo, open **Settings → Ingestion** and create a token bound to `com.besze
 
 ## 3. Get the helper
 
-In the Score Editor, select **Beszel** and open the **Source** tab. The **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the helper package to `~/Library/Application Support/Tempo/Integrations/com.beszel/` and reveals it. Copy that folder to the host that will run the poller.
-
-The package holds `beszel-tempo.py` (the poller) and `com.beszel.json` (this score, already built into Tempo).
+In the Score Editor, select **Beszel** and open the **Source** tab. The **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the helper package to `~/Library/Application Support/Tempo/Integrations/com.beszel/` and reveals it. The package holds the poller script `beszel-tempo.py` and a copy of its README. Copy `beszel-tempo.py` to the host that will run it.
 
 ## 4. Configure the helper
 
