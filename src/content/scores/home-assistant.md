@@ -51,7 +51,7 @@ rest_command:
     method: POST
     content_type: "application/json"
     headers:
-      X-Tempo-Token: "<token>"
+      X-Tempo-Token: !secret tempo_token
     payload: >
       {"title": "{{ friendly_name }} is {{ state }}",
        "providerIdentifier": "com.home-assistant",
@@ -66,7 +66,7 @@ rest_command:
        }}
 ```
 
-Copy `<token>` from **Settings → Ingestion**. Reload the YAML configuration (**Developer Tools → YAML → Reload**, or restart Home Assistant) so the command registers.
+Get the token from **Settings → Ingestion**. Rather than pasting it into `configuration.yaml`, keep it in Home Assistant's `secrets.yaml`: add a line `tempo_token: <token>` there, and the `!secret tempo_token` reference above reads it from that file. This keeps the token out of the shared configuration and works on every install (Container, Supervised, OS, or Core). On a container setup you can instead pass the token as an environment variable and write `X-Tempo-Token: !env_var TEMPO_TOKEN`. Then reload the YAML configuration (**Developer Tools → YAML → Reload**, or restart Home Assistant) so the command registers.
 
 ### 3. Add the automation
 
