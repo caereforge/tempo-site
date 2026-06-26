@@ -70,6 +70,30 @@ const { Content } = await render(score);
   </article>
 </BaseLayout>
 
+<script>
+  // Click any image in a guide to open it full size; click anywhere or press
+  // Escape to close. Images otherwise render at the text-column width.
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    const img = t && t.closest ? t.closest(".score-content img") : null;
+    if (!img) return;
+    const overlay = document.createElement("div");
+    overlay.className = "img-lightbox";
+    const full = document.createElement("img");
+    full.src = img.currentSrc || img.src;
+    full.alt = img.alt || "";
+    overlay.appendChild(full);
+    overlay.addEventListener("click", () => overlay.remove());
+    document.body.appendChild(overlay);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const lb = document.querySelector(".img-lightbox");
+      if (lb) lb.remove();
+    }
+  });
+</script>
+
 <style>
   .page-header {
     max-width: var(--measure);
@@ -256,5 +280,34 @@ const { Content } = await render(score);
   }
   .score-content :global(a:hover) {
     text-decoration: underline;
+  }
+
+  /* Guide screenshots: constrained to the text column, click to enlarge. */
+  .score-content :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1.75rem auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: zoom-in;
+  }
+
+  :global(.img-lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.82);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    cursor: zoom-out;
+  }
+  :global(.img-lightbox img) {
+    max-width: 95vw;
+    max-height: 95vh;
+    border-radius: 8px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
   }
 </style>
