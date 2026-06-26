@@ -1,0 +1,105 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+// Technical reference index: links to each score's full README page
+// (/scores/<id>). The /scores catalog is the discursive overview; this is
+// the documentation entry point to the per-score technical setup docs.
+const allScores = (await getCollection("scores", ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.title.localeCompare(b.data.title),
+);
+---
+<BaseLayout
+  title="Score reference - Tempo"
+  description="The full technical reference for every built-in Tempo score: what it reads, how it sets severity, the payload it expects, the actions it attaches, and how to set up its source and helper."
+>
+  <header class="page-header">
+    <nav class="page-nav"><a href="/docs/">← Docs</a></nav>
+    <h1>Score reference</h1>
+    <p class="lede">
+      The full technical README for every built-in score: what it reads, how it sets severity, how it groups, the payload it expects, the actions it attaches, and how to wire up the source (and its companion helper, when there is one). For a lighter overview of what each score is for, see the <a href="/scores/">Scores catalog</a>.
+    </p>
+  </header>
+
+  <main class="ref-list">
+    {allScores.map((score) => (
+      <a class="ref-row" href={`/scores/${score.id}/`}>
+        <span class="ref-swatch" style={`--swatch: ${score.data.color};`}></span>
+        <span class="ref-body">
+          <span class="ref-head">
+            <span class="ref-title">{score.data.title}</span>
+            <code class="ref-id">{score.data.providerIdentifier}</code>
+          </span>
+          <span class="ref-desc">{score.data.description}</span>
+        </span>
+        <span class="ref-arrow" aria-hidden="true">→</span>
+      </a>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .page-header {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 2rem 1.25rem 1rem;
+  }
+  .page-nav { font-size: 0.875rem; margin-bottom: 2rem; }
+  .page-nav a { color: var(--text2); }
+  .page-nav a:hover { color: var(--text); }
+  .page-header h1 {
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+  .lede { color: var(--text2); max-width: 64ch; line-height: 1.55; }
+  .lede a { color: var(--blue); }
+
+  .ref-list {
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding: 1rem 1.25rem 4rem;
+  }
+  .ref-row {
+    display: grid;
+    grid-template-columns: 8px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 0.5rem 1rem 0;
+    border-bottom: 1px solid var(--border);
+    color: inherit;
+    text-decoration: none;
+  }
+  .ref-row:first-child { border-top: 1px solid var(--border); }
+  .ref-row:hover { background: var(--bg2); }
+  .ref-row:hover .ref-title { color: var(--blue); }
+
+  .ref-swatch {
+    align-self: stretch;
+    background: var(--swatch, var(--border));
+    border-radius: 2px;
+  }
+  .ref-body { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+  .ref-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .ref-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: color 120ms ease;
+  }
+  .ref-id {
+    font-size: 0.78rem;
+    color: var(--text3);
+    background: var(--bg2);
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+  }
+  .ref-desc { color: var(--text2); font-size: 0.92rem; line-height: 1.5; }
+  .ref-arrow { color: var(--text3); font-size: 1.1rem; }
+  .ref-row:hover .ref-arrow { color: var(--blue); }
+</style>
