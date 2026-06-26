@@ -48,6 +48,28 @@ Anything that doesn't match a rule lands with the default **Shortcut** label at 
 
 Two pairs also fold into a single grouped entry: `sleep` `on`/`off` open and close one sleep span, and `focus` `on`/`off` open and close a focus span keyed by `metadata.focus`. The closing event resolves the one it opened instead of stacking a second row.
 
+## From iOS
+
+The **Send Event to Tempo** action is a macOS App Intent: it talks to Tempo on `127.0.0.1`, so it only works on the Mac running Tempo. From an iPhone or iPad, send the event over the network instead, with a webhook Shortcut:
+
+1. Add a **Get Contents of URL** action.
+2. **URL**: `http://<your-mac-lan-ip>:7776/ingest` — the Mac must be reachable from the phone (same LAN, or a VPN / Tailscale).
+3. **Method**: `POST`.
+4. **Headers**: add `X-Tempo-Token` set to a token bound to `com.shortcuts` (the same token the Mac action uses).
+5. **Request Body** → **JSON**:
+
+```json
+{
+  "title": "Arrived home",
+  "eventType": "alert",
+  "providerIdentifier": "com.shortcuts",
+  "startDate": "<current date, ISO-8601>",
+  "metadata": { "category": "location", "state": "arrived" }
+}
+```
+
+This is the same ingestion contract any script uses (see [Scripts](/scores/scripts/)), so the score classifies an iOS event exactly like a Mac one — the `category` / `state` table above still applies. A geofence trigger that fires when you arrive at or leave home is a natural fit for this pattern.
+
 ## What you'll see
 
 Each Shortcut run shows up as one event on the timeline, labeled and tagged per the table above, with its indicator emoji if the category matches. Battery-low events are raised to **warning**; everything else stays at **info**, which is the right posture for the personal, ambient signals Shortcuts tends to send.
