@@ -1,87 +1,55 @@
 ---
 title: "Vaultwarden"
-description: "Vaultwarden auth activity in Tempo's timeline: logins, admin access, vault exports, and a brute-force signal, grouped per source IP. Your secrets stay local."
+description: "Vaultwarden authentication activity (logins, admin access, vault exports, a brute-force signal) plus server reachability, on the Tempo timeline through a log watcher."
 providerIdentifier: "com.vaultwarden"
-color: "#175DDC"
-version: "1.1.0"
-compatibility:
-  - "Vaultwarden 1.32+"
+color: "#065ADC"
+version: "1.0.0"
 pubDate: 2026-04-30
 builtIn: true
 ---
 
-Surface Vaultwarden auth activity in Tempo with five read-only actions (open vault, open admin, copy server URL, copy user email, copy source IP). Built for the security angle: every event from one **source IP** collapses into a single stack, so a brute-force run reads as one entry instead of a flood.
+This score renders [Vaultwarden](https://github.com/dani-garcia/vaultwarden) authentication activity on the Tempo timeline: failed and successful logins, admin-panel access, vault exports, new users, invitations, and a brute-force burst signal, plus whether the server is reachable. It is read-only. The actions open the vault or admin in your browser and copy a few fields. Nothing writes back to Vaultwarden, and the admin token and vault data never leave the host that runs the watcher.
 
-Vaultwarden has **no native outbound webhook**, so this integration is **log-driven**: a small watcher tails the Vaultwarden container's log (`docker logs -f`) and POSTs to Tempo whenever it sees an auth-relevant line, extracting the source IP and user email.
+## How it works
 
-The integration keeps the source's secrets local: your admin token and vault data **never leave the machine running the watcher**. Only the parsed event, source IP and user email go to Tempo.
+Vaultwarden has no native outbound webhook. Its authentication events only appear in its log, so this integration is log-driven. A small companion helper runs on the Vaultwarden host, tails the container log, and POSTs a structured event to Tempo on each auth-relevant line.
 
-Tested against live Vaultwarden 1.32+ in a standard Docker setup.
-
----
-
-## Install
-
-1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
-2. In Tempo, open **Manage Sources** and enable **Vaultwarden** (built-in scores are activated there; only the generic Scripts source auto-installs).
-3. In Tempo **Settings → Ingestion**, add a token named `vaultwarden` bound to `com.vaultwarden`. Copy the token; you'll paste it into the watcher's env in the next step.
-4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
-5. Install the log watcher (below) on the host running Vaultwarden.
-
-## Log watcher
-
-The watcher tails the container's stdout and emits a structured event on each auth-relevant line. It runs as a long-lived process (the `docker logs -f` stream), not a cron one-shot.
-
-Save as `vaultwarden-tempo.sh`:
-
-```sh
-#!/usr/bin/env bash
-# vaultwarden-tempo.sh - stream Vaultwarden auth events to Tempo
-set -uo pipefail
-
-: "${VW_URL:?set VW_URL}"               # https://<vaultwarden-host>:8443
-: "${TEMPO_URL:?set TEMPO_URL}"         # http://<mac-ip>:7776/ingest
-: "${TEMPO_TOKEN:?set TEMPO_TOKEN}"     # token bound to com.vaultwarden
-VW_CONTAINER="${VW_CONTAINER:-vaultwarden}"
-SD="${STATE_DIR:-$HOME/.local/state/vaultwarden-tempo}"; mkdir -p "$SD"
-
-emit() {
-  local title=$1 event=$2 email=${3:-} ip=${4:-}
-  curl -s --max-time 5 -o /dev/null -X POST \
-    -H "X-Tempo-Token: $TEMPO_TOKEN" -H 'Content-Type: application/json' \
-    -d "{\"providerIdentifier\":\"com.vaultwarden\",\"title\":\"$title\",\"startDate\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"eventType\":\"alert\",\"metadata\":{\"Event\":\"$event\",\"ServerUrl\":\"$VW_URL\",\"UserEmail\":\"$email\",\"IP\":\"$ip\"}}" \
-    "$TEMPO_URL"
-}
-
-while true; do
-  docker logs -f --since 0s "$VW_CONTAINER" 2>&1 | while IFS= read -r line; do
-    ip=$(echo "$line"    | grep -oE 'IP: [0-9a-fA-F:.]+'     | head -n1 | sed 's/IP: //; s/\.$//')
-    email=$(echo "$line" | grep -oE 'Username: [^ ]+@[^ ]+' | head -n1 | sed 's/Username: //; s/\.$//')
-    case "$line" in
-      *"Username or password is incorrect"*)
-        echo "$(date +%s)" >> "$SD/recent.log"
-        emit "Login failed" "login_failed" "$email" "$ip"
-        NOW=$(date +%s)
-        awk -v c=$((NOW-300)) '$1>=c' "$SD/recent.log" > "$SD/recent.tmp" 2>/dev/null && mv "$SD/recent.tmp" "$SD/recent.log"
-        n=$(wc -l < "$SD/recent.log" 2>/dev/null | tr -d ' ')
-        [ "${n:-0}" -ge 5 ] && emit "Login failures burst ($n/5min)" "login_failed_burst" "" "$ip" ;;
-      *"logged in successfully"*)              emit "User logged in"     "user_login"         "$email" "$ip" ;;
-      *"Invalid admin token"*)                 emit "Admin login failed" "admin_login_failed" ""       "$ip" ;;
-      *"(post_admin_login)"*"=> 200 OK"*)      emit "Admin login"        "admin_login"        ""       "$ip" ;;
-      *"Vault exported"*|*"Exported vault"*)   emit "Vault exported"     "vault_exported"     "$email" "$ip" ;;
-      *"User registered"*|*"created account"*) emit "User created"       "user_created"       "$email" "$ip" ;;
-    esac
-  done
-  sleep 3
-done
+```
+Vaultwarden container  (logs auth lines to stdout)
+      |  docker logs -f
+helper (vaultwarden-tempo.sh)  on the container host
+      |   parses the line, extracts source IP and user email
+      |   also polls  ${VW_URL}/alive  for reachability
+      |  HTTP POST, per-provider token
+Tempo ingestion server  on <mac>:7776/ingest
 ```
 
-> **Bare-metal install?** Replace `docker logs -f --since 0s "$VW_CONTAINER"` with `tail -F /path/to/vaultwarden.log`; the `case` parser is the same.
-> **Wording caveat.** The `login_failed`, `user_login`, `admin_login_failed` and `admin_login` patterns are validated against real 1.32–1.34 logs. `vault_exported` and `user_created` wordings vary by version: confirm with `docker logs <container>` and adapt the branch if needed.
+The helper does two things. It tails `docker logs` for authentication lines and emits an event per line (with the source `IP` and `UserEmail`). Separately, it polls Vaultwarden's `/alive` endpoint on an interval, so a stopped or unreachable container is reported as down (the log tail alone cannot see "down"). The score handles what happens after an event lands: severity, the badge label, grouping, and the action buttons.
 
-## Run it persistently (flock keepalive)
+The helper holds no Vaultwarden credential. It never reads the admin token. It only tails `docker logs`, and its single secret is the Tempo ingestion token.
 
-The watcher is a long-lived stream, so keep it alive with a single-instance flock cron. It restarts within 5 minutes if it dies and starts on boot:
+## Setup
+
+### 1. Create the Tempo token
+
+In Tempo, open **Settings → Ingestion** and create a token bound to `com.vaultwarden`. Copy its value; you will put it in the helper's configuration below.
+
+### 2. Enable the score
+
+In Tempo, open **Manage Sources** and enable **Vaultwarden**. The score ships built-in (seeded into `~/Library/Application Support/Tempo/Scores/` on first launch), so there is nothing to download. Only the generic Scripts source auto-installs; this one is activated here.
+
+### 3. Get the helper
+
+In the score's **Source** tab (Score Editor), the **Helper** section has two buttons:
+
+- **Open in Finder** copies the helper package to `~/Library/Application Support/Tempo/Integrations/com.vaultwarden/` and reveals it.
+- **Open README** displays the helper's own README.
+
+The package contains `vaultwarden-tempo.sh` (the watcher) and `vaultwarden-run.sh` (a wrapper for the keepalive cron). Copy that folder to the host running the Vaultwarden container. The helper is a shell script and runs on any Linux or macOS host that has `docker` and `curl`.
+
+### 4. Configure it
+
+Create a `vaultwarden.env` file next to the scripts (`chmod 600`):
 
 ```sh
 # vaultwarden.env  (chmod 600)
@@ -91,51 +59,146 @@ export TEMPO_TOKEN=<com.vaultwarden token>
 export VW_CONTAINER=vaultwarden
 export STATE_DIR=$HOME/.local/state/vaultwarden-tempo
 ```
+
+- `VW_URL`: the Vaultwarden base URL. It powers the open-vault and open-admin actions, and it is the host the `/alive` liveness poll checks.
+- `TEMPO_URL`: your Tempo ingestion endpoint, `http://<mac-running-tempo>:7776/ingest` (use `127.0.0.1` only if Tempo and the helper run on the same machine).
+- `TEMPO_TOKEN`: the token from step 1.
+- `VW_CONTAINER`: the container name (default `vaultwarden`).
+
+Liveness controls:
+
+- `VW_EMIT_DOWN`: the `/alive` poll is on by default. Set `VW_EMIT_DOWN=0` to disable it (for example if another tool already monitors the container).
+- `VW_ALIVE_INTERVAL`: poll interval in seconds (default `30`).
+
+#### Keeping the token out of plaintext (`*_FILE`)
+
+You do not have to leave the token in a plaintext `.env`. Every secret also resolves from a file: set `TEMPO_TOKEN_FILE` to a path and the helper reads the secret from there, so the value never enters the environment. Point it at a Docker secret (`/run/secrets/...`, mounted in tmpfs), a systemd encrypted credential (`LoadCredentialEncrypted`), or any `chmod 600` file. Resolution order is file, then environment variable, then Keychain.
+
+The **firewall** must let the Vaultwarden host reach the Mac on port **7776** (allow it in the macOS firewall or Little Snitch). You can optionally restrict the token to that host's IP with the token's allowlist in **Settings → Ingestion**.
+
+### 5. Run it as a daemon
+
+The watcher is a long-lived stream (a `docker logs -f` tail plus the `/alive` poll), not a cron one-shot. Keep it running and restart it on crash or reboot.
+
+#### Linux: flock keepalive cron
+
+This is the method the helper package ships for. `vaultwarden-run.sh` sources the env file and execs the watcher, logging to a file:
+
 ```sh
 # vaultwarden-run.sh
 #!/bin/sh
-. /path/to/vaultwarden.env
-exec bash /path/to/vaultwarden-tempo.sh >> /path/to/vw-watcher.log 2>&1
+. /home/<you>/tempo-vaultwarden/vaultwarden.env
+exec bash /home/<you>/tempo-vaultwarden/vaultwarden-tempo.sh >> /home/<you>/tempo-vaultwarden/vw-watcher.log 2>&1
 ```
+
+A single-instance flock cron restarts it within 5 minutes if it dies and starts it on boot. flock holds the lock for the whole life of the stream, so a second copy never starts:
+
 ```cron
-*/5 * * * * flock -n /path/to/vaultwarden.lock /path/to/vaultwarden-run.sh
-@reboot     flock -n /path/to/vaultwarden.lock /path/to/vaultwarden-run.sh
+*/5 * * * * flock -n /home/<you>/tempo-vaultwarden/vaultwarden.lock /home/<you>/tempo-vaultwarden/vaultwarden-run.sh
+@reboot     flock -n /home/<you>/tempo-vaultwarden/vaultwarden.lock /home/<you>/tempo-vaultwarden/vaultwarden-run.sh
 ```
 
-## Severity rules
+#### Linux: systemd (alternative)
 
-| Match                         | Severity   | Badge          |
-| ----------------------------- | ---------- | -------------- |
-| `Status: down`                | `critical` | Down           |
-| `Status: unreachable`         | `critical` | Unreachable    |
-| `Event: login_failed_burst`   | `warning`  | Brute-force?   |
-| `Event: admin_login_failed`   | `warning`  | Admin fail     |
-| `Event: vault_exported`       | `warning`  | Vault export   |
-| `Event: login_failed`         | `info`     | Login fail     |
-| `Event: user_login`           | `info`     | Login          |
-| `Event: user_created`         | `info`     | New user       |
-| `Event: user_invited`         | `info`     | Invite         |
-| `Event: admin_login`          | `info`     | Admin          |
-| _(default)_                   | `info`     | Info           |
+If you prefer systemd, create `/etc/systemd/system/tempo-vaultwarden.service`:
 
-`login_failed_burst` fires when 5+ failed logins arrive within 5 minutes, the brute-force signal. `vault_exported` is a warning because an export is a data-exfil signal worth surfacing even when legitimate, and `admin_login_failed` flags a failed admin-panel login. A separate liveness watch polls Vaultwarden's `/alive`, so a stopped or unreachable server surfaces as `critical` even though the log tail alone can't see "down".
+```ini
+[Unit]
+Description=Tempo Vaultwarden watcher
+After=docker.service network-online.target
 
-## Required `metadata` fields
+[Service]
+EnvironmentFile=/home/<you>/tempo-vaultwarden/vaultwarden.env
+ExecStart=/usr/bin/env bash /home/<you>/tempo-vaultwarden/vaultwarden-tempo.sh
+Restart=always
 
-- **`Event`**: drives severity (values above).
-- **`ServerUrl`**: base URL of Vaultwarden (powers the open-vault / open-admin actions).
-- **`IP`**: source IP of the auth line; the **grouping key** (all activity from one IP is one stack) and the most actionable field for a brute-force alert.
-- **`UserEmail`**: set when the event involves a user.
+[Install]
+WantedBy=multi-user.target
+```
 
-## Hardening (recommended before storing real secrets)
+Then `sudo systemctl enable --now tempo-vaultwarden`.
 
-The score gives you **visibility**; pair it with source-side hardening:
-- `SIGNUPS_ALLOWED=false` once your account exists; then a `user_created` event is genuinely suspicious.
-- `INVITATIONS_ALLOWED=false` unless you actively invite others.
-- Strong `ADMIN_TOKEN`: an Argon2 hash (`docker exec <container> /vaultwarden hash`), not a plaintext string; or leave it unset to disable the admin panel.
-- A reverse proxy + fail2ban if it's internet-reachable. The watcher **reports** brute-force, it does not block it.
+#### macOS: launchd
 
-## Notes
+If Vaultwarden runs in Docker on a Mac, a LaunchAgent keeps the watcher alive. Create `~/Library/LaunchAgents/app.tempo.vaultwarden.plist`:
 
-- The catalog score uses only `openURL` and `copyToClipboard`. Kicking sessions, disabling the server, or rotating the admin token are sensitive and require a **local drop-in** score you explicitly trust.
-- For multiple instances, run one watcher per container with its own `VW_URL`, `VW_CONTAINER` and `STATE_DIR`; events flow to the same Tempo source.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>app.tempo.vaultwarden</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>/Users/<you>/tempo-vaultwarden/vaultwarden-run.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+</dict>
+</plist>
+```
+
+Load it with `launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/app.tempo.vaultwarden.plist`.
+
+#### Windows
+
+Run Vaultwarden's watcher on the container host. If that host is Windows, run the script under WSL or Git Bash (it needs a POSIX shell, `docker`, and `curl`) and keep it alive with a Scheduled Task that runs at logon and restarts on failure, or a service wrapper such as NSSM. In practice the Vaultwarden host is usually Linux, so the flock or systemd method above is the common path.
+
+## What you'll see
+
+Events arrive as alerts with a badge label and a severity. The severity drives whether Tempo rings its needs-attention bell (`warning` and `critical`) or stays quiet in the timeline (`info`).
+
+| Event / status            | Badge        | Severity   | When                                                     |
+| ------------------------- | ------------ | ---------- | -------------------------------------------------------- |
+| `Status: down`            | Down         | `critical` | the `/alive` poll fails (server stopped)                 |
+| `Status: unreachable`     | Unreachable  | `critical` | the `/alive` poll cannot reach the host                  |
+| `login_failed_burst`      | Brute-force  | `warning`  | 5 or more failed logins within 5 minutes                 |
+| `admin_login_failed`      | Admin fail   | `warning`  | a wrong admin token at `/admin`                          |
+| `vault_exported`          | Vault export | `warning`  | a vault was exported (a data-exfiltration signal)        |
+| `login_failed`            | Login fail   | `info`     | a single failed login                                    |
+| `user_login`              | Login        | `info`     | a successful login                                       |
+| `user_created`            | New user     | `info`     | a new account registered                                 |
+| `user_invited`            | Invite       | `info`     | an invitation was sent                                   |
+| `admin_login`             | Admin        | `info`     | a successful admin-panel login                           |
+| _(any other event)_       | Info         | `info`     | default                                                  |
+
+The `user_invited` event carries no email: the recipient address is not in the Vaultwarden log unless SMTP is configured (Vaultwarden then logs the recipient).
+
+If you want to silence a specific event type you do not care about (for example `user_login`), do not edit the helper. In the score's **Ack and dismiss** tab (Score Editor), add a rule that auto-dismisses events matching that `Event`. They still land for the record but never demand attention.
+
+## Grouping and actions
+
+Events stack within a **1 hour** window, keyed on **`UserEmail` and `Event`** (`["${metadata.UserEmail}", "${metadata.Event}"]`). Repeated activity of the same kind by the same account collapses into one entry rather than a row per line. A burst of failed logins for one account therefore reads as a single stack.
+
+Five actions are attached to every event:
+
+- **Open vault**: opens `${metadata.ServerUrl}/`.
+- **Open admin**: opens `${metadata.ServerUrl}/admin/`.
+- **Copy server URL**: copies `${metadata.ServerUrl}`.
+- **Copy user email**: copies `${metadata.UserEmail}`.
+- **Copy source IP**: copies `${metadata.IP}`.
+
+Actions whose template field is empty for a given event (for example **Copy user email** on an event with no email) resolve to nothing useful, since the helper sends an empty string for fields it cannot extract.
+
+## Metadata fields
+
+The helper sends these keys, and the score reads them:
+
+- **`Event`**: drives severity and the badge label (values above).
+- **`Status`**: `down` or `unreachable`, set by the `/alive` liveness poll.
+- **`ServerUrl`**: the Vaultwarden base URL, used by the open-vault, open-admin, and copy-server-URL actions.
+- **`UserEmail`**: the account involved, when present. Part of the grouping key.
+- **`IP`**: the source IP of the authentication line, copied by the copy-source-IP action.
+
+## Troubleshooting and limitations
+
+- **The helper must run on the container host.** It uses `docker logs`, so it has to run where the Vaultwarden container runs, not on the Mac.
+- **Reports activity, not vault contents.** The helper reads the container log, so it sees authentication events and `/alive` reachability only. It cannot read vaults or secrets, and it does not block attacks: it reports a brute-force run, it does not stop it. Pair it with source-side hardening (disable open signups, use a strong `ADMIN_TOKEN`, front it with a reverse proxy and fail2ban if it is internet-reachable).
+- **Log wording varies by version.** The `login_failed`, `user_login`, `admin_login_failed`, and `admin_login` patterns match standard Vaultwarden logs. The `vault_exported` and `user_created` wordings differ slightly between versions; confirm against `docker logs <container>` and adapt the parser branch if an event does not appear.
+- **No events at all.** Check that the token is bound to `com.vaultwarden`, that the helper can reach the Mac on port 7776 (firewall), and that `VW_CONTAINER` matches the running container name.
+- **No down or unreachable events.** Confirm `VW_EMIT_DOWN` is not set to `0` and that `VW_URL` is reachable from the helper host.
+- **Bare-metal Vaultwarden.** If Vaultwarden does not run in Docker, point the watcher at the log file (`tail -F /path/to/vaultwarden.log`) instead of `docker logs`; the parser is the same.
+- **Sensitive actions are deliberately absent.** The catalog score uses only `openURL` and `copyToClipboard`. Kicking sessions, disabling the server, or rotating the admin token are sensitive and not included; those would need a local drop-in score you explicitly trust.
+</content>
+</invoke>
