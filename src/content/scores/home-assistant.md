@@ -1,229 +1,127 @@
 ---
 title: "Home Assistant"
-description: "Home Assistant state changes and automations in your Tempo timeline, with multi-key severity rules and human-readable titles via ${metadata.xxx} interpolation."
+description: "Home Assistant state changes for the entities you choose on the Tempo timeline, classified by device class, with severity for safety sensors, alarms, and locks."
 providerIdentifier: "com.home-assistant"
 color: "#18BCF2"
 version: "1.0.0"
 compatibility:
-  - "Home Assistant 2024.1+"
+  - "Home Assistant 2024.4+"
 pubDate: 2026-04-23
 builtIn: true
 ---
 
-Home Assistant has no native "custom webhook" notification service the way DSM or Proxmox do: you build the payload yourself inside an **automation**, using the `rest_command` or `notify.rest` integration. The upside: you control every field. The downside: there is no official external contract Tempo can conform to. This page documents the contract **Tempo expects**, and gives you a drop-in Jinja template to produce it.
+Home Assistant is a home automation platform. This score renders the state changes you choose to forward, classified by device class. Home Assistant posts to Tempo directly through a `rest_command`, so there is no companion helper to run. It is read-only into Tempo: the actions open the dashboard, an entity's history, or the automation editor, and nothing writes back to Home Assistant.
 
-This score ships with 13 severity rules that exercise Tempo's matching engine: multi-key matches (entity_id + state), glob patterns, and presentation templates that rewrite the title with values pulled from the payload.
+## How it works
 
-No adapter on the Tempo side is required.
+Home Assistant produces a state change for almost everything in the house, far more than belongs on a timeline. Two mechanisms keep the feed useful.
 
----
+First, you curate at the source. An automation forwards only the entities you tag, so the noise never leaves Home Assistant.
 
-## Install
+Second, the score classifies by device class. It reads the stable `device_class` attribute (`smoke`, `moisture`, `lock`, and similar) rather than the entity name, so severity holds up even when an integration names entities by hardware ID.
 
-1. Tempo ships this score **built-in**, it's seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there's nothing to download.
-2. In Tempo, open **Manage Sources** and enable **Home Assistant** (built-in scores are activated there; only the generic Scripts source auto-installs).
-3. In Tempo **Settings → Ingestion**, add a token named `home-assistant` bound to `com.home-assistant`. Copy the token.
-4. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/events`.
-5. Configure Home Assistant (see below).
+The data path is direct: a Home Assistant automation fires on a state change, calls the `rest_command`, and POSTs a JSON event to Tempo's ingestion endpoint with a per-provider token. The score then assigns severity, a badge label, grouping, and the action buttons.
 
-## Home Assistant side: the rest_command
+## Curate at the source
 
-Add this to your `configuration.yaml`:
+Home Assistant decides what reaches Tempo, not the score. The cleanest control is a label.
+
+1. In Home Assistant, add a label, for example `tempo`, to each entity you want on the timeline. Entity labels are under **Settings → Devices & Services → Entities**, or in an entity's own settings dialog. Labels require Home Assistant 2024.4 or later.
+2. The automation in step 3 below fires on every state change but forwards only entities that carry that label.
+
+When the timeline fills up later, tighten the label in Home Assistant rather than editing the score. Curation belongs on the Home Assistant side.
+
+<!-- SCREENSHOT: Home Assistant entity settings dialog with the "tempo" label assigned -->
+
+## Setup
+
+### 1. Create a token
+
+In Tempo, open **Settings → Ingestion** and add a token bound to `com.home-assistant`. Copy it.
+
+### 2. Define the rest_command
+
+Add this to `configuration.yaml`. The score reads the metadata keys `entity_id`, `device_class`, `friendly_name`, `area`, and `state`, so the payload sends those exact keys:
 
 ```yaml
+# configuration.yaml
 rest_command:
-  tempo_event:
-    url: "http://your-mac.local:7776/events"
+  tempo_ingest:
+    url: "http://<your-mac-ip>:7776/ingest"
     method: POST
-    headers:
-      Content-Type: "application/json"
-      X-Tempo-Token: "YOUR_TOKEN_HERE"
-    payload: >
-      {{ payload }}
     content_type: "application/json"
+    headers:
+      X-Tempo-Token: "<token>"
+    payload: >
+      {"title": "{{ friendly_name }} is {{ state }}",
+       "providerIdentifier": "com.home-assistant",
+       "metadata": {
+         "entity_id": "{{ entity_id }}",
+         "device_class": "{{ device_class }}",
+         "friendly_name": "{{ friendly_name }}",
+         "area": "{{ area }}",
+         "state": "{{ state }}",
+         "new_state": "{{ new_state }}",
+         "old_state": "{{ old_state }}"
+       }}
 ```
 
-Reload REST commands (**Developer Tools → YAML → REST Commands**) or restart HA.
+Copy `<token>` from **Settings → Ingestion**. Reload the YAML configuration (**Developer Tools → YAML → Reload**, or restart Home Assistant) so the command registers.
 
-## The payload contract
+### 3. Add the automation
 
-Tempo expects this shape. Fields marked **required** are the minimum; everything else is optional metadata that your severity rules and actions can reference with `${metadata.xxx}`.
-
-```json
-{
-  "title": "string - human-readable title (required; overridden by score rules)",
-  "providerIdentifier": "com.home-assistant",
-  "eventType": "alert",
-  "metadata": {
-    "entity_id":     "binary_sensor.kitchen_smoke",
-    "state":         "on",
-    "friendly_name": "Kitchen smoke detector",
-    "area":          "Kitchen",
-    "device_class":  "smoke",
-    "automation":    "optional - set this instead of entity_id for automation triggers"
-  }
-}
-```
-
-**Reserved Tempo fields (`title`, `providerIdentifier`, `eventType`) are at the top level. Everything Home Assistant specific lives in `metadata`.**
-
-## Jinja template: one automation, all entities
-
-Drop this automation into **Settings → Automations & Scenes**. It fires on any state change for any entity in the domains you care about (smoke, leak, door, window, motion, battery, climate), builds the Tempo payload with interpolated values, and POSTs it.
+This automation fires on any state change and forwards only labeled entities. The `device_class` value comes from the entity's attributes:
 
 ```yaml
-alias: "Tempo - forward state changes"
-mode: queued
-max: 25
-trigger:
-  - platform: state
-    entity_id:
-      - binary_sensor.kitchen_smoke
-      - binary_sensor.garage_leak
-      - binary_sensor.front_door
-      - binary_sensor.living_room_motion
-      - sensor.master_bedroom_battery
-      - climate.living_room
-action:
-  - service: rest_command.tempo_event
-    data:
-      payload: >-
-        {
-          "title": "{{ state_attr(trigger.entity_id, 'friendly_name') or trigger.entity_id }}",
-          "providerIdentifier": "com.home-assistant",
-          "eventType": "alert",
-          "metadata": {
-            "entity_id":     "{{ trigger.entity_id }}",
-            "state":         "{{ trigger.to_state.state }}",
-            "friendly_name": "{{ state_attr(trigger.entity_id, 'friendly_name') or trigger.entity_id }}",
-            "area":          "{{ area_name(trigger.entity_id) or 'Home' }}",
-            "device_class":  "{{ state_attr(trigger.entity_id, 'device_class') or '' }}"
-          }
-        }
-```
-
-For automation events (e.g. a scene firing), use a separate automation that sets `metadata.automation` instead of `metadata.entity_id`:
-
-```yaml
-alias: "Tempo - forward automation fires"
+alias: Tempo forward labeled entities
 trigger:
   - platform: event
-    event_type: automation_triggered
+    event_type: state_changed
+condition:
+  - "{{ trigger.event.data.entity_id in label_entities('tempo') }}"
 action:
-  - service: rest_command.tempo_event
+  - service: rest_command.tempo_ingest
     data:
-      payload: >-
-        {
-          "title": "Automation: {{ trigger.event.data.name }}",
-          "providerIdentifier": "com.home-assistant",
-          "eventType": "alert",
-          "metadata": {
-            "automation": "{{ trigger.event.data.name }}"
-          }
-        }
+      entity_id: "{{ trigger.event.data.entity_id }}"
+      device_class: "{{ state_attr(trigger.event.data.entity_id, 'device_class') }}"
+      friendly_name: "{{ trigger.event.data.new_state.attributes.friendly_name }}"
+      area: "{{ area_name(trigger.event.data.entity_id) }}"
+      state: "{{ trigger.event.data.new_state.state }}"
+      new_state: "{{ trigger.event.data.new_state.state }}"
+      old_state: "{{ trigger.event.data.old_state.state }}"
 ```
+
+<!-- SCREENSHOT: Home Assistant automation editor in YAML mode showing the forwarding automation -->
+
+Trigger a labeled entity. The event reaches Tempo's feed within about a second.
 
 ## How the score classifies events
 
-The bundled score runs **device_class-first**: matches on the stable `device_class` attribute that Home Assistant assigns to entities (e.g. `smoke`, `moisture`, `motion`, `tamper`) take priority over entity_id substring patterns. This holds up better because raw integration names like `binary_sensor.0x00158d0001abc_ias_zone` (Zigbee2MQTT) carry no semantic info: `device_class` is the signal that survives renames.
+The score matches device class first. The `device_class` attribute is stable, because Home Assistant assigns it from what a sensor reports rather than from how the entity is named. An integration such as Zigbee2MQTT may name a smoke detector `binary_sensor.0x00158d0001abc_ias_zone`, which carries no meaning, while its `device_class` stays `smoke`. Matching on the class catches both the well-named and the cryptic entity. A second set of rules matches `entity_id` glob patterns (`*_smoke*`, `*_leak*`, and similar) as a fallback for entities with no device class.
 
-Rules are evaluated in order, first match wins. Highlights:
+Rules are evaluated in order, and the first match wins:
 
-| Severity   | What triggers it |
-|------------|------------------|
-| `critical` | `device_class: smoke / carbon_monoxide / gas / moisture / safety` (state on); `alarm_control_panel.* state=triggered`; legacy entity_id glob (`*_smoke*`, `*_leak*`, `*_water*`) for users who haven't set device_class |
-| `warning`  | `device_class: tamper / problem` (state on); `device_class: battery` (low); `alarm_control_panel.* state=pending`; `event_type: homeassistant_stop` |
-| `info`     | Door/window/motion sensors; alarm panel armed/disarmed/arming transitions; locks (locked/unlocked); presence (`person.*` / `device_tracker.*` home/not_home); `homeassistant_start`; `device_class: update`; climate domain catch-all; `automation: *` |
-| `ok`       | Smoke cleared; moisture cleared (`state: off` for those classes) |
+| Severity | Triggers |
+|---|---|
+| `critical` | `device_class` smoke, carbon_monoxide, gas, moisture, or safety, in the `on` state; an `alarm_control_panel.*` entity that becomes `triggered` |
+| `warning` | `device_class` tamper or problem (`on`); a low battery; `alarm_control_panel.*` in the `pending` state; Home Assistant stopping |
+| `info` | doors, windows, and motion; alarm arm and disarm transitions; locks; presence (`person.*` and `device_tracker.*`, home or away); climate changes; an available update |
+| `ok` | a safety sensor returning to `off` (leak cleared, smoke cleared) |
 
-For the full list (~30 rules with title/subtitle templates), open the score file in Tempo's Score Editor or read `~/Library/Application Support/Tempo/Scores/com.home-assistant.json`.
+Entities with no `device_class` and no matching rule land at the `info` default. The safety styling depends on `device_class` and `entity_id` being present in the payload, which is why both are in the automation above.
 
-### Why device_class beats entity_id matching
+## Grouping and actions
 
-Two of the most common HA installs (Zigbee2MQTT, ESPHome auto-discovery) name entities by hardware ID, not semantics. A smoke detector might be `binary_sensor.0x00158d0001abc_ias_zone` rather than `binary_sensor.kitchen_smoke`. The legacy entity_id glob rules catch the second pattern but miss the first. The `device_class: smoke` match catches **both**, because Home Assistant assigns `device_class` based on what the sensor reports, not how you named it.
+Events stack per entity (`entity_id`) within a one-hour window, so an entity that changes state repeatedly reads as one entry rather than a row per change.
 
-The legacy entity_id rules are kept as a fallback, for users who haven't set device_class on a custom integration, named their entities semantically, or are using older HA Core versions where some integrations didn't expose device_class.
+Five actions are attached to every event:
 
-### Match semantics
+- **Open dashboard**: opens Home Assistant at `http://${metadata.senderAddress}:8123`. `senderAddress` is the host that posted the event, resolved automatically, so there is nothing to hardcode. For a custom port or HTTPS, edit the action's URL in the Score Editor.
+- **Open entity history**: opens the entity's history page for `${metadata.entity_id}`.
+- **Open automations**: opens the automation editor.
+- **Copy entity ID**: copies `${metadata.entity_id}`.
+- **HA docs**: opens the Home Assistant documentation.
 
-- **Multi-key**: all keys in a rule's `match` dict must match (AND). The smoke-detector rule above fires only for `binary_sensor.*_smoke*` entities **and** `state: "on"`. The complementary rule (state: `off`) renders a "cleared" event with `ok` severity: one sensor, two lines of timeline, both self-explanatory.
-- **Globs**: `*` matches any run of characters, `?` matches a single character. So `binary_sensor.*_smoke*` matches `binary_sensor.kitchen_smoke`, `binary_sensor.garage_smoke_detector`, etc.
-- **First match wins**: rules are evaluated top-to-bottom. Put specific rules above general ones. The bundled HA score ends with a catch-all `automation: "*"` rule so nothing falls through to the severity default.
-- **Presentation templates**: `title` and `subtitle` are interpolated at render time. If the referenced key is missing from metadata, the raw template is shown, which is usually enough to spot the typo.
+## Known limitations
 
-## Actions provided (5 total)
-
-| Group        | Actions                                                        |
-|--------------|----------------------------------------------------------------|
-| **HA UI**    | Open dashboard · Open entity history · Open automations page   |
-| **Clipboard**| Copy entity ID                                                 |
-| **Docs**     | Home Assistant docs                                            |
-
-## Customizing
-
-- **HA URL**: the actions target `http://${metadata.senderAddress}:8123`, the address Home Assistant posted from, resolved automatically, so there's nothing to hardcode. If you reach HA on a custom port or over HTTPS with a custom domain, edit the `openURL` in each action.
-- **More entity types**: add rules to the score via the in-app **Score editor** (Timeline tab). Click **+ Add rule**, add your match conditions, pick a severity, and optionally write a title template. The Try panel on the right lets you drop a recent event against the rule and preview the badge + resolved title before saving.
-- **Hide noisy entities**: either drop them from the automation's `entity_id` list (don't send at all), or write a rule that matches them and tag it with `severity: info` + no title override so they're visible but quiet.
-
-## Verifying
-
-Trigger any of the entities you listed in the automation. Tempo's live feed should show a new alert within a second.
-
-If not, see **Troubleshooting** below.
-
----
-
-## Troubleshooting
-
-If events don't land in Tempo, run these five checks in order.
-
-**1. Is Tempo reachable from Home Assistant?** SSH to the HA host (or use the SSH add-on terminal) and run:
-
-```sh
-curl -v http://your-mac.local:7776/health
-```
-
-A `200 OK` means reachability is fine. A timeout or "No route to host" is a network problem (firewall on the Mac, WiFi isolation, HA running in a VLAN that can't reach the Mac).
-
-**2. Does the token work and does Tempo accept your payload shape?** From the same HA host, send a synthetic event that mimics the automation's payload:
-
-```sh
-curl -X POST http://your-mac.local:7776/events \
-  -H 'Content-Type: application/json' \
-  -H 'X-Tempo-Token: YOUR_TOKEN_HERE' \
-  -d '{"title":"smoke probe","providerIdentifier":"com.home-assistant","eventType":"alert","metadata":{"entity_id":"binary_sensor.kitchen_smoke","state":"on","friendly_name":"Kitchen smoke detector","area":"Kitchen","device_class":"smoke"}}'
-```
-
-A `200` or `202` with "Smoke detected in Kitchen" appearing in Tempo's feed means ingestion + the score's presentation rule both work. A `401` means the token is wrong or not bound to `com.home-assistant`; a `422` means the JSON is malformed.
-
-**3. Are the packets reaching the Mac?** Open Terminal on the Mac and watch inbound traffic:
-
-```sh
-sudo tcpdump -i any -A 'tcp port 7776 and src host your-ha-host.local'
-```
-
-Trigger a state change in HA. You should see the JSON body in the output. If nothing appears, HA's `rest_command` is failing before the request leaves. Check HA logs (**Settings → System → Logs**) for errors on `rest_command.tempo_event`.
-
-**4. What is Tempo doing right now?** Stream Tempo's live logs:
-
-```sh
-log stream --predicate 'subsystem == "app.tempoapp.Tempo"' --level debug
-```
-
-Useful to watch the score's rule evaluation in real time.
-
-**5. What did Tempo see historically?** Grep the rolling file log:
-
-```sh
-grep -h com.home-assistant ~/Library/Application\ Support/Tempo/Logs/tempo-*.log | tail -50
-```
-
-Every HA event Tempo has touched appears with timestamp and outcome. This is what `Settings → Help → Export diagnostics bundle` packages up.
-
----
-
-## References
-
-- [Home Assistant `rest_command` integration](https://www.home-assistant.io/integrations/rest_command/)
-- [Home Assistant automation triggers](https://www.home-assistant.io/docs/automation/trigger/)
-- [Jinja templating in HA](https://www.home-assistant.io/docs/configuration/templating/)
+Curation lives on the Home Assistant side: the `tempo` label decides what is sent, and Tempo classifies and renders only what arrives. To add or remove entities, change the label rather than the score. Other domains, including calendar events, can be forwarded the same way by sending the metadata keys the score reads.

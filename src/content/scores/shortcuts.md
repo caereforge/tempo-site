@@ -80,6 +80,8 @@ The **Send Event to Tempo** action is a macOS App Intent: it talks to Tempo on `
 
 This is the same ingestion contract any script uses (see [Scripts](/scores/scripts/)), so an iOS event is classified exactly like a Mac one. A geofence trigger that fires when you arrive at or leave home fits this pattern.
 
+Each Shortcut needs its own copy of this action. The **Get Contents of URL** block is not shared across Shortcuts: duplicate it and adapt the title, severity, and metadata in every Shortcut or automation you build, so each one reports its own event.
+
 ### Reaching the Mac when you are away
 
 On the same Wi-Fi, the Mac's LAN IP is enough. To send from outside the home network, the phone needs a route back to the Mac. **Tailscale** is the simplest: install it on both the Mac and the phone, sign both into the same tailnet, and use the Mac's Tailscale address (the `100.x.y.z` IP) as the URL host. The traffic stays inside your tailnet, so no port is exposed to the public internet. A traditional VPN back to the home network works the same way.
