@@ -28,7 +28,7 @@ GitHub's servers live on the public internet and cannot reach your LAN, so a sma
 
 **Get the files.** In the score's **Source** tab (Score Editor), the **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the relay package to `~/Library/Application Support/Tempo/Integrations/com.github.actions/` and reveals it. Copy that folder to the host that will run the relay, then follow its **Open README**.
 
-**Configure the relay.** It needs two secrets — the HMAC webhook secret and the Tempo token (bound to `com.github.actions`, from **Settings → Ingestion**):
+**Configure the relay.** It needs two secrets, the HMAC webhook secret and the Tempo token (bound to `com.github.actions`, from **Settings → Ingestion**):
 
 - On a **Mac**, store them in the **Keychain** (never on disk):
   ```sh
@@ -37,9 +37,34 @@ GitHub's servers live on the public internet and cannot reach your LAN, so a sma
   ```
 - On **Linux / Docker / a `.env` file**, set environment variables instead (`TEMPO_GH_WEBHOOK_SECRET`, `TEMPO_TOKEN`), or use the `*_FILE` convention to keep secrets off plaintext. Resolution order per secret: `*_FILE` → env var → macOS Keychain.
 
-Point the relay at Tempo with `TEMPO_URL=http://<mac-running-tempo>:7776/ingest`, run it (the package ships a LaunchAgent), then expose its port `7777` through a public tunnel (Cloudflare Tunnel, Tailscale Funnel, ngrok). The tunnel is the only internet-facing surface — scope it to `/gh` and keep the HMAC secret private.
+Point the relay at Tempo with `TEMPO_URL=http://<mac-running-tempo>:7776/ingest` and run it (the package ships a LaunchAgent). It now listens on port `7777`, but only on your LAN. The last step is to give GitHub a public way in.
 
-**Add the webhook.** In the repo (or org) **Settings → Webhooks**, point a new webhook at your tunnel URL plus `/gh`, set **Content type** to `application/json`, and use the same HMAC secret.
+### Exposing the relay with a tunnel
+
+GitHub posts from the public internet, so the relay needs a public URL that forwards to its local port `7777`. A **tunnel** does exactly that, without opening a port on your router or exposing your home IP. **Cloudflare Tunnel** (its daemon is called `cloudflared`) is the common choice; **Tailscale Funnel** and **ngrok** are alternatives that work the same way.
+
+The fastest path is a Cloudflare **quick tunnel**, which needs no account and no domain:
+
+```sh
+cloudflared tunnel --url http://localhost:7777
+```
+
+It prints a public `https://<random>.trycloudflare.com` address that forwards to the relay; you use that address plus `/gh` as the GitHub webhook URL. The catch: a quick tunnel's address is **ephemeral**. It changes every time `cloudflared` restarts, and you'd have to update the GitHub webhook each time. Good for a first test, not for a permanent setup.
+
+For a stable setup, use a **named tunnel**. It keeps a fixed hostname across restarts, at the cost of a (free) **Cloudflare account** and a **domain on Cloudflare's DNS**:
+
+```sh
+cloudflared tunnel login
+cloudflared tunnel create tempo-gh
+cloudflared tunnel route dns tempo-gh gh.example.com
+cloudflared tunnel run --url http://localhost:7777 tempo-gh
+```
+
+GitHub then posts to `https://gh.example.com/gh`, unchanging.
+
+Either way the tunnel is the **only internet-facing surface**, so keep it tight: route only the `/gh` path to the relay and keep the HMAC secret private. The relay rejects any request whose signature doesn't match, so a discovered URL alone can't inject events.
+
+**Add the webhook.** In the repo (or org) **Settings → Webhooks**, point a new webhook at your tunnel address plus `/gh`, set **Content type** to `application/json`, and use the same HMAC secret.
 
 If the relay runs on a different host than Tempo, that host must reach the Mac on port **7776** (allow it in the macOS firewall or Little Snitch, and optionally restrict the token to that host's IP via its allowlist in **Settings → Ingestion**).
 
