@@ -16,7 +16,7 @@ This is a read-only view: the actions open the run in your browser, jump to the 
 
 ## Install
 
-The score ships **built-in** and is seeded on first launch — there's nothing to download. To start receiving events:
+The score ships **built-in** and is seeded on first launch, so there's nothing to download. To start receiving events:
 
 1. In Tempo **Settings → Ingestion**, add a token bound to `com.github.actions` and copy it. (The binding also covers any dotted sub-namespace under it.)
 2. Note your Tempo endpoint: `http://<your-mac-hostname>:7776/ingest` (or `127.0.0.1` if Tempo is loopback-only).
@@ -24,7 +24,7 @@ The score ships **built-in** and is seeded on first launch — there's nothing t
 
 ## GitHub side
 
-GitHub's servers live on the public internet and cannot reach your LAN, so a small **companion relay** sits in between: it receives GitHub's webhook, verifies the HMAC signature on every request, and forwards the payload to Tempo. Tempo does **not** run the relay for you — it runs on a host you choose that GitHub can reach (through a tunnel) and that can reach Tempo.
+GitHub's servers live on the public internet and cannot reach your LAN, so a small **companion relay** sits in between: it receives GitHub's webhook, verifies the HMAC signature on every request, and forwards the payload to Tempo. Tempo does **not** run the relay for you; it runs on a host you choose that GitHub can reach (through a tunnel) and that can reach Tempo.
 
 **Get the files.** In the score's **Source** tab (Score Editor), the **Helper** section has **Open in Finder** and **Open README**. *Open in Finder* copies the relay package to `~/Library/Application Support/Tempo/Integrations/com.github.actions/` and reveals it. Copy that folder to the host that will run the relay, then follow its **Open README**.
 
@@ -83,8 +83,8 @@ Issues, pull requests, and workflow runs each group into their own stack (issue,
 
 Every event carries the same five actions:
 
-- **Open run** — opens the run in your browser (`${metadata.runUrl}`). Renders disabled when an event has no run URL, for example a non-workflow event.
-- **Open repo Actions** — opens `https://github.com/${metadata.repo}/actions`.
-- **Copy repo** — copies `${metadata.repo}` to the clipboard.
-- **Clone repo** — opens Terminal with `git clone https://github.com/${metadata.repo}.git`.
-- **GitHub Actions docs** — opens the official docs.
+- **Open run**: opens the run in your browser (`${metadata.runUrl}`). Renders disabled when an event has no run URL, for example a non-workflow event.
+- **Open repo Actions**: opens `https://github.com/${metadata.repo}/actions`.
+- **Copy repo**: copies `${metadata.repo}` to the clipboard.
+- **Clone repo**: opens Terminal with `git clone https://github.com/${metadata.repo}.git`.
+- **GitHub Actions docs**: opens the official docs.
