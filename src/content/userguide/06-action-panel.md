@@ -35,7 +35,7 @@ Each button shows:
 
 - A **leading SF Symbol icon** chosen by the score (a lock for SSH, a globe for browser URLs, a terminal for commands)
 - A **label** chosen by the score: descriptive ("Open dashboard", "Copy IP", "Ping client") rather than generic
-- A **subtitle** showing the resolved trigger value (the URL, the command, the string to copy) so you can confirm what's about to happen before clicking
+- A **trailing warning triangle** when the action can't run because a referenced metadata field is missing; hovering the button shows a tooltip (the label when the action is runnable, or the names of the missing fields when it isn't)
 
 Actions are ordered: **score-declared defaults first** (stable across all events of the same source, so you build muscle memory), **per-event actions next** (the upstream tool put them in the payload, override score defaults by label).
 
@@ -43,17 +43,17 @@ Click a button:
 
 - **`openURL`** triggers: open in the relevant macOS handler (browser for `https://`, Terminal for `ssh://`, the registered app for `obsidian://` or `slack://`, and so on for any of the allowed schemes). Only allowlisted schemes dispatch; anything outside the allowlist is blocked at click time
 - **`openTerminalWith`** triggers: Terminal.app activates and the command runs in a new window or tab
-- **`copyToClipboard`** triggers: the string lands in your clipboard, and a brief feedback animation fires on the button
+- **`copyToClipboard`** triggers: the string lands in your clipboard
 
 The event stays selected, so you can fire multiple actions in a row.
 
-> 💡 **Note**: action buttons resolve `${...}` placeholders **at click time**, not at render time. If the resolved subtitle shows `${metadata.host}` literally instead of the actual host, that means the payload didn't include a `host` field, so the score's interpolation had nothing to substitute. Either fix the upstream payload or change the score to reference a field that's actually present.
+> 💡 **Note**: action buttons interpolate `${...}` placeholders against the event's metadata **when the panel renders**. If a referenced field is missing, that placeholder resolves to an empty string and the button is shown **disabled and grayed with a warning icon**; its tooltip names the missing field(s). The action doesn't display the literal `${metadata.host}` text and it can't be clicked. Either fix the upstream payload to include the field or change the score to reference a field that's actually present.
 
 ### Details section
 
 Below the actions, the **Details** section renders the event's full metadata payload as a list of key/value rows. Each row is monospaced for the value (so JSON-shape values are readable) and selectable for copy.
 
-Tempo hides a small set of internal keys (`badge`, `badgeHex`, `source`, `providerName`, `report`) that exist for rendering plumbing rather than user-facing information. Everything else is shown verbatim.
+Tempo hides a small set of internal keys (`badge`, `badgeHex`, `source`, `providerName`, `report`, `thumbnail`, `_transport`) that exist for rendering plumbing rather than user-facing information. Everything else is shown verbatim.
 
 Long values (anything over ~200 characters: long notes, large embedded JSON, multi-URL fields) render as a **collapsible row** with a "Show more" toggle, so a single large field can't blow up the panel.
 
@@ -70,7 +70,7 @@ These two buttons apply to *any* event type: alerts, reminders, calendar events 
 
 > 💡 **Note**: acknowledging or dismissing a calendar event or a reminder is a *Tempo-side soft mark*: Tempo records you've seen it (or hidden it from the active feed), but never propagates back to Calendar.app or Reminders.app. The original calendar entry stays scheduled and the reminder stays pending in their respective apps. This is deliberate: Tempo isn't your calendar app and isn't your task manager, so it doesn't reach into them. To complete a reminder for real, use Reminders.app, or click the per-event **Mark complete** action in the panel above (once you've granted Tempo access to Reminders, that path *does* propagate completion upstream).
 
-The yellow accent on Acknowledge isn't decorative: it's the color Tempo uses globally for "user attention" affordances (filter banner, ack pills). Once you've internalized that, the Acknowledge button reads as "this is a user-attention action" rather than just "this is the primary button."
+Yellow is the color Tempo uses across the app for user-attention affordances (the filter banner, ack pills, and this Acknowledge button), so the accent identifies Acknowledge as a user-attention action.
 
 > 💡 **Note**: when an event is already acked, the Acknowledge button renders as a ghost outline (yellow border, transparent fill) rather than a filled prominent button. The color stays so you know what state it represents, but the visual weight drops: un-acking is reversible plumbing rather than a primary action.
 
@@ -149,7 +149,7 @@ If you selected "everything in this stack" expecting all warnings and the breakd
 The bulk panel deliberately omits:
 
 - **Score-defined actions** (SSH, Open dashboard, etc.): these are per-event by design. Most actions don't make sense when fanned out across multiple events (you don't want to SSH into 12 different hosts at once; you want to SSH into the one host the alert is about)
-- **Restore**: when a multi-select includes already-dismissed events, the bulk panel still offers Acknowledge all / Dismiss all, but bulk-restore isn't surfaced. Restore individual events from their detail view instead
+- **Restore**: when a multi-select includes already-dismissed events, the bulk panel still offers Acknowledge all / Dismiss all, but bulk-restore isn't offered. Restore individual events from their detail view instead
 
 These omissions aren't gaps; they're intentional. Bulk operations are for the repetitive verbs (ack, dismiss); per-event verbs stay per-event.
 
@@ -161,7 +161,7 @@ When no event is selected, the action panel shows a placeholder:
 
 > Select an event to see actions.
 
-This isn't an empty-state to be embarrassed about; it's a deliberate breath in the layout. The action panel has a defined width (it's resizable but always present), and it would feel uncomfortable to leave it blank. The placeholder confirms that the panel is intentional and waiting for input, rather than broken.
+The action panel has a defined width (it's resizable but always present), so it stays in place with no event selected. The placeholder text confirms the panel is waiting for input rather than broken.
 
 ---
 

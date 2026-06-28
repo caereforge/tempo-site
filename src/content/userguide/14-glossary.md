@@ -38,7 +38,7 @@ Actions are user-triggered in v1: Tempo never fires one on its own. Auto-firing 
 
 The technical part of an [action](#action) that says *what* happens when the action is clicked. The five trigger types in v1:
 
-- `openURL`: opens a URL whose scheme is on Tempo's allowlist (`https`, `ssh`, `sftp`, `mailto`, and ~20 app schemes); `file://`, `javascript:` and similar are blocked
+- `openURL`: opens a URL whose scheme is on Tempo's allowlist (`https`, `ssh`, `sftp`, `mailto`, and roughly two dozen app schemes); `file://`, `javascript:` and similar are blocked
 - `openTerminalWith`: opens Terminal.app and runs a command
 - `copyToClipboard`: copies a string to the system clipboard
 - `completeReminder`: flips an Apple Reminder's done state to completed (EventKit write-back)
@@ -64,7 +64,7 @@ You don't usually need to think about this. Tempo derives it for you, and it shi
 
 The trail of what happened on the ingestion side: which payloads arrived, from which IP, with which token, accepted or rejected and why. Useful when a [score](#score) isn't behaving as expected and you need to confirm whether the underlying event even reached Tempo.
 
-Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (last 500 rows) and surfaced in the Security Audit window (shield icon / Settings → Security). Everything else, accepted events included, lives in OSLog, viewable via macOS Console.app or via the diagnostic export from Settings → Help.
+Rejections are written to `~/Library/Application Support/Tempo/rejections.csv` (last 500 rows) and shown in the Security Audit window (shield icon / Settings → Security). Everything else, accepted events included, lives in OSLog, viewable via macOS Console.app or via the diagnostic export from Settings → Help.
 
 **See also**: Chapter 12.6 (Logs and diagnostic export).
 
@@ -110,6 +110,16 @@ Dismissing is the right move for events you've handled and don't want cluttering
 
 ---
 
+### Episode
+
+One open-to-close session of a stateful condition: opened when the source reports the condition `firing` and closed when it reports the matching `resolved`, tied together by a stable [externalID](#externalid). A monitor that goes down and later recovers folds its down and up updates into a single episode rather than two unrelated events.
+
+The episode is the unit the needs-attention filter and session grouping operate on: a closed episode (resolved, or acked/dismissed) drops out of needs-attention, while an open one stays. Session grouping rules (`opens` / `closes` / `continues`) are file-authored and read-only in the Score Editor.
+
+**See also**: [State (firing / resolved)](#state-firing--resolved), [Stack](#stack), [externalID](#externalid), Chapter 11 (Score authoring).
+
+---
+
 ### Event
 
 The atomic unit Tempo deals with. Anything that happens (a calendar entry, a backup completion, a UniFi alarm, a GitHub Actions run) arrives at Tempo as an event with a title, a timestamp, a [provider](#provider) identifier, and a payload of metadata.
@@ -122,7 +132,7 @@ Events have a small set of types (`alert`, `event`, `task`, `reminder`) and a [s
 
 ### externalID
 
-The identifier the upstream source uses for an event. When the same upstream entity sends multiple updates (e.g., Uptime Kuma re-notifying every 60 seconds that web-01 is down), Tempo uses the externalID to recognise them as updates to the same event rather than separate events.
+The identifier the upstream source uses for an event. When the same upstream entity sends multiple updates (e.g., Uptime Kuma re-notifying every 60 seconds that web-01 is down), Tempo uses the externalID to recognize them as updates to the same event rather than separate events.
 
 If a source sends a fresh externalID every time, Tempo treats each one as new. If it sends a stable externalID per monitored thing, repeated ingests update the existing row in place.
 
@@ -152,9 +162,9 @@ Configurable per score: 15 minutes, 30 minutes, 1 hour, 6 hours, 1 day, 1 week, 
 
 ### Headline metric
 
-A user-facing number or short string surfaced prominently on an event card (file size, duration, error count, IP address) chosen by the [score](#score) for that source. Pulled from the event payload via [interpolation](#interpolation).
+A user-facing number or short string displayed prominently on an event card (file size, duration, error count, IP address) chosen by the [score](#score) for that source. Pulled from the event payload via [interpolation](#interpolation).
 
-Headline metric is the difference between a card that says "Backup completed" and one that says "Backup completed · +147KB · 1.2s".
+Example: a Kopia card reading "Backup completed · +147KB · 1.2s", where the size and duration are pulled from the event payload and appended to the title.
 
 **See also**: Chapter 5.1 (The event card), Chapter 7.4 (Presentation and custom labels).
 
@@ -162,11 +172,11 @@ Headline metric is the difference between a card that says "Backup completed" an
 
 ### Heatmap
 
-The 24-hour activity strip that sits above the event feed for the current day. Each segment is one hour, coloured by the highest-severity event in that hour: blue (info), green (ok), yellow (warning), red (error/critical), neutral grey (no events).
+The 24-hour activity strip that sits above the event feed for the current day. Each segment is one hour, colored by the highest-severity event in that hour: blue (info), green (ok), yellow (warning), red (error/critical), neutral gray (no events).
 
 Click any hour segment to scroll the feed to that hour. Two visual styles available, pill or flat, togglable in Settings → Interface.
 
-**See also**: Chapter 5.5 (The heatmap), [Source history view](#source-history-view) for longer-range visualisation.
+**See also**: Chapter 5.5 (The heatmap), [Source history view](#source-history-view) for longer-range visualization.
 
 ---
 
@@ -176,7 +186,7 @@ The HTTP server inside Tempo that listens for incoming events from external sour
 
 An optional encrypted listener runs on port `8776` (TLS, self-signed cert, anti-downgrade), opt-in per token via a `secure` flag, shipped in 1.1.
 
-Receives events at `POST /ingest` (generic) and at module-specific paths (`/kopia`, `/ingest/unifi`, `/uptime-kuma`).
+Receives events at `POST /ingest` (generic) and at module-specific paths (`/kopia`, `/ingest/unifi/network`, `/ingest/unifi/protect`, `/uptime-kuma`).
 
 **See also**: Chapter 8.2 (Ingestion and tokens), Chapter 10.2 (Generic webhook).
 
@@ -264,7 +274,7 @@ Tempo ships with [bundled scores](#bundled-score) for common sources. You can ed
 
 ### `.tempo-score` file
 
-A score file with a custom file extension that triggers a one-click install flow. Double-clicking a `.tempo-score` file opens Tempo's **Score Review Sheet** (a preview of what's about to be installed: provider identifier, display name, colour, rules, default actions) and an Install button.
+A score file with a custom file extension that triggers a one-click install flow. Double-clicking a `.tempo-score` file opens Tempo's **Score Review Sheet** (a preview of what's about to be installed: provider identifier, display name, color, rules, default actions) and an Install button.
 
 Used for distributing community-contributed scores via the public catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores). Functionally identical to a `.json` score file, but the extension makes the install flow simpler.
 
@@ -274,7 +284,7 @@ Used for distributing community-contributed scores via the public catalog at [gi
 
 ### Severity
 
-A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`. Drives the colouring of cards, badges, and the heatmap. Assigned by the [score](#score) for the source, not a property the upstream tool sets directly.
+A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`. Drives the coloring of cards, badges, and the heatmap. Assigned by the [score](#score) for the source, not a property the upstream tool sets directly.
 
 `info` is blue and `ok` is green, both quiet outcomes, distinguishable. `warning` is yellow. `error` and `critical` are red. The exact mapping is configurable per score via [severity rules](#severity-rule).
 
@@ -284,7 +294,7 @@ A semantic label on each event: `info`, `ok`, `warning`, `error`, or `critical`.
 
 ### Severity rule
 
-A pattern inside a [score](#score) that matches against fields in an incoming event payload and assigns a [severity](#severity) (and optionally a [custom label](#custom-label) and a colour override) when it matches. Rules are evaluated top-to-bottom; the first match wins.
+A pattern inside a [score](#score) that matches against fields in an incoming event payload and assigns a [severity](#severity) (and optionally a [custom label](#custom-label) and a color override) when it matches. Rules are evaluated top-to-bottom; the first match wins.
 
 Example: a UniFi score might have a rule that matches `alarmKey == STA_ASSOC_FAILURE` and assigns severity `warning` with the custom label "Connection failed".
 
@@ -296,7 +306,7 @@ Example: a UniFi score might have a rule that matches `alarmKey == STA_ASSOC_FAI
 
 A single stream of events from a [provider](#provider). One Kopia repo is one source; one UniFi controller is one source; one Home Assistant instance is one source. Distinguished from provider when a single provider hosts multiple distinct streams.
 
-Sources appear as rows in the source panel. You can hide a source, set per-source auto-dismiss, change its colour, and view its history.
+Sources appear as rows in the source panel. You can hide a source, set per-source auto-dismiss, change its color, and view its history.
 
 **See also**: Chapter 2.2 (Sources and providers), Chapter 4 (Source panel).
 
@@ -304,7 +314,7 @@ Sources appear as rows in the source panel. You can hide a source, set per-sourc
 
 ### Source history view
 
-A separate visualisation, accessed from the source actions menu (the "i" icon next to a source row → "Show history"), that displays activity for that single source over the past 84 days as a GitHub-contribution-style grid. Each cell is one day, coloured by activity volume + max severity.
+A separate visualization, accessed from the source actions menu (the "i" icon next to a source row → "Show history"), that displays activity for that single source over the past 84 days as a GitHub-contribution-style grid. Each cell is one day, colored by activity volume + max severity.
 
 The full event database keeps everything indefinitely; the 84-day window is what this view renders, not what Tempo retains.
 
@@ -324,8 +334,10 @@ Click a stack to expand it into individual events. Use the dismiss-all footer at
 
 ### State (firing / resolved)
 
-For events from sources that report ongoing conditions (like Uptime Kuma monitors or Home Assistant alarms), Tempo tracks whether the condition is currently *firing* (active problem) or *resolved* (cleared). The card surfaces this in colour and meta-text.
+For events from sources that report ongoing conditions (like Uptime Kuma monitors or Home Assistant alarms), Tempo tracks whether the condition is currently *firing* (active problem) or *resolved* (cleared). The card shows this in color and meta-text.
 
-Stateful behaviour requires the source to send updates with a stable [externalID](#externalid) so Tempo can recognise updates as belonging to the same condition.
+Events that don't track an ongoing condition (one-shot notifications, a completed backup, a calendar entry) carry the third state value, `info`. The full triplet is `firing` / `resolved` / `info`.
+
+Stateful behavior requires the source to send updates with a stable [externalID](#externalid) so Tempo can recognize updates as belonging to the same condition.
 
 **See also**: Chapter 2.5 (Severity, state, acknowledgment, dismissal).

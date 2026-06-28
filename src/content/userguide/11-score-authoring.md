@@ -102,9 +102,9 @@ If you don't want to set this in the score, the user can override it in their lo
 
 ### `color`
 
-Accent colour for the source, as `#RRGGBB` hex. Pattern enforced.
+Accent color for the source, as `#RRGGBB` hex. Pattern enforced.
 
-If omitted, Tempo uses a neutral gray (`#8E8E93` is a common fallback). Strongly recommended to set this: distinct colours are how the source panel stays scannable.
+If omitted, Tempo uses a neutral gray (`#8E8E93` is a common fallback). Strongly recommended to set this: distinct colors are how the source panel stays scannable.
 
 ### `severityDefault`
 
@@ -138,13 +138,13 @@ An ordered array of rules. Each rule has:
 
 Evaluation: top-to-bottom, first match wins. Order matters: put more specific rules above more general ones.
 
-> 💡 **Note**: the runtime also supports a richer rule shape with `color` overrides and presentation templates (`titleTemplate`, `subtitleTemplate`). The public catalog schema is intentionally narrower: those features are local-only and don't ship in catalog scores. Use the Score Editor for the richer shape; manage your own scores in `~/Library/Application Support/Tempo/Scores/` for distribution.
+> 💡 **Note**: the runtime also supports a richer rule shape with a `color` override and presentation templates (the JSON keys are `title` and `subtitle`). The public catalog schema is intentionally narrower: those features are local-only and don't ship in catalog scores. Use the Score Editor for the richer shape; manage your own scores in `~/Library/Application Support/Tempo/Scores/` for distribution.
 
 ### `grouping` and `groupingWindow`
 
 Stack grouping configuration. See [§2.6 - Stack and grouping](/docs/02-concepts#26---stack-and-grouping) and [§7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping).
 
-- **`grouping`**: array of templates, with `${metadata.xxx}` placeholders. Tempo picks the first one that fully resolves
+- **`grouping`**: a single template string, or an array of fallback templates, with `${metadata.xxx}` placeholders. Tempo picks the first one that fully resolves
 - **`groupingWindow`**: duration string: `15m`, `30m`, `1h`, `6h`, `1d`, `1w`, or empty (no cutoff)
 
 ```json
@@ -164,7 +164,8 @@ Array of action buttons that appear on every event from this provider. Each acti
 
 - **`label`** (required, ≥1 char): button text
 - **`systemIcon`** (required, ≥1 char): SF Symbol name
-- **`trigger`** (required): an object with one of five shapes (covered in §11.4)
+- **`trigger`** (required): an object with one of three shapes (covered in §11.4)
+- **`_disabled`** (optional boolean): when `true`, the action ships present but inactive. It does not render in the action panel until the user enables it in the Score Editor. Useful for shipping an action that only works on some setups (the bundled Kopia score ships its web-UI and docs actions disabled). This flag is per-action, not per-score.
 
 ```json
 "defaultActions": [
@@ -183,12 +184,14 @@ Per-event actions sent in the payload itself are *appended* after the default ac
 Beyond the basics above, a real bundled score can use the following blocks. They're all optional, and most of them are also editable from the Score Editor (the exceptions are noted). A shipped score like `com.beszel.json` uses `senderSeverityWins`, `groupingRules`, `helper` and `surface` together; these are what you'll find.
 
 - **`senderSeverityWins`** (boolean, default `true`): when `true`, a payload that carries its own non-`info` severity field short-circuits `severityRules` and uses the sender's severity directly. Set `false` to make your rules authoritative for a source that over-declares severity. Editable on the Severity tab.
-- **`groupingRules`** / **`restStateOverrides`**: *session* grouping, distinct from the template `grouping` above. `groupingRules` assign each event an `opens` / `closes` / `continues` role keyed off `${metadata.x}` values, so a monitor that goes down and later recovers folds into one episode. Used by stateful sources (Uptime Kuma, Beszel, UniFi). `restStateOverrides` adjusts the resting/closed-cycle severity of such an episode. **File-authored and read-only in the editor**: the editor preserves them but does not expose a UI for them.
+- **`groupingRules`** / **`restStateOverrides`**: *session* grouping, distinct from the template `grouping` above. `groupingRules` assign each event a role keyed off `${metadata.x}` values, so a monitor that goes down and later recovers folds into one episode. The session roles are `opens` / `closes` / `continues`; the punctual roles `single` (never stacks) and `repeats` (stacks repetitions within a window) also exist for events complete in themselves. Used by stateful sources (Uptime Kuma, Beszel, UniFi). `restStateOverrides` swaps the `opens` / `closes` orientation for natural-off subjects and can set a per-subject resolved-cycle severity. **File-authored and read-only in the editor**: the editor preserves them but does not expose a UI for them. Session grouping is an advanced mechanism the bundled stateful scores rely on; it is not yet a supported surface for user-authored scores and may change. The grouping available and supported today is the template `grouping` above.
 - **`indicatorRules`** / **`tagRules`**: payload-driven emoji indicators and tags attached to matching events. Edited on the **Tags & emoji** tab.
 - **`ackRules`** / **`dismissRules`**: payload conditions that auto-acknowledge or auto-dismiss matching events. Evaluation is **any-rule-matches** (logical OR across rules); when both an ack rule and a dismiss rule match the same event, **dismiss wins**. Edited on the **Ack and dismiss** tab.
-- **`helper`**: a short string naming the ingestion helper or adapter associated with the source (informational / catalog metadata).
-- **`surface`**: `"timeline"` (default) or `"agenda"`. An `agenda` score is a day-view source (calendar/reminders-style); it only exposes the Source and Actions tabs in the editor and skips the severity/grouping/tag/ack machinery.
-- **Meta keys**: keys prefixed with `_` are reserved metadata and are ignored by the runtime logic: **`_disabled`** (boolean, ships a score in a dormant state until the user enables it), **`_comment`** (free-text note for authors/reviewers), **`_bundledVersion`** (version marker the seeder uses to track bundled-vs-user state).
+- **`eventPattern`**: `"episodic"` (default), `"entity"`, or `"run-bound"`. `episodic` treats each event as a standalone occurrence. `run-bound` activates the lifecycle UI layer for finite multi-step runs (step/total subtitle, run-status badge, timeout check) and is driven by reserved `runTotal` / `runTimeout` / `runComplete` / `runStatus` metadata keys. `entity` is reserved for long-lived stateful subjects driven via `externalID` upsert. **File-authored**.
+- **`stackTitle`**: a `${...}` template that overrides the title of a grouped stack's primary row (single-event rows ignore it). Resolved against the primary event with the standard `${metadata.x}`, `${title}`, and `${providerIdentifier}` placeholders.
+- **`helper`**: an object describing the companion helper or adapter associated with the source (informational / catalog metadata only; Tempo never installs or runs it). Optional fields: **`summary`** (one-line description), **`platforms`** (array of file-extension hints for the shipped variants, e.g. `"sh"`, `"py"`, `"ps1"`), **`url`** (external location when the helper is hosted elsewhere rather than bundled beside the score). The bundled `com.beszel.json` ships `"helper": { "platforms": ["py"], "summary": "Polls the Beszel hub for triggered alerts and posts them to Tempo." }`.
+- **`surface`**: `"timeline"` or `"agenda"`. When omitted, the default is derived from the event's `eventType` (`alert` → timeline, everything else → agenda). An `agenda` score is a day-view source (calendar/reminders-style); it only exposes the Source and Actions tabs in the editor and skips the severity/grouping/tag/ack machinery.
+- **Meta keys**: top-level keys prefixed with `_` are reserved metadata and are ignored by the runtime logic: **`_comment`** (free-text note for authors/reviewers) and **`_bundledVersion`** (version marker the seeder uses to track bundled-vs-user state). (The per-action **`_disabled`** flag is documented under `defaultActions` in §11.2.)
 
 ---
 
@@ -254,7 +257,7 @@ Stringification is implicit: numbers, booleans and strings all collapse to their
 
 ## 11.4 - Action triggers reference
 
-Five trigger types are supported: `openURL`, `openTerminalWith`, `copyToClipboard`, `completeReminder`, and `uncompleteReminder`. Each is mutually exclusive: an action has exactly one trigger. (`completeReminder` / `uncompleteReminder` flip an Apple Reminder's completed flag and apply only to EventKit reminder sources; the three below are the ones you'll author for ingested sources.)
+A score-authored trigger accepts exactly three shapes: `openURL`, `openTerminalWith`, and `copyToClipboard`. Each is mutually exclusive: an action has exactly one trigger. (Tempo also has two runtime triggers, `completeReminder` and `uncompleteReminder`, which flip an Apple Reminder's completed flag. They are synthesized by the EventKit provider and are not writable in a `.tempo-score` file; the three above are the ones you author for ingested sources.)
 
 ### `openURL`
 
@@ -305,7 +308,7 @@ The three string-based triggers (`openURL`, `openTerminalWith`, `copyToClipboard
 - `${startDate}` → the event's timestamp (ISO 8601)
 - `${metadata.custom.disk_usage_percent}` → reaches into the custom bucket
 
-If a referenced field is missing from the payload, the action does **not** fire with a malformed value. Tempo disables the button: it renders greyed out (about 55% opacity) and unclickable, with a tooltip that names the missing field(s): *"Can't run: the event is missing `host`."* This means an action whose template can't resolve can't be invoked, rather than firing a broken `ssh://admin@` with an empty host. Fix the upstream payload or reference a field that's actually present, and the button re-enables.
+If a referenced field is missing from the payload, the action does **not** fire with a malformed value. Tempo disables the button: it renders grayed out (about 55% opacity) and unclickable, with a tooltip that names the missing field(s): *"Can't run: the event is missing `host`."* This means an action whose template can't resolve can't be invoked, rather than firing a broken `ssh://admin@` with an empty host. Fix the upstream payload or reference a field that's actually present, and the button re-enables.
 
 ### `systemIcon`
 
@@ -331,10 +334,10 @@ The full SF Symbols catalog is browsable in the **SF Symbols** app from Apple. P
 
 ## 11.5 - `.tempo-score` installer file
 
-A `.tempo-score` file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognises the extension via Tempo's UTI registration; double-clicking a `.tempo-score` file opens Tempo and triggers the **Score Review Sheet**, a preview UI showing what's about to be installed:
+A `.tempo-score` file is a single JSON file with the same shape as a regular score, but with a custom file extension. macOS recognizes the extension via Tempo's UTI registration; double-clicking a `.tempo-score` file opens Tempo and triggers the **Score Review Sheet**, a preview UI showing what's about to be installed:
 
 - The provider identifier
-- The display name and colour
+- The display name and color
 - A preview of the rules and default actions
 - A diff if a score with this provider identifier is already installed (existing rules vs incoming rules)
 
@@ -471,7 +474,7 @@ The script POSTs:
 A card that:
 
 - Shows "Log scan · {matches_found} matches" as the title
-- Coloured by severity: 0 matches → ok green, 1-9 → warning yellow, 10+ → error red
+- Colored by severity: 0 matches → ok green, 1-9 → warning yellow, 10+ → error red
 - Has actions: "Open log file" (opens the scanned file via `file://`, permitted here because this is a locally-installed score; `file://` would be blocked only for a remote-ingested payload action), "Copy log file path", "SSH to host"
 
 ### The score
@@ -535,7 +538,7 @@ A card that:
 
 When a log_scan event arrives:
 
-- Title rendered as `log_scan completed`, with the severity pill coloured by `metadata.label` and labelled with the match count
+- Title rendered as `log_scan completed`, with the severity pill colored by `metadata.label` and labeled with the match count
 - Three action buttons in the action panel: SSH, Copy path, Tail log
 - Events from the same host + log file group together within a 1-day window
 - The source panel shows "Log Scan" with the orange (#FF9F0A) accent

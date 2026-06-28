@@ -108,7 +108,7 @@ If you see calendar entries in Tempo whose source you can't identify, the most l
 
 ### EventKit doesn't notify for some change types
 
-EventKit's notification system isn't comprehensive. Some kinds of changes (a calendar's colour changing in Calendar.app, certain attachment edits) don't fire a notification, and Tempo's view stays a few minutes stale until the next periodic refresh.
+EventKit's notification system isn't comprehensive. Some kinds of changes (a calendar's color changing in Calendar.app, certain attachment edits) don't fire a notification, and Tempo's view stays a few minutes stale until the next periodic refresh.
 
 - **Workaround**: quit and re-launch Tempo for an immediate refresh
 - **Acceptable**: most users never notice this; the changes that don't notify are rare and mostly cosmetic
@@ -122,7 +122,7 @@ You've created a score (or are using a bundled one) and events from the source a
 ### Symptom: events arrive but render with default styling, no severity
 
 - **Check 1**: open the Score Editor for the provider. Is the score loaded? If the editor shows "No score selected" when you click on the provider's chip, the score file may not be parsing
-- **Check 2**: open Console.app, filter by subsystem `app.tempoapp.Tempo`. Look for "Failed to parse score" or "Schema validation error" messages
+- **Check 2**: open Console.app, filter by subsystem `app.tempoapp.Tempo`. Look for a "Failed to decode score" message (it names the file and the decode error)
 - **Fix**: validate the JSON manually. Run `jq . ~/Library/Application\ Support/Tempo/Scores/<provider>.json`; if it errors, fix the JSON. Otherwise check against the schema at `https://tempoapp.app/schema/score.schema.json`
 
 ### Symptom: events arrive, severity is set, but custom labels show literal `${metadata.xxx}`
@@ -133,11 +133,12 @@ You've created a score (or are using a bundled one) and events from the source a
 
 ### Symptom: events don't arrive at all
 
-- **Check 1**: confirm the request is reaching Tempo. Open Console.app, filter by `app.tempoapp.Tempo`. Send a test event. You should see "Accepted ingestion ..." or "Rejected ingestion ... reason: <reason>"
-  - **No message at all** → the request isn't reaching Tempo. Networking problem (§12.1)
-  - **"Rejected: invalid token"** → token is wrong or revoked. Settings → Ingestion → confirm the token is active and correct
-  - **"Rejected: provider mismatch"** → token is bound to a different providerIdentifier than the payload declares. Either change the payload's `providerIdentifier` or rebind the token
-  - **"Rejected: schema validation: <field>"** → payload is malformed. The error message names the offending field
+- **Check 1**: confirm the request is reaching Tempo. Open Console.app, filter by `app.tempoapp.Tempo`. Send a test event. Each request logs one line in the format `<ip> <method> <path> -> <status> [token: <name>]`. A `-> 200` is accepted; a `4xx` status is rejected. For the human-readable rejection reason, open the **Security Audit window** (Settings → Security) or read `rejections.csv`. The common rejections:
+  - **No log line at all** → the request isn't reaching Tempo. Networking problem (§12.1)
+  - **`-> 401` (reason "unauthorized")** → the token is missing, wrong, or revoked. Settings → Ingestion → confirm the token is active and correct. Note: a token marked `secure` (TLS-only) that posts on the plain HTTP port is also rejected with an opaque `401`; the Security Audit window shows the real cause and tells you to switch the sender to the TLS port (8776)
+  - **`-> 403` (reason "token not authorized for this provider")** → the token is bound to a different providerIdentifier than the payload declares. Either change the payload's `providerIdentifier` or rebind the token
+  - **`-> 403` (reason "source IP not allowed for this token")** → the token has a source-IP allowlist set and the sender's IP or CIDR isn't in it. This bites senders behind NAT/SNAT (for example a Tailscale subnet router rewriting the source IP). Add the sender's address to the token's allowlist, or clear the allowlist
+  - **`-> 422`** → the payload is malformed. The reason names the offending field
 - **Check 2**: rate limiting. If you're sending many events rapidly (a script in a tight loop), the rate limit may be active: 120 requests per minute, per token, on a sliding 60-second window. Wait a minute for the window to slide, or split load across more tokens. There is no per-IP limit, so an extra bound token raises your effective ceiling
 
 ### Symptom: score has rules but the wrong rule is firing
@@ -146,7 +147,7 @@ You've created a score (or are using a bundled one) and events from the source a
 - **Check**: in the Score Editor, look at rule order. The Try panel on the right shows you which rule actually fires for a recent event
 - **Fix**: move the specific rule above the general one (use the up-arrow on the rule card)
 
-### Symptom: bundled score's behaviour seems off after an app update
+### Symptom: bundled score's behavior seems off after an app update
 
 - **Cause**: an update may have improved a bundled score, but your local edits to that score persist (Tempo doesn't overwrite user edits on update)
 - **Fix**: to drop your local edits and pick up the bundled version, quit Tempo, delete `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch. Tempo reseeds that score from the bundle on launch. Duplicate the score first (chip bar → **Duplicate**) if you want to keep your customizations to merge back manually
@@ -159,7 +160,7 @@ You downloaded the DMG and macOS refuses to open Tempo.
 
 ### Symptom: "Tempo can't be opened because it is from an unidentified developer"
 
-- **Cause**: macOS doesn't recognise the signature. Usually caused by a corrupted download or a non-default browser stripping the quarantine attribute oddly
+- **Cause**: macOS doesn't recognize the signature. Usually caused by a corrupted download or a non-default browser stripping the quarantine attribute oddly
 - **Fix 1** (preferred): re-download the DMG from `downloads.tempoapp.app`. Use the default browser for the download (Safari or whatever else is set in System Settings)
 - **Fix 2**: if re-downloading still produces this dialog, open System Settings → Privacy & Security. Scroll to the "Security" section. Click **Open Anyway** next to the Tempo entry
 
@@ -184,7 +185,7 @@ If your timeline has tens of thousands of events and Tempo feels sluggish:
 - Settings → Maintenance → Database → **Keep events for** → pick a window (90 days, 6 months, 1 year)
 - On the next launch, Tempo deletes events older than the window. Database shrinks; queries get faster
 
-The 84-day heatmap window means anything beyond that isn't visualised anyway, so a 90-day or 180-day retention is usually fine for active users.
+The 84-day heatmap window means anything beyond that isn't visualized anyway, so a 90-day or 180-day retention is usually fine for active users.
 
 ### Auto-dismiss noisy sources
 
@@ -233,7 +234,7 @@ Useful filters:
 
 - `Action: Include Info Messages` for general activity
 - `Process: Tempo` if you have a noisy log feed and want only Tempo entries
-- Search for specific terms: "Failed to parse", "Rejected ingestion", "Score reload", etc.
+- Search for specific terms: "Failed to decode score" for a score that won't parse, or `-> 401` / `-> 403` / `-> 422` / `-> 429` for rejected ingestion requests
 
 ### Diagnostic bundle
 
@@ -243,17 +244,17 @@ The single-click way to grab "everything Tempo support might want":
 
 The bundle is a zip containing:
 
-- `manifest.json`: bundle version, app version, generation timestamp
-- `system.txt`: macOS version, hardware summary
+- `metadata.txt`: app version, macOS version, architecture, hostname, locale, timezone, generation timestamp
+- `config.txt`: your Tempo configuration summary (retention, UI and ingestion settings, auto-rules, but *not* tokens or event payloads)
+- `sources.txt`: the connected sources table
 - `firewall.txt`: macOS Application Firewall state, third-party firewall detection
-- `config.json`: your Tempo configuration summary (sources connected, retention, auto-rules, but *not* tokens or event payloads)
-- `oslog.log`: the last 24 hours of Tempo's OSLog output
+- `logs.txt`: the last 7 days of Tempo's file log plus the last 24 hours of OSLog output
 
 Use the bundle when:
 
 - Asking for help on Discord or GitHub
 - Reporting a bug
-- Comparing behaviour with another user
+- Comparing behavior with another user
 
 What's *not* in the bundle:
 
@@ -266,17 +267,18 @@ If a support request needs your scores, attach them separately. The bundle delib
 
 ### Audit log
 
-Every ingestion attempt, accepted or rejected, is captured in OSLog (subsystem `app.tempoapp.Tempo`, category `Ingestion`). Look for `Accepted ingestion` or `Rejected ingestion` entries. Each entry includes:
+Every ingestion attempt, accepted or rejected, is captured in OSLog (subsystem `app.tempoapp.Tempo`, category `ingestion`). Each request is logged as a single line in the format `<ip> <method> <path> -> <status> [token: <name>]`, for example `192.168.1.5 POST /ingest -> 200 [token: disk-check]`. Search the log for the status code: `-> 200` is accepted; `-> 401`, `-> 403`, `-> 422`, and `-> 429` are rejected. The line carries:
 
 - Source IP
+- HTTP method and path
+- Status code (the accept/reject result)
 - Token name (never the value)
-- Provider identifier
-- Transport (TLS or cleartext)
-- Result + reason on rejection
 
-**Rejections** are also written to a CSV file at `~/Library/Application Support/Tempo/rejections.csv` (capped at the last 500 rows). There is no `Logs/` directory and no rolling daily file log; accepted events and the full history live in OSLog only.
+The human-readable rejection reason is not in this line. It lives in the Security Audit window and `rejections.csv` (see below).
 
-Rejections are surfaced as a UI: the **Security Audit window**, reachable from the shield icon or **Settings → Security**. It has **Security** and **All** tabs and shows, per rejected attempt, the status code, source IP, token name (never the value), provider, transport (TLS vs cleartext), and reason; you can mark an entry as handled. The window is backed by `rejections.csv` (last 500 rows).
+Tempo also keeps a rolling daily file log at `~/Library/Application Support/Tempo/Logs/tempo-YYYY-MM-DD.log` (one file per day, pruned by retention). It captures the same accept/reject request lines as OSLog and, unlike OSLog `.info` entries (which macOS does not persist to disk), it survives a relaunch. **Rejections** are additionally written to a CSV file at `~/Library/Application Support/Tempo/rejections.csv` (capped at the last 500 rows).
+
+Rejections are shown in a UI: the **Security Audit window**, reachable from the shield icon or **Settings → Security**. It has **Security** and **All** tabs and shows, per rejected attempt, the status code, source IP, token name (never the value), provider, transport (TLS vs cleartext), and reason; you can mark an entry as handled. The window is backed by `rejections.csv` (last 500 rows).
 
 For accepted events and full history beyond the rejection feed, read OSLog via Console.app filtered on the subsystem. The diagnostic bundle carries roughly the last 24 hours of OSLog automatically. For long-term forensics, set up macOS log forwarding to a syslog server (out of scope for this guide, but documented in Apple's `os_log` reference).
 
@@ -306,7 +308,7 @@ On launch, the bundled scores are seeded fresh. Any user-authored scores you wro
 
 ### Reset settings
 
-To reset Tempo's UserDefaults (theme, footer toggle, heatmap colours, auto-rules, source overrides):
+To reset Tempo's UserDefaults (theme, footer toggle, heatmap colors, auto-rules, source overrides):
 
 1. Quit Tempo
 2. Run in Terminal: `defaults delete app.tempoapp.Tempo`

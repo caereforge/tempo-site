@@ -37,7 +37,7 @@ Tempo shows and proposes; in V1 it never acts on its own.
 - **Not a calendar app.** No daily/weekly/monthly grids; no event editing
 - **Not a task manager.** Reads your reminders, completes them on click; doesn't create or edit them
 - **Not a monitoring tool.** Receives signals from monitoring tools; doesn't run probes itself
-- **Not Notification Center.** Persistent, semantic, agentic: a different shape entirely
+- **Not Notification Center.** Events persist on a timeline you act on later; notifications are transient and disappear
 - **Not IFTTT or Zapier.** V1 is human-in-the-loop; V2 will support some automations, but Tempo isn't a generic flow engine
 
 See [§1.2](/docs/01-introduction#12---what-tempo-is-what-it-isnt) for the longer treatment.
@@ -46,11 +46,11 @@ See [§1.2](/docs/01-introduction#12---what-tempo-is-what-it-isnt) for the longe
 
 Home Assistant is great inside its own world. But your homelab isn't only HA: it's also your NAS backups, monitoring stack, GitHub Actions, network gear, and the calendar/reminders on your Mac.
 
-Tempo isn't trying to replace any of those dashboards. It sits on top, surfaces the events that need your attention, and gives you one place to act on them.
+Tempo isn't trying to replace any of those dashboards. It sits on top, shows the events that need your attention, and gives you one place to act on them.
 
 ### Why not n8n, Node-RED, or another automation tool?
 
-Those automate server-side workflows. Tempo centralises *visibility and decision* on your Mac. It reads your local calendar and reminders (things server-side tools can't touch), puts them alongside infra signals, and lets *you* decide what to do.
+Those automate server-side workflows. Tempo centralizes *visibility and decision* on your Mac. It reads your local calendar and reminders (things server-side tools can't touch), puts them alongside infra signals, and lets *you* decide what to do.
 
 They're complementary: Tempo can be the human-facing surface in front of an n8n flow.
 
@@ -66,7 +66,7 @@ A future v2 may be a paid one-time purchase. The path from V1-free to V2-paid is
 
 ### Will it be on the App Store?
 
-No. It's distributed as a signed and notarised DMG (Developer ID), with auto-update via Sparkle.
+No. It's distributed as a signed and notarized DMG (Developer ID), with auto-update via Sparkle.
 
 The reasoning: outside the App Store sandbox so the LAN ingestion server, terminal commands, and the rest of Tempo's actions all work without restriction.
 
@@ -76,7 +76,7 @@ The reasoning: outside the App Store sandbox so the LAN ingestion server, termin
 
 ### Will Tempo continue to receive updates after v2 ships?
 
-Yes. After v2 ships, v1 will continue to receive **security fixes only**: no new features, no behavioural changes. v1 is free forever; v1 users have no obligation to upgrade.
+Yes. After v2 ships, v1 will continue to receive **security fixes only**: no new features, no behavioral changes. v1 is free forever; v1 users have no obligation to upgrade.
 
 Support for v1 will move to community channels (Discord and GitHub issues); direct support from the publisher will focus primarily on v2 and later releases.
 
@@ -90,7 +90,7 @@ No account, no cloud sync, no third-party telemetry. Everything lives in a local
 
 The HTTP ingestion server is LAN-reachable (so your homelab can post to it) but never exposed to the internet. It accepts only authenticated requests from per-provider tokens stored in the macOS Keychain.
 
-Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on the LAN by default; a native TLS listener (opt-in, port `8776`, with a per-token *Require TLS* flag) shipped in 1.1. See [§8 - Settings](/docs/08-settings-reference#secure-tls) and the [security page](/security/#tls).
+Tempo does not collect or transmit telemetry of any kind in V1. The ingestion server is plain HTTP on port `7776` on the LAN by default; a native TLS listener (opt-in, port `8776`, with a per-token *Require TLS* flag) shipped in 1.1. See [§8 - Settings](/docs/08-settings-reference#secure-tls) and the [security page](/security/#tls).
 
 ### Where exactly does my data live?
 
@@ -116,7 +116,7 @@ There's no proprietary format anywhere. Tempo is a viewer over data you own; if 
 
 ### Does Tempo work with CalDAV calendars (Fastmail, Nextcloud, iCloud)?
 
-Yes. Tempo reads from Apple Calendar via EventKit, which natively syncs CalDAV accounts. If a calendar shows up in Calendar.app, it shows up in Tempo.
+Yes. Tempo reads from Apple Calendar via EventKit, which natively syncs CalDAV accounts. Any calendar that Calendar.app syncs is available to Tempo; you choose which of those calendars Tempo shows (the selection matches by calendar title).
 
 ### What about Google Calendar / Outlook 365?
 
@@ -142,13 +142,13 @@ For Linux, the closest analogue is something like [Glance](https://github.com/gl
 
 ### What if I need more help with a specific source?
 
-Each source, built-in or downloadable, has its own page in the [Scores catalog](/scores/) with setup, behaviour notes, default actions, and a source-specific FAQ. Start there if your question is about a particular source rather than Tempo as a whole.
+Each source, built-in or downloadable, has its own page in the [Scores catalog](/scores/) with setup, behavior notes, default actions, and a source-specific FAQ. Start there if your question is about a particular source rather than Tempo as a whole.
 
 ---
 
-## Customisation
+## Customization
 
-### Can I customise what actions appear for each event?
+### Can I customize what actions appear for each event?
 
 Yes. This is the core of Tempo. Every event type has its own action set, defined in the source's [score](/docs/14-glossary#score). You can edit bundled scores in the Score Editor or write your own from scratch.
 
@@ -156,7 +156,7 @@ See [§7 - Score Editor](/docs/07-score-editor) for hands-on; [§11 - Score auth
 
 ### Can I add a custom button to events?
 
-Yes, by editing the source's score file directly. The Score Editor handles colors, severity rules, and display names; action buttons are authored as JSON in V1. The blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) walks through the full flow with a concrete example. See also [§11 - Score authoring](/docs/11-score-authoring) for the reference.
+Yes. The Score Editor's **Actions** tab authors buttons visually: add a button, set its label and SF Symbol, pick the trigger type, and write its value with `${metadata.xxx}` interpolation. The score JSON stays a valid alternate surface if you prefer hand-editing, and whatever you author in the editor is exactly what lands in the file. The blog post [Adding a button to Tempo events](/blog/adding-a-custom-action-button/) walks through the JSON path with a concrete example. See also [§11 - Score authoring](/docs/11-score-authoring) for the reference.
 
 ### Can I write my own scores?
 
@@ -168,7 +168,7 @@ Yes. The public catalog at [github.com/caereforge/tempo-scores](https://github.c
 
 ### Can I theme Tempo?
 
-Light / Dark / System theme switching is in V1. Custom themes (drop-in JSON in `~/Library/Application Support/Tempo/Themes/`) are V1.1. A visual theme editor is V2 candidate.
+System / Light / Dark / Caereforge theme switching is built in. Custom themes (drop-in JSON in `~/Library/Application Support/Tempo/Themes/`) are V1.1. A visual theme editor is V2 candidate.
 
 ---
 
@@ -218,9 +218,9 @@ Most common cause: networking. See [§12.1 - Networking](/docs/12-troubleshootin
 
 Second most common: token mismatch, token bound to the wrong provider, or wrong token in the upstream config. Check Settings → Ingestion → Tokens.
 
-### A bundled score's behaviour seems wrong after an update
+### A bundled score's behavior seems wrong after an update
 
-Tempo doesn't overwrite your local edits to bundled scores when the app updates. If a bundled score improved in the update and you want the new behaviour, quit Tempo, delete that score's file from `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch. Tempo reseeds the bundled version on startup. (Duplicate the score first if you want to keep your customizations.)
+Tempo doesn't overwrite your local edits to bundled scores when the app updates. If a bundled score improved in the update and you want the new behavior, quit Tempo, delete that score's file from `~/Library/Application Support/Tempo/Scores/<provider>.json`, and relaunch. Tempo reseeds the bundled version on startup. (Duplicate the score first if you want to keep your customizations.)
 
 See [§7.8 - Persistence and reset to defaults](/docs/07-score-editor#78---persistence-and-recovery).
 
@@ -234,7 +234,7 @@ A few common causes and fixes in [§12.5 - Performance with many sources](/docs/
 - **Discord** at [tempoapp.app/community](https://tempoapp.app/community/) for quick discussion
 - **GitHub Issues** for tracked bugs
 
-A diagnostic bundle attached to your bug report makes triage 10x faster.
+A diagnostic bundle attached to your bug report gives the maintainer the logs and environment needed to reproduce the issue.
 
 ---
 
@@ -243,10 +243,6 @@ A diagnostic bundle attached to your bug report makes triage 10x faster.
 ### Will Tempo support automations (auto-fire actions)?
 
 V2 roadmap. V1 is strictly human-in-the-loop. V2 plans to add per-rule automations: user defines conditions, Tempo runs the action automatically when conditions match. With audit log + kill switch + opt-in by default.
-
-### Will Tempo have a mobile app?
-
-A separate companion app, **Tempo Lite** for Mac + iOS, is on the roadmap. It's an aggregator over Calendar, Reminders, HomeKit, Focus, Health (no homelab/webhook ingestion). Different positioning, different audience. The V1 product covered by this guide is Tempo for macOS only.
 
 ### Will Tempo open the source code?
 

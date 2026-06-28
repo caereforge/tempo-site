@@ -8,158 +8,147 @@ pubDate: 2026-05-05
 ---
 # 5 - Event panel
 
-The event panel, the center column, is where the timeline lives. Most of the time you spend in Tempo is spent looking at this panel. This chapter walks through every piece of it: the card layout, what the meta-text means, how acknowledged events render, how stacks expand, the activity heatmap above the feed, and the day separators that break the scroll into recognizable chunks.
+The event panel, the center column, is where the timeline lives. Most of the time you spend in Tempo is spent looking at this panel. This chapter walks through every piece of it: the row layout, what each slot means, how acknowledged events render, how stacks expand, the activity heatmap above the feed, and the day separators that break the scroll into recognizable chunks.
 
 ---
 
-## 5.1 - The event card
+## 5.1 - The event row
 
-Every event shows as a card. Cards have a deliberately fixed slot layout, which means once your eyes have learned the structure, scanning a long feed is fast: your gaze always lands in the same place for the same kind of information.
+Every alert renders as a single-line row in the log-line layout. The columns sit in fixed slots, so once your eyes have learned the structure, scanning a long feed is fast: your gaze lands in the same place for the same kind of information.
 
-### Card anatomy
+### Row anatomy
 
 ```
-[stripe][icon] Title ......... [headline] [📎] [Acked] [SEVERITY] | [stack 60pt]
-                Subtitle / meta-text
+[indicator] HH:MM  Source name  Title · subtitle ......... [headline] [ACK/OK] [BADGE] [tag] [stack] [•]
 ```
 
 From left to right:
 
-- **Colored stripe**: a thin vertical bar at the card's left edge, filled with the source color (or the severity color, depending on your **Settings → Interface → Stripe meaning** preference)
-- **Provider icon**: a small icon identifying the source. Bundled providers have curated icons; custom sources get a generic fallback. If the title starts with an emoji and the source is unknown, the icon is suppressed to avoid double-decoration
-- **Title**: the human-readable event name, single-line truncated. For completed reminders, the title is struck through and dimmed
-- **Right-hand fixed slots**, in order from the title outward:
-  - **Headline metric**: the score's headline value (file size, duration, error count) in monospaced semibold
-  - **Attachment icons**: small icons indicating linked files, notes, or external resources
-  - **Acked pill**: outlined "Acked" pill if the event has been acknowledged
-  - **Severity**: the universal-vocabulary label (UPPERCASE: `INFO`, `OK`, `WARNING`, `ERROR`, `CRITICAL`), always at the rightmost edge so your eye finds it without searching
-- **Stack count slot**: fixed-width 60pt area on the very right where the stack count pill renders. Single events leave it empty; stacked events fill it
-
-Below the title row:
-
-- **Subtitle / meta-text**: a single line of tertiary-color text. By default this is the timestamp; scores can replace it with custom-rendered content (e.g., `host.local · +147KB · 1.2s`)
-
-The whole card has a soft background (subtle when unselected, slightly brighter when selected), a left-edge gradient tint in the source color for visual identity at a glance, and a hairline border that brightens on selection.
+- **Indicator**: a small colored bar (or an emoji) at the row's left edge. Its color and emoji come from the score's indicator rules, or, for a run-bound stack primary, from the run lifecycle state. It is not the source color and not the severity color
+- **Timestamp**: the event time in a fixed monospaced column. Inside an expanded stack, sibling rows also show the compact date, because a stack can span more than one day
+- **Source name**: the human-readable source name, drawn in the source color
+- **Title**: the event title, single-line truncated. Two optional pieces can follow it on the same line: the **headline metric** (the score's headline value such as a file size or duration, in monospaced semibold) and the **subtitle** (a score-supplied string, rendered after a `·` separator). The subtitle is empty unless a score provides one
+- **ACK / OK slot**: an outlined pill. It reads `ACK` (yellow) when the event has been acknowledged, or `OK` (green) when a stateful event has resolved. Both share this one slot, and `ACK` wins when an event is both acknowledged and resolved
+- **Custom-label badge**: a filled pill carrying the score's custom label (for example `BACKUP FAILED`), shown only when the score sets a label that differs from the default
+- **Tag**: an outlined pill with the event's first tag, when present
+- **Stack pill**: the stack count (or `↻N` flap-cycle count) for stacked rows; empty for single events
+- **Severity**: at the rightmost edge, a small severity-colored dot. With the `ui.symbolicSeverity` setting on, the dot becomes an SF Symbol icon instead. The severity vocabulary itself (info, ok, warning, error, critical) is covered in §5.2
 
 ### Why the slot order matters
 
-The right-edge slot layout was deliberately chosen so:
+The slot layout is fixed so the same signal always sits in the same place:
 
-- **Severity** lands at the rightmost edge: the most important "how urgent is this" signal is always in the same spot
-- **Headline metric** sits adjacent to the title, pairing "what" (title) with "how much" (metric) into a single semantic unit
-- **Acked pill** uses an outlined style, visually distinct from the filled severity pill so you can tell at a glance whether the event has been handled
+- **Severity** lands at the rightmost edge, so the urgency cue is always in one spot
+- **Headline metric** sits next to the title, pairing "what" (title) with "how much" (metric)
+- The **ACK / OK** pill is outlined, visually distinct from the filled custom-label badge, so you can tell whether the event has been handled
 
-If you find yourself staring at a card unsure where to look, the answer is almost always the rightmost edge. Severity. Then sweep left for context.
+### Agenda rows (calendar entries, reminders, tasks)
 
-### Card body for non-alert events
+Calendar entries, reminders, and tasks do not use the alert log-line. They render as **compact agenda rows**:
 
-Calendar entries, reminders, and tasks render as **compact rows** rather than full cards. They have:
-
-- The provider icon
+- A **provider icon** identifying the source. Bundled providers have curated icons; custom sources get a generic fallback. If the title starts with an emoji and the source is unknown, the icon is suppressed to avoid double-decoration
 - The title (with strikethrough for completed reminders)
-- A small set of metadata on the right (start time, due date, calendar/list name)
-- No stripe, no headline, no severity badge: these are agenda items, not alerts
+- A small set of metadata on the right (start time, due date, status pills such as `OVERDUE` or `COMPLETED`, attachment and alarm icons)
+- No indicator bar, no headline, no severity dot: these are agenda items, not alerts
 
-The compact rendering keeps your calendar from drowning out actionable monitoring events when both share the feed. If you have so much calendar activity that it's still drowning out monitoring, hide the calendar via **Settings → Agenda** or hide the agenda section entirely via the menubar **View → Show personal agenda** toggle.
+The compact rendering keeps your calendar from drowning out monitoring events when both share the feed. If calendar activity is still too heavy, hide the calendar via **Settings → Agenda** or hide the agenda section entirely via the menubar **View → Show personal agenda** toggle.
 
 ---
 
-## 5.2 - Severity meta-text
+## 5.2 - Severity
 
-The severity badge at the rightmost edge of every alert card uses a shared visual vocabulary across all sources. The same color and label conventions apply whether the event is a Kopia backup result, a UniFi alarm, or a custom webhook from a script you wrote yesterday.
+Severity is shown by color, not by a text label. On every alert row the rightmost slot is a severity-colored dot (or an SF Symbol icon when `ui.symbolicSeverity` is on). The same vocabulary applies across every source, regardless of which tool emitted the event.
 
-| Severity | Label | Color | Meaning |
-|---|---|---|---|
-| `info` | INFO | blue | Informational only, no action needed |
-| `ok` | OK | green | Positive outcome (a backup succeeded, a probe is up) |
-| `warning` | WARNING | yellow | Something to look at, not urgent |
-| `error` | ERROR | red | Something failed, attention needed |
-| `critical` | CRITICAL | red | Urgent, immediate action recommended |
+| Severity | Meaning |
+|---|---|
+| `info` | Informational only, no action needed |
+| `ok` | Positive outcome (a backup succeeded, a probe is up) |
+| `warning` | Something to look at, not urgent |
+| `error` | Something failed, attention needed |
+| `critical` | Urgent, immediate action recommended |
+
+The dot color runs cool to hot across this scale: blue for info, green for ok, then orange and red for the warning, error, and critical levels. Exact shades come from the active theme's semantic palette.
 
 ### Custom labels
 
-The score for a source can replace the default label with a custom one: `OK` becomes `BACKUP OK`, `ERROR` becomes `BACKUP FAILED`, `WARNING` becomes `CONNECTION FAILED`. The color stays driven by severity (so `BACKUP FAILED` is still red and reads as an error at a glance), but the *label* communicates context.
+The score for a source can attach a custom badge label: `OK` becomes `BACKUP OK`, `ERROR` becomes `BACKUP FAILED`, `WARNING` becomes `CONNECTION FAILED`. This label renders as a filled pill in the custom-label badge slot. The severity dot keeps its color, driven by severity, so a `BACKUP FAILED` event still shows a red dot and reads as an error at a glance, while the badge text carries the source-specific phrasing.
 
-Two slots can render adjacent: the custom label first, the universal severity label second. This way you get both the score-specific phrasing and the universal urgency vocabulary, without one obscuring the other.
-
-A simplified UniFi card might read:
+A simplified UniFi row might read:
 
 ```
-Title ............................ STA_AUTH_FAILURE  WARNING
+... Title  STA_AUTH_FAILURE  •
 ```
 
-The custom label tells you *what kind of warning*; the universal label tells you it's a warning.
+The badge tells you what kind of event it is; the dot color tells you how urgent it is.
 
-### Severity color vs. card background
+### Severity color vs. source color
 
-The severity color appears in the badge pill itself: bright background, contrasting text, capsule shape. The card background stays mostly neutral; only the left-edge stripe and the gradient tint pick up the source color.
+The severity dot and the source identity are separate visual channels. The source color is used for the source-name text and the stack pill, telling you which source an event came from; the severity dot tells you how urgent it is. Keeping them separate means a feed with several sources does not read as uniformly alarming just because several sources happen to share a color.
 
-This separation matters: in a feed with many sources, the *card background* tells you *which source* an event came from (via the source color), while the *severity pill* tells you *how urgent it is*. Stacking these two visual channels into one (e.g., red card backgrounds for red severity) would conflate "which" and "how": a homelab with five red sources would look uniformly alarming whether or not anything was actually wrong.
-
-> 💡 **Note**: customize the heatmap and badge colors in **Settings → Interface**. The severity-pill colors track the heatmap colors by default, so changing one updates the other for visual consistency.
+> 💡 **Note**: severity colors come from the active theme's semantic palette. The heatmap has its own color settings in **Settings → Interface → Heatmap colors** (§5.5); the two are configured separately.
 
 ---
 
 ## 5.3 - Acknowledged events
 
-Acknowledging ("ack-ing") an event is a soft state change: the event stays in the feed, but its appearance softens so it no longer competes for your attention.
+Acknowledging ("ack-ing") an event is a soft state change: the event stays in the feed, but it stops counting toward the dock badge and the needs-attention filter.
 
 ### What changes when you ack
 
-- The **title** dims slightly (less than the strikethrough used for completed reminders, more than the default)
-- An **outlined "Acked" pill** appears in the right-side fixed slot, just before the severity badge
-- The **severity badge** stays in place, with its color intact, so you can still see "this was a warning" or "this was an error" at a glance, even after acking
+- An **outlined `ACK` pill** (yellow) appears in the ACK / OK slot, left of the custom-label badge
+- The **severity dot** stays in place, with its color intact, so you can still see that the event was a warning or an error after acking
+- The row keeps its normal opacity by default. If you turn on `ui.dimAckedRows` (Settings → Interface), acknowledged rows dim to a lower opacity so they recede further. This setting is off by default and dims the whole row, not just the title
 
-Compare:
+Compare (with the dim setting off):
 
 ```
-Before ack:  Backup failed ............... 03:14  ERROR
-After ack:   Backup failed ........ Acked  03:14  ERROR
+Before ack:  03:14  Backup failed ...............  •
+After ack:   03:14  Backup failed ......... ACK    •
 ```
 
-The severity color doesn't change. Acking is a comment on *your relationship with the event*, not on the event itself.
+The severity dot color doesn't change. Acking is a comment on *your relationship with the event*, not on the event itself.
 
 ### When to ack vs. dismiss
 
 - **Ack** when you've seen the event but want to leave it visible. Use cases: an ongoing problem you're investigating; a recurring noise pattern you want to keep an eye on; a backup that failed at 03:14 and you've made a note to look at after standup
 - **Dismiss** when you've handled the event and want it out of your feed. Use cases: a transient warning that resolved on its own; an alert you've already routed to a ticket; a duplicate
 
-Both are reversible. Ack is cosmetic; dismiss removes from the active feed but keeps the event in the database (and in source history).
+Both are reversible. Ack keeps the event in the feed; dismiss removes it from the live feed but keeps it in the database (and in source history).
 
 ### Resolved (state) vs. Acked (user action)
 
-For stateful events, there's a related but distinct visual marker: **Resolved**. When a stateful condition (a Uptime Kuma monitor, a Home Assistant alarm) clears, the corresponding event renders with a **Resolved** marker. State and severity are independent axes: the closing event's `state` is *resolved*, but its severity is whatever the source's score assigns to the recovery event (commonly `ok`). The engine doesn't force the severity to ok on resolve; a recovery that the score rates as a warning stays a warning.
+For stateful events there's a related but distinct marker. When a stateful condition (an Uptime Kuma monitor, a Home Assistant alarm) clears, the resolving event shows an outlined `OK` pill (green) in the same slot the `ACK` pill uses. State and severity are independent axes: the closing event's `state` is *resolved*, but its severity is whatever the source's score assigns to the recovery event (commonly `ok`). The engine doesn't force the severity to ok on resolve; a recovery that the score rates as a warning stays a warning.
 
-A "Resolved" pill is the *system* saying "this fixed itself"; an "Acked" pill is *you* saying "I've seen it." They can coexist on the same event: you can ack a still-firing problem, and you can also see when the problem eventually resolves.
+`OK` is the system reporting that the condition cleared; `ACK` is you reporting that you've seen it. They share one slot, and `ACK` takes precedence: if you ack an event that later resolves, the slot shows `ACK`, not `OK`.
 
-> 🛠 **Tip**: bulk acknowledge via the action panel. Cmd-click multiple cards (or Shift-click for a range), then click "Acknowledge all (N)". See [§6.3 - Bulk acknowledge and dismiss](/docs/06-action-panel#63---bulk-acknowledge-and-dismiss).
+> 🛠 **Tip**: bulk acknowledge via the action panel. Cmd-click multiple rows (or Shift-click for a range), then click "Acknowledge all (N)". See [§6.3 - Bulk acknowledge and dismiss](/docs/06-action-panel#63---bulk-acknowledge-and-dismiss).
 
 ---
 
 ## 5.4 - Stacked events
 
-When a source emits multiple events that are conceptually related (same monitor flapping, same backup running multiple times, same UniFi client reconnecting), Tempo collapses them into a **stack**: a single card with a count pill on the right, instead of N separate cards.
+When a source emits multiple events that the score treats as related (for example a monitor that flaps up and down), Tempo collapses them into a **stack**: a single row with a count pill, instead of N separate rows.
 
 ### How a stack looks
 
-A stacked card displays:
+A stacked row displays:
 
-- The **most recent event** of the stack as the visible card (title, headline, severity all from the latest event)
-- A **count pill** in the rightmost slot, showing how many events are in the stack
+- The **most recent event** of the stack as the visible row (title, headline, and severity dot all from the latest event)
+- A **stack pill** in the stack slot, showing the event count, or `↻N` when the stack is a multi-cycle flap aggregate (the cycle count, not the event count)
 
 ```
-Backup failed ......... 03:14  CRITICAL  | [3]
+03:14  Backup failed ...............  •  [3]
 ```
 
 The "3" tells you there are three events in this stack. The most recent one is the one shown.
 
 ### Expanding a stack
 
-Click the card to expand the stack inline: the visible card stays as the parent, and sibling cards render below it in chronological order, indented and dimmed slightly so the visual hierarchy is clear.
+Click the row to expand the stack inline: the visible row stays as the parent, and sibling rows render below it in chronological order, indented and dimmed slightly so the visual hierarchy is clear. Sibling rows also show their date, since a stack groups by key and can span more than one day.
 
-A **dismiss-all footer** appears at the bottom of the expanded stack: "Dismiss all 3 events" with a single click. This is the bulk-action shortcut for clearing a noisy stack, useful when, say, your CI pipeline produced five identical "build failed" events and you only need to handle the underlying cause once.
+A **footer** appears at the bottom of the expanded stack with up to three buttons: **Ack (N)**, **Tag**, and **Dismiss (N)**. Each acts on the rows you've selected within the stack, or on the whole stack when nothing is selected. Dismiss is the bulk shortcut for clearing a noisy stack, useful when, say, a CI pipeline produced several identical "build failed" events and you only need to handle the underlying cause once.
 
-Click the parent card again (or anywhere else) to collapse the stack.
+Click the parent row again to collapse the stack.
 
 ### What "related" means
 
@@ -170,11 +159,11 @@ Stacking is driven by the **score** for the source. The legacy mechanism a score
 
 So if a source emits the same keyed event three times over the course of three hours with a `1h` grouping window: you'll see separate stacks for the runs that fall outside each other's window, not one combined stack.
 
-> 💡 **Note**: the shipped *stateful* scores (Uptime Kuma, Beszel, UniFi) don't use the legacy template-plus-window mechanism above. They group by **session** via `groupingRules`: a down/recovery cycle is one session of opens, continues, and closes. That's a different grouping system from the one this section describes; if you're authoring a stateful score, reach for `groupingRules`, not the key-plus-window pair.
+> 💡 **Note**: the shipped *stateful* scores (Uptime Kuma, Beszel, UniFi) don't use the template-plus-window mechanism above. They group by **session** internally: a down/recovery cycle is one session of opens, continues, and closes. This session-based grouping is built into those bundled scores; it is not yet a supported user-authoring feature, and richer custom grouping may arrive in a later version. For your own scores, the template grouping described above is the grouping available today.
 
 ### Tuning stacks for your taste
 
-If a source generates too many separate cards instead of stacking them:
+If a source generates too many separate rows instead of stacking them:
 
 - The score might not declare a `grouping` template at all → add one in the Score Editor's **Stack grouping** section
 - The grouping template might reference a metadata field that's missing from your payloads → check the Available keys strip and pick a key that's actually present
@@ -219,10 +208,10 @@ Empty segments don't respond to clicks: there's nothing to scroll to.
 
 Two styles available, switchable in **Settings → Interface → Heatmap style**:
 
-- **Pill** (default): rounded pill segments with a soft halo around active hours
-- **Flat**: flat rectangular cells, the legacy look
+- **Rounded pills** (default): rounded pill segments with color around events in neighboring empty hours
+- **Flat cells**: flat rectangular cells that keep each hour strictly independent
 
-Pill is the default for most users. Flat reads as more clinical and may suit dashboard-style preferences better.
+Rounded pills is the default. Flat cells reads as more clinical and may suit dashboard-style preferences better.
 
 ### Color customization
 
@@ -232,7 +221,7 @@ In **Settings → Interface → Heatmap colors** you can customize the three sem
 - **Warning**: defaults to yellow/orange
 - **Alert (Error / Critical)**: defaults to red
 
-Changes apply immediately and also drive the severity-pill colors on event cards (so the heatmap and the cards stay visually consistent).
+Changes apply immediately to the heatmap. These settings are separate from the severity dot colors, which come from the active theme's semantic palette.
 
 ### Colorblind mode
 
@@ -267,16 +256,23 @@ Separator labels are forced to **en_US locale** regardless of your Mac's system 
 
 ---
 
+## 5.7 - The needs-attention filter
+
+A toggle above the feed switches between showing every event and showing only those that need attention. "Needs attention" means a firing, not-acknowledged, not-dismissed alert at warning severity or higher, which is the same set the dock badge counts. Turning the filter on hides everything else.
+
+The filter is **not persisted across launches**: it resets to showing all events each time Tempo starts.
+
+---
+
 ## Empty states
 
-A few situations leave the event panel empty:
+When the feed has nothing to show, the event panel displays a single empty state rather than a blank rectangle:
 
-- **No sources connected** (only Apple Calendar declined): "No events yet. Connect a source to get started" with a link to Manage Sources
-- **All sources hidden**: "All sources are hidden. Click a source row to un-hide" with a link to the source panel
-- **Active filter with no matching events**: "No events from filtered sources. Clear filter to see everything" with a clear button
-- **Date selected with no events**: "No events on this day. Pick another date or jump to today" with a "Jump to today" button
+- Icon: a calendar-with-clock glyph
+- Title: **"No events today"**
+- Subtitle: **"Events from your sources will appear here."**
 
-Each empty state is intentional UX: the panel never shows a blank rectangle. There's always a hint about why it's empty and what to do about it.
+There are no per-cause buttons; the same message covers an unconnected source, a filtered-out feed, or a day with no activity.
 
 ---
 

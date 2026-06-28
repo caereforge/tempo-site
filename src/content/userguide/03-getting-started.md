@@ -18,7 +18,7 @@ If you just want events in the feed, [§1.4 - Tempo in five minutes](/docs/01-in
 
 ### Get the DMG
 
-Tempo is distributed as a signed and notarised disk image. Download it from:
+Tempo is distributed as a signed and notarized disk image. Download it from:
 
 - [downloads.tempoapp.app](https://downloads.tempoapp.app): always the latest release
 - [tempoapp.app/changelog](https://tempoapp.app/changelog): versioned download links if you want a specific release
@@ -35,7 +35,7 @@ After dragging, you can right-click the DMG in Finder → **Eject "Tempo Install
 
 ### First open and Gatekeeper
 
-The first time you open Tempo, macOS verifies the signature with Apple's notarisation service. This takes a couple of seconds and you'll see the app icon in the Dock with a brief delay before the window appears.
+The first time you open Tempo, macOS verifies the signature with Apple's notarization service. This takes a couple of seconds and you'll see the app icon in the Dock with a brief delay before the window appears.
 
 If you downloaded Tempo through a non-default browser or an automation, macOS may show a Gatekeeper dialog asking you to confirm the app comes from an identified developer:
 
@@ -54,7 +54,7 @@ brew tap caereforge/tap
 brew install --cask tempo
 ```
 
-The cask fetches the exact same signed and notarised DMG from `downloads.tempoapp.app`, verifies its SHA-256, and installs `Tempo.app` into `/Applications`: identical end state to the manual flow above. Drag-to-Applications is handled for you, and the first-open Gatekeeper checks still apply on the next launch.
+The cask fetches the exact same signed and notarized DMG from `downloads.tempoapp.app`, verifies its SHA-256, and installs `Tempo.app` into `/Applications`: identical end state to the manual flow above. Drag-to-Applications is handled for you, and the first-open Gatekeeper checks still apply on the next launch.
 
 **Updating**:
 
@@ -93,16 +93,20 @@ The tap source is public at [github.com/caereforge/homebrew-tap](https://github.
 The first time Tempo launches, the main window opens at its default size of 1200×760 pixels. Three panels are visible:
 
 - **Source panel** on the left, mostly empty except for a yellow accent line and a button
-- **Event panel** in the centre, also mostly empty
+- **Event panel** in the center, also mostly empty
 - **Action panel** on the right, showing a placeholder
 
-A clock icon appears in the macOS menubar. That's Tempo's menubar item; it stays there even when the window is closed.
+Tempo's menubar icon appears in the macOS menubar. It stays there even when the window is closed.
 
 ### The ingestion server
 
-Behind the scenes, Tempo also starts its **ingestion server** on first launch. This is a small HTTP server that listens on port `7776` by default, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it. The first time it starts, Tempo generates a default ingestion token and stores it in your macOS Keychain.
+Behind the scenes, Tempo also starts its **ingestion server** on first launch. This is a small HTTP server that listens on port `7776` by default, bound to `0.0.0.0` (all interfaces) so other machines on your LAN can reach it.
 
-You won't see anything in the UI to indicate this; it runs in the background. To verify it's working, open **Settings → Ingestion**: you'll see the listen address, the active tokens, and a copy-to-clipboard button for each token.
+Tempo does **not** create a token for you. A fresh install has no tokens, and the server rejects any POST that doesn't carry a valid one. You add your first token in **Create your first token** below, before connecting a source.
+
+You won't see anything in the UI to indicate the server is running; it stays in the background. To check it, open **Settings → Ingestion**: you'll see the listen address and, once you've added one, your tokens with a copy-to-clipboard button for each.
+
+The first time the server binds in its default LAN-reachable mode, Tempo shows a one-time dialog titled **"Tempo accepts events from your local network"**. It names the port, explains that any machine on your LAN can now reach the listener, and reminds you to add a token before sharing the address. Two buttons: **Got it** dismisses it, **Open Settings…** jumps straight to **Settings → Ingestion** so you can add your first token. This dialog appears around the same time as the macOS firewall prompt below; they are two separate prompts. (You won't see it if you've switched to loopback-only mode.)
 
 > 💡 **Note**: Tempo can also accept encrypted (TLS) connections on port `8776`. TLS is opt-in per token in **Settings → Ingestion**; see the [Security page](/security) for the cert and per-token `secure` flag details.
 
@@ -132,7 +136,7 @@ If your homelab is on a flat network (everything on one subnet, no VLANs), this 
 - **Client isolation** on guest WiFi or "IoT-safe" SSIDs: if your source lives on an isolated WiFi, even same-subnet devices can't talk to each other. Disable isolation on that network, or move the source onto a non-isolated SSID
 - **mDNS / Bonjour reflection**: `your-mac.local` resolution typically doesn't cross VLANs. Either enable mDNS reflector on your router (UniFi has it; many others do), or use the Mac's LAN IP directly in webhook URLs and pair it with a DHCP reservation so the IP stays stable
 
-Keep firewall rules narrow: specific source IP, specific destination IP, specific port. Tempo's ingestion is token-authenticated, so the firewall isn't your only line of defence, but a tight rule is good hygiene.
+Keep firewall rules narrow: specific source IP, specific destination IP, specific port. Tempo's ingestion is token-authenticated, so the firewall isn't your only line of defense, but a tight rule is good hygiene.
 
 > 💡 **Note**: this is only the headline. The full troubleshooting walk-through with five scenarios (Mac-local firewall, VLAN routing, hostname resolution, client isolation, server-not-listening) is in [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion). If first-source setup gets stuck, that's the page to reach for.
 
@@ -152,31 +156,31 @@ If you keep it on, your calendar entries and reminders appear as an "Apple Calen
 
 ## 3.3 - A tour of the three panels
 
-The Tempo window is a fixed three-column layout. Each column is resizable by dragging the divider between them, but you can't reorder them: left is always sources, centre is always the timeline, right is always the action panel. The aim is muscle memory: after a few days, your eyes know where to look without thinking.
+The Tempo window is a fixed three-column layout. Each column is resizable by dragging the divider between them, but you can't reorder them: left is always sources, center is always the timeline, right is always the action panel. The columns keep a fixed position so the location of each is predictable across sessions.
 
 ### Source panel (left)
 
 The source panel lists every source Tempo knows about. Each row shows:
 
-- A **coloured dot** on the far left: the source's identifying colour, click it to change
+- A **colored dot** on the far left: the source's identifying color, click it to change
 - The **source name**, bold or dimmed depending on whether the source is hidden
 - A **priority badge** on the right, combining three orthogonal signals:
-  - **Colour**: the maximum severity of currently outstanding events from that source (red = error/critical, yellow = warning, green = ok/info, no fill = empty)
+  - **Color**: the maximum severity of currently outstanding events from that source (red = error/critical, yellow = warning, green = ok/info, no fill = empty)
   - **Number**: the count of actionable (non-acked, non-dismissed) events
   - **Bolt** ⚡: appears when the source is currently "live" (emitting events recently); fades when it's been silent past a configurable threshold
-- An **info button** (ⓘ) on the far right that opens a menu: Show only this source / Add to filter / Show all sources / Hide from timeline / Show history
+- An **info button** (ⓘ) on the far right that opens a menu: Show only this source / Add to filter / Show all sources / Hide from timeline / Show dismissed… / Save full history…
 
 Filtering the timeline to one or more sources happens through the info menu (ⓘ): click it on a source row, then **Show only this source** (or **Add to filter** to combine multiple). A yellow filter banner appears across the top of the event panel listing the active filter; click the banner to clear. The source row itself is not a click target: that's a deliberate choice to keep clicking on the row from feeling like a state change you didn't plan for.
 
 A button at the bottom of the source panel switches the panel into **Manage Sources** mode, a different view where you can add new sources and change source-level settings. The button label adapts to your current source count: "Add a source" until you reach five sources (highlighted with a sparkles icon when you are just starting out), then "Manage sources" at five or more.
 
-### Event panel (centre)
+### Event panel (center)
 
 This is where the timeline lives. Four things are stacked vertically:
 
-1. **Tab selector** at the top: switches the centre panel between **Timeline** (the chronological feed of events, the default view), **Score Editor** (chapter 7) and **Search** (find an event by title, metadata, or source)
+1. **Tab selector** at the top: switches the center panel between **Timeline** (the chronological feed of events, the default view), **Search** (find an event by title, metadata, or source) and **Score editor** (chapter 7)
 2. **Day picker**: a small date control next to the tab selector. Lets you jump to any past day to see what the timeline looked like then
-3. **24-hour activity heatmap**: a horizontal strip of 24 segments, one per hour, coloured by the highest-severity event in that hour. Click a segment to scroll the feed to that hour
+3. **24-hour activity heatmap**: a horizontal strip of 24 segments, one per hour, colored by the highest-severity event in that hour. Click a segment to scroll the feed to that hour
 4. **Event feed**: chronological list of events, with day separators ("TODAY", "YESTERDAY", weekday name for older days), each event rendered as a card
 
 The feed loads a recent window of events (the default is the last 7 days, configurable in **Settings → Maintenance → Database**) plus everything still outstanding: anything firing or needing attention, however old. As you scroll back, older events lazy-load on demand. The net effect is a feed that stays smooth even with thousands of historical events without holding all of history in memory at once.
@@ -211,13 +215,25 @@ Every source follows the same conceptual pattern:
 
 Bundled scores ship for the providers most homelab users have: Kopia, UniFi, Home Assistant, Uptime Kuma, GitHub Actions, Synology. For each, [§10 - Sources reference](/docs/10-sources-reference) has a per-source setup section: where to point the webhook in the upstream tool, what payload fields the score expects, what to expect in the timeline.
 
+### Create your first token
+
+A fresh install has no tokens, and the ingestion server rejects any POST that isn't authenticated. Before you send anything, create one:
+
+1. Open **Settings → Ingestion**
+2. Click **Add Token**
+3. Give it a **Name** (any label, e.g. `Kopia NAS` or `First test`)
+4. Set the **Provider identifier** it is bound to. A token authorizes its exact provider and any sub-namespace under it (a token bound to `scripts.shell` also accepts `scripts.shell.check_disk`). An unbound token authorizes nothing, so this field is required. For the test below, bind it to `com.test`
+5. Click **Create**
+
+The new token appears in the list. Copy it with the clipboard icon next to it; you'll paste it into the upstream tool (or the test command below). When you set up a real source, create a token bound to that source's provider identifier (for example `com.kopia`, `com.ubiquiti.unifi`); each source's section in [§10 - Sources reference](/docs/10-sources-reference) names the identifier to use.
+
 ### A two-minute test before connecting anything real
 
-Before you set up your first real source, it's worth confirming Tempo's ingestion path actually works on your Mac. The `curl` command below sends a fake event to your local Tempo, no upstream tools involved:
+Before you set up your first real source, it's worth confirming Tempo's ingestion path actually works on your Mac. The `curl` command below sends a fake event to your local Tempo, no upstream tools involved. It uses `providerIdentifier: com.test`, so use a token bound to `com.test` (or to a parent namespace of it); a token bound to a different provider is rejected with `403`.
 
 ```bash
-# Replace <token> with the token from Settings → Ingestion (click the
-# clipboard icon next to it).
+# Replace <token> with a token bound to com.test, copied from
+# Settings → Ingestion (click the clipboard icon next to it).
 curl -X POST http://localhost:7776/ingest \
   -H "Content-Type: application/json" \
   -H "X-Tempo-Token: <token>" \
@@ -232,7 +248,7 @@ curl -X POST http://localhost:7776/ingest \
 If everything's set up correctly, the response is:
 
 ```json
-{ "status": "accepted", "id": "<some-uuid>" }
+{ "id": "<some-uuid>" }
 ```
 
 …and within a second, an event titled "First test event" appears in your timeline with `com.test` as the source. If that doesn't happen, jump to [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion).
@@ -242,7 +258,7 @@ If everything's set up correctly, the response is:
 Most users connect a real source in this order:
 
 1. **Something you already have running**: your Kopia backups or your Home Assistant instance. Pick whichever is easier to reach (i.e., whichever you have the admin UI open in another tab right now)
-2. **Something with frequent events**, like a CI workflow or a noisy monitor, so you see Tempo's grouping and severity behaviour kick in within a few minutes rather than waiting for a daily cron
+2. **Something with frequent events**, like a CI workflow or a noisy monitor, so you see Tempo's grouping and severity behavior kick in within a few minutes rather than waiting for a daily cron
 3. **A custom script**: once the bundled sources are familiar, the [`tempo-post` helper](/docs/10-sources-reference#1010---tempo-post-helper) makes it easy to wire any cron job, post-commit hook, or shell script into Tempo
 
 Pick one and follow the matching section in [§10 - Sources reference](/docs/10-sources-reference). Each setup section is two to four pages, takes 5-15 minutes end-to-end.
@@ -256,7 +272,7 @@ The single most common failure mode for first-time setup is the request never re
 - **The token is wrong**. Tokens are case-sensitive and have no whitespace tolerance, so copy via the clipboard icon in **Settings → Ingestion**, not by hand
 - **The upstream tool wasn't restarted** after you changed its webhook config. Most tools (Kopia, Kuma) hot-reload; some (custom scripts using a daemon) don't
 
-Tempo's audit log records every payload that hits the ingestion endpoint, accepted or rejected, with the reason for rejection. To inspect it, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. For sharing with support, use **Settings → Help → Export diagnostics bundle…**; it includes the last 24 hours of OSLog output (no token values, no event payloads).
+Tempo logs one line per request that hits the ingestion endpoint, accepted or rejected, recording the source IP, method, path, status code, and token name (never the payload body and never the token value). To inspect it, open **Console.app** and filter by subsystem `app.tempoapp.Tempo`. Rejections also land in the Security Audit (**Settings → Security**), where each one carries the reason it was rejected. For sharing with support, use **Settings → Help → Export diagnostics bundle…**; it includes the last 24 hours of OSLog output (no token values, no event payloads).
 
 ---
 
@@ -264,9 +280,9 @@ Tempo's audit log records every payload that hits the ingestion endpoint, accept
 
 You have Tempo installed, the ingestion server ready to accept events, and a sense of what each panel does. From here:
 
-- **Customise how a source looks** in the feed → [§7 - Score Editor](/docs/07-score-editor): assign different colours, custom labels, group repeated events, define action buttons
+- **Customize how a source looks** in the feed → [§7 - Score Editor](/docs/07-score-editor): assign different colors, custom labels, group repeated events, define action buttons
 - **Connect more sources** → [§10 - Sources reference](/docs/10-sources-reference) for the bundled set; [§10.2 - Generic webhook](/docs/10-sources-reference#102---generic-webhook) for anything else
-- **Adjust visual preferences** → [§8.1 - Interface](/docs/08-settings-reference#81---interface): appearance, footer toggle, heatmap colours, badge contrast
+- **Adjust visual preferences** → [§8.1 - Interface](/docs/08-settings-reference#81---interface): appearance, footer toggle, heatmap colors, badge contrast
 - **Set up automatic housekeeping** → [§8.4 - Maintenance](/docs/08-settings-reference#84---maintenance): auto-ack, auto-dismiss, retention
 
 If anything along the way didn't behave the way this chapter described, [§12 - Troubleshooting](/docs/12-troubleshooting) covers the failure modes we've seen.

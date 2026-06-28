@@ -8,9 +8,9 @@ pubDate: 2026-05-05
 ---
 # 4 - Source panel
 
-The source panel (the leftmost column in the Tempo window) lists every source Tempo knows about and gives you the controls for showing, hiding, filtering, and re-colouring each one. It's the closest thing Tempo has to a global navigator: where the event panel shows *what's happening*, the source panel shows *who's talking*.
+The source panel (the leftmost column in the Tempo window) lists every source Tempo knows about and gives you the controls for showing, hiding, filtering, and recoloring each one. The event panel shows the events; the source panel shows the sources those events came from.
 
-This chapter walks through the UI element by element and explains what each one means, so the badges and controls stop being decoration and start being information.
+This chapter describes each control and badge in the panel.
 
 ---
 
@@ -22,21 +22,21 @@ A source row is a horizontal strip with four parts, left to right:
 ●   Source name              ⚡ 12     ⓘ
 ```
 
-- The **colour dot** on the left identifies the source. It's also the source's accent colour, the tint Tempo applies to event cards from this source in the feed. On a leaf source the dot is a colour picker: click it to open the system colour picker and recolour the source. On an **umbrella parent** (UniFi, Apple, Scripts) the dot is a fixed neutral marker: the parent has no colour of its own, so it can't be recoloured; set colours on its concrete sub-sources instead. The dot is one role; the **left-edge stripe** on each event card is a separate signal whose meaning you can switch in **Settings → Interface**: by default the stripe reflects *severity* (green / yellow / red), but you can flip it to *source* and have the stripe match this dot instead
+- The **color dot** on the left identifies the source. It's also the source's accent color, the tint Tempo applies to event cards from this source in the feed. On a leaf source the dot is a color picker: click it to open the system color picker and recolor the source. On an **umbrella parent** (UniFi, Apple, Scripts) the dot is a fixed neutral marker: the parent has no color of its own, so it can't be recolored; set colors on its concrete sub-sources instead. The left-edge stripe on each event card is a separate signal that always reflects *severity* (green / yellow / red), not the source color
 - The **source name** is the human-readable label. For bundled sources it defaults to the provider's canonical name ("Kopia", "UniFi", "Home Assistant"). For custom sources you can rename it in Manage Sources
 - The **priority badge** on the right is the at-a-glance status, described in detail below
 - The **info button** (ⓘ) on the far right opens the source actions menu, also described below
 
 ### The priority badge
 
-The badge collapses three independent signals into one compact widget. Reading it correctly is the difference between glancing at the source panel and *understanding* the source panel.
+The badge combines three independent signals into one compact widget.
 
 **The three signals**:
 
 | Channel | What it tells you |
 |---|---|
-| **Colour** | The maximum severity among the source's *actionable* events: non-acked, non-dismissed, still asking for your attention. Red (error/critical), yellow (warning), green (ok/info), or no colour fill when nothing actionable remains. Acked events still in the feed don't drive the fill; they shift the badge into the outline-only mode below. Dismissed events never contribute. |
-| **Number** | In coloured mode: the count of those actionable events. In outline mode (no fill): the count of acked-but-undismissed events still in the feed, your "I've seen these but haven't cleared them yet" pile |
+| **Color** | The maximum severity among the source's *actionable* events: non-acked, non-dismissed, still asking for your attention. Red (error/critical), yellow (warning), green (ok/info), or no color fill when nothing actionable remains. Acked events still in the feed don't drive the fill. Dismissed events never contribute. |
+| **Number** | The count of actionable events. It is hidden when zero; a green fill with no number means there is nothing to handle. |
 | **Bolt** ⚡ | Whether the source is currently *live*: it has emitted at least one event within its [liveness window](/docs/14-glossary#liveness) |
 
 **The combinations you'll actually see**:
@@ -46,17 +46,16 @@ The badge collapses three independent signals into one compact widget. Reading i
 | Red `12` ⚡ | 12 actionable error/critical events; source is live |
 | Yellow `3` | 3 actionable warnings; source has been silent past its liveness threshold |
 | Green `1` ⚡ | 1 actionable ok/info event (a backup completed); live |
-| Outline-only `5` | 5 events still in the feed but all already acked. Nothing demands attention |
-| `⚡` only | Source is live but no events outstanding (everything's been handled or dismissed) |
-| Nothing at all | Source is empty and silent: no recent events, none outstanding |
+| `⚡` only | Source is live but nothing needs handling (the outline capsule carries just the bolt, no number) |
+| Nothing at all | Source is empty and silent: no recent events, nothing to handle |
 
-A row with no badge is fine and quiet. A red badge with a number is the row your eye should land on first.
+A row with no badge is quiet. A red badge with a number is the one that needs attention first.
 
 > 🛠 **Tip**: hover over the badge to see a tooltip that spells out exactly what each channel is reporting for that specific source. The same explanation lives in **Settings → Help**, in case you'd rather have it as a reference.
 
 ### Hidden sources
 
-If you've hidden a source (see §4.4 below), its row stays in the source panel but renders dimmed: the colour dot is at 35% opacity, the name is in tertiary text colour, and badges are halved in opacity. A hidden source contributes no events to the feed and no segments to the heatmap; Tempo treats it as if it didn't exist for the duration of the hide.
+If you've hidden a source (see §4.4 below), its row stays in the source panel but renders dimmed: the color dot is at 35% opacity, the name is in tertiary text color, and badges are halved in opacity. A hidden source contributes no events to the feed and no segments to the heatmap; Tempo treats it as if it didn't exist for the duration of the hide.
 
 The row stays visible so you can un-hide easily; it isn't *gone*, just muted.
 
@@ -101,7 +100,7 @@ If a source goes silent and the bolt disappears, that's the source telling you s
 Filtering goes through the source's **info menu** (ⓘ), not by clicking the row. Open the menu and pick **"Show only this source"** to filter the timeline down to that one source. Two visual changes happen:
 
 1. The chosen source row gets a slight highlight in the source panel (its background fills in)
-2. A **yellow filter banner** appears across the top of the event panel, naming the filtered source(s): *"Filtered: UniFi · Kopia · click to clear"*
+2. A **yellow filter banner** appears across the top of the event panel, naming the filtered source(s): *"Showing only UniFi"* for one source, or *"Showing 2 sources: Kopia, UniFi"* for several. A **Clear** button on the right dismisses the filter
 
 Click the banner to clear the filter and return to the full feed (or use the menu's **"Show all sources"** entry on any source).
 
@@ -112,9 +111,9 @@ To filter to *multiple* sources at once:
 1. Open the info menu (ⓘ) on the first source and click **"Show only this source"**
 2. Open the info menu (ⓘ) on each additional source you want to include and click **"Add to filter"**
 
-The filter banner lists all the sources, separated by `·`. Clear it the same way: click the banner, or use the menu's **"Show all sources"** entry on any source.
+The filter banner lists the sources separated by commas, capped at three names with a "+N more" suffix beyond that. Clear it the same way: click the banner, or use the menu's **"Show all sources"** entry on any source.
 
-> 🛠 **Tip**: filter is a *visualisation* setting, not a state change. Filtering doesn't ack or dismiss anything; it just hides events from the *view*. Acking and dismissing happen via the action panel buttons or per-source auto-rules.
+> 🛠 **Tip**: filter is a *visualization* setting, not a state change. Filtering doesn't ack or dismiss anything; it just hides events from the *view*. Acking and dismissing happen via the action panel buttons or per-source auto-rules.
 
 ### What the filter affects
 
@@ -125,7 +124,7 @@ The filter banner lists all the sources, separated by `·`. Clear it the same wa
 | Source panel | No: every source row stays visible |
 | Action panel | Indirect: only events in the filtered feed are selectable |
 
-The heatmap intentionally ignores the filter. The reasoning: the heatmap is your *temporal awareness* surface. If you've filtered to UniFi but a critical Kopia event lit up an hour ago, you should still see that hour glowing red on the strip.
+The heatmap intentionally ignores the filter. It shows activity over time across all sources, so if you've filtered to UniFi but a critical Kopia event arrived an hour ago, that hour still shows on the strip.
 
 ---
 
@@ -138,14 +137,15 @@ Source actions
 ──────────────────────────
 Show only this source
 Add to filter            ▸ (or "Remove from filter" if already in)
-Show all sources         ▸ (greyed out if no filter active)
+Show all sources         ▸ (grayed out if no filter active)
 ──────────────────────────
 Hide from timeline       ▸ (or "Show in timeline" if already hidden)
 ──────────────────────────
-Show history…
+Show dismissed…
+Save full history…
 ```
 
-Colour is set elsewhere: click the source's coloured dot directly (system colour picker), or open the source's score in the Score Editor, where it sits next to the display name and the rest of the source-level configuration.
+Color is set elsewhere: click the source's colored dot directly (system color picker), or open the source's score in the Score Editor, where it sits next to the display name and the rest of the source-level configuration.
 
 ### Show only / Add to filter / Show all
 
@@ -154,7 +154,7 @@ These are the filter controls described in §4.3; they live in this menu because
 - If there's no active filter: **"Show only this source"** is the primary entry
 - If this source is already part of an active filter: **"Remove from filter"** appears
 - If this source is *not* in the active filter: **"Add to filter"** and **"Show only this source"** both appear
-- **"Show all sources"** clears the filter; greyed when no filter is active
+- **"Show all sources"** clears the filter; grayed when no filter is active
 
 ### Hide from timeline
 
@@ -168,17 +168,27 @@ Hiding is the right move for:
 
 To completely remove a source, use **Manage Sources** instead; that one fully forgets the source rather than just muting it.
 
-### Show history
+### Show dismissed
 
-Opens the **source history sheet**: a separate window showing this source's activity over the past 84 days as a GitHub-contribution-style heatmap grid. Each cell is one day, coloured by the maximum severity of that day's events.
+Opens the **dismissed-events sheet** for this source: a window listing every event you've dismissed from it, newest dismissal first. The header names the source and reads "Dismissed events". Each row shows the event title and an audit lifeline (when it arrived, when and how it was acked, when it was dismissed) and carries a **Restore** button that returns the event to the live feed. If nothing has been dismissed from the source, the sheet reads "Nothing dismissed from this source yet."
 
-The 84-day window is what the *visualisation* renders, not what Tempo *retains*. The full event database keeps everything indefinitely, subject to your retention policy in **Settings → Maintenance → Database**.
+The sheet is scoped to one provider, not a global dismissed list. For sources organized under an **umbrella** parent (UniFi grouping Network and Protect, Apple grouping Calendar and Reminders, Scripts grouping its languages), open **Show dismissed** on the concrete sub-source you care about.
 
-The history sheet is read-only: you can hover over any cell to see a tooltip with that day's count and severity breakdown, but you can't edit or dismiss events from this view. To act on a specific day's events, close the history sheet, navigate to that day in the main timeline (using the date picker at the top of the event panel), and act from there.
+### Save full history
 
-For sources organised under an **umbrella** parent (UniFi grouping Network and Protect, Apple grouping Calendar and Reminders, Scripts grouping its languages), the history sheet is per concrete sub-source, not per umbrella. Opening **Show history** on UniFi Protect shows only Protect events; Network's history is its own sheet.
+The next entry, **Save full history…**, opens a save panel and exports this source's complete event history to a file at a path you choose. Pick a `.csv` or `.json` extension to set the format. For an umbrella parent the export rolls up every contained provider's events into one file. This is a one-way export for archiving or analysis outside Tempo, not a viewer; the events stay in Tempo untouched.
 
-> 🛠 **Tip**: source history is the answer to "did anything weird happen with this backup last weekend?" or "is this source generating more noise this month than last?". A glance at the heatmap pattern often answers these questions faster than scrolling through cards.
+> 🛠 **Tip**: the dismissed-events sheet answers "what did I clear from this source last week, and do I want any of it back?". The **Restore** button puts a row back in the live feed without re-ingesting it.
+
+---
+
+## 4.5 - Activity heatmap
+
+Below the source list the panel shows an **Activity** heatmap: a GitHub-contribution-style grid of the last 84 days (12 weeks × 7 weekdays). Columns are weeks with the current week rightmost, rows are weekdays with Monday on top. Each cell is one day, its hue set by the most severe event recorded that day. Hover any cell for a popover with the date and a per-severity count breakdown ("No events" on an empty day).
+
+This grid aggregates **all** sources, not one; it is not affected by the source filter. The severity color is frozen at ingest time, so editing a score later does not recolor past days. Days that fall outside your retention cutoff are pruned from the database and drop off the grid, so a short retention window can blank parts of it (retention is set in **Settings → Maintenance → Database**).
+
+> 🛠 **Tip**: the Activity heatmap answers "did anything change in the overall pattern this month?". A glance at the grid often reads faster than scrolling the feed.
 
 ---
 
@@ -186,8 +196,8 @@ For sources organised under an **umbrella** parent (UniFi grouping Network and P
 
 The button at the bottom of the source panel switches the panel into **Manage Sources** mode. The label adapts:
 
-- **"Add a source"** when you have one to four sources (highlighted with a sparkles icon right after install)
-- **"Add a source"** when you have three or four
+- **"Add a source"** with a sparkles icon when you have two or fewer sources (the prominent prompt right after install)
+- **"Add a source"** with a plain plus icon when you have three or four
 - **"Manage sources"** when you have five or more
 
 Manage Sources is its own view: same column, different content. From there you can:
@@ -196,13 +206,13 @@ Manage Sources is its own view: same column, different content. From there you c
 - Edit per-source settings: display name, auto-dismiss override, liveness override
 - Remove a source. This deletes its score and, by default, its stored events and settings, though you can opt to keep the events or keep the settings when you remove it. The source's ingestion token is **kept** by default (deleting it is a separate opt-in); as long as the token survives, the source can still POST new events, so to fully cut it off, delete its token too
 
-A yellow accent line near the button highlights the transition, so when you're switching between the active list and the manage view your eye lands in the same place.
+A yellow accent line near the button marks the transition between the active list and the manage view.
 
 ---
 
 ## Where to go from here
 
-- **Customising what events look like in the feed** → [§5 - Event panel](/docs/05-event-panel)
+- **Customizing what events look like in the feed** → [§5 - Event panel](/docs/05-event-panel)
 - **Editing the score for a source** → [§7 - Score Editor](/docs/07-score-editor)
 - **Tuning auto-rules per source** → [§8.4 - Maintenance settings](/docs/08-settings-reference#84---maintenance)
 - **Adding a new source from scratch** → [§10 - Sources reference](/docs/10-sources-reference)

@@ -10,7 +10,7 @@ pubDate: 2026-05-05
 
 This chapter covers what's worth backing up, how Tempo's built-in backup tools work, what they include and exclude, and how to move your Tempo state to a new Mac.
 
-> 💡 **Note**: V1 ships with a unified `.tempobackup` bundle that captures both your event database **and** your configuration (edited scores, auto-rules, source overrides, curated preferences). The same bundle restores both halves atomically. This chapter walks through the bundle layout, how to schedule and trigger backups, and how to restore on a new Mac.
+> 💡 **Note**: V1 ships with a unified `.tempobackup` bundle that captures both your event database **and** your configuration (edited scores, auto-rules, source overrides, curated preferences). The same bundle restores both halves. This chapter walks through the bundle layout, how to schedule and trigger backups, and how to restore on a new Mac.
 
 ---
 
@@ -34,7 +34,7 @@ Tempo writes to one location:
 
 Plus:
 
-- **Preferences**: `~/Library/Preferences/app.tempoapp.Tempo.plist` (UserDefaults: auto-ack rules, auto-dismiss rules, source colour overrides, hidden source list, theme choice, heatmap colours, etc.)
+- **Preferences**: `~/Library/Preferences/app.tempoapp.Tempo.plist` (UserDefaults: auto-ack rules, auto-dismiss rules, source color overrides, hidden source list, theme choice, heatmap colors, etc.)
 - **Ingestion tokens**: macOS Keychain, under the service name `app.tempoapp.Tempo` (account `providerTokens.v1`). Tokens you've explicitly saved via the **Save in Keychain** button live under a separate service `app.tempo.tempo.publictoken`, one entry per token name.
 
 The events database is the heaviest item (typically a few MB to a few hundred MB depending on how long you've been running Tempo and how chatty your sources are). Everything else is tiny: scores are kilobytes each, and preferences are a single plist.
@@ -53,11 +53,11 @@ The Database backup lives in **Settings → Maintenance → Database**. It is th
 
 ### What's in a backup bundle
 
-Each backup is a `.tempobackup` bundle (a zip with a custom extension) carrying a versioned `manifest.json` plus:
+Each backup is a `.tempobackup` bundle (a directory with a custom extension) carrying a versioned `manifest.json` plus:
 
 - The **SQLite database** as a `VACUUM INTO` snapshot (`database.sqlite`), safe to take while Tempo is running
-- A **curated slice of your preferences** (`settings.json`): appearance and heatmap colours, agenda settings, retention windows for events and Protect thumbnails, backup intervals and destination, ingestion server configuration (port, loopback-only flag), app icon variant. The full allowlist is enumerated in `BundleManifest.swift`; keys not on it are excluded by design
-- **Rule blobs** under `rules/`: auto-ack thresholds (global + per-source overrides), auto-dismiss policies, liveness thresholds (global + per-source overrides), hidden-sources list, source-level colour and name overrides, source aliases
+- A **curated slice of your preferences** (`settings.json`): appearance and heatmap colors, agenda settings, retention windows for events and Protect thumbnails, backup intervals and destination, ingestion server configuration (port, loopback-only flag), app icon variant. The full allowlist is enumerated in `BundleManifest.swift`; keys not on it are excluded by design
+- **Rule blobs** under `rules/`: auto-ack thresholds (global + per-source overrides), auto-dismiss policies, liveness thresholds (global + per-source overrides), hidden-sources list, source-level color and name overrides, source aliases
 - The **`Scores/` folder** verbatim: every JSON in `~/Library/Application Support/Tempo/Scores/`, both bundled scores you may have edited and any custom scores you've authored
 
 Bundle file name: `tempo-backup-YYYYMMDD-HHmmss.tempobackup`
@@ -76,7 +76,7 @@ If you want your tokens to survive a Mac swap, the path is **Settings → Ingest
 
 A V1.1+ panel will let you re-import these synced Keychain entries back into Tempo automatically. For V1, the import is manual: see [§9.4 - Step 4](#step-4---recreate-or-import-your-ingestion-tokens) below for the procedure.
 
-> 🛑 **Critical**: this exclusion is a security feature, not an oversight. If a backup bundle could be exfiltrated and contained your tokens, an attacker could ingest events posing as your sources, or worse, read your sources' identity surface. Keep tokens in the Keychain (encrypted, sandboxed, optionally synced via iCloud), and keep backup bundles for the rest.
+> 🛑 **Critical**: this exclusion is a security feature, not an oversight. If a backup bundle could be exfiltrated and contained your tokens, an attacker could ingest events posing as your sources, or learn which services your Mac talks to. Keep tokens in the Keychain (encrypted, sandboxed, optionally synced via iCloud), and keep backup bundles for the rest.
 
 ### How to take a backup
 
@@ -110,7 +110,7 @@ Other options that work fine:
 - **Local folder**: a path on this Mac. Useful for testing or for users who don't use iCloud
 - **Mounted external**: NFS share, SMB share, USB external drive. Tempo writes to the mounted path the same way it writes to local paths
 
-> ⚠️ **Warning**: don't pick a destination that lives *inside* `~/Library/Application Support/Tempo/`. Tempo's backup of itself, in itself, is a bad time: the bundle ends up containing previous bundles recursively. Use a destination outside the Tempo app-support directory.
+> ⚠️ **Warning**: don't pick a destination that lives *inside* `~/Library/Application Support/Tempo/`. If you do, each new bundle captures the previous bundles recursively. Use a destination outside the Tempo app-support directory.
 
 > 💡 **Note**: a destination on a network share that may not be mounted at backup time will silently fail. Schedule a daily reminder for yourself if you've picked a flaky destination, or use iCloud which handles mount-state transparently.
 
@@ -125,7 +125,7 @@ Configuration is **already inside the `.tempobackup` bundle** the V1 backup tool
 Two cases where copying files alongside the bundle is useful:
 
 - **Custom themes**: the Themes drop-in folder (`~/Library/Application Support/Tempo/Themes/`) ships today but isn't yet folded into the bundle, so mirror it manually until it is
-- **Out-of-band copies** for paranoia: a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite` and `rejections.csv`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` zip
+- **Out-of-band copies** for paranoia: a weekly cron or a Hazel rule that mirrors the entire `~/Library/Application Support/Tempo/` folder (minus `Tempo.sqlite` and `rejections.csv`) into a separate destination is a fine "belt and braces" approach if you want a flat-file copy distinct from the `.tempobackup` bundle
 
 ```bash
 # Snippet for the out-of-band copy approach
@@ -134,18 +134,18 @@ rsync -a --exclude='Tempo.sqlite*' --exclude='rejections.csv' \
   ~/iCloud\ Drive/Tempo/Mirror/
 ```
 
-The bundle remains the canonical, atomic, restore-preview-aware path; the mirror is supplementary.
+The bundle is the supported restore path; the mirror is a supplementary flat-file copy.
 
 ### What changes how often
 
 - **Scores** change when you edit them: typically once after install (during initial setup), then occasionally (a new use case, a rule tweak). Re-backup after every editing session
-- **Preferences** change with every Settings change; they mostly stabilise after initial setup
+- **Preferences** change with every Settings change; they mostly stabilize after initial setup
 - **Themes** are stable once installed
 - **Tokens** (Keychain): you set them once when configuring sources; rarely changes after that
 
 ### What's already in the `.tempobackup` bundle
 
-The V1 bundle covers all four categories above (scores, curated preferences, rule blobs, and the database). Your auto-rules, source overrides, scores, and source colour customisations all ride inside the bundle and restore atomically. The only manual piece left is the Keychain tokens.
+The V1 bundle covers all four categories above (scores, curated preferences, rule blobs, and the database). Your auto-rules, source overrides, scores, and source color customizations all ride inside the bundle and restore together. The only manual piece left is the Keychain tokens.
 
 ---
 
@@ -171,9 +171,9 @@ Two paths depending on how you backed up:
 
 1. **Settings → Maintenance → Database → Restore from backup…**
 2. A file picker opens, scoped to `.tempobackup` bundles
-3. Tempo previews what's about to be replaced (current state vs. backup state, summary of database row counts and configuration deltas)
+3. Tempo previews what the backup contains and will replace: whether the events database is present, whether the settings slice is present, how many rule files, and how many score files. The preview reads the bundle's `manifest.json`; it does not diff against your current state and does not show row counts
 4. Click **Restore** to apply
-5. Tempo writes a small `PreRestore-<timestamp>.tempobackup` snapshot of your current state next to the bundles (an "undo last restore" safety net), then applies the bundle atomically and relaunches itself
+5. Tempo writes a `PreRestore-<timestamp>.tempobackup` snapshot of your current state next to the bundles, then quits and reopens. On relaunch, before the UI appears, it applies each section of the bundle (database, settings, rules, scores). The sections are applied independently: if one fails, the earlier sections stay applied and the pre-restore snapshot is your undo path
 
 After relaunch, Tempo opens with your old database, your scores, and your curated preferences in place. The source panel should look the way it did on the old Mac.
 
@@ -193,7 +193,7 @@ A V1.1+ release will collapse this into a single **Import from Keychain** button
 
 #### B - You didn't save tokens to Keychain
 
-The original token values are gone with the source Mac. Generate fresh tokens in **Settings → Ingestion → + Add token**, then update each upstream sender (Kopia, UniFi, Home Assistant, …) with the new values. Tedious, but correct: a Mac migration is also a perfectly fine moment to rotate tokens you no longer fully trust or to drop tokens for sources you no longer use.
+The original token values are gone with the source Mac. Generate fresh tokens in **Settings → Ingestion → + Add token**, then update each upstream sender (Kopia, UniFi, Home Assistant, …) with the new values. A Mac migration is also a good moment to rotate tokens you no longer fully trust or to drop tokens for sources you no longer use.
 
 > 🛠 **Tip**: regardless of which path you used last time, keep a list of which sources use which token names somewhere outside Tempo (Notes.app, a file in your password manager). Token names are descriptive ("Kopia NAS", "GitHub Actions relay"); a list of names is enough to systematically recreate everything without forgetting a source.
 
@@ -201,7 +201,7 @@ The original token values are gone with the source Mac. Generate fresh tokens in
 
 Walk through your sources one at a time:
 
-- Open the source's row in the source panel: does it show the right colour and display name?
+- Open the source's row in the source panel: does it show the right color and display name?
 - Trigger an event (run a backup, click a test in Uptime Kuma, send a curl)
 - Confirm the event arrives in the timeline with the right severity, label, actions
 
@@ -215,10 +215,10 @@ A backup is only as good as your confidence that it'll actually restore. A few s
 
 ### File-level checks
 
-A `.tempobackup` bundle is a zip with a known structure. You can inspect it from Terminal:
+A `.tempobackup` bundle is a directory with a known structure. You can open it in Finder (it is a folder) or inspect it from Terminal:
 
 ```bash
-unzip -l tempo-backup-YYYYMMDD-HHmmss.tempobackup
+ls -R tempo-backup-YYYYMMDD-HHmmss.tempobackup
 ```
 
 Expected contents:
@@ -227,7 +227,7 @@ Expected contents:
 - `database.sqlite`: VACUUM INTO snapshot of the events database
 - `settings.json`: curated allowlist of UserDefaults keys
 - `rules/`: auto-ack thresholds, auto-dismiss policies, liveness thresholds, hidden-sources list, source-level overrides
-- `Scores/`: directory with your bundled and customised score JSON files
+- `Scores/`: directory with your bundled and customized score JSON files
 
 ### Restore-test procedure
 

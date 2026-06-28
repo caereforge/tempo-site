@@ -8,7 +8,7 @@ pubDate: 2026-05-05
 ---
 # 2 - Concepts
 
-> If you came in from chapter 1 and the words *score*, *severity*, *stack* feel abstract, this chapter is for you. We define the small vocabulary Tempo uses, explain how the parts connect, and hand you the mental model that makes the rest of the guide make sense.
+> If you came in from chapter 1 and the words *score*, *severity*, *stack* feel abstract, this chapter is for you. It defines the vocabulary Tempo uses and explains how the parts relate.
 >
 > If you'd rather start hands-on and pick up the concepts as you go, skip to [chapter 3 - Getting started](/docs/03-getting-started). You can always come back. Each concept here links to the chapter that goes deeper.
 
@@ -25,7 +25,7 @@ Every event has a small set of mandatory fields:
 - **Title**: the human-readable label that shows in the timeline
 - **Timestamp**: when the event happened (or, for stateful events, when the underlying state changed)
 - **Provider identifier**: which system the event came from, like `com.kopia` or `com.unifi`
-- **Event type**: one of `alert`, `event`, `task`, `reminder`. Affects rendering and a couple of UI behaviours
+- **Event type**: one of `alert`, `event`, `task`, `reminder`. Affects rendering and a couple of UI behaviors
 - **Payload metadata**: a flexible dict of fields the upstream tool sent (hostname, file size, IP address, status code, whatever)
 
 Events also have fields Tempo manages itself: severity, state, acknowledgment timestamps, ID. You don't usually think about these. (Whether an event "needs attention" isn't a stored field: Tempo computes it from state, severity, and whether you've acknowledged or dismissed it.)
@@ -53,8 +53,8 @@ In the source panel (the leftmost column in Tempo), each source gets its own row
 The provider/source distinction matters because:
 
 1. The **score** (see §2.3) is defined per *provider*, not per source. All your Kopia repos use the same Kopia score: same display logic, same actions, same severity rules
-2. **Sources can be hidden, soloed, or coloured individually**. You might mute one noisy Kopia repo while keeping the other two visible
-3. Source-level customisation (custom display name, custom colour, per-source auto-dismiss) lives at the source level
+2. **Sources can be hidden, soloed, or colored individually**. You might mute one noisy Kopia repo while keeping the other two visible
+3. Source-level customization (custom display name, custom color, per-source auto-dismiss) lives at the source level
 
 > 🛠 **Tip**: if you have a vendor that sells multiple distinct products, the convention is one provider with a `sourceGroup` metadata field distinguishing products, rather than one provider per product. For example, Synology has DSM (NAS), Surveillance Station, and various others, all under provider `com.synology` with `sourceGroup: "DSM"`, `sourceGroup: "SurveillanceStation"`, etc.
 
@@ -86,15 +86,15 @@ Concretely, a score is a small JSON file. Here's a simplified slice of the Kopia
 
 When a Kopia event arrives at Tempo, this score:
 
-1. Tags it with the colour `#30D158` (green) for the source badge
+1. Tags it with the color `#30D158` (green) for the source badge
 2. Looks at the payload's `outcome` field and assigns severity + a custom label accordingly
 3. Builds the action button "Open repo" using the `repoUrl` from the payload
 
 Scores live as files in `~/Library/Application Support/Tempo/Scores/`. Tempo loads them at launch and reloads automatically when files change. You can edit a bundled score (Tempo ships with twenty and growing: UniFi, Kopia, Uptime Kuma, Home Assistant, GitHub Actions, the *arr stack, Synology, Hazel, Apple Shortcuts, and more), drop in a community score from the [public catalog](https://github.com/caereforge/tempo-scores), or write your own from scratch. Apple Calendar and Reminders are separate: they ride on a built-in EventKit provider, not on a score JSON file.
 
-The score system is the canonical configuration surface between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source (different colours, different labels, different action buttons), the answer is almost always "edit the score."
+The score system is the canonical configuration surface between raw payload and what you see and do in Tempo. If you want Tempo to react differently to a source (colors, labels, action buttons), the answer is almost always "edit the score."
 
-> 💡 **Note**: scores are the V1 way to customise Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) that covers severity rules, presentation, and grouping for hands-on editing without touching JSON. The Score Editor's **Actions** tab lets you add, edit, and reorder the buttons themselves; see [§7.6](/docs/07-score-editor#76---actions). The score JSON stays a valid alternate surface if you prefer to edit it by hand.
+> 💡 **Note**: scores are the V1 way to customize Tempo. We ship a [Score Editor UI](/docs/07-score-editor) (chapter 7) that covers severity rules, presentation, and grouping for hands-on editing without touching JSON. The Score Editor's **Actions** tab lets you add, edit, and reorder the buttons themselves; see [§7.6](/docs/07-score-editor#76---actions). The score JSON stays a valid alternate surface if you prefer to edit it by hand.
 
 **Where to learn more**: [chapter 7 - Score Editor](/docs/07-score-editor) for hands-on editing; [chapter 11 - Score authoring](/docs/11-score-authoring) for the full JSON reference; [glossary entry for score](/docs/14-glossary#score).
 
@@ -119,7 +119,7 @@ A typical UniFi event might offer these actions:
 - **Copy MAC** → `copyToClipboard: ${metadata.clientMac}`
 - **Ping client** → `openTerminalWith: ping ${metadata.clientIP}`
 
-Click any one and Tempo resolves the interpolation, then dispatches the action. Total time from "I see the event" to "I'm acting on it": about a second.
+Click any one and Tempo resolves the interpolation, then dispatches the action.
 
 Actions in v1 are **always user-triggered**. Tempo never fires an action on its own. v2 will extend this with auto-firing rules (the user defines conditions, Tempo runs the action automatically), but v1 keeps the human in the loop.
 
@@ -131,18 +131,18 @@ Actions in v1 are **always user-triggered**. Tempo never fires an action on its 
 
 ## 2.5 - Severity, state, acknowledgment, dismissal
 
-These four words together describe how Tempo characterises and manages events through their lifecycle.
+These four words together describe how Tempo characterizes and manages events through their lifecycle.
 
 ### Severity
 
 Every event gets a **severity** label. The five values, from quietest to loudest:
 
-| Severity | Meaning | Default colour |
+| Severity | Meaning | Default color |
 |---|---|---|
 | `info` | Informational, no action needed | blue |
 | `ok` | Positive outcome (a backup succeeded, a probe is up) | green |
 | `warning` | Something you should look at, not urgent | yellow |
-| `error` | Something failed, attention needed | red |
+| `error` | Something failed, attention needed | orange |
 | `critical` | Urgent, immediate action recommended | red |
 
 Severity is **assigned by the score**, not by the upstream tool directly. The same Kopia "outcome=error" payload can be severity `error` in one user's score and severity `critical` in another's, depending on how that user calibrated their thresholds.
@@ -151,9 +151,9 @@ Severity is **assigned by the score**, not by the upstream tool directly. The sa
 
 Some sources report **stateful** conditions: Uptime Kuma monitors that go down then come back up, Home Assistant alarm sensors that trip then clear. For these, Tempo tracks whether the condition is currently *firing* (active problem) or *resolved* (cleared).
 
-State is shown in colour and meta-text on the card. A monitor that's currently down shows in red with "DOWN" meta-text; once it's back up, the same row updates to green with "UP" or "RESOLVED."
+State is shown in color and meta-text on the card. A monitor that's currently down shows in red with "DOWN" meta-text; once it's back up, the same row updates to green with "UP" or "RESOLVED."
 
-For stateful behaviour to work, the upstream source must send updates with a stable `externalID` (so Tempo recognises updates as belonging to the same condition). The bundled scores for Uptime Kuma and Home Assistant handle this for you.
+For stateful behavior to work, the upstream source must send updates with a stable `externalID` (so Tempo recognizes updates as belonging to the same condition). The bundled scores for Uptime Kuma and Home Assistant handle this for you.
 
 ### Acknowledgment
 
@@ -183,21 +183,23 @@ Without help, these would flood the feed with near-duplicate cards.
 
 Tempo's answer is **stacking**: a cluster of related events shown as a single card with a count badge instead of N separate cards. Click a stack to expand it; the dismiss-all footer at the bottom lets you clear the whole cluster in one action.
 
-Stacking is driven by the score. Each score declares two things:
+Stacking is driven by the score. With the `grouping` primitive, a score declares two things:
 
-1. **What "related" means**: a `grouping` template (or a list of fallback templates), like `${metadata.monitorID}` for Uptime Kuma or `[${metadata.clientMac}, ${metadata.deviceMac}]` for UniFi. Events with the same resolved value get clustered
+1. **What "related" means**: a `grouping` template (or a list of fallback templates). The Kopia score groups by `${metadata.repo}/${metadata.path}`; the Synology score groups by `${metadata.hostname}/${metadata.subject}`. Events with the same resolved value get clustered
 2. **A grouping window**: a `groupingWindow` like `1h` or `6h` or `1d` defines how long a stack stays "open" to absorb new events. After the window closes, the next matching event starts a fresh stack
 
-A simplified Kopia grouping config:
+A simplified slice of the Synology grouping config:
 
 ```json
-"grouping": ["${metadata.repo}/${metadata.path}", "${metadata.path}"],
-"groupingWindow": "1d"
+"grouping": ["${metadata.hostname}/${metadata.subject}", "${metadata.hostname}"],
+"groupingWindow": "6h"
 ```
 
-This says: events get clustered by `repo/path` (e.g., `prod-backup/Documents`); if that path is missing from the payload, fall back to grouping by `path` alone; new events are absorbed into the stack for one day.
+This says: events get clustered by `hostname/subject`; if `subject` is missing from the payload, fall back to grouping by `hostname` alone; new events are absorbed into the stack for six hours.
 
-The result: instead of seven separate cards for seven Kopia runs of the same path in one day, you see one stack with the count "7" and the latest run on top.
+The result: instead of seven separate cards for seven Synology notifications about the same host in six hours, you see one stack with the count "7" and the latest notification on top.
+
+Some scores use a richer `groupingRules` form instead of the `grouping` primitive. UniFi and Uptime Kuma use it: rather than a fixed template, `groupingRules` opens and closes stacks based on event content (for example, a Kuma `DOWN` event opens a stack that the matching `UP` event closes). The full reference is in [chapter 11 - Score authoring](/docs/11-score-authoring).
 
 > 🛠 **Tip**: stacking is per-source by design. Events from different sources never cluster together, even if their grouping keys happen to collide. This keeps source identity preserved in the feed.
 
@@ -212,7 +214,7 @@ The result: instead of seven separate cards for seven Kopia runs of the same pat
 If the concepts feel solid:
 
 - Hands-on: [chapter 3 - Getting started](/docs/03-getting-started)
-- Customisation: [chapter 7 - Score Editor](/docs/07-score-editor)
+- Customization: [chapter 7 - Score Editor](/docs/07-score-editor)
 - Adding a source you don't have bundled: [chapter 10 - Sources reference](/docs/10-sources-reference)
 
 If a concept didn't quite land, the [glossary](/docs/14-glossary) has tighter one-paragraph definitions for each term used here. Open it in a separate tab and use it as a quick lookup while you read the rest of the guide.

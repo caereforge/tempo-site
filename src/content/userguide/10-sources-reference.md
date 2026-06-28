@@ -1,6 +1,6 @@
 ---
 title: "Sources reference"
-description: "The per-source manual: every bundled source gets a section covering setup, the payload fields its score expects, and what to expect in the timeline."
+description: "The per-source manual: a curated subset of the bundled sources, each with setup, the payload fields its score expects, and what to expect in the timeline."
 chapter: 10
 order: 10
 draft: false
@@ -8,13 +8,13 @@ pubDate: 2026-05-05
 ---
 # 10 - Sources reference
 
-This chapter is the per-source manual: every bundled source gets its own section covering setup, what payload fields the bundled score expects, and what to expect in the timeline.
+This chapter is a per-source manual covering a curated subset of the bundled sources in full detail: setup, what payload fields the bundled score expects, and what to expect in the timeline. Tempo ships about 20 bundled scores; the ones given full sections here are the most common starting points. Every other shipped source is listed in [§10.11 - Full bundled catalog](#1011---full-bundled-catalog), with a one-line summary and a link to its technical guide at [tempoapp.app/scores](https://tempoapp.app/scores).
 
-The sources are presented in a stable order (calendar first, then generic webhook, then alphabetised among bundled providers). Read straight through if you're new to Tempo; jump directly to the source you're connecting if you're not.
+The sources are presented in a stable order (calendar first, then generic webhook, then alphabetized among the bundled providers covered here). Read straight through if you're new to Tempo; jump directly to the source you're connecting if you're not.
 
 > 🛠 **Tip**: every native (non-Apple Calendar) source uses the same plumbing: Tempo's HTTP ingestion server on port `7776`, a per-provider token, and a JSON or plain-text payload. The differences are which endpoint to hit and what fields the bundled score knows about. If you're comfortable with the generic webhook in §10.2, the native modules are mostly minor variations on the same shape.
 
-> 💡 **About endpoint paths**: you'll notice some sources hit dedicated root paths (`/kopia`, `/uptime-kuma`) while UniFi sits under `/ingest/unifi`. That's a historical artifact: the earliest two native modules (Kopia, Uptime Kuma) landed before we settled on `/ingest/<source>` as the convention. The behaviour is identical regardless of path; the URL each source uses is documented in its section below. Existing scores keep working unchanged across releases.
+> 💡 **About endpoint paths**: you'll notice some sources hit dedicated root paths (`/kopia`, `/uptime-kuma`) while UniFi sits under `/ingest/unifi/network` and `/ingest/unifi/protect`. That's a historical artifact: the earliest two native modules (Kopia, Uptime Kuma) landed before we settled on `/ingest/<source>` as the convention. The behavior is identical regardless of path; the URL each source uses is documented in its section below. Existing scores keep working unchanged across releases.
 
 ---
 
@@ -29,7 +29,7 @@ The Apple Calendar and Reminders source is **automatic**: it activates the momen
 - **Calendar events** from every macOS calendar account you've enabled in Calendar.app: iCloud, Google (via macOS Internet Accounts), Exchange, CalDAV servers, local calendars
 - **Reminders** from every list you've enabled: iCloud Reminders, Exchange, CardDAV-style reminders
 
-Each entry shows in the timeline as a compact row (no severity, no stripe, no headline metric: agenda items, not alerts). The provider icon is a calendar; the source colour is the calendar's native colour from Calendar.app.
+Each entry shows in the timeline as a compact row (no severity, no stripe, no headline metric: agenda items, not alerts). The provider icon is a calendar; the source color is the calendar's native color from Calendar.app.
 
 ### Setup
 
@@ -60,7 +60,7 @@ EventKit is notification-driven. Most state changes propagate to Tempo within a 
 Slower paths:
 
 - **iCloud-synced changes from another device**: depends on iCloud's batch interval (typically 10-30 seconds, occasionally longer)
-- **Google Calendar via macOS Internet Accounts**: Google's push-vs-poll behaviour determines latency. Often 1-5 minutes to fan out
+- **Google Calendar via macOS Internet Accounts**: Google's push-vs-poll behavior determines latency. Often 1-5 minutes to fan out
 - **CalDAV servers**: varies by server; macOS polls, so latency depends on the configured poll interval (typically 15 minutes)
 
 For more on troubleshooting calendar sync issues, see [§12.2 - Apple Calendar sync issues](/docs/12-troubleshooting#122---apple-calendar-sync-issues).
@@ -81,7 +81,7 @@ The intrinsic limits of this pattern:
 - **Refresh latency**. Tempo sees what Calendar.app sees, which is what the iCal subscription has fetched on its last refresh. Sub-minute responsiveness isn't possible on this path
 - **Subscription cap**. Calendar.app has its own performance characteristics for many subscribed calendars; if you have 10+ task-manager subscriptions, latency and battery cost compound
 
-> 💡 **Note**: native API integration with a specific task manager (actually talking to the Todoist API or OmniFocus database directly, with two-way sync of completion state) is a candidate for a future release. For V1, iCal subscription is the sanctioned bridge.
+> 💡 **Note**: some task managers have their own bundled source. **Todoist** ships with a native score, and **Fastmail** ships as a bundled CalDAV source; see their guides at [tempoapp.app/scores](https://tempoapp.app/scores). For task managers without a dedicated integration (OmniFocus, Things, TickTick), iCal subscription is the bridge. Deeper two-way sync of completion state for more apps is a candidate for a future release.
 
 ---
 
@@ -129,7 +129,7 @@ A few highlights worth knowing:
 
 ### What Tempo rejects
 
-- Payload larger than 64 KiB → `413`
+- Payload larger than 4 MB → `413`
 - Unknown top-level fields, unknown metadata keys, unknown action trigger types → `400`
 - URL action with a non-whitelisted scheme (`file://`, `javascript:`, etc.) → `400`
 - Token mismatch (token bound to provider X, payload says provider Y) → `403`
@@ -137,7 +137,7 @@ A few highlights worth knowing:
 
 ### What you get back
 
-- `202 Accepted` with the generated event ID on success
+- `200 OK` with a JSON body `{"id":"<event-id>"}` on success
 - A descriptive 4xx error explaining what was wrong on failure
 
 ### The bundled Scripts score
@@ -145,7 +145,7 @@ A few highlights worth knowing:
 Any payload whose `providerIdentifier` starts with `scripts.` is rendered through the bundled **Scripts score**, which:
 
 - Maps `metadata.label` to a severity (`OK` → ok green, `Warning` → warning yellow, `Error` → error red, `Critical` → error red)
-- Surfaces a small set of generic actions (SSH to source host, copy host, copy title)
+- Provides a small set of generic actions (SSH to source host, copy host, copy title)
 - Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.`: `scripts.shell` → **Shell**, `scripts.ruby` → **Ruby**, whatever you name it. Anything deeper rolls up: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**, and the specific name shows in the action panel when you open the event.
 
 **Why only one level?** It lets you split your scripts logically (shell checks apart from Python pollers) without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
@@ -157,19 +157,19 @@ The Scripts score is the right starting point for shell/Python/Ruby scripts you 
 If you POST to `/ingest` with the bare minimum (`title` + `providerIdentifier`), don't have a score for that provider, and your `providerIdentifier` doesn't fall under the bundled Scripts score's namespace conventions either, the event still lands in the timeline. Tempo doesn't require a score to ingest. But the card will look minimal:
 
 - **Title and timestamp**, the two values you actually sent
-- A **neutral grey dot** in the source panel, since Tempo has no colour to associate with the source
-- Severity stays `info` (the default), so the badge is the small grey "Info" pill
+- A **neutral gray dot** in the source panel, since Tempo has no color to associate with the source
+- Severity stays `info` (the default), so the badge is the small gray "Info" pill
 - **No subtitle, no headline, no per-event metric**: none of the rich rendering that bundled scores extract from `metadata`
 - **No actions** in the action panel beyond the universal Acknowledge / Dismiss
 - The **source name** in the panel is the raw `providerIdentifier` string (`com.example.my-tool` rather than a friendly label)
 
-The card is functional (you can still see *what* happened and *when*) but it's hard to scan at a glance, especially next to fully-scored sources whose cards carry severity colour, custom pills, and one-click actions.
+The card is functional (you can still see *what* happened and *when*) but it's hard to scan at a glance, especially next to fully-scored sources whose cards carry severity color, custom pills, and one-click actions.
 
 Three ways to make a custom source's card richer, in increasing order of effort:
 
 1. **Pass more fields in the payload.** Add `severity` (`"warning"`, `"error"`, `"critical"`) and a few `metadata.custom.<key>` values so Tempo has something to display in the card and the action panel's details list. Five more lines of JSON is often enough to lift the card from "blank" to "informative", with no score authoring required.
 2. **Adopt the bundled Scripts score's namespace.** Name your provider `scripts.<lang>.<name>` and the Scripts score picks it up automatically: severity from `metadata.label`, source-panel grouping under a single **Scripts** parent row (one level deep, by `<lang>`), a couple of generic actions. Zero authoring.
-3. **Author a dedicated score** for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct colour, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.
+3. **Author a dedicated score** for your provider. Full control: custom severity rules, headline templates, action buttons specific to your source, distinct color, friendly display name. The investment is one JSON file (~30 minutes for a first one) and pays for itself the moment that source becomes part of your daily scan.
 
 A useful heuristic: if you'll see this source's events more than once a week, the dedicated score is worth writing. For one-off ad-hoc senders that fire occasionally, option 1 or 2 is enough indefinitely.
 
@@ -234,73 +234,115 @@ The bundled Kopia score offers (per snapshot event):
 
 - **Run snapshot now** → `kopia snapshot create ${metadata.path}` in Terminal
 - **List snapshots** → `kopia snapshot list ${metadata.path}` in Terminal
+- **Repository status** → `kopia repository status` in Terminal
+- **Maintenance info** → `kopia maintenance info` in Terminal
+- **Open KopiaUI (desktop app)**
+- **Open Kopia server (web UI)**
 - **Kopia docs** → opens [kopia.io/docs/](https://kopia.io/docs/)
 
-Customise these via the Score Editor for per-repo SSH actions, dashboard URLs, etc.
+Customize these via the Score Editor for per-repo SSH actions, dashboard URLs, etc.
 
 ### Stateless by design
 
-Each Kopia snapshot is a discrete event. The bundled score uses **no externalID**, so every snapshot is a fresh row. The bundled score doesn't declare a `grouping` block by default, so each snapshot lands on its own line; if you want history-of-one-target collapsed into a stack, add a grouping template like `${metadata.repo}/${metadata.path}` in the Score Editor (with whatever time window suits your cadence).
+Each Kopia snapshot is a discrete event: the source is stateless, so every snapshot run lands as a fresh row rather than updating an earlier one. The bundled score declares a `grouping` block by default (`${metadata.repo}/${metadata.path}`, falling back to `${metadata.path}`), so repeated snapshots of the same backup source collapse into one expandable stack out of the box. Edit the grouping template in the Score Editor if you want a different key or time window.
 
 ---
 
 ## 10.4 - UniFi
 
-**Provider identifier**: `com.ubiquiti.unifi`
-**Endpoint**: `POST http://<your-mac>:7776/ingest/unifi`
-**Format**: UniFi's native alarm JSON (Default Content)
+Tempo ships **two separate UniFi sources**, with two distinct provider identifiers and two endpoints:
 
-### What it does
+- **UniFi Network** (`com.ubiquiti.unifi.network`) for controller alarms
+- **UniFi Protect** (`com.ubiquiti.unifi.protect`) for camera detections
 
-UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhooks for events on the network: device disconnects, association failures, firmware updates, port changes, security events. Tempo's UniFi module parses the alarm JSON (which varies in shape across firmware versions; Tempo handles both flat and wrapped forms), maps it to severity via the bundled UniFi score, and renders it as a card.
+Each has its own ingestion token and its own bundled score. In the source panel they appear together under one **UniFi** row, but that row is a semantic container: it holds no token of its own and produces no events. You configure, token, and toggle each UniFi source separately. The full per-source guide lives at [tempoapp.app/scores/unifi](https://tempoapp.app/scores/unifi).
 
-### Setup
+### 10.4.1 - UniFi Network
 
-1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.ubiquiti.unifi`
-2. **In your UniFi controller**:
-   - Open **Settings → System → Alerts** (or **Notifications**, depending on UniFi version)
-   - Add a new alarm/webhook destination
-   - **Delivery URL**: `http://<your-mac>:7776/ingest/unifi`
+**Provider identifier**: `com.ubiquiti.unifi.network`
+**Endpoint**: `POST http://<your-mac>:7776/ingest/unifi/network`
+**Format**: UniFi's native alarm JSON
+
+UniFi controllers (Cloud Key, UDM, Dream Machine, self-hosted) emit alarm webhooks for events on the network: device disconnects, association failures, firmware updates, port changes, security events. Tempo's UniFi Network module parses the alarm JSON, maps it to severity via the bundled score, and renders it as a card.
+
+#### Setup
+
+1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.ubiquiti.unifi.network`
+2. **In your UniFi Network controller**:
+   - Add an alert webhook destination
+   - **Delivery URL**: `http://<your-mac>:7776/ingest/unifi/network`
    - **Delivery method**: POST
-   - **Authentication**: None (UniFi can't set arbitrary headers in some firmware, so Tempo accepts the token via `Authorization: Bearer <token>`)
-   - **Add Header**: `Authorization: Bearer <token>` (or `X-Tempo-Token: <token>` if your firmware supports it)
-   - **Content**: Default Content (let UniFi send its native shape)
-3. **Save** and trigger a test alarm; the controller's UI usually has a "Send test" button next to the webhook destination
+   - **Header**: `X-Tempo-Token: <token>` (or `Authorization: Bearer <token>` if your firmware can't set arbitrary headers)
+   - Enable the alarm categories you care about. Client connect and disconnect can fire constantly on a busy network; scope the webhook to device and uplink events if the feed gets noisy
+3. **Save** and trigger a test alarm
 
-### What UniFi events look like in Tempo
+#### What UniFi Network events look like in Tempo
 
-The bundled UniFi score includes ~40 rules covering the alarm types most homelabs see. Common ones:
+The bundled score includes ~40 rules that match UniFi's `alarmName` field. Common ones:
 
-- **STA_ASSOC_FAILURE**: wireless client failed to associate. Severity: warning
-- **STA_AUTH_FAILURE**: wireless authentication failure (wrong WPA password, certificate issue). Severity: warning
-- **WAN_DISCONNECTED**: uplink lost. Severity: critical
-- **DEVICE_OFFLINE**: managed device (AP, switch) went offline. Severity: error
-- **EVT_AD_LOGIN**: admin login to the controller. Severity: info
+- **Lost Contact / device down** → severity `error`, badge "Down"
+- **Threat / IPS / IDS** → severity `critical`, badge "Threat"
+- **Rogue AP** → severity `critical`, badge "Rogue AP"
+- **Upgrade failed**, **Restart / Reboot**, **Speedtest failed** → severity `warning`
+- **Client Connected / Disconnected** → severity `info`
 
-Severity is per-rule and customisable in the Score Editor.
+Anything the score doesn't recognize falls through to the default: `info`, label "Info". Severity is per-rule and customizable in the Score Editor.
 
-### Default actions
+#### Default actions
 
-The bundled UniFi score offers:
+The bundled UniFi Network score offers:
 
-- **Open local controller (port 443)** → `https://${metadata.senderAddress}/network/default/dashboard`
-- **Open local controller (port 8443)** → `https://${metadata.senderAddress}:8443/manage/site/default/dashboard`
-- **Open client in controller (port 443)** → `https://${metadata.senderAddress}/network/default/clients/${metadata.deviceMac}`
-- **Open client in controller (port 8443)** → `https://${metadata.senderAddress}:8443/manage/site/default/clients/${metadata.deviceMac}`
+- **Open dashboard** → `https://${metadata.senderAddress}/network/default/dashboard`
+- **Open client in controller** → `https://${metadata.senderAddress}/network/default/clients/${metadata.deviceMac}`
 - **Open UniFi dashboard (cloud)** → opens [unifi.ui.com](https://unifi.ui.com/)
-- **SSH to controller** → `ssh://root@${metadata.senderAddress}` (requires that you've set up key-based SSH access to the controller)
+- **SSH to controller** → `ssh://root@${metadata.senderAddress}` (requires key-based SSH access to the controller)
+- **Copy device name** → `${metadata.device}`
+- **Copy MAC address** → `${metadata.deviceMac}`
+- **UniFi docs**
 
-### Multi-template grouping
+#### Grouping
 
-UniFi alarms come in different shapes (some have `clientMac` and `deviceMac`, some only `deviceMac`). The bundled score uses a fallback chain:
+The score groups stateful client sessions: a client **Disconnected** event opens a group keyed on `clientMac` (2 hour window), and a matching **Connected** event closes it, so a disconnect and its reconnect read as one entry. Other device alarms repeat-group on `deviceMac` over a 1 hour window, so a flapping device stays one row.
 
-```
-${metadata.clientMac}/${metadata.deviceMac}
-${metadata.deviceMac}
-${metadata.alarmKey}
-```
+### 10.4.2 - UniFi Protect
 
-So client-association events group by client+AP, device-status events group by AP alone, and miscellaneous alarms group by key.
+**Provider identifier**: `com.ubiquiti.unifi.protect`
+**Endpoint**: `POST http://<your-mac>:7776/ingest/unifi/protect`
+**Format**: UniFi Protect's alarm webhook JSON
+
+UniFi Protect fires alarm webhooks for camera detections: motion, smart detections (person, vehicle, package, face), doorbell rings, intrusions. Tempo's Protect module reads the alarm payload and the attached snapshot, so there's nothing to map by hand.
+
+#### Setup
+
+1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.ubiquiti.unifi.protect`. This is a different token from the Network one
+2. **In UniFi Protect**, create an alarm and add a **Custom Webhook** action:
+   - **Delivery URL**: `http://<your-mac>:7776/ingest/unifi/protect`
+   - **Method**: POST
+   - **Authentication**: `bearer`, with the Protect token from step 1
+   - **Use Thumbnails**: on, if you want the camera snapshot rendered on the event
+3. Scope the alarm to the cameras and detection types you want, so the timeline stays focused
+
+#### What UniFi Protect events look like in Tempo
+
+The bundled score reads Protect's `detectionType` to set severity:
+
+- **Intruder**, **Alarm** → severity `critical`
+- **Smart detect**, **Person**, **Vehicle**, **Package**, **Face**, **Doorbell ring** → severity `warning`
+- **Motion** → severity `info`
+
+When **Use Thumbnails** is enabled controller-side, Tempo renders the camera snapshot inline above the action list. Thumbnails are kept for the period set in Settings → Database / Maintenance, then stripped from the row to keep the database small (the event itself stays).
+
+#### Default actions
+
+- **Open in Protect** → `${metadata.eventLocalLink}` (deep-link to the event page)
+- **Open Protect cloud** → opens [unifi.ui.com](https://unifi.ui.com/)
+- **Copy event ID** → `${metadata.eventId}`
+- **Copy camera MAC** → `${metadata.cameraMac}`
+- **UniFi Protect docs**
+
+#### Grouping
+
+Protect events repeat-group on `cameraMac` over a 5 minute window, so a camera firing repeatedly stays one row rather than scattering across the timeline.
 
 ---
 
@@ -367,13 +409,15 @@ The bundled Home Assistant score has rules for common patterns:
 - `device_class=motion` → severity `info`, label varies by entity
 - `state` transitions on alarm panels (`disarmed`, `armed_home`, `armed_away`, `triggered`)
 
-The full rule list is visible in the Score Editor; ~30 rules covering the most common HA automation patterns.
+The full rule list is visible in the Score Editor; ~40 rules covering the most common HA automation patterns.
 
 ### Default actions
 
 - **Open dashboard** → `http://homeassistant.local:8123`
 - **Open entity history** → `http://homeassistant.local:8123/history?entity_id=${metadata.entity_id}`
 - **Open automations** → `http://homeassistant.local:8123/config/automation/dashboard`
+- **Copy entity ID** → `${metadata.entity_id}`
+- **HA docs**
 
 If your HA isn't at `homeassistant.local`, edit the actions in the Score Editor to point at your actual hostname or IP.
 
@@ -389,7 +433,7 @@ If your HA isn't at `homeassistant.local`, edit the actions in the Score Editor 
 
 Uptime Kuma is a self-hosted uptime monitor. Each "monitor" (an HTTP probe, a port check, a ping target) transitions between **DOWN / UP / PENDING / MAINTENANCE** states over time. Kuma fires a webhook on every state transition.
 
-Tempo's Uptime Kuma module emits a **stable externalID** per monitor (`kuma:<monitor-id-or-slug>`), which means repeated state transitions update the same row in place: the timeline shows one card per monitor that flips colour as the monitor's state changes, not a new card every 60 seconds when the monitor re-notifies.
+Tempo's Uptime Kuma module emits a **stable externalID** per monitor (`kuma:<monitor-id-or-slug>`), which means repeated state transitions update the same row in place: the timeline shows one card per monitor that flips color as the monitor's state changes, not a new card every 60 seconds when the monitor re-notifies.
 
 ### Setup
 
@@ -405,15 +449,20 @@ Tempo's Uptime Kuma module emits a **stable externalID** per monitor (`kuma:<mon
 ### What it looks like in Tempo
 
 - **Monitor goes DOWN** → red card with the monitor name, severity `error` or `critical` (configurable in the score), state `firing`
-- **Monitor comes back UP** → the same card updates: severity drops to `ok`, a "Resolved" pill appears, the colour goes green
+- **Monitor comes back UP** → the same card updates: severity drops to `ok`, a "Resolved" pill appears, the color goes green
 - **Repeated DOWN re-notifies** → no new cards. Same card, same row, severity stays where it was
 
 This is the canonical example of **stateful** event handling in Tempo.
 
 ### Default actions
 
-- **Open Uptime Kuma dashboard** → `${metadata.statusPageURL}` if present, else a default
-- **Probe URL** → `openURL: ${metadata.url}` (if the monitor target is HTTP-shaped)
+- **Open monitor URL** → `${metadata.url}`
+- **Open Kuma dashboard** → `http://${metadata.senderAddress}:3001`
+- **Curl probe** → `curl -ksSI ... ${metadata.url}` in Terminal
+- **Ping host** → `ping -c 5 ${metadata.hostname}` in Terminal
+- **Traceroute host** → `traceroute ${metadata.hostname}` in Terminal
+- **Resolve hostname** → `dig ${metadata.hostname} +short` in Terminal
+- **Copy monitor URL** → `${metadata.url}`
 - **Uptime Kuma docs** → opens [github.com/louislam/uptime-kuma/wiki](https://github.com/louislam/uptime-kuma/wiki)
 
 ---
@@ -452,52 +501,59 @@ The bundled GitHub Actions score has rules for:
 
 ### Default actions
 
+- **Open run** → `${metadata.runUrl}`
 - **Open repo Actions** → `https://github.com/${metadata.repo}/actions`
-- **Open run** → `https://github.com/${metadata.repo}/actions/runs/${metadata.run_id}`
+- **Copy repo** → `${metadata.repo}`
 - **Clone repo** → `git clone https://github.com/${metadata.repo}.git` in Terminal
 - **GitHub Actions docs** → opens [docs.github.com/actions](https://docs.github.com/actions)
 
 ### Multi-template grouping
 
-GitHub events come in different shapes (issues, PRs, workflow runs each have different metadata). Bundled grouping uses a fallback chain so each event type clusters meaningfully: issues by issue number, PRs by PR number, workflow runs by workflow name + branch.
+GitHub events come in different shapes (issues, PRs, workflow runs each have different metadata). Bundled grouping uses a fallback chain so each event type clusters meaningfully: issues by issue number (`${metadata.repo}/issue/${metadata.issueNumber}`), PRs by PR URL (`${metadata.prUrl}`), workflow runs by repo + workflow name (`${metadata.repo}/workflow/${metadata.workflow}`).
 
 ---
 
 ## 10.8 - Synology
 
-**Provider identifier**: `com.synology` (umbrella; sub-products distinguished via `metadata.sourceGroup` like `DSM`, `SurveillanceStation`)
+**Provider identifier**: `com.synology`
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
 **Format**: JSON, Tempo's generic webhook shape
 
+> ⚠️ **Experimental.** This score was built from Synology's official Custom Webhook documentation and has not been verified end-to-end on live hardware. The test unit died and was disposed of before verification. Treat the body template and the field mapping as a starting point and adjust them to your DSM version if events arrive looking wrong.
+
 ### What it does
 
-Synology DSM (the NAS operating system) supports webhook destinations via Notification Settings. Pointing it at Tempo gives you cards for: SMART warnings, RAID degradation, login attempts, package updates, scheduled task results, Surveillance Station alerts.
+Synology DSM (the NAS operating system) supports a Custom Webhook notification transport. Pointing it at Tempo gives you cards for DSM notifications: SMART warnings, RAID degradation, login attempts, package updates, scheduled task results.
+
+DSM's Custom Webhook exposes a single reliable substitution token, `@@TEXT@@`, which expands to the rendered notification body as a localized, human-readable string. DSM does not send structured fields (no severity, no event category, no machine identifier). Because the only real signal is that string, the score derives severity by keyword-matching the text rather than reading a severity field.
 
 ### Setup
 
 1. **Create a token** in Tempo Settings → Ingestion. Bind it to provider `com.synology`
-2. **In DSM**: Control Panel → Notification → Push Service → Webhook (or "Custom webhook" depending on DSM version)
+2. **In DSM**: Control Panel → Notification → Push Service → Webhooks → Add → Custom
 3. **Configure**:
    - URL: `http://<your-mac>:7776/ingest`
    - HTTP method: POST
    - Headers: `X-Tempo-Token: <token>`
-   - Body template: a JSON template DSM expands with placeholders like `@@SUBJECT@@` and `@@MESSAGE@@`. The exact template depends on DSM version; see the public score documentation at [tempoapp.app/scores/synology](https://tempoapp.app/scores/synology) for the current recommended template
+   - Body template: a JSON template where you hardcode the NAS hostname and copy the `@@TEXT@@` string into the metadata keys the score reads (`subject` for severity matching, `message` for the copy action). See the public score documentation at [tempoapp.app/scores/synology](https://tempoapp.app/scores/synology) for the current recommended template
 
 4. **Save** and trigger a test notification
 
 ### Common alerts
 
+The score keyword-matches the notification text and maps it to severity (15 rules), for example:
+
 - **System health**: SMART warnings, RAID degraded, fan failure
 - **Storage**: volume full, snapshot failures
 - **Authentication**: failed logins, 2FA changes
 - **Packages**: updates available, package crashed
-- **Scheduled tasks**: backup completed/failed, hyper backup result
+- **Scheduled tasks**: backup completed/failed
 
-The bundled score maps each to severity and offers a default action set: open DSM, open the relevant control panel page, copy the hostname.
+The bundled score offers a default action set: open DSM, open Storage Manager / Log Center / Security Advisor, SSH or ping the NAS, copy the hostname or message.
 
-### Multiple Synology products
+### Grouping
 
-If you have DSM + Surveillance Station + Photos + Drive, they all live under `com.synology` as the provider, but `metadata.sourceGroup` differentiates them. The source panel groups them under one Synology row with sub-rows per product.
+Events group on `${metadata.hostname}/${metadata.subject}`, falling back to `${metadata.hostname}`, over a 6 hour window, so repeated notifications of the same kind from one NAS collapse into a single row.
 
 ---
 
@@ -506,9 +562,9 @@ If you have DSM + Surveillance Station + Photos + Drive, they all live under `co
 **Provider identifier**: `scripts.shell` (or `scripts.<language>` like `scripts.python`, `scripts.ruby`)
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
 
-The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarises something. Anything that produces a result-per-run.
+The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarizes something. Anything that produces a result-per-run.
 
-The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, surfaces generic actions, and groups your senders under the **Scripts** row, one level deep, by the first segment after `scripts.` (see §10.2 for the why).
+The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, exposes generic actions, and groups your senders under the **Scripts** row, one level deep, by the first segment after `scripts.` (see §10.2 for the why).
 
 ### Naming convention
 
@@ -670,10 +726,32 @@ Schedule with launchd or cron; the helper handles the rest.
 
 ---
 
+## 10.11 - Full bundled catalog
+
+The sections above cover the most common starting points. Tempo ships about 20 bundled scores in total. The sources not given a full section above are listed here, each with a one-line summary and a link to its technical guide. The guides cover setup, payload fields, severity rules, grouping, and actions in full.
+
+- **[Beszel](/scores/beszel)**: server-monitoring alerts (CPU, memory, disk, temperature), one stack per host and metric, delivered through a small read-only poller that reads the hub's alert history.
+- **[Fastmail](/scores/fastmail)** (CalDAV): an experimental, read-only CalDAV bridge that pulls today's Fastmail calendar events into your Tempo agenda. Basic by design: manual configuration, display-only events, no write-back.
+- **[Jellyfin](/scores/jellyfin)**: media server events (new media, playback start and stop, login failures, scheduled task results). Read-only, with actions that open the web UI, the item, or the admin dashboard.
+- **[Jellyseerr](/scores/jellyseerr)**: media requests and issue reports, grouped by title, with a severity that tracks each request from pending approval through available.
+- **[Vaultwarden](/scores/vaultwarden)**: authentication activity (logins, admin access, vault exports, a brute-force signal) plus server reachability, through a log watcher.
+- **[Pi-hole](/scores/pi-hole)**: DNS blocking state, reachability, updates, blocklist (gravity) refreshes, and host load, delivered by a small polling helper.
+- **[Hazel](/scores/hazel)**: Hazel rule fires as timeline events, each with one-click actions to open the file, jump to a folder, or copy the path.
+- **[Todoist](/scores/todoist)**: today's and overdue tasks, grouped by project, with priority-driven severity and buttons to open the task or the Todoist app.
+- **[Sonarr](/scores/sonarr)**: grabs, imports, and health events, stacked per series, each carrying an Open Sonarr action.
+- **[Radarr](/scores/radarr)**: grabs, imports, and health events, stacked per movie, with an Open Radarr action resolved to the sender's address.
+- **[Prowlarr](/scores/prowlarr)**: health and update events (health issues as warnings, recoveries as resolved, application updates as info), each with an Open Prowlarr action.
+- **[Apple Shortcuts](/scores/shortcuts)**: send your own events from Apple Shortcuts, on a Mac or an iPhone, with a webhook action whose JSON body drives the score's labels and indicators.
+
+For sources beyond the bundled set, see [§11 - Score authoring](/docs/11-score-authoring) and the community catalog at [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores).
+
+---
+
 ## Where to go from here
 
 - **Writing a custom score for a source not bundled** → [§11 - Score authoring](/docs/11-score-authoring)
-- **Customising one of the bundled scores** → [§7 - Score Editor](/docs/07-score-editor)
+- **Customizing one of the bundled scores** → [§7 - Score Editor](/docs/07-score-editor)
 - **The full webhook payload reference** → see [**§10.2 - Generic webhook → Full payload reference**](#full-payload-reference) above
 - **Troubleshooting "my events aren't arriving"** → [§12.1 - Networking](/docs/12-troubleshooting#121---networking-lan-ingestion) and [§12.3 - A score isn't appearing](/docs/12-troubleshooting#123---a-score-isnt-appearing)
-- **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores): Proxmox, Jellyfin, Vaultwarden, Pi-hole, Hazel, and more
+- **The full bundled-source catalog** → [§10.11 - Full bundled catalog](#1011---full-bundled-catalog) lists every shipped source with a link to its technical guide at [tempoapp.app/scores](https://tempoapp.app/scores)
+- **The community score catalog** → [github.com/caereforge/tempo-scores](https://github.com/caereforge/tempo-scores): user-contributed scores for sources beyond the bundled set

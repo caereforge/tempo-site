@@ -14,7 +14,7 @@ Reference material that didn't fit cleanly into the chapter flow but is worth ha
 
 ## 15.1 - Keyboard shortcuts
 
-V1 inherits the standard macOS shortcuts and adds a small set for the timeline. Most of what you'd expect from a Mac app works the way you'd expect.
+V1 inherits the standard macOS shortcuts and adds a small set for the timeline.
 
 ### Window and app
 
@@ -25,7 +25,7 @@ V1 inherits the standard macOS shortcuts and adds a small set for the timeline. 
 | **Cmd-W** | Close window (window stays alive in dock; menubar item still active) |
 | **Cmd-H** | Hide Tempo |
 | **Cmd-Option-H** | Hide other apps |
-| **Cmd-M** | Minimise window to dock |
+| **Cmd-M** | Minimize window to dock |
 
 ### Selection and feed
 
@@ -98,11 +98,11 @@ Short version:
 
 - **No accounts.** No login, no signup, no email required to use Tempo
 - **No cloud sync.** All data lives in `~/Library/Application Support/Tempo/` on your Mac
-- **No third-party telemetry.** Tempo doesn't ship analytics to any analytics service. V1 has no usage telemetry of any kind, opt-in or otherwise
+- **No third-party telemetry.** Tempo sends no analytics or usage data to any external service. V1 has no usage telemetry of any kind, opt-in or otherwise
 - **Calendar and Reminders access** is via macOS EventKit and respects the system permission you granted. Calendar contents stay between Calendar.app, EventKit, and Tempo; nothing leaves your Mac
 - **The ingestion server** binds to your LAN by default. Per-provider tokens authenticate every request. Audit log records every accept and reject
 
-If you have specific concerns about what Tempo does with a particular kind of data, the privacy page goes into detail. The short version is: it's all local, it's all under your control, and the audit log is there for forensics if you ever want to verify it.
+If you have specific concerns about what Tempo does with a particular kind of data, the privacy page goes into detail. Everything is stored locally on your Mac, and the audit log records every accepted and rejected ingestion if you want to verify what reached the server.
 
 ---
 
@@ -114,7 +114,7 @@ Short version:
 
 - **Tempo 1.x is and will remain freeware**: distributed free of charge, free for personal and commercial use. Existing and future 1.x releases stay free; whether a future major version (2.0) is paid is a data-driven decision (see below)
 - **Provided as-is, without warranty of any kind.** You're responsible for the scores you install and the actions they perform. The license & disclaimer are linked from the About panel in-app
-- **After v2 ships, v1 will continue to receive security fixes only**: no new features, no behavioural changes. Direct support migrates to v2
+- **After v2 ships, v1 will continue to receive security fixes only**: no new features, no behavioral changes. Direct support migrates to v2
 
 The licensing approach is meant to be transparent: V1 is freeware-with-no-warranty, distributed broadly to find product-market fit. V2 is conditional and may be paid; that decision is data-driven, not date-driven.
 
@@ -143,6 +143,6 @@ Thanks for reading.
 
 If something didn't land (a chapter that left you confused, a section that should have existed, a phrasing that read awkwardly) file an issue at [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues), or join the Discord at [tempoapp.app/community](https://tempoapp.app/community/).
 
-Documentation is the surface that compensates for V1 not having a Visual Action Builder yet. We take it seriously, and we'd rather hear that something didn't work than have you struggle through it alone.
+In V1 the Score Editor has no Visual Action Builder, so this documentation is the primary reference for authoring scores. Reports of gaps or errors are welcome at the issue tracker above.
 
 - *the Tempo docs*
