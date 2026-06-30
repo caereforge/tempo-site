@@ -13,6 +13,8 @@ Sometimes one source produces a few distinct kinds of event you would like to se
 
 For Hazel, instead of everything under `com.noodlesoft.hazel`, post email-rule events under `com.noodlesoft.hazel.email` and scanner-rule events under `com.noodlesoft.hazel.scanner`. Each becomes its own row grouped under the Hazel parent, and you can hide or auto-dismiss them independently.
 
+The suffix after the parent is **yours to invent**. Tempo doesn't predefine any sub-sources, there is no built-in `email` or `scanner`; whatever dotted segment you post under simply becomes a row. Pick names that mean something to you (`.email`, `.scanner`, `.backups`, `.deploys`), keep them consistent, and the panel organizes itself.
+
 This works because:
 
 - the **token** bound to `com.noodlesoft.hazel` already accepts any `com.noodlesoft.hazel.*` sub-source,

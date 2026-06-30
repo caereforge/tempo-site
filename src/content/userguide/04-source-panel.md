@@ -93,6 +93,14 @@ Common thresholds:
 
 If a source goes silent and the bolt disappears, that's the source telling you something. Whether it's a problem depends on the source.
 
+### The activity meter
+
+The bolt answers *is this source alive?* An optional **activity meter** answers a different question: *how busy is it right now?* It's a small vertical stack of five lozenge bars that fill from the bottom up on a log scale, sized by how many events the source emitted inside its liveness window: roughly, no events leaves it dark, a couple lights one bar, dozens fill it.
+
+The meter deliberately carries **vitality, never severity**. It's drawn in neutral opacity, never in red / yellow / green, so it never competes with the priority badge's "act now" color. A source can be busy and perfectly healthy; the meter reports throughput, the badge reports whether anything needs you.
+
+It is **off by default**. Turn it on in **Settings → Interface** with **Show activity on healthy sources**. Once enabled it appears only on sources that are live and healthy: a source that needs attention shows its priority badge, not the meter.
+
 ---
 
 ## 4.3 - Source filtering and the filter banner

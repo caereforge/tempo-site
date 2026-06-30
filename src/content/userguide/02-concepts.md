@@ -40,7 +40,12 @@ Events also have fields Tempo manages itself: severity, state, acknowledgment ti
 
 Tempo uses two related but distinct words: **source** and **provider**.
 
-A **provider** is a category of system: Kopia (backup), UniFi (network + cameras), Home Assistant (home automation), Uptime Kuma (monitoring), GitHub Actions (CI). Each provider has a unique identifier, conventionally in reverse-DNS form: `com.kopia`, `com.ubiquiti.unifi.network`, `com.uptime-kuma`, `com.home-assistant`. Some brand families act as umbrellas: `com.ubiquiti.unifi` rolls up Network and Protect (and, later, possibly Talk / Access / Connect / InnerSpace) as siblings under one parent row.
+A **provider** is a category of system: Kopia (backup), UniFi (network + cameras), Home Assistant (home automation), Uptime Kuma (monitoring), GitHub Actions (CI). Each provider has a unique identifier, conventionally in reverse-DNS form: `com.kopia`, `com.ubiquiti.unifi.network`, `com.uptime-kuma`, `com.home-assistant`.
+
+Most providers stand alone: one provider, one row. Two patterns put more than one row under a shared parent, and they work differently:
+
+- **Umbrella sources** fan a single provider out into as many sub-sources as *you* invent, by posting under a dotted identifier. **Scripts** and **Hazel** are the two umbrellas. Post under `scripts.shell.backup` and `scripts.shell.disk` (or `com.noodlesoft.hazel.email` and `com.noodlesoft.hazel.scanner`) and each dotted suffix becomes its own row under the parent, all covered by one score and accepted by one token. The suffixes are yours; Tempo doesn't predefine any. See the tip [Split one source into sub-sources](/tips/split-into-sub-sources).
+- **Semantic grouping** is a fixed, code-defined folder, purely for visual tidiness. Today there is exactly one: **UniFi**. `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` are two distinct providers, each emitted by its own module, that Tempo files under a single **UniFi** parent row so they read as one product. Unlike an umbrella, you can't invent new children here: the set is fixed (today Network and Protect).
 
 A **source** is one specific instance of a provider. You might have:
 
@@ -151,7 +156,7 @@ Severity is **assigned by the score**, not by the upstream tool directly. The sa
 
 Some sources report **stateful** conditions: Uptime Kuma monitors that go down then come back up, Home Assistant alarm sensors that trip then clear. For these, Tempo tracks whether the condition is currently *firing* (active problem) or *resolved* (cleared).
 
-State is shown in color and meta-text on the card. A monitor that's currently down shows in red with "DOWN" meta-text; once it's back up, the same row updates to green with "UP" or "RESOLVED."
+State is shown in color and meta-text on the row. A monitor that's currently down shows in red with "DOWN" meta-text; once it's back up, the same row updates to green with "UP" or "RESOLVED."
 
 For stateful behavior to work, the upstream source must send updates with a stable `externalID` (so Tempo recognizes updates as belonging to the same condition). The bundled scores for Uptime Kuma and Home Assistant handle this for you.
 
@@ -179,9 +184,9 @@ You can also configure **per-source auto-dismiss**: events from a chosen source 
 
 Some sources are chatty. A Uptime Kuma monitor that's down doesn't send one alert and stop; it re-notifies every 60 seconds. A Home Assistant alarm in a fault loop can send 30 events in five minutes. A Hazel rule processing a folder full of files generates a stream of "moved" events.
 
-Without help, these would flood the feed with near-duplicate cards.
+Without help, these would flood the feed with near-duplicate rows.
 
-Tempo's answer is **stacking**: a cluster of related events shown as a single card with a count badge instead of N separate cards. Click a stack to expand it; the dismiss-all footer at the bottom lets you clear the whole cluster in one action.
+Tempo's answer is **stacking**: a cluster of related events shown as a single row with a count badge instead of N separate rows. Click a stack to expand it; the dismiss-all footer at the bottom lets you clear the whole cluster in one action.
 
 Stacking is driven by the score. With the `grouping` primitive, a score declares two things:
 
@@ -197,13 +202,15 @@ A simplified slice of the Synology grouping config:
 
 This says: events get clustered by `hostname/subject`; if `subject` is missing from the payload, fall back to grouping by `hostname` alone; new events are absorbed into the stack for six hours.
 
-The result: instead of seven separate cards for seven Synology notifications about the same host in six hours, you see one stack with the count "7" and the latest notification on top.
+The result: instead of seven separate rows for seven Synology notifications about the same host in six hours, you see one stack with the count "7" and the latest notification on top.
 
 Some scores use a richer `groupingRules` form instead of the `grouping` primitive. UniFi and Uptime Kuma use it: rather than a fixed template, `groupingRules` opens and closes stacks based on event content (for example, a Kuma `DOWN` event opens a stack that the matching `UP` event closes). The full reference is in [chapter 11 - Score authoring](/docs/11-score-authoring).
 
 > 🛠 **Tip**: stacking is per-source by design. Events from different sources never cluster together, even if their grouping keys happen to collide. This keeps source identity preserved in the feed.
 
-> 💡 **Note**: grouping is configured per-score, in the Score Editor's Stack grouping section. If you find a source generates too many cards, check whether its score declares grouping. If it doesn't, you can add one, or pick a smaller grouping window if it does and you want stacks to close more aggressively.
+> 💡 **Note**: grouping is configured per-score, in the Score Editor's Stack grouping section. If you find a source generates too many rows, check whether its score declares grouping. If it doesn't, you can add one, or pick a smaller grouping window if it does and you want stacks to close more aggressively.
+
+> 💡 **Note**: in v1 each score carries a **single, built-in stacking criterion**: the grouping key and window come preconfigured with the score, not from some app-wide setting. For template scores you can edit that key and window in the Score Editor, so "built-in" doesn't mean "fixed". What you *can't* do yet is run several stacking criteria in parallel or author fully custom multi-stacking; user-defined multi-stacking is planned for a later version.
 
 **Where to learn more**: [chapter 5.4 - Stacked events](/docs/05-event-panel#54---stacked-events) for UI; [chapter 7.5 - Stack grouping](/docs/07-score-editor#75---stack-grouping) for editor.
 
