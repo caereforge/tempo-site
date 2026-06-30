@@ -22,7 +22,7 @@ A source row is a horizontal strip with four parts, left to right:
 ●   Source name              ⚡ 12     ⓘ
 ```
 
-- The **color dot** on the left identifies the source. It's also the source's accent color, the tint Tempo applies to event cards from this source in the feed. On a leaf source the dot is a color picker: click it to open the system color picker and recolor the source. On an **umbrella parent** (UniFi, Apple, Scripts) the dot is a fixed neutral marker: the parent has no color of its own, so it can't be recolored; set colors on its concrete sub-sources instead. The left-edge stripe on each event card is a separate signal that always reflects *severity* (green / yellow / red), not the source color
+- The **color dot** on the left identifies the source. It's also the source's accent color, the tint Tempo applies to event rows from this source in the feed. On a leaf source the dot is a color picker: click it to open the system color picker and recolor the source. On a **parent row** (an umbrella like Scripts or Hazel, or a semantic group like UniFi or Apple) the dot is a fixed neutral marker: the parent has no color of its own, so it can't be recolored; set colors on its concrete sub-sources instead. The left-edge stripe on each event row is a separate signal that always reflects *severity* (green / yellow / red), not the source color
 - The **source name** is the human-readable label. For bundled sources it defaults to the provider's canonical name ("Kopia", "UniFi", "Home Assistant"). For custom sources you can rename it in Manage Sources
 - The **priority badge** on the right is the at-a-glance status, described in detail below
 - The **info button** (ⓘ) on the far right opens the source actions menu, also described below
@@ -180,11 +180,11 @@ To completely remove a source, use **Manage Sources** instead; that one fully fo
 
 Opens the **dismissed-events sheet** for this source: a window listing every event you've dismissed from it, newest dismissal first. The header names the source and reads "Dismissed events". Each row shows the event title and an audit lifeline (when it arrived, when and how it was acked, when it was dismissed) and carries a **Restore** button that returns the event to the live feed. If nothing has been dismissed from the source, the sheet reads "Nothing dismissed from this source yet."
 
-The sheet is scoped to one provider, not a global dismissed list. For sources organized under an **umbrella** parent (UniFi grouping Network and Protect, Apple grouping Calendar and Reminders, Scripts grouping its languages), open **Show dismissed** on the concrete sub-source you care about.
+The sheet is scoped to one provider, not a global dismissed list. For sources organized under a **parent row** (UniFi grouping Network and Protect, Apple grouping Calendar and Reminders, Scripts grouping its sub-sources), open **Show dismissed** on the concrete sub-source you care about.
 
 ### Save full history
 
-The next entry, **Save full history…**, opens a save panel and exports this source's complete event history to a file at a path you choose. Pick a `.csv` or `.json` extension to set the format. For an umbrella parent the export rolls up every contained provider's events into one file. This is a one-way export for archiving or analysis outside Tempo, not a viewer; the events stay in Tempo untouched.
+The next entry, **Save full history…**, opens a save panel and exports this source's complete event history to a file at a path you choose. Pick a `.csv` or `.json` extension to set the format. For a parent row the export rolls up every contained provider's events into one file. This is a one-way export for archiving or analysis outside Tempo, not a viewer; the events stay in Tempo untouched.
 
 > 🛠 **Tip**: the dismissed-events sheet answers "what did I clear from this source last week, and do I want any of it back?". The **Restore** button puts a row back in the live feed without re-ingesting it.
 
