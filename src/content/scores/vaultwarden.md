@@ -10,6 +10,8 @@ builtIn: true
 
 This score renders [Vaultwarden](https://github.com/dani-garcia/vaultwarden) authentication activity on the Tempo timeline: failed and successful logins, admin-panel access, vault exports, new users, invitations, and a brute-force burst signal, plus whether the server is reachable. It is read-only. The actions open the vault or admin in your browser and copy a few fields. Nothing writes back to Vaultwarden, and the admin token and vault data never leave the host that runs the watcher.
 
+![Vaultwarden events on the Tempo timeline](/scores/img/vaultwarden-timeline.png)
+
 ## How it works
 
 Vaultwarden has no native outbound webhook. Its authentication events only appear in its log, so this integration is log-driven. A small companion helper runs on the Vaultwarden host, tails the container log, and POSTs a structured event to Tempo on each auth-relevant line.

@@ -10,6 +10,8 @@ builtIn: true
 
 Beszel is a lightweight, self-hosted server-monitoring hub. It watches CPU, memory, disk, temperature, load, and up/down status across your machines and raises an alert when a metric crosses a threshold. This score reads those alerts and renders them on Tempo's timeline as structured events, one stack per host and metric, so a flapping monitor reads as a single entry instead of a flood.
 
+![Beszel system metrics on the Tempo timeline](/scores/img/beszel-timeline.png)
+
 This score is built into Tempo. It ships with the app and is seeded into `~/Library/Application Support/Tempo/Scores/` on first launch, so there is nothing to download for the score itself. The work below is setting up the companion helper once.
 
 ## How it works

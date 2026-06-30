@@ -10,6 +10,8 @@ builtIn: true
 
 This score renders GitHub repository and Actions events on the Tempo timeline: workflow runs, pull requests, issues, reviews, releases, deployments, and Dependabot or security advisories. It is read-only. The actions open the run, the repo, or the docs in your browser, and nothing writes back to GitHub.
 
+![GitHub Actions runs on the Tempo timeline](/scores/img/github-actions-timeline.png)
+
 GitHub events do not reach Tempo directly. GitHub delivers webhooks from the public internet, and Tempo's ingestion server listens on the LAN, not on a public address. A small relay bridges the two. Most of the work below is setting up that relay once.
 
 ## How it works

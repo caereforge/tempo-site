@@ -12,6 +12,8 @@ builtIn: true
 
 This score renders events from a self-hosted [Jellyfin](https://jellyfin.org/) media server on the Tempo timeline: new media added to the library, playback start and stop, authentication failures, scheduled task results, and plugin changes. It is read-only. The actions open the Jellyfin web UI, an item's detail page, or the admin dashboard in your browser, and copy the server URL or item ID. Nothing writes back to Jellyfin.
 
+![Jellyfin events on the Tempo timeline](/scores/img/jellyfin-timeline.png)
+
 ## How it works
 
 Jellyfin has no native outbound notifications, but its official **Webhook plugin** does. The plugin watches server events and POSTs a JSON body to a destination you configure. Tempo's ingestion server is a valid destination, so Jellyfin posts to Tempo directly. There is no relay and no Tempo-side helper for this score: the plugin is the only moving part you set up.

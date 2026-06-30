@@ -12,6 +12,8 @@ builtIn: true
 
 Home Assistant is a home automation platform. This score renders the state changes you choose to forward, classified by device class. Home Assistant posts to Tempo directly through a `rest_command`, so there is no companion helper to run. It is read-only into Tempo: the actions open the dashboard, an entity's history, or the automation editor, and nothing writes back to Home Assistant.
 
+![Home Assistant events on the Tempo timeline](/scores/img/home-assistant-timeline.png)
+
 ## How it works
 
 Home Assistant produces a state change for almost everything in the house, far more than belongs on a timeline. Two mechanisms keep the feed useful.

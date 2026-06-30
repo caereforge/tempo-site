@@ -12,6 +12,8 @@ builtIn: true
 
 This score renders Synology DSM notifications on the Tempo timeline: storage, security, system, and backup events. It is read-only. The actions open DSM and its applications, SSH or ping the NAS, copy details for a ticket, or open Synology's documentation. Nothing writes back to the NAS.
 
+![Synology DSM events on the Tempo timeline](/scores/img/synology-timeline.png)
+
 Synology is a built-in source. It ships with Tempo and registers on first launch, so there is no `.tempo-score` file to download and no helper to run. DSM 7 includes a Custom Webhook notification transport, and DSM posts to Tempo directly over the LAN. The work below is configuring that webhook once.
 
 > **Experimental.** This score was built from Synology's official Custom Webhook documentation and has not been verified end-to-end on live hardware. The test unit died and was disposed of before verification. Treat the body template and the field mapping as a starting point and adjust them to your DSM version if events arrive looking wrong.

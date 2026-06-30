@@ -10,6 +10,8 @@ builtIn: true
 
 Scripts is the generic source: the open door into Tempo. There is no integration to install on the other end and no vendor payload contract to match. You decide what to send. Any of your own shell scripts, cron jobs, backup hooks, CI steps, or one-off webhooks can POST a JSON event to Tempo's ingest endpoint, and it lands on the timeline. This is the score that embodies the rule of entry: if it can POST, Tempo can read it.
 
+![Custom script events on the Tempo timeline](/scores/img/scripts-timeline.png)
+
 ## How it works
 
 A sender (any script, scheduled job, or service that can make an HTTP request) POSTs a JSON event to Tempo's ingest endpoint with a bearer token. There is nothing to install on the sending side beyond the ability to run `curl` or an equivalent.

@@ -13,6 +13,8 @@ builtIn: true
 
 This score renders Pi-hole state on the Tempo timeline: whether DNS blocking is enabled or disabled, whether Pi-hole is reachable, and, optionally, whether a component update is available, whether the blocklist ("gravity") was refreshed, and whether the host is under high load. It is read-only. The actions open the admin pages or copy the server URL, and nothing writes back to Pi-hole.
 
+![Pi-hole events on the Tempo timeline](/scores/img/pi-hole-timeline.png)
+
 Pi-hole has no outbound webhook, so it cannot push to Tempo on its own. A small helper script polls Pi-hole's API and posts an event to Tempo when something changes. Most of the work below is setting up that helper once.
 
 ## How it works

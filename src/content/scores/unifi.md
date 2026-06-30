@@ -13,6 +13,9 @@ builtIn: true
 
 Tempo ships with two separate UniFi sources: **UniFi Network** for controller alarms (clients connecting and disconnecting, devices losing contact, threats) and **UniFi Protect** for camera detections (motion, smart detect, doorbell ring). Both are built in. There is no `.tempo-score` file to download and no Tempo-side helper to run. The UniFi controller posts to Tempo directly through its own webhook actions.
 
+![UniFi Network events on the Tempo timeline](/scores/img/unifi-network-timeline.png)
+![UniFi Protect events on the Tempo timeline](/scores/img/unifi-protect-timeline.png)
+
 This guide covers how the two sources relate, how to configure each one, what lands on the timeline, the actions each event carries, and the one networking limitation to know about.
 
 ## How the two sources relate

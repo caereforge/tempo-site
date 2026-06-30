@@ -13,6 +13,8 @@ builtIn: true
 
 [Hazel](https://www.noodlesoft.com/) is a macOS file automation tool: it watches folders and runs rules when files match conditions. This score brings each rule fire onto your Tempo timeline as an event, with buttons to open the matched file, jump to the source or destination folder, or copy the path. It is read-only: Tempo shows what a rule did and never moves files back.
 
+![Hazel rule events on the Tempo timeline](/scores/img/hazel-timeline.png)
+
 Hazel does not ship a webhook transport, and it does not need one. Every rule can run an embedded shell script, and a few lines of `curl` are enough to POST a Tempo event. There is no daemon and no relay: the script runs inside Hazel each time the rule fires, and posts straight to Tempo's ingestion server.
 
 ## How it works

@@ -10,6 +10,8 @@ builtIn: true
 
 Kopia is a fast, encrypted backup tool that snapshots files to a local or remote repository. This score teaches Tempo to read Kopia's snapshot notifications and turn each run into a timeline event. It classifies the event by the snapshot `outcome`, shows the size delta as a headline on success, and reports failures and warnings as events you can act on.
 
+![Kopia backups on the Tempo timeline](/scores/img/kopia-timeline.png)
+
 Kopia is **stateless** in Tempo. Each snapshot run is a distinct event with its own externalID, so a new run never overwrites an earlier one. Runs of the same backup source stack together instead. The grouping key is `${metadata.repo}/${metadata.path}`, falling back to `${metadata.path}`, so repeated snapshots of the same source collapse into one stack you can expand.
 
 ## How it works

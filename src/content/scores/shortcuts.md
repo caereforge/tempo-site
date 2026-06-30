@@ -10,6 +10,8 @@ builtIn: true
 
 Apple Shortcuts can put your own events on the Tempo timeline: a Focus mode turning on, a geofence trigger, a Mail rule, a scheduled check, anything Shortcuts can run. There are two ways to send an event. A **webhook** (a Get Contents of URL action) is the general path: it runs on both a Mac and an iPhone or iPad, and it can carry the metadata the score classifies on. A **native macOS action** also exists for simple events, covered at the end.
 
+![Apple Shortcuts events on the Tempo timeline](/scores/img/shortcuts-timeline.png)
+
 The score is built in and seeded on first launch. There is nothing to install.
 
 ## Send an event with a webhook

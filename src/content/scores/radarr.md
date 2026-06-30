@@ -10,6 +10,8 @@ builtIn: true
 
 Radarr is a movie PVR: it watches your indexers, grabs releases, and imports finished downloads into your library. This score turns Radarr's notifications into timeline entries, colored and labeled by what happened, and stacks every event for the same movie into one entry, so a grab followed by an import reads as a single line rather than two separate rows.
 
+![Radarr events on the Tempo timeline](/scores/img/radarr-timeline.png)
+
 The sender carries only data (a title plus metadata). The score owns the presentation: color, severity, grouping, and the action. Radarr posts a Tempo-shaped event on every notification it raises, and this score gives those events their look and behavior in Tempo.
 
 ## How it works

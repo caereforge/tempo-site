@@ -10,6 +10,8 @@ builtIn: true
 
 Prowlarr is the indexer manager for the *arr stack. It manages your Usenet and torrent indexers and feeds them to Sonarr, Radarr, and the rest. It is not a downloader and has no media library of its own, so the events it raises are operational: indexer and health problems, and application updates. This score gives those events their color and severity and attaches an action that opens the Prowlarr web UI.
 
+![Prowlarr events on the Tempo timeline](/scores/img/prowlarr-timeline.png)
+
 This score ships built-in and shares one helper kit with Sonarr and Radarr (the *arr integration), because all three wire to Tempo the same way.
 
 ## How it works

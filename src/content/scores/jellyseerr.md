@@ -10,6 +10,8 @@ builtIn: true
 
 [Jellyseerr](https://github.com/Fallenbagel/jellyseerr) is a media request manager for Jellyfin, Emby, and Plex. Users browse for movies and shows and submit requests; each request moves through approval, download, and availability. A built-in issue tracker handles problems that turn up after a title is available, such as a bad file or a wrong episode.
 
+![Jellyseerr requests on the Tempo timeline](/scores/img/jellyseerr-timeline.png)
+
 This score renders those notifications on the Tempo timeline. It reads Jellyseerr's `notification_type`, assigns a severity and label per state, groups every event by its media title, and attaches one action that opens Jellyseerr.
 
 ## How it works
