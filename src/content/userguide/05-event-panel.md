@@ -154,7 +154,7 @@ Click the parent row again to collapse the stack.
 
 Stacking is driven by the **score** for the source. The legacy mechanism a score can declare is two things:
 
-1. A **grouping key** template, like `${metadata.path}` for a backup tool. Events with the same resolved key are considered related
+1. A **grouping key**, written as one template or an ordered list of them, like `${metadata.path}` for a backup tool. A score has only one grouping; when it lists several templates, the **first that fully resolves** for an event wins, so order sets the priority. Events with the same resolved key are considered related
 2. A **grouping window**: `1h`, `6h`, `1d`, `1w`, or no-window. Events outside the window of the most-recent event in a stack don't extend that stack; they start a new one
 
 So if a source emits the same keyed event three times over the course of three hours with a `1h` grouping window: you'll see separate stacks for the runs that fall outside each other's window, not one combined stack.

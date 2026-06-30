@@ -190,7 +190,7 @@ Tempo's answer is **stacking**: a cluster of related events shown as a single ro
 
 Stacking is driven by the score. With the `grouping` primitive, a score declares two things:
 
-1. **What "related" means**: a `grouping` template (or a list of fallback templates). The Kopia score groups by `${metadata.repo}/${metadata.path}`; the Synology score groups by `${metadata.hostname}/${metadata.subject}`. Events with the same resolved value get clustered
+1. **What "related" means**: the `grouping` key. A score has **exactly one** grouping, but it's written as an **ordered list of templates**, and Tempo uses the **first one that fully resolves** for a given event (every `${...}` field it names must be present in that event's payload). Order *is* the logic: put the most specific template first and a general fallback last. The Kopia score groups by `${metadata.repo}/${metadata.path}`; the Synology score groups by `${metadata.hostname}/${metadata.subject}`, falling back to `${metadata.hostname}` when an event carries no subject. Events whose chosen template resolves to the same value get clustered
 2. **A grouping window**: a `groupingWindow` like `1h` or `6h` or `1d` defines how long a stack stays "open" to absorb new events. After the window closes, the next matching event starts a fresh stack
 
 A simplified slice of the Synology grouping config:
