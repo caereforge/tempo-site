@@ -5,38 +5,68 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 // Screenshots live in /public/gallery/<id>.png
 type Shot = { id: string; title: string; caption: string };
 
-const heroShots: Shot[] = [
+const timelineThemes: Shot[] = [
   {
-    id: "hero-timeline",
-    title: "The timeline",
-    caption: "Every signal, on one chronological feed. Calendar entries, webhook alerts, monitoring events, your own scripts, all in the order they happened.",
+    id: "timeline-caereforge",
+    title: "Caereforge theme",
+    caption: "Every signal on one chronological feed: calendar entries, webhook alerts, monitoring events, your own scripts, in the order they happened. The signature Caereforge palette, made for long sessions.",
   },
   {
-    id: "hero-action-panel",
-    title: "Actions in context",
-    caption: "Each event carries its next move. Open a URL, run a command, copy a value, launch a dashboard, even jump into Todoist, Obsidian, or DEVONthink. One click from the row, no app-switching.",
+    id: "timeline-dark",
+    title: "Dark theme",
+    caption: "The same timeline in classic dark. For the homelab cave, late nights, and screens that stay on.",
   },
   {
-    id: "hero-score-editor-ha",
-    title: "Score Editor: Home Assistant",
-    caption: "Teach Tempo how to read a new source. Severity rules, color, grouping, and custom labels, all declarative, no code.",
-  },
-  {
-    id: "hero-score-editor-unifi",
-    title: "Score Editor: UniFi",
-    caption: "Dense rule sets handle the long tail of alarm classes. The editor scales to every flavor of source you throw at it.",
-  },
-  {
-    id: "hero-score-editor-synology",
-    title: "Score Editor: Synology",
-    caption: "Same surface, simpler source. Each score is shaped to what its tool emits: no one-size-fits-all template.",
-  },
-  {
-    id: "hero-light-theme",
+    id: "timeline-light",
     title: "Light theme",
-    caption: "Same Tempo, lighter palette. Match your workspace: dark for the homelab cave, light for the home office.",
+    caption: "Same Tempo, lighter palette. For the home office and bright rooms. Pick the look that matches your desk.",
   },
 ];
+
+const noAgendaShots: Shot[] = [
+  { id: "timeline-caereforge-no-agenda", title: "Caereforge, agenda off", caption: "" },
+  { id: "timeline-dark-no-agenda", title: "Dark, agenda off", caption: "" },
+  { id: "timeline-light-no-agenda", title: "Light, agenda off", caption: "" },
+];
+
+const editorTabs: Shot[] = [
+  {
+    id: "editor-source",
+    title: "Source",
+    caption: "Name, color, and the provider the score binds to. The identity of the source in the panel and the feed.",
+  },
+  {
+    id: "editor-severity",
+    title: "Severity",
+    caption: "Map each payload to a severity and a custom label. The same outcome can be a warning for you and critical for someone else.",
+  },
+  {
+    id: "editor-grouping",
+    title: "Grouping",
+    caption: "Collapse repeats into one stack: choose the key and the window. A chatty monitor stops flooding the feed.",
+  },
+  {
+    id: "editor-actions",
+    title: "Actions",
+    caption: "The buttons each event carries. Open a URL, run a command, copy a value, all interpolated from the payload at click time.",
+  },
+  {
+    id: "editor-tags",
+    title: "Tags & Emoji",
+    caption: "Tag events and pick the indicator emoji, so a source reads at a glance without opening it.",
+  },
+  {
+    id: "editor-ack-dismiss",
+    title: "Ack & Dismiss",
+    caption: "Rules for auto-acknowledging and auto-dismissing, so routine noise clears itself and only what matters stays.",
+  },
+];
+
+const searchShot: Shot = {
+  id: "search",
+  title: "Search",
+  caption: "Find any event by title, metadata, or source, across your whole history, not just what's on screen.",
+};
 
 const heatmapShots: Shot[] = [
   {
@@ -74,63 +104,18 @@ const settingsShots: Shot[] = [
   },
 ];
 
-const homelabScenarios: Shot[] = [
-  {
-    id: "homelab-kuma-down",
-    title: "Uptime Kuma: host recovered",
-    caption: "Kuma POSTs the recovery as soon as the monitor goes back up, Tempo flags it green. Action panel offers Open in Kuma to inspect the dashboard, ping the host, and copy the monitor URL.",
-  },
-  {
-    id: "homelab-unifi-connect",
-    title: "UniFi: device flapping, stacked",
-    caption: "When a device disconnects and reconnects repeatedly, Tempo collapses the noise into a single stack on the timeline: count visible at a glance, full sequence one click away. Same row stays under the UniFi parent in the source panel.",
-  },
-  {
-    id: "homelab-kopia-complete",
-    title: "Kopia: backup complete",
-    caption: "Snapshot finished, size and duration in the row. Action to open the repository in Finder or copy the snapshot ID for scripting.",
-  },
-  {
-    id: "homelab-ha-scene",
-    title: "Home Assistant: automation finished",
-    caption: "HA fires a webhook when a scene runs. Tempo records it next to today's other events; action button triggers the inverse scene if you change your mind.",
-  },
-];
-
-const wfhScenarios: Shot[] = [
-  {
-    id: "wfh-meeting-cross-source",
-    title: "Meeting starting: URLs auto-extracted",
-    caption: "Calendar event with URLs in the notes: Tempo extracts them automatically as action buttons. One click jumps to the Todoist task, the Obsidian note, the DEVONthink doc, or the meeting link in the browser. Zero configuration: the publisher of the feed put the links there, Tempo only surfaces them.",
-  },
-  {
-    id: "wfh-scan-from-mfp",
-    title: "Scan from the multifunction printer",
-    caption: "Hazel watches the scanner folder. New PDF lands, Hazel POSTs to Tempo with the filename. Actions: open in Preview, move to the tax folder, email to the bookkeeper.",
-  },
-  {
-    id: "wfh-delivery",
-    title: "Delivery: out for arrival",
-    caption: "Carrier email arrives. A Mail rule + Hazel script extracts the tracking number and POSTs to Tempo. Action panel opens the carrier's tracking page directly so you can see the status without digging through email, plus copy the tracking number.",
-  },
-  {
-    id: "wfh-keepa-pricedrop",
-    title: "Keepa: price drop on a watched product",
-    caption: "Keepa sends its free email alert when a wishlist item drops below your threshold. A Mail rule forwards it to Tempo via Hazel. Action panel opens the Amazon page so you can pull the trigger or pass.",
-  },
-];
-
 const allShots: Shot[] = [
-  ...heroShots,
+  ...timelineThemes,
+  ...noAgendaShots,
+  ...editorTabs,
+  searchShot,
   ...heatmapShots,
   ...settingsShots,
-  ...homelabScenarios,
-  ...wfhScenarios,
 ];
 ---
 <BaseLayout
   title="Gallery - Tempo"
-  description="What Tempo looks like, and a few examples of what people use it for: homelab monitoring, work-from-home triage, and the in-between."
+  description="What Tempo looks like: the timeline in three themes, the Score Editor up close, search, and the settings you tune to make it yours."
 >
   <header class="gallery-header">
     <h1>Gallery</h1>
@@ -140,7 +125,7 @@ const allShots: Shot[] = [
   </header>
 
   <section class="hero-shots">
-    {heroShots.map((shot) => (
+    {timelineThemes.map((shot) => (
       <figure class="hero-card">
         <a href={`#${shot.id}`} class="shot-thumb" aria-label={`Open ${shot.title} fullscreen`}>
           <img src={`/gallery/${shot.id}.png`} alt={shot.title} loading="lazy" />
@@ -153,13 +138,78 @@ const allShots: Shot[] = [
     ))}
   </section>
 
+  <section class="scenario-section" aria-labelledby="agenda-off">
+    <header class="scenario-header">
+      <span class="scenario-chip">Your call</span>
+      <h2 id="agenda-off">Calendar in, or calendar out</h2>
+      <p class="scenario-intro">
+        Apple Calendar and Reminders flow in alongside everything else, ready
+        to show your day. Not your thing? Hide the agenda and Tempo is a pure
+        event feed, just your sources, nothing else. Same three themes.
+      </p>
+    </header>
+    <div class="hero-shots tight">
+      {noAgendaShots.map((shot) => (
+        <figure class="hero-card">
+          <a href={`#${shot.id}`} class="shot-thumb" aria-label={`Open ${shot.title} fullscreen`}>
+            <img src={`/gallery/${shot.id}.png`} alt={shot.title} loading="lazy" />
+          </a>
+          <figcaption>
+            <h3>{shot.title}</h3>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <section class="scenario-section" aria-labelledby="score-editor">
+    <header class="scenario-header">
+      <span class="scenario-chip">Make a source yours</span>
+      <h2 id="score-editor">The Score Editor, tab by tab</h2>
+      <p class="scenario-intro">
+        A score teaches Tempo how to read a source: how to color it, when to
+        raise the severity, how to group repeats, which actions to offer. The
+        editor walks every part of it, no JSON required (though the JSON stays
+        the source of truth if you prefer to hand-edit).
+      </p>
+    </header>
+    <div class="hero-shots">
+      {editorTabs.map((shot) => (
+        <figure class="hero-card">
+          <a href={`#${shot.id}`} class="shot-thumb" aria-label={`Open ${shot.title} fullscreen`}>
+            <img src={`/gallery/${shot.id}.png`} alt={shot.title} loading="lazy" />
+          </a>
+          <figcaption>
+            <h3>{shot.title}</h3>
+            <p>{shot.caption}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
   <section class="customize-note">
     <p>
-      All the visualization choices are customizable in the Score Editor.
-      Every action can be customized (or you can add more) by editing the
-      <a href="/docs/11-score-authoring/#defaultactions">score's JSON file</a>
-      (for the moment...)
+      Every visualization choice and every action is editable in the Score
+      Editor, or by hand in the
+      <a href="/docs/11-score-authoring/#defaultactions">score's JSON file</a>.
+      Each bundled score also has its own page in the
+      <a href="/scores">catalogue</a>, with a screenshot of that source on the
+      Tempo timeline.
     </p>
+  </section>
+
+  <section class="scenario-section" aria-labelledby="search">
+    <header class="scenario-header">
+      <span class="scenario-chip">Find anything</span>
+      <h2 id="search">Search across everything</h2>
+      <p class="scenario-intro">{searchShot.caption}</p>
+    </header>
+    <figure class="single-card">
+      <a href={`#${searchShot.id}`} class="shot-thumb" aria-label={`Open ${searchShot.title} fullscreen`}>
+        <img src={`/gallery/${searchShot.id}.png`} alt={searchShot.title} loading="lazy" />
+      </a>
+    </figure>
   </section>
 
   <section class="scenario-section" aria-labelledby="patterns-over-time">
@@ -217,94 +267,6 @@ const allShots: Shot[] = [
     </div>
   </section>
 
-  <section class="disclaimer">
-    <p>
-      Tempo adapts to your needs. Below are a few examples by environment...
-      they're just examples. Tempo can show everything, or just what you need
-      at the moment.
-    </p>
-  </section>
-
-  <section class="scenario-section" aria-labelledby="for-homelab">
-    <header class="scenario-header">
-      <span class="scenario-chip">For homelab</span>
-      <h2 id="for-homelab">Webhooks, monitoring, infrastructure</h2>
-      <p class="scenario-intro">
-        Tempo aggregates the signals your digital life already throws off:
-        Uptime Kuma, UniFi, your backup system, Pi-hole, Proxmox, your house
-        via Home Assistant, GitHub, your own scripts. Everything lands on one
-        Mac-native timeline, with the next move one click from the row, and
-        you can customize the buttons too. No new dashboards, no logging in
-        to check status. Apple Calendar and Reminders flow in alongside,
-        ready to show your day at a glance.
-      </p>
-    </header>
-    <div class="scenario-grid">
-      {homelabScenarios.map((s) => (
-        <figure class="scenario-card">
-          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
-            <img src={`/gallery/${s.id}.png`} alt={s.title} loading="lazy" />
-          </a>
-          <figcaption>
-            <h3>{s.title}</h3>
-            <p>{s.caption}</p>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
-  </section>
-
-  <section class="scenario-section" aria-labelledby="for-wfh">
-    <header class="scenario-header">
-      <span class="scenario-chip">For home office</span>
-      <h2 id="for-wfh">Meetings, errands, the desk you actually sit at</h2>
-      <p class="scenario-intro">
-        Work-from-home has its own rhythm: meetings that need focus, a
-        printer-scanner you wish would tell you when it's done, deliveries
-        that interrupt the day, small purchases you've been waiting on. Many
-        of the tools involved don't speak webhooks natively, so Tempo gets
-        them through small bridges: Hazel rules, Mail rules, Apple
-        Shortcuts. The same timeline, wired to a different stack.
-      </p>
-    </header>
-    <div class="scenario-grid">
-      {wfhScenarios.map((s) => (
-        <figure class="scenario-card">
-          <a href={`#${s.id}`} class="shot-thumb" aria-label={`Open ${s.title} fullscreen`}>
-            <img src={`/gallery/${s.id}.png`} alt={s.title} loading="lazy" />
-          </a>
-          <figcaption>
-            <h3>{s.title}</h3>
-            <p>{s.caption}</p>
-          </figcaption>
-        </figure>
-      ))}
-    </div>
-    <aside class="callout">
-      <p>
-        These three are Hazel rules, but Hazel is one bridge among many.
-        I picked these because I love Hazel and use it daily; Hazel can
-        watch any folder, any file pattern, any download. If Hazel or any
-        tool like it sees it, Tempo can show it and act on it. The three
-        above are where I started, not where I stopped.
-      </p>
-    </aside>
-  </section>
-
-  <section class="scenario-section coming">
-    <header class="scenario-header">
-      <span class="scenario-chip muted">More coming</span>
-      <h2>For knowledge workers, for multimedia creators</h2>
-      <p class="scenario-intro">
-        Notes, drafts, editorial deadlines on one side; OBS scene changes,
-        Frame.io reviews, render queues on the other. We'll add both
-        environments here in the weeks after launch. If your stack doesn't
-        fit any of these labels, that's fine too. Point it at Tempo and
-        it'll find a row.
-      </p>
-    </header>
-  </section>
-
   <section class="whats-next" aria-labelledby="whats-next">
     <h2 id="whats-next">What's next</h2>
     <ul class="whats-next-list">
@@ -353,11 +315,10 @@ const allShots: Shot[] = [
 </BaseLayout>
 
 <style>
-  /* Layout - wider than the article measure to host 3-up hero and 2×2 scenario grids */
+  /* Layout - wider than the article measure to host 3-up hero grids */
   .gallery-header,
   .hero-shots,
   .customize-note,
-  .disclaimer,
   .scenario-section,
   .whats-next,
   .gallery-footer {
@@ -382,14 +343,17 @@ const allShots: Shot[] = [
     margin-bottom: 0.75rem;
   }
 
-  /* Hero shots - 3 across on desktop, stacked on mobile. With 6 cards
-     this naturally arranges as a 3×2 grid above 820px. */
+  /* Hero shots - 3 across on desktop, stacked on mobile. Reused for the
+     timeline themes, the no-agenda variants, and the Score Editor tabs. */
   .hero-shots {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.25rem;
     padding-top: 1rem;
     padding-bottom: 2rem;
+  }
+  .hero-shots.tight {
+    padding-bottom: 0;
   }
   .hero-card {
     margin: 0;
@@ -408,10 +372,13 @@ const allShots: Shot[] = [
     line-height: 1.55;
   }
 
-  /* Customize note - yellow-tinted callout between hero and Make it yours.
-     Obsidian-style: fully rounded corners + soft all-around border + bg tint.
-     Less rigid than a left-rule callout, sits more like a pill in the
-     rhythm of the otherwise rectilinear sections above and below. */
+  /* Single centered shot (Search) */
+  .single-card {
+    margin: 0 auto;
+    max-width: 720px;
+  }
+
+  /* Customize note - yellow-tinted callout */
   .customize-note {
     margin-top: 1rem;
     margin-bottom: 1.5rem;
@@ -436,28 +403,11 @@ const allShots: Shot[] = [
     text-decoration-color: #d4a833;
   }
 
-  /* Disclaimer - italic-ish callout band */
-  .disclaimer {
-    padding-top: 1rem;
-    padding-bottom: 2.5rem;
-    border-top: 1px solid var(--border);
-    margin-top: 1rem;
-  }
-  .disclaimer p {
-    color: var(--text2);
-    max-width: 60ch;
-    font-size: 0.95rem;
-  }
-  .disclaimer strong { color: var(--text); }
-
   /* Scenario + Settings sections */
   .scenario-section {
     padding-top: 2rem;
     padding-bottom: 2.5rem;
     border-top: 1px solid var(--border);
-  }
-  .scenario-section.coming {
-    opacity: 0.7;
   }
   .scenario-header {
     margin-bottom: 1.75rem;
@@ -474,9 +424,6 @@ const allShots: Shot[] = [
     text-transform: uppercase;
     margin-bottom: 0.85rem;
   }
-  .scenario-chip.muted {
-    color: var(--text3);
-  }
   .scenario-header h2 {
     font-size: 1.5rem;
     letter-spacing: -0.015em;
@@ -488,15 +435,7 @@ const allShots: Shot[] = [
     line-height: 1.6;
   }
 
-  .scenario-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-  /* Heatmap grid - asymmetric: historical at half-width in top-left,
-     caption beside it (top-right), daily spanning the full row below.
-     Different aspect ratios get appropriate space: mosaic gets a card,
-     strip gets a row. */
+  /* Heatmap grid - asymmetric */
   .heatmap-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -539,9 +478,6 @@ const allShots: Shot[] = [
     height: auto;
     display: block;
   }
-  /* Historical heatmap: box + image scaled to ~50% of scenario-card
-     dimensions, framed with padding. Sits left-aligned in its grid cell
-     with the caption to the right (vertically centered next to it). */
   .heatmap-card.hist {
     max-width: 220px;
   }
@@ -568,11 +504,7 @@ const allShots: Shot[] = [
     max-width: 75ch;
   }
 
-  /* Settings grid - 4 across so settings shots stay visually smaller
-     than the wide Tempo timeline screenshots in the scenario sections.
-     Settings PNGs are near-square (~1488×1624) vs timeline shots wide
-     (~3872×2388); a 2-col layout was making settings appear "larger"
-     because of vertical bulk. 4-col solves that without cropping. */
+  /* Settings grid - 4 across so settings shots stay visually smaller */
   .settings-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -593,24 +525,6 @@ const allShots: Shot[] = [
     color: var(--text2);
     font-size: 0.9rem;
     line-height: 1.55;
-  }
-
-  /* Callout - Hazel "via artificio" note after WFH cards.
-     Obsidian-style rounded pill, same yellow palette as the customize-note
-     above for visibility. Two yellow callouts on the page reinforce each
-     other as "things the visitor shouldn't skim past". */
-  .callout {
-    margin-top: 2rem;
-    padding: 1rem 1.5rem;
-    border-radius: 12px;
-    background: rgba(201, 162, 39, 0.08);
-    border: 1px solid rgba(201, 162, 39, 0.32);
-  }
-  .callout p {
-    color: #d4a833;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin: 0;
   }
 
   /* Shot thumbnails - link to lightbox via :target */
@@ -756,9 +670,6 @@ const allShots: Shot[] = [
   /* Responsive */
   @media (max-width: 820px) {
     .hero-shots {
-      grid-template-columns: 1fr;
-    }
-    .scenario-grid {
       grid-template-columns: 1fr;
     }
     .settings-grid {
