@@ -24,6 +24,19 @@ const guideChapters = (await getCollection("userguide", ({ data }) => !data.draf
 
   <main class="doc">
 
+    <aside class="disclaimer">
+      <p>
+        <strong>A one-person project.</strong> Tempo is designed, built, and
+        documented by one person, under the Caereforge name. I've done my best to
+        make these docs accurate, but a single pair of hands can only check so
+        much, and the app moves quickly — a detail here and there may be out of
+        date or not quite right. If something doesn't line up with what you see in
+        the app, I'd genuinely like to know: email
+        <a href="mailto:hello@tempoapp.app">hello@tempoapp.app</a>, or flag it on
+        the community Discord. Corrections are always welcome.
+      </p>
+    </aside>
+
     <section class="group">
       <h2>Per-source integration guides</h2>
       <p>
@@ -147,6 +160,19 @@ const guideChapters = (await getCollection("userguide", ({ data }) => !data.draf
       border-radius: 8px;
       margin-bottom: 16px;
     }
+    .disclaimer {
+      margin: 8px 0 0;
+      padding: 14px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text2);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: 8px;
+    }
+    .disclaimer p { margin: 0; }
+    .disclaimer strong { color: var(--text); }
     .doc {
       max-width: 760px;
       margin: 0 auto 80px;
