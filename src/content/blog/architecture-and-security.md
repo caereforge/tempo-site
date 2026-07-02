@@ -11,7 +11,7 @@ A pass at what's inside Tempo v1: enough to give you a mental model of the app, 
 
 ### Architecture, high-level
 
-Tempo is a closed-source native Mac app, distributed as a signed and notarized DMG. The binary is small (~7 MB) and Universal (Apple Silicon and Intel). It runs as a single process: no helper daemon, no background service, no shared database accessed by multiple writers.
+Tempo is a closed-source native Mac app, distributed as a signed and notarized DMG. The binary is small (~13 MB) and Universal (Apple Silicon and Intel). It runs as a single process: no helper daemon, no background service, no shared database accessed by multiple writers.
 
 Internally, the codebase is split into a handful of layers that map roughly to function:
 
