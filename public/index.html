@@ -631,9 +631,9 @@ footer {
         Grafana webhook. No plugin SDK, no rebuild.
       </p>
       <p>
-        Each event carries its own action set, declared in a small JSON
-        <span class="highlight">score</span>. Drop one in or write your own, and
-        Tempo reads the fields and builds the buttons. Use payload tokens like
+        Each event carries its own action set, defined in a small
+        <span class="highlight">score</span>. Build it in the Score Editor, or
+        drop one in / hand-edit the JSON — Tempo reads the fields and builds the buttons. Use payload tokens like
         <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>
         so each click already knows the context.
       </p>
@@ -729,11 +729,21 @@ footer {
 
     <div class="faq-item">
       <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+        What sources can Tempo pull from?
+        <span class="faq-arrow">▼</span>
+      </button>
+      <div class="faq-a">
+        If it can send an HTTP request, Tempo can show it. Out of the box there are ready-made scores for the tools homelabbers reach for most — Home Assistant, Uptime Kuma, Kopia, UniFi (Network &amp; Protect), Pi-hole, Beszel, Vaultwarden, GitHub Actions, the *arr stack (Sonarr / Radarr / Prowlarr), Jellyfin, Jellyseerr, Hazel, Apple Shortcuts, Todoist — plus Apple Calendar &amp; Reminders, and a generic webhook for everything else. (Synology and Fastmail CalDAV ship experimental for now.) The list keeps growing, and the community drives much of it: I can't run every tool out there in my own homelab to test it, so scores are just shareable files anyone can write and pass around. Bring what you use.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
         Can I customize what actions appear for each event?
         <span class="faq-arrow">▼</span>
       </button>
       <div class="faq-a">
-        Yes, this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger a Shortcut), and the labels. Tempo ships bundled scores for common sources, and you can write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code>, so each button already knows the context. Tempo also includes a built-in visual score editor for severity, tags and emoji; actions are customized by editing the JSON.
+        Yes, this is the core of Tempo. Every event type has its own action set, defined in a small JSON file called a <strong style="color:var(--text)">score</strong>. The score declares the buttons, what they do (open URL, run terminal command, copy to clipboard, trigger a Shortcut), and the labels. Tempo ships bundled scores for common sources, and you can write your own. Use payload tokens like <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.host}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${metadata.ip}</code>, <code style="font-family:monospace;font-size:11px;color:var(--blue)">${title}</code>, so each button already knows the context. Edit all of it two ways: visually in the built-in Score Editor — its Actions tab adds and edits the buttons (label, icon, trigger, payload), no JSON needed — or in the score's JSON directly. The same editor also covers severity, tags and emoji.
       </div>
     </div>
 

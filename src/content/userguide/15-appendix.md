@@ -143,6 +143,6 @@ Thanks for reading.
 
 If something didn't land (a chapter that left you confused, a section that should have existed, a phrasing that read awkwardly) file an issue at [github.com/caereforge/tempo-site/issues](https://github.com/caereforge/tempo-site/issues), or join the Discord at [tempoapp.app/community](https://tempoapp.app/community/).
 
-In V1 the Score Editor has no Visual Action Builder, so this documentation is the primary reference for authoring scores. Reports of gaps or errors are welcome at the issue tracker above.
+The Score Editor authors action buttons visually (its Actions tab), and you can edit the score JSON directly whenever you prefer. This guide is the reference for that JSON surface and for score features beyond the editor. Reports of gaps or errors are welcome at the issue tracker above.
 
 - *the Tempo docs*
