@@ -106,7 +106,7 @@ If a key isn't on a given event, the button is hidden for that event. Tempo does
 ## A few pointers from here
 
 - **Chapter 11, Score authoring** in the User Guide is the reference: every field, the severity rules, conditional visibility. Worth a bookmark once you start customizing more than one source: [/docs/11-score-authoring/](/docs/11-score-authoring/)
-- **Chapter 7, Score Editor** covers the in-app UI for editing scores. The Editor handles colors, severity rules, grouping, display names. Action authoring stays in JSON for V1 and lands in the UI later.
+- **Chapter 7, Score Editor** covers the in-app UI for editing scores. The Editor handles colors, severity rules, grouping, display names — and, on its Actions tab, the action buttons themselves (add, edit, trigger, payload), so the JSON walkthrough above is now an optional power-user route.
 - **Discord** is the easiest way to ask if something doesn't work, and the easiest way to show off what you wired together. I read everything there.
 
 That's it. One JSON edit, one save, one new button. Tempo's design assumption is that you know what you want to click, and the score file is just a clean place to declare it.

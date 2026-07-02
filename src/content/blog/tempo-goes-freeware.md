@@ -13,7 +13,7 @@ Tempo costs time and money, that's true. But before thinking about recovering th
 
 For this reason, **Tempo v1 will be freeware, forever.** My hope is that the community forming around it will have a real voice in the technical choices ahead. This isn't a trial or a free tier hiding a paywall. v1 is complete, native, local-only, yours to keep.
 
-To move faster and ship the first release as soon as possible, there's one tradeoff: **no visual builder at launch.** Everything else is there.
+To move faster and ship the first release as soon as possible, there's one tradeoff: **no auto-firing automations at launch** — every action is a deliberate click. Everything else is there.
 
 ### Scores
 

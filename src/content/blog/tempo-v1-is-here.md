@@ -45,7 +45,7 @@ The secondary audience (but not by relevance) is any Mac power user who'd benefi
 A few things are deliberately out of scope for v1. I want to set expectations cleanly:
 
 - **No auto-firing actions.** Everything is user-triggered. v2 may bring conditional auto-fire, gated behind explicit trust opt-in. v1 needs a human action, always.
-- **No visual score builder.** Default actions (the buttons themselves) are edited in the score JSON file for now. You can add as many as you need. A built-in Score Editor handles severity rules, presentation, grouping, and per-event matching without touching JSON, so most score authoring is GUI-driven, but the action declarations themselves still need a text editor. Visual editor for actions is a v2 candidate.
+- **No drag-and-drop action builder.** The built-in Score Editor already edits actions on its Actions tab — add and edit buttons (label, icon, trigger, `${metadata}` payload) with no JSON, alongside severity rules, presentation, grouping, and per-event matching. You can still edit the score's JSON directly. A richer drag-and-drop / live-preview builder is a v2 candidate.
 - **No Google Calendar / Outlook OAuth.** v1 reads from Apple Calendar via EventKit, which natively syncs any CalDAV account (Fastmail, Nextcloud, iCloud). For Google/Outlook the path is "subscribe the calendar in Apple Calendar.app". Native OAuth is v2.
 - **No outbound automation.** Tempo shows and proposes. It never sends. v2 may extend this for users who explicitly opt in.
 
