@@ -24,7 +24,7 @@ Bundled with the app:
 - ⚫ **GitHub Actions**: workflow runs across your repos in the same timeline as the rest of the homelab.
 - 🟠 **Synology**: DSM notifications: storage health, package updates, backup job outcomes.
 - 🟤 **Hazel**: v1 bundles two ready-made sub-scores under the `com.noodlesoft.hazel` umbrella: Mail-rule handoff (`com.noodlesoft.hazel.mail`) and Keepa price-drop alerts (`com.noodlesoft.hazel.keepa`). Each has actions tuned to its specific surface (email-centric for Mail, product-centric for Keepa) rather than the generic file-pattern defaults. The umbrella score itself, with those file-pattern defaults, lives in the catalog below; install it if you want everything else Hazel-driven covered too.
-- ⚙️ **Scripts**: the generic catch-all under the `scripts` umbrella for anything that can POST JSON: cron, launchd, a Bash one-liner watching a sensor. Drop in `scripts.shell.my_thing.json` and that one script gets its own dedicated source under the same umbrella.
+- ⚙️ **Scripts**: the generic catch-all under the `scripts` umbrella for anything that can POST JSON: cron, launchd, a Bash one-liner watching a sensor. Drop in `scripts.hosts.my_thing.json` and that one script gets its own dedicated source under the same umbrella.
 
 Plus Apple Calendar and Reminders, pre-wired via EventKit. They don't share the main timeline; they live in their own panel next to it, which you can show or hide, so the day's entries stay one glance away without diluting the homelab feed.
 

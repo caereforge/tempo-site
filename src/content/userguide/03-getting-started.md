@@ -222,7 +222,7 @@ A fresh install has no tokens, and the ingestion server rejects any POST that is
 1. Open **Settings → Ingestion**
 2. Click **Add Token**
 3. Give it a **Name** (any label, e.g. `Kopia NAS` or `First test`)
-4. Set the **Provider identifier** it is bound to. A token authorizes its exact provider and any sub-namespace under it (a token bound to `scripts.shell` also accepts `scripts.shell.check_disk`). An unbound token authorizes nothing, so this field is required. For the test below, bind it to `com.test`
+4. Set the **Provider identifier** it is bound to. A token authorizes its exact provider and any sub-namespace under it (a token bound to `scripts` also accepts `scripts.hosts.disk_space`). An unbound token authorizes nothing, so this field is required. For the test below, bind it to `com.test`
 5. Click **Create**
 
 The new token appears in the list. Copy it with the clipboard icon next to it; you'll paste it into the upstream tool (or the test command below). When you set up a real source, create a token bound to that source's provider identifier (for example `com.kopia`, `com.ubiquiti.unifi`); each source's section in [§10 - Sources reference](/docs/10-sources-reference) names the identifier to use.

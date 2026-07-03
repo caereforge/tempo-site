@@ -15,15 +15,15 @@ That's what umbrella sources solve.
 
 ## Provider identifiers are namespaces
 
-Every source in Tempo is named by a **provider identifier**: a dotted, reverse-DNS string like `com.noodlesoft.hazel` or `scripts.shell.check_disk`. Read left to right, those dots are a hierarchy: a namespace, then progressively more specific names inside it. `com.noodlesoft` is Noodlesoft; `com.noodlesoft.hazel` is their app Hazel; `com.noodlesoft.hazel.mail` is one particular kind of Hazel event.
+Every source in Tempo is named by a **provider identifier**: a dotted, reverse-DNS string like `com.noodlesoft.hazel` or `scripts.hardware.check_disk`. Read left to right, those dots are a hierarchy: a namespace, then progressively more specific names inside it. `com.noodlesoft` is Noodlesoft; `com.noodlesoft.hazel` is their app Hazel; `com.noodlesoft.hazel.mail` is one particular kind of Hazel event.
 
-That hierarchy is the whole trick. An **umbrella source is a single score placed at a namespace prefix**, and every sender whose identifier sits *underneath* that prefix inherits the score automatically. The file lives at the parent level (`scripts.json`, `com.noodlesoft.hazel.json`), and `scripts.shell.check_disk`, `scripts.ruby.deploy`, `com.noodlesoft.hazel.mail` all fall under it.
+That hierarchy is the whole trick. An **umbrella source is a single score placed at a namespace prefix**, and every sender whose identifier sits *underneath* that prefix inherits the score automatically. The file lives at the parent level (`scripts.json`, `com.noodlesoft.hazel.json`), and `scripts.hardware.check_disk`, `scripts.backups.offsite`, `com.noodlesoft.hazel.mail` all fall under it.
 
 Tempo has **exactly two** umbrellas, and that's deliberate:
 
 | Umbrella | Example senders |
 |---|---|
-| **Scripts** | `scripts.shell.check_disk`, `scripts.ruby.deploy` |
+| **Scripts** | `scripts.hardware.check_disk`, `scripts.backups.offsite` |
 | **Hazel** | `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.downloads` |
 
 They're the two sources where a single configuration genuinely fits a whole family of senders you create yourself. Everything else is a single source, or a vendor *container* (more on that next). You don't turn an arbitrary namespace into a third umbrella.
@@ -39,27 +39,27 @@ So: umbrella = **one** score for many senders; container = **many** scores that 
 
 ## How the resolution works
 
-When an event arrives, Tempo finds its score by walking up the namespace until it hits one that exists. For `scripts.shell.check_disk`, with only the bundled `scripts` score installed:
+When an event arrives, Tempo finds its score by walking up the namespace until it hits one that exists. For `scripts.hardware.check_disk`, with only the bundled `scripts` score installed:
 
-1. Is there a score for `scripts.shell.check_disk`? No.
-2. Drop a segment, a score for `scripts.shell`? No.
+1. Is there a score for `scripts.hardware.check_disk`? No.
+2. Drop a segment, a score for `scripts.hardware`? No.
 3. Drop again, a score for `scripts`? Yes. Use it.
 
-The **nearest ancestor that has a score wins**. Install a `scripts.shell` score and step 2 would stop there instead; with nothing but `scripts`, everything beneath it lands on the umbrella. (These are lookups against the scores already loaded in memory, not a filesystem search on every event.) The pattern is the same however deep the identifier goes.
+The **nearest ancestor that has a score wins**. Install a `scripts.hardware` score and step 2 would stop there instead; with nothing but `scripts`, everything beneath it lands on the umbrella. (These are lookups against the scores already loaded in memory, not a filesystem search on every event.) The pattern is the same however deep the identifier goes.
 
 ## One level deep, and why
 
-Resolution spans any depth, but the **source list nests exactly one level** under an umbrella. Under Scripts you get a row per first segment: `scripts.shell` is **Shell**, `scripts.ruby` is **Ruby**, `scripts.go` is **Go**, whatever you name it. Anything deeper rolls up into that row: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**. Hazel works the same way, so `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.downloads` become **Mail**, **Downloads**.
+Resolution spans any depth, but the **source list nests exactly one level** under an umbrella. Under Scripts you get a row per first segment: `scripts.hardware` is **Hardware**, `scripts.backups` is **Backups**, `scripts.security` is **Security**, whatever you name it. Anything deeper rolls up into that row: `scripts.backups.nightly` and `scripts.backups.offsite` both live under **Backups**. Hazel works the same way, so `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.downloads` become **Mail**, **Downloads**.
 
-Why cap it at one level? Because one level lets you split a source *logically* (your shell checks apart from your Python pollers, your Mail rules apart from your download rules) without letting a deep or auto-generated identifier sprout a tree of rows the source list could never sensibly hold. **Breadth is your call** (make thirty sub-sources if you like); **depth is fixed at one** so the list stays readable and Tempo's current UI can manage it.
+Why cap it at one level? Because one level lets you split a source *logically* (your hardware checks apart from your backup jobs, your Mail rules apart from your download rules) without letting a deep or auto-generated identifier sprout a tree of rows the source list could never sensibly hold. **Breadth is your call** (make thirty sub-sources if you like); **depth is fixed at one** so the list stays readable and Tempo's current UI can manage it.
 
 ## What shows where
 
 The one-level name is what you see in the two busy surfaces; the specific sub-name is kept for when you actually want it:
 
 - **Source panel** (left): the umbrella, then one row per first-level sub-source: Ruby, Shell, Mail.
-- **Live feed**: each event is labeled with that same first-level name. `scripts.ruby.deploy` reads **Ruby**, matching the panel; the deep tail never leaks into the feed.
-- **Action panel** (open an event): the specific sub-name (**Deploy**, **Migrate**) so you still see exactly which script or rule fired.
+- **Live feed**: each event is labeled with that same first-level name. `scripts.backups.nightly` reads **Backups**, matching the panel; the deep tail never leaks into the feed.
+- **Action panel** (open an event): the specific sub-name (**Nightly**, **Offsite**) so you still see exactly which script or rule fired.
 
 ## What the parent controls
 
@@ -103,19 +103,19 @@ Drop a more specific score file alongside the umbrella, and it wins for that sen
 
 ```
 ~/Library/Application Support/Tempo/Scores/
-  scripts.json                    ← umbrella (catches everything)
-  scripts.shell.disk_check.json   ← override (just for this one script)
+  scripts.json                     ← umbrella (catches everything)
+  scripts.hardware.disk_check.json ← override (just for this one script)
 ```
 
-Events from `scripts.shell.disk_check` use the override; events from every other `scripts.*` sender still fall through to the umbrella. You get per-source customization exactly where you need it, without maintaining a score file for every sender. This refines a child *inside* one of the two umbrellas; it doesn't create a new one.
+Events from `scripts.hardware.disk_check` use the override; events from every other `scripts.*` sender still fall through to the umbrella. You get per-source customization exactly where you need it, without maintaining a score file for every sender. This refines a child *inside* one of the two umbrellas; it doesn't create a new one.
 
 The same works for Hazel: drop `com.noodlesoft.hazel.mail.json` next to `com.noodlesoft.hazel.json` and Mail-rule events get their own color and actions while everything else Hazel-driven stays on the parent's defaults.
 
 ## Tokens bind to the namespace too
 
-A token is **always bound to a provider identifier**; there are no generic, anything-goes tokens. An unbound token authorizes *nothing*. What a bound token covers follows the same namespace logic as scores: a token bound to `scripts` authorizes every `scripts.*` sender; a token bound to `scripts.shell` authorizes `scripts.shell` and what's beneath it, but not `scripts.ruby`. It never reaches a sibling, and never reaches the parent.
+A token is **always bound to a provider identifier**; there are no generic, anything-goes tokens. An unbound token authorizes *nothing*. What a bound token covers follows the same namespace logic as scores: a token bound to `scripts` authorizes every `scripts.*` sender; a token bound to `scripts.hardware` authorizes `scripts.hardware` and what's beneath it, but not `scripts.backups`. It never reaches a sibling, and never reaches the parent.
 
-So the binding depth is a security dial. Bind a token at the umbrella (`scripts`) for convenience when one process drives many sub-sources; bind it deep (`scripts.shell.disk_check`) to keep the blast radius tiny if that one token ever leaks. (It also means a new sub-source under a narrowly-bound token needs its own token: `scripts.shell` can't post as `scripts.ruby`.)
+So the binding depth is a security dial. Bind a token at the umbrella (`scripts`) for convenience when one process drives many sub-sources; bind it deep (`scripts.hardware.disk_check`) to keep the blast radius tiny if that one token ever leaks. (It also means a new sub-source under a narrowly-bound token needs its own token: `scripts.hardware` can't post as `scripts.backups`.)
 
 ## Further reading
 

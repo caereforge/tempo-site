@@ -15,7 +15,7 @@ The bundled `tempo-post` tool, and the bundled `scripts` score, have this wired 
 
 ```sh
 RUN="$(uuidgen | cut -c1-12)"
-post() { tempo-post --provider scripts.shell --run-id "$RUN" "$@"; }
+post() { tempo-post --provider scripts.backups --run-id "$RUN" "$@"; }
 
 post --title "Backup started"  --run-total 4 --status "start"
 post --title "Compressing"     --status "step 1"

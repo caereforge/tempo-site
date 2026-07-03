@@ -146,11 +146,11 @@ Any payload whose `providerIdentifier` starts with `scripts.` is rendered throug
 
 - Maps `metadata.label` to a severity (`OK` → ok green, `Warning` → warning yellow, `Error` → error red, `Critical` → error red)
 - Provides a small set of generic actions (SSH to source host, copy host, copy title)
-- Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.`: `scripts.shell` → **Shell**, `scripts.ruby` → **Ruby**, whatever you name it. Anything deeper rolls up: `scripts.ruby.deploy` and `scripts.ruby.migrate` both live under **Ruby**, and the specific name shows in the action panel when you open the event.
+- Groups your scripts under a single **Scripts** row, split one level deep by the first segment after `scripts.`: `scripts.hardware` → **Hardware**, `scripts.hosts` → **Hosts**, whatever you name it. Anything deeper rolls up: `scripts.hosts.load` and `scripts.hosts.memory` both live under **Hosts**, and the specific name shows in the action panel when you open the event.
 
-**Why only one level?** It lets you split your scripts logically (shell checks apart from Python pollers) without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
+**Why only one level?** It lets you split your scripts logically (hardware checks apart from host pollers) without a deep or auto-generated identifier sprouting a tree of rows the source list can't sensibly hold. Breadth is your call (make as many first-level sub-sources as you want); depth is fixed at one. Hazel follows the same rule.
 
-The Scripts score is the right starting point for shell/Python/Ruby scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider. See [§11 - Score authoring](/docs/11-score-authoring).
+The Scripts score is the right starting point for the scripts you write yourself. For more elaborate UX (custom actions, custom labels, payload-specific severity rules), write a dedicated score for your provider. See [§11 - Score authoring](/docs/11-score-authoring).
 
 ### What your card looks like without a score
 
@@ -557,21 +557,28 @@ Events group on `${metadata.hostname}/${metadata.subject}`, falling back to `${m
 
 ---
 
-## 10.9 - Shell scripts (`scripts.shell`)
+## 10.9 - Scripts (`scripts`)
 
-**Provider identifier**: `scripts.shell` (or `scripts.<language>` like `scripts.python`, `scripts.ruby`)
+**Provider identifier**: `scripts` (or `scripts.<category>` like `scripts.hosts`, `scripts.backups`)
 **Endpoint**: `POST http://<your-mac>:7776/ingest`
 
-The Scripts namespace is for short-lived senders you write yourself: a shell script that checks disk usage, a Python script that hits a third-party API, a Ruby cron that summarizes something. Anything that produces a result-per-run.
+The Scripts namespace is for short-lived senders you write yourself: a disk-space check, a service up-down poller, a nightly backup wrapper. Anything that produces a result-per-run.
+
+Organize sub-sources by *what* a script watches, not the language it's written in. Each sender (a machine) binds one token to the bare `scripts` umbrella, which Tempo accepts for `scripts` and any `scripts.*` child, so a single token covers every category that host posts.
 
 The bundled Scripts score (covered in §10.2) provides a sensible default: maps `metadata.label` to severity, exposes generic actions, and groups your senders under the **Scripts** row, one level deep, by the first segment after `scripts.` (see §10.2 for the why).
 
 ### Naming convention
 
-- `scripts.shell`: generic shell script senders
-- `scripts.python`: Python script senders
-- `scripts.ruby`, `scripts.go`, etc.: language-specific
-- `scripts.<anything>`: the first segment after `scripts.` becomes the sub-source row. Only that one level groups; deeper segments (`scripts.ruby.deploy`) are the script's own name and roll up under their first-level row, shown in the action panel.
+The names are yours to invent; Tempo predefines none of them. A useful starting set, grouped by what a script watches:
+
+- `scripts.hardware`: disks/SMART, temperatures, fans, UPS, RAID
+- `scripts.software`: services/containers up-down, cert expiry, app health
+- `scripts.internet`: WAN/connectivity, DNS, public IP, external endpoints
+- `scripts.hosts`: host load, RAM, free space, pending updates, reboots (the generic default)
+- `scripts.backups`: backup / snapshot jobs
+- `scripts.security`: failed logins, firewall, fail2ban
+- `scripts.<anything>`: the first segment after `scripts.` becomes the sub-source row. Only that one level groups; deeper segments (`scripts.hosts.disk_space`) are the script's own name and roll up under their first-level row, shown in the action panel.
 
 ### Title convention
 
@@ -674,7 +681,7 @@ The helper builds the JSON payload from your flags, POSTs to `/ingest`, and exit
 | Flag | Purpose |
 |---|---|
 | `--title <text>` | event title (**required**) |
-| `--provider <id>` | provider identifier (default `scripts.shell`) |
+| `--provider <id>` | provider identifier (default `scripts.hosts`) |
 | `--severity <info\|ok\|warning\|error\|critical>` | event severity |
 | `--event-type <alert\|event\|task\|reminder>` | event type (default `alert`) |
 | `--metadata KEY=VALUE` | repeatable; adds a metadata field |

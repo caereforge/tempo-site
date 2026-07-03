@@ -88,7 +88,7 @@ The actual validator is permissive: `^[A-Za-z0-9._\-]{1,128}$`, so uppercase is 
 **Conventions**:
 
 - **Reverse-DNS** for vendors and well-known tools: `com.kopia`, `com.ubiquiti.unifi`, `com.home-assistant`, `com.uptime-kuma`
-- **`scripts.<language>.<name>`** for shell/Python/Ruby scripts: `scripts.shell.check_disk`, `scripts.python.log_scan`
+- **`scripts.<category>.<name>`** for scripts you write yourself, grouping by what they watch. The category is a name you pick, not a fixed set (for example `hardware`, `hosts`, `backups`): `scripts.hosts.disk_space`, `scripts.backups.nightly`
 - **`local.<name>`** for senders running on the same Mac as Tempo: `local.check_disk`, `local.backup_notify`
 - **`lab.<host>.<name>`** for senders on other LAN hosts: `lab.nas01.smart_check`
 
@@ -455,7 +455,7 @@ The script POSTs:
 ```json
 {
   "title": "log_scan completed",
-  "providerIdentifier": "scripts.python.log_scan",
+  "providerIdentifier": "scripts.security.log_scan",
   "metadata": {
     "host": "monitor-01.lab",
     "label": "Warning",
@@ -479,11 +479,11 @@ A card that:
 
 ### The score
 
-`~/Library/Application Support/Tempo/Scores/scripts.python.log_scan.json`:
+`~/Library/Application Support/Tempo/Scores/scripts.security.log_scan.json`:
 
 ```json
 {
-  "providerIdentifier": "scripts.python.log_scan",
+  "providerIdentifier": "scripts.security.log_scan",
   "displayName": "Log Scan",
   "color": "#FF9F0A",
   "severityDefault": {
@@ -545,7 +545,7 @@ When a log_scan event arrives:
 
 ### Adjustments after observing real traffic
 
-Once a few events have arrived, look at the Available keys strip in the Score Editor for `scripts.python.log_scan`. Maybe you discover:
+Once a few events have arrived, look at the Available keys strip in the Score Editor for `scripts.security.log_scan`. Maybe you discover:
 
 - `metadata.custom.matches_found` isn't always set (the script forgot it on early-exit paths). Add a fallback in the labels: `"label": "${metadata.custom.matches_found} matches"` could resolve as ` matches` (empty)
 - The tail log command needs sudo on some hosts. Adjust the action

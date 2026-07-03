@@ -37,14 +37,14 @@ Some sources don't show up as a single row in the source panel. They show up as 
 | **Apple** | `com.apple.calendar`, `com.apple.reminders` |
 | **UniFi** | `com.ubiquiti.unifi.network`, `com.ubiquiti.unifi.protect` |
 | **Hazel** | `com.noodlesoft.hazel.mail`, `com.noodlesoft.hazel.keepa` |
-| **Scripts** | `scripts.bash.<name>`, `scripts.python.<name>`, `scripts.php.<name>`, … |
+| **Scripts** | `scripts.hosts.<name>`, `scripts.backups.<name>`, `scripts.security.<name>`, … |
 
-The grouping is implicit in the provider identifier. Any two IDs that share a dot-separated prefix nest under the same parent. `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` share `com.ubiquiti.unifi`, so they sit as siblings under one **UniFi** row in the panel. `scripts.bash.check_disk` and `scripts.python.sensor_poll` share `scripts`, so they sit under one **Scripts** row.
+The grouping is implicit in the provider identifier. Any two IDs that share a dot-separated prefix nest under the same parent. `com.ubiquiti.unifi.network` and `com.ubiquiti.unifi.protect` share `com.ubiquiti.unifi`, so they sit as siblings under one **UniFi** row in the panel. `scripts.hardware.check_disk` and `scripts.hosts.sensor_poll` share `scripts`, so they sit under one **Scripts** row.
 
 This matters when you create the token, because token authorization is also prefix-based. A token bound to `com.ubiquiti.unifi` accepts both Network and Protect payloads (the parent covers all children). A token bound to `com.ubiquiti.unifi.network` only accepts Network. Two patterns work:
 
 - **One token per leaf**: recommended for most sources. Bind a token to `com.ubiquiti.unifi.network` for the UniFi controller, a separate token to `com.ubiquiti.unifi.protect` for the Protect controller. If one token leaks, only one source can be forged with it.
-- **One token at the parent**: recommended for **Scripts**, where you'll have dozens of sub-senders (`scripts.bash.x`, `scripts.python.y`, …) and creating a token per leaf would be tedious. Bind one token to `scripts` and every `scripts.*` sender uses it.
+- **One token at the parent**: recommended for **Scripts**, where you'll have dozens of sub-senders (`scripts.hosts.x`, `scripts.backups.y`, …) and creating a token per leaf would be tedious. Bind one token to `scripts` and every `scripts.*` sender uses it.
 
 The decision is yours. Both work; the trade-off is convenience vs blast radius if the token escapes.
 
@@ -113,10 +113,10 @@ You could give each of these its own provider ID and write a score for it. But y
 The convention is:
 
 ```
-scripts.<language>.<name>
+scripts.<category>.<name>
 ```
 
-You pick the language slug and the script name. So `scripts.bash.check_disk`, `scripts.php.log_scan`, `scripts.python.sensor_poll`. Tempo doesn't care what `<language>` says; it's purely for your own organization. Pick what helps you scan the list.
+You pick the category and the script name, organizing by *what the script watches* rather than what language it's written in. So `scripts.hardware.check_disk`, `scripts.security.log_scan`, `scripts.hosts.sensor_poll`. A handful of categories that tend to cover most homelabs are `scripts.hardware`, `scripts.software`, `scripts.internet`, `scripts.hosts` (a generic default), `scripts.backups`, and `scripts.security`, but these are just examples, not a fixed set: invent whatever grouping fits your setup. Tempo doesn't care what `<category>` says; it's purely for your own organization. Pick what helps you scan the list.
 
 In Settings → Ingestion create **one token** bound to provider `scripts` (the parent). That single token authorizes every `scripts.*` sender via prefix matching, with no need to create a separate token for each script. Name it something like `scripts-all` or `homelab-scripts` so you recognize it later.
 
@@ -135,7 +135,7 @@ curl -s http://localhost:7776/ingest \
   -d @- <<EOF
 {
   "title": "Disk usage at ${USAGE}%",
-  "providerIdentifier": "scripts.bash.check_disk",
+  "providerIdentifier": "scripts.hardware.check_disk",
   "metadata": { "label": $([ "$USAGE" -gt 80 ] && echo '"warning"' || echo '"ok"') }
 }
 EOF
@@ -154,7 +154,7 @@ requests.post(
     headers={'X-Tempo-Token': 'your-token-here'},
     json={
         'title': f'Disk usage at {percent}%',
-        'providerIdentifier': 'scripts.python.check_disk',
+        'providerIdentifier': 'scripts.hardware.check_disk',
         'metadata': {'label': 'warning' if percent > 80 else 'ok'},
     },
 )
@@ -173,7 +173,7 @@ await fetch('http://localhost:7776/ingest', {
   },
   body: JSON.stringify({
     title: `Disk usage at ${used}%`,
-    providerIdentifier: 'scripts.node.check_disk',
+    providerIdentifier: 'scripts.hardware.check_disk',
     metadata: { label: used > 80 ? 'warning' : 'ok' },
   }),
 });
@@ -187,7 +187,7 @@ $used = 87;
 
 $payload = json_encode([
     'title' => "Disk usage at {$used}%",
-    'providerIdentifier' => 'scripts.php.check_disk',
+    'providerIdentifier' => 'scripts.hardware.check_disk',
     'metadata' => ['label' => $used > 80 ? 'warning' : 'ok'],
 ]);
 
@@ -210,7 +210,7 @@ AppleScript shells out to `curl`. The trick is escaping the JSON cleanly:
 
 ```applescript
 set tempoToken to "your-token-here"
-set payload to "{\"title\":\"Backup completed\",\"providerIdentifier\":\"scripts.applescript.backup_notify\",\"metadata\":{\"label\":\"ok\"}}"
+set payload to "{\"title\":\"Backup completed\",\"providerIdentifier\":\"scripts.backups.backup_notify\",\"metadata\":{\"label\":\"ok\"}}"
 
 do shell script "curl -s http://localhost:7776/ingest " & ¬
     "-H 'Content-Type: application/json' " & ¬
@@ -218,7 +218,7 @@ do shell script "curl -s http://localhost:7776/ingest " & ¬
     "-d " & quoted form of payload
 ```
 
-All five land in the same **Scripts** umbrella, grouped by the language slug you chose. The `metadata.label` value (`"warning"`, `"ok"`, `"error"`, `"critical"`) drives the severity badge: that's the convention the bundled Scripts score reads.
+All five land in the same **Scripts** umbrella, grouped by the category you chose. The `metadata.label` value (`"warning"`, `"ok"`, `"error"`, `"critical"`) drives the severity badge: that's the convention the bundled Scripts score reads.
 
 ## Custom reverse-DNS for everything else
 

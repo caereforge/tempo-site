@@ -148,10 +148,10 @@ The Tokens section lists every active ingestion token. Each row shows:
 
 The **Add Token** button opens a sheet. Both fields are required:
 
-- **Name**: descriptive label, e.g., "Kopia NAS" or "check_disk script"
-- **Provider identifier**: a `providerIdentifier` like `com.kopia` or `scripts.shell`. The token accepts events for this provider and any sub-namespace (e.g. `scripts.shell` also accepts `scripts.shell.check_disk`) and rejects any payload declaring a different provider
+- **Name**: descriptive label, e.g., "Kopia NAS" or "NAS scripts"
+- **Provider identifier**: a `providerIdentifier` like `com.kopia` or `scripts`. The token accepts events for this provider and any sub-namespace (e.g. `scripts` also accepts `scripts.hosts.disk_space`) and rejects any payload declaring a different provider
 
-Binding is mandatory: an unbound token authorizes nothing. Because a token is bound to one provider, leaking one script's token can't spoof your other sources.
+Binding is mandatory: an unbound token authorizes nothing. Bind one token per sender (a machine) to the bare `scripts` umbrella, and it covers every `scripts.*` sub-source that sender posts. Because a token is bound to one provider, leaking one sender's token can't spoof your other sources.
 
 #### The X-Tempo-Token header
 
