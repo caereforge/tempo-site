@@ -6,7 +6,8 @@ function isActive(prefix: string): boolean {
 }
 // Nav items mirror the homepage nav order so both surfaces look the same.
 // Story/FAQ were dropped (they only scroll the homepage). "Docs" is a dropdown
-// grouping the reference pages: the user guide and the security/threat model.
+// grouping the reference pages: user guide, tips & tricks, score reference,
+// and the security/threat model.
 const links: { href: string; label: string; external?: boolean }[] = [
   { href: "/gallery/", label: "Gallery" },
   { href: "/roadmap", label: "Roadmap" },
@@ -16,8 +17,9 @@ const links: { href: string; label: string; external?: boolean }[] = [
 ];
 const docsLinks: { href: string; label: string }[] = [
   { href: "/docs/", label: "User Guide" },
+  { href: "/tips/", label: "Tips & Tricks" },
   { href: "/docs/scores", label: "Score reference" },
-  { href: "/security/", label: "Security" },
+  { href: "/security/", label: "Security & Threat Model" },
 ];
 ---
 <header class="site-nav">
@@ -45,7 +47,7 @@ const docsLinks: { href: string; label: string }[] = [
       </a>
     ))}
     <details class="site-nav-dropdown">
-      <summary class:list={["site-nav-link", { active: isActive("/docs") || isActive("/security") }]}>Docs<span class="site-nav-chevron" aria-hidden="true">▾</span></summary>
+      <summary class:list={["site-nav-link", { active: isActive("/docs") || isActive("/tips") || isActive("/security") }]}>Docs<span class="site-nav-chevron" aria-hidden="true">▾</span></summary>
       <div class="site-nav-dropdown-menu">
         {docsLinks.map((d) => (
           <a class="site-nav-dropdown-item" href={d.href}>{d.label}</a>
