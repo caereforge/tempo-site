@@ -13,6 +13,21 @@ bucket_name = "tempo-downloads"
 binding = "TEMPO_ANALYTICS"
 dataset = "tempo_downloads"
 
+# KV namespace for exact, permanent, real-time download counters.
+# Analytics Engine samples at volume and expires (~3 months); KV holds the
+# exact all-time cumulative totals that back the /_stats endpoint and any
+# future downloads badge. Only actual `download` events increment KV, so
+# writes stay well inside the free tier (high-volume update_check / head_check
+# events stay in Analytics Engine only).
+[[kv_namespaces]]
+binding = "TEMPO_DOWNLOAD_COUNTS"
+id = "6c5805997e6b48f8b3dd34091f76fade"
+
+# STATS_TOKEN is a secret (not stored here). Set it with:
+#   openssl rand -hex 32 | tr -d '\n' | wrangler secret put STATS_TOKEN
+# Then read counters with:
+#   curl -H "Authorization: Bearer $TOKEN" https://downloads.tempoapp.app/_stats
+
 # Route the worker to downloads.tempoapp.app. After first deploy you must
 # also point the DNS record for downloads.tempoapp.app to the worker
 # (proxied/orange-cloud). The custom domain binding can be created in
