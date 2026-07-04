@@ -42,15 +42,17 @@ type UABucket = "internal" | "sparkle" | "browser" | "homebrew_curl" | "other";
 const INTERNAL_UA_RE = /Tempo-Internal\//i;
 
 const DMG_VERSION_RE = /Tempo-([0-9]+\.[0-9]+\.[0-9]+|latest)\.dmg(\.sha256)?$/;
-// Sparkle's User-Agent reports CFBundleVersion (the build number), NOT the
-// marketing CFBundleShortVersionString. For 1.0.x the two coincided
-// (build "1.0.3"), so a strict X.Y.Z pattern matched; from 1.1 the build
-// number diverged (e.g. "26"), so that pattern logged a blank and the whole
-// 1.1.x installed base became invisible in update_check stats. Capture the
-// full token after "Tempo/" instead — marketing version ("1.1.1"), bare build
-// number ("26"), or pre-release tag ("1.2.0b3") — so the base is always
-// recorded. Build-number values get mapped back to a marketing version
-// downstream (in analysis), not here.
+// Sparkle (2.9.1, the version Tempo bundles) builds its User-Agent from
+// CFBundleShortVersionString — the MARKETING version — not CFBundleVersion.
+// Empirically confirmed against Analytics Engine: the real app self-reports
+// "Tempo/1.1.1 Sparkle/2.9.1" (marketing 1.1.1, build 26), so the installed
+// base is fully visible under its marketing version and a strict X.Y.Z
+// pattern would already match it. We keep the wider token capture only as a
+// harmless superset that also tolerates pre-release tags ("1.2.0b3"). Catalog
+// crawlers (Updatest, Latest, Pearcleaner, MacUpdater...) self-identify with
+// their OWN name before the slash, so filtering to "Tempo/%" isolates the real
+// app from them; the ASN (blob7/blob8) is the backstop for any crawler that
+// ever mimics our exact UA.
 const SPARKLE_VERSION_RE = /Tempo\/([0-9][0-9A-Za-z._-]*)/;
 
 function classifyUA(ua: string): UABucket {
