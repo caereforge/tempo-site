@@ -25,12 +25,32 @@ interface Env {
 }
 
 type EventType = "download" | "update_check" | "checksum" | "head_check" | "other";
-type UABucket = "sparkle" | "browser" | "homebrew_curl" | "other";
+type UABucket = "internal" | "sparkle" | "browser" | "homebrew_curl" | "other";
+
+// Marker we deliberately set on our own dev/CI/manual requests so they can be
+// excluded from the real download counters. Any request whose User-Agent
+// contains this token is bucketed "internal": still written to Analytics
+// Engine (so we can inspect our own activity if we want), but never counted in
+// the KV badge numbers. Real users never send it. Set it with:
+//   curl -A "Tempo-Internal/<who>" https://downloads.tempoapp.app/...
+const INTERNAL_UA_RE = /Tempo-Internal\//i;
 
 const DMG_VERSION_RE = /Tempo-([0-9]+\.[0-9]+\.[0-9]+|latest)\.dmg(\.sha256)?$/;
-const SPARKLE_VERSION_RE = /Tempo\/([0-9]+\.[0-9]+\.[0-9]+)/;
+// Sparkle's User-Agent reports CFBundleVersion (the build number), NOT the
+// marketing CFBundleShortVersionString. For 1.0.x the two coincided
+// (build "1.0.3"), so a strict X.Y.Z pattern matched; from 1.1 the build
+// number diverged (e.g. "26"), so that pattern logged a blank and the whole
+// 1.1.x installed base became invisible in update_check stats. Capture the
+// full token after "Tempo/" instead — marketing version ("1.1.1"), bare build
+// number ("26"), or pre-release tag ("1.2.0b3") — so the base is always
+// recorded. Build-number values get mapped back to a marketing version
+// downstream (in analysis), not here.
+const SPARKLE_VERSION_RE = /Tempo\/([0-9][0-9A-Za-z._-]*)/;
 
 function classifyUA(ua: string): UABucket {
+  // Checked first: our internal marker wins over every other pattern, so a
+  // dev/CI request never lands in a real bucket.
+  if (INTERNAL_UA_RE.test(ua)) return "internal";
   if (/Sparkle/i.test(ua)) return "sparkle";
   if (/Homebrew|curl|wget/i.test(ua)) return "homebrew_curl";
   if (/Safari|Chrome|Firefox|Edg|Brave|Vivaldi|Arc/i.test(ua)) return "browser";
@@ -181,6 +201,17 @@ export default {
     const ua = request.headers.get("user-agent") ?? "";
     const country = request.headers.get("cf-ipcountry") ?? "XX";
     const { eventType, version, uaBucket } = classifyRequest(path, ua);
+    // Raw User-Agent — captured ONLY for our own updaters (Sparkle / Homebrew),
+    // never for browsers. Those UAs are our app/tooling self-reporting, not a
+    // user fingerprint, so this keeps the "no browser fingerprinting" privacy
+    // stance intact while making version blanks diagnosable: if the version
+    // extraction ever comes back empty again, the raw updater UA is right here
+    // to show why. Truncated to stay well inside the Analytics Engine blob
+    // budget.
+    const updaterUA =
+      uaBucket === "sparkle" || uaBucket === "homebrew_curl"
+        ? ua.slice(0, 256)
+        : "";
     // HEAD requests transfer no bytes — count them under a distinct
     // event_type so they don't inflate download/update_check totals.
     const analyticsEventType: EventType =
@@ -195,7 +226,14 @@ export default {
         Promise.resolve().then(() => {
           try {
             env.TEMPO_ANALYTICS.writeDataPoint({
-              blobs: [analyticsEventType, path, country, version, uaBucket],
+              blobs: [
+                analyticsEventType,
+                path,
+                country,
+                version,
+                uaBucket,
+                updaterUA,
+              ],
               doubles: [1],
               indexes: [analyticsEventType],
             });
@@ -209,9 +247,11 @@ export default {
     // Exact KV counters — only actual byte-transferring downloads (a GET of a
     // .dmg). HEAD checks became "head_check" above, and high-volume
     // update_check / head_check events are deliberately excluded to keep KV
-    // writes inside the free tier. These are the numbers a downloads badge or
-    // the /_stats endpoint reports.
-    if (analyticsEventType === "download") {
+    // writes inside the free tier. Our own "internal" requests are excluded too
+    // so the badge reflects real users only (they still land in Analytics
+    // Engine, tagged ua_bucket=internal, if we ever want to inspect them).
+    // These are the numbers a downloads badge or the /_stats endpoint reports.
+    if (analyticsEventType === "download" && uaBucket !== "internal") {
       const day = new Date().toISOString().slice(0, 10);
       ctx.waitUntil(
         incrementCounters(env.TEMPO_DOWNLOAD_COUNTS, [

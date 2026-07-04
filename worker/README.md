@@ -15,12 +15,44 @@ For every request to `downloads.tempoapp.app/*`:
 2. Extracts the version (from filename for downloads, from Sparkle UA for
    update checks).
 3. Reads the country from `CF-IPCountry` and buckets the user-agent into
-   `sparkle` / `browser` / `homebrew_curl` / `other`.
+   `internal` / `sparkle` / `browser` / `homebrew_curl` / `other`.
 4. Writes one data point to the `tempo_downloads` Analytics Engine dataset.
 5. Serves the file from R2 with a sensible `cache-control` header.
 
 The Analytics Engine write is fire-and-forget (`ctx.waitUntil`), so it
 never blocks or fails the download.
+
+## Marking our own requests (`internal`)
+
+Dev/CI/manual pokes at production would otherwise pollute the real numbers and
+are hard to tell apart after the fact. So set a marker User-Agent on anything
+*we* do and the Worker buckets it as `internal`:
+
+```bash
+curl -A "Tempo-Internal/leo" https://downloads.tempoapp.app/Tempo-latest.dmg
+```
+
+Any UA matching `Tempo-Internal/` (case-insensitive) is classified `internal`,
+which:
+
+- **is excluded from the KV download counters** (`/_stats`, the badge) — those
+  reflect real users only;
+- **is still written to Analytics Engine** tagged `ua_bucket = internal`, so we
+  can inspect (or `WHERE blob5 != 'internal'` to exclude) our own activity.
+
+The marker wins over every other UA pattern, so `Tempo-Internal/… curl/8.4.0`
+is `internal`, not `homebrew_curl`. It's a plain readable token, not a secret —
+a stranger has no incentive to self-tag as internal. Real users never send it.
+
+Bake it into test/CI scripts, and for ad-hoc shells an alias helps:
+
+```bash
+alias tcurl='curl -A "Tempo-Internal/leo"'   # then: tcurl https://downloads.tempoapp.app/...
+```
+
+Note: stock `brew` and in-app Sparkle send their own fixed UA and can't carry
+this marker, so those specific pokes stay unmarked — rare and low-volume. If
+that ever matters, add a dedicated internal hostname bound to the same Worker.
 
 ## KV download counters + `/_stats`
 
@@ -78,6 +110,11 @@ openssl rand -hex 32 | tr -d '\n' | wrangler secret put STATS_TOKEN
 Server-side aggregate only. No IP retention, no cookies, no tracking
 pixels, no fingerprinting, no correlation with any identity. Reflected in
 `/privacy` on tempoapp.app.
+
+The raw `User-Agent` (`blob6`) is stored **only for our own updaters**
+(Sparkle and Homebrew) — i.e. our app/tooling self-reporting its version, not
+a user's browser. Browser UAs are only ever bucketed (`browser`), never
+stored raw, so the no-browser-fingerprinting stance is unchanged.
 
 ## First-time deployment
 
@@ -171,10 +208,20 @@ Each event writes:
 | blob1   | event_type            | `download`                       |
 | blob2   | path                  | `Tempo-1.0.2.dmg`                |
 | blob3   | country (ISO-3166)    | `IT`                             |
-| blob4   | version               | `1.0.2`                          |
+| blob4   | version               | `1.0.2` / build no. `26`         |
 | blob5   | ua_bucket             | `sparkle`                        |
+| blob6   | updater_ua (raw)      | `Tempo/26 Sparkle/2.6.4 …`       |
 | double1 | count                 | `1`                              |
 | index1  | event_type (indexed)  | `download`                       |
+
+`blob4` (version) is extracted from the filename for downloads and from the
+Sparkle `User-Agent` for update checks. Sparkle reports `CFBundleVersion`, so
+this can be a **build number** (`26`) rather than the marketing version — map
+it back in analysis (build 26 = 1.1.1).
+
+`blob6` (updater_ua) holds the **raw** `User-Agent`, but **only for our own
+updaters** (`sparkle` / `homebrew_curl`) — never for browsers. It exists to
+diagnose version-extraction blanks; see Privacy below.
 
 Querying via SQL example:
 
