@@ -15,6 +15,13 @@
  *   - referer_bucket: where the visitor arrived from
  *   - ua_bucket: "browser" | "bot" | "feed_reader" | "other"
  *   - status_code: HTTP response status
+ *   - asn / as_org: the visitor's Autonomous System (network operator). Used
+ *     to separate real human visits (residential / mobile / business ASNs)
+ *     from bots that fake a browser User-Agent but run on datacenter networks
+ *     (AWS, Hetzner, OVH...). Stored raw and classified downstream in the
+ *     query. An ASN aggregates thousands-to-millions of hosts, so it is not an
+ *     identifier and cannot fingerprint a visitor — consistent with the
+ *     no-fingerprinting stance.
  *
  * Bound to Analytics Engine dataset `tempo_visits` via the
  * `TEMPO_ANALYTICS` variable, configured in the Pages dashboard under
@@ -169,6 +176,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const refererBucket = classifyReferer(referer, url.hostname);
     const uaBucket = classifyUA(ua);
     const status = String(response.status);
+    // Network operator of the visit. This is the discriminator that catches
+    // bots faking a browser User-Agent: real humans arrive on residential /
+    // mobile / business ASNs, datacenter ASNs are almost always automation.
+    // Stored raw (number + org name); the datacenter-vs-human split is done in
+    // the query, never baked into a stale allowlist here.
+    const asn = String(request.cf?.asn ?? "");
+    const asOrg = String(request.cf?.asOrganization ?? "").slice(0, 128);
 
     context.waitUntil(
       Promise.resolve().then(() => {
@@ -182,6 +196,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               refererBucket,
               uaBucket,
               status,
+              asn,
+              asOrg,
             ],
             doubles: [1],
             indexes: [eventType],
