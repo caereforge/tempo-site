@@ -10,6 +10,12 @@
  *   - version: extracted from filename or Sparkle UA when present
  *   - country: CF-IPCountry header (ISO-3166-1 alpha-2)
  *   - ua_bucket: "sparkle" | "browser" | "homebrew_curl" | "other"
+ *   - updater_ua / asn / as_org: recorded ONLY for our own updaters
+ *     (sparkle / homebrew_curl), never for browsers. The ASN + AS org name
+ *     let us subtract catalog crawlers (MacUpdater et al.) that impersonate
+ *     our exact User-Agent but run on datacenter networks, so the update_check
+ *     count reflects real installs. An ASN aggregates thousands-to-millions of
+ *     hosts: it is not an identifier and cannot single out a person.
  *
  * No IP retention, no cookies, no tracking pixels, no fingerprinting,
  * no correlation with any identity. See /privacy on tempoapp.app.
@@ -201,17 +207,31 @@ export default {
     const ua = request.headers.get("user-agent") ?? "";
     const country = request.headers.get("cf-ipcountry") ?? "XX";
     const { eventType, version, uaBucket } = classifyRequest(path, ua);
-    // Raw User-Agent — captured ONLY for our own updaters (Sparkle / Homebrew),
-    // never for browsers. Those UAs are our app/tooling self-reporting, not a
-    // user fingerprint, so this keeps the "no browser fingerprinting" privacy
-    // stance intact while making version blanks diagnosable: if the version
+    // Everything below (raw UA, ASN, AS org) is captured ONLY for our own
+    // updaters (Sparkle / Homebrew), never for browsers — those UAs are our
+    // app/tooling self-reporting, not a user fingerprint, so the "no browser
+    // fingerprinting" stance stays intact.
+    const isUpdater = uaBucket === "sparkle" || uaBucket === "homebrew_curl";
+    // Raw User-Agent — makes version blanks diagnosable: if the version
     // extraction ever comes back empty again, the raw updater UA is right here
     // to show why. Truncated to stay well inside the Analytics Engine blob
     // budget.
-    const updaterUA =
-      uaBucket === "sparkle" || uaBucket === "homebrew_curl"
-        ? ua.slice(0, 256)
-        : "";
+    const updaterUA = isUpdater ? ua.slice(0, 256) : "";
+    // Autonomous System of the request. This is the discriminator that
+    // separates genuine Sparkle checks from catalog crawlers (MacUpdater et al.)
+    // that impersonate our exact User-Agent and only hit the appcast: those run
+    // on datacenter ASNs (AWS, Hetzner, OVH, DigitalOcean...), while real
+    // installs sit on residential / mobile / business ASNs. Stored RAW (both
+    // the number and the org name) — the datacenter-vs-residential split is done
+    // downstream in the query, never baked into a stale allowlist here, so the
+    // one or two crawler ASNs can be identified empirically (they show up as a
+    // high-count datacenter org against a long tail of residential orgs) and
+    // excluded. An ASN is not an identifier: it aggregates thousands-to-millions
+    // of hosts, consistent with the no-fingerprinting stance.
+    const asn = isUpdater ? String(request.cf?.asn ?? "") : "";
+    const asOrg = isUpdater
+      ? String(request.cf?.asOrganization ?? "").slice(0, 128)
+      : "";
     // HEAD requests transfer no bytes — count them under a distinct
     // event_type so they don't inflate download/update_check totals.
     const analyticsEventType: EventType =
@@ -233,6 +253,8 @@ export default {
                 version,
                 uaBucket,
                 updaterUA,
+                asn,
+                asOrg,
               ],
               doubles: [1],
               indexes: [analyticsEventType],

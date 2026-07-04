@@ -111,10 +111,14 @@ Server-side aggregate only. No IP retention, no cookies, no tracking
 pixels, no fingerprinting, no correlation with any identity. Reflected in
 `/privacy` on tempoapp.app.
 
-The raw `User-Agent` (`blob6`) is stored **only for our own updaters**
-(Sparkle and Homebrew) — i.e. our app/tooling self-reporting its version, not
-a user's browser. Browser UAs are only ever bucketed (`browser`), never
-stored raw, so the no-browser-fingerprinting stance is unchanged.
+The raw `User-Agent` (`blob6`), ASN (`blob7`) and AS org name (`blob8`) are
+stored **only for our own updaters** (Sparkle and Homebrew) — i.e. our
+app/tooling self-reporting, not a user's browser. Browser UAs are only ever
+bucketed (`browser`), never stored raw, and no ASN is recorded for them, so the
+no-browser-fingerprinting stance is unchanged. The ASN identifies the network
+operator (an Autonomous System aggregating thousands-to-millions of hosts), not
+a device or a person; it exists purely to subtract datacenter crawlers from the
+active-install count. The IP itself is never stored.
 
 ## First-time deployment
 
@@ -211,6 +215,8 @@ Each event writes:
 | blob4   | version               | `1.0.2` / build no. `26`         |
 | blob5   | ua_bucket             | `sparkle`                        |
 | blob6   | updater_ua (raw)      | `Tempo/26 Sparkle/2.6.4 …`       |
+| blob7   | asn (raw)             | `3269`                           |
+| blob8   | as_org (raw)          | `Telecom Italia`                 |
 | double1 | count                 | `1`                              |
 | index1  | event_type (indexed)  | `download`                       |
 
@@ -219,9 +225,13 @@ Sparkle `User-Agent` for update checks. Sparkle reports `CFBundleVersion`, so
 this can be a **build number** (`26`) rather than the marketing version — map
 it back in analysis (build 26 = 1.1.1).
 
-`blob6` (updater_ua) holds the **raw** `User-Agent`, but **only for our own
-updaters** (`sparkle` / `homebrew_curl`) — never for browsers. It exists to
-diagnose version-extraction blanks; see Privacy below.
+`blob6` / `blob7` / `blob8` (updater_ua, asn, as_org) are recorded **only for
+our own updaters** (`sparkle` / `homebrew_curl`) — never for browsers. `blob6`
+diagnoses version-extraction blanks; `blob7`/`blob8` hold the request's
+Autonomous System number and org name so catalog crawlers (MacUpdater et al.)
+that impersonate our exact `User-Agent` but run on datacenter networks can be
+subtracted from the update-check count. An ASN aggregates thousands-to-millions
+of hosts, so it is not an identifier — see Privacy below.
 
 Querying via SQL example:
 
@@ -237,4 +247,26 @@ WHERE timestamp > NOW() - INTERVAL '7' DAY
 GROUP BY event_type, version, country, ua_bucket
 ORDER BY n DESC
 LIMIT 100;
+```
+
+**Genuine active installs** — real Sparkle checks with the crawlers removed. The
+crawler(s) surface as a high-count datacenter org against a long tail of
+residential orgs; inspect the distribution first, then exclude the ASN(s) you
+see:
+
+```sql
+-- 1. Inspect: which ASNs are behind the update checks?
+SELECT blob7 AS asn, blob8 AS as_org, count() AS n
+FROM tempo_downloads
+WHERE blob1 = 'update_check' AND blob5 = 'sparkle'
+  AND timestamp > NOW() - INTERVAL '7' DAY
+GROUP BY asn, as_org ORDER BY n DESC LIMIT 50;
+
+-- 2. Count genuine checks per day, excluding the crawler ASN(s) found above.
+SELECT toDate(timestamp) AS day, count() AS genuine_checks
+FROM tempo_downloads
+WHERE blob1 = 'update_check' AND blob5 = 'sparkle'
+  AND blob7 NOT IN ('<crawler_asn>')
+  AND timestamp > NOW() - INTERVAL '30' DAY
+GROUP BY day ORDER BY day;
 ```
