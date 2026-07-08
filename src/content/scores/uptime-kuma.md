@@ -1,6 +1,7 @@
 ---
 title: "Uptime Kuma"
-description: "Uptime Kuma monitor status on the Tempo timeline. Tempo parses Kuma's webhook payload with a native adapter, and each monitor stays one stateful row instead of spamming the feed."
+seoTitle: "Send Uptime Kuma alerts to your Mac | Tempo"
+description: "Send Uptime Kuma alerts to your Mac. Kuma's built-in Webhook posts to Tempo, so every monitor becomes one live row on your timeline, with one-click host actions."
 providerIdentifier: "com.uptime-kuma"
 color: "#5CDD8B"
 version: "1.0.0"
@@ -9,6 +10,8 @@ compatibility:
 pubDate: 2026-06-26
 builtIn: true
 ---
+
+Get your Uptime Kuma monitors on your Mac: point Kuma's built-in Webhook notification at Tempo and every up, down, and pending event lands on one timeline, right next to the rest of your homelab. No relay, no helper script.
 
 Uptime Kuma is a self-hosted uptime monitor. This score renders the status of every monitor you enable on your Tempo timeline: down, up, pending, degraded, maintenance, or test. It is read-only. The actions probe and inspect the monitored host from your Mac; nothing writes back to Uptime Kuma.
 

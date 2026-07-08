@@ -14,7 +14,7 @@ const { score } = Astro.props;
 const { Content } = await render(score);
 ---
 <BaseLayout
-  title={`${score.data.title} - Tempo score`}
+  title={score.data.seoTitle ?? `${score.data.title} - Tempo score`}
   description={score.data.description}
 >
   <header class="page-header">

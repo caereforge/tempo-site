@@ -18,6 +18,10 @@ const scores = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
+    // Optional query-optimized <title>/og:title for SEO (e.g. "Send Uptime
+    // Kuma alerts to your Mac"). Falls back to `${title} - Tempo score` when
+    // absent, so `title` stays the clean display name (H1 + index cards).
+    seoTitle: z.string().optional(),
     providerIdentifier: z.string(),
     color: z.string(),
     version: z.string(),
