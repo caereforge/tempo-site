@@ -1,6 +1,7 @@
 ---
 title: "Kopia"
-description: "Kopia snapshot outcomes on the Tempo timeline (success, failure, warning, or no-change) with one-click kopia CLI actions to run, list, and inspect backups."
+seoTitle: "Kopia backup alerts on your Mac | Tempo"
+description: "See your Kopia backups on your Mac. Each snapshot run lands on your timeline as success or failure, so a failed backup can't slip by unnoticed."
 providerIdentifier: "com.kopia"
 color: "#30D158"
 version: "1.0.0"

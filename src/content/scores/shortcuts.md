@@ -1,6 +1,7 @@
 ---
 title: "Apple Shortcuts"
-description: "Send your own events to the Tempo timeline from Apple Shortcuts, on a Mac or an iPhone, with a webhook action whose JSON body drives the score's labels and indicators."
+seoTitle: "Send Apple Shortcuts events to your Mac | Tempo"
+description: "Fire a Tempo event from any Apple Shortcut. Mail rules, Focus changes, geofences: anything Shortcuts can trigger lands on your timeline."
 providerIdentifier: "com.shortcuts"
 color: "#E0457B"
 version: "1.0.0"

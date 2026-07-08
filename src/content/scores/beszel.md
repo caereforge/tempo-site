@@ -1,6 +1,7 @@
 ---
 title: "Beszel"
-description: "Beszel server-monitoring alerts on the Tempo timeline, one stack per host and metric, delivered through a small read-only poller that reads the hub's alert history."
+seoTitle: "Beszel server metric alerts on your Mac | Tempo"
+description: "Get Beszel alerts on your Mac. CPU, memory, disk, and temperature thresholds land on your timeline, so a struggling host surfaces at a glance."
 providerIdentifier: "com.beszel"
 color: "#B63600"
 version: "1.0.0"

@@ -1,6 +1,7 @@
 ---
 title: "Pi-hole"
-description: "Pi-hole DNS blocking state, reachability, updates, blocklist (gravity) refreshes, and host load on the Tempo timeline, delivered by a small polling helper."
+seoTitle: "Pi-hole events on your Mac | Tempo"
+description: "Send Pi-hole events to your Mac. Status and updates land on one timeline with a one-click action to open the admin console, next to the rest of your homelab."
 providerIdentifier: "net.pi-hole.pi-hole"
 color: "#A52B2B"
 version: "1.0.0"

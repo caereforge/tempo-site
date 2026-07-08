@@ -1,6 +1,7 @@
 ---
 title: "Scripts"
-description: "The generic catch-all source: any script, cron job, or webhook that can POST JSON lands on your Tempo timeline. The embodiment of \"if it can POST, Tempo can read it.\""
+seoTitle: "Send your own scripts' output to your Mac | Tempo"
+description: "Point any script or cron job at Tempo and watch its completion, exit status, and output land on your Mac timeline. The generic webhook for anything you wire up."
 providerIdentifier: "scripts"
 color: "#C9A35C"
 version: "1.0.0"

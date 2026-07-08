@@ -1,6 +1,7 @@
 ---
 title: "Home Assistant"
-description: "Home Assistant state changes for the entities you choose on the Tempo timeline, classified by device class, with severity for safety sensors, alarms, and locks."
+seoTitle: "Home Assistant events on your Mac | Tempo"
+description: "Send Home Assistant events to your Mac. Point an HA automation or webhook at Tempo, and devices, sensors, and alerts land on one live timeline with one-click actions."
 providerIdentifier: "com.home-assistant"
 color: "#18BCF2"
 version: "1.0.0"

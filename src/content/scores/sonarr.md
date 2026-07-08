@@ -1,6 +1,7 @@
 ---
 title: "Sonarr"
-description: "Sonarr grabs, imports, and health events on the Tempo timeline, stacked per series, each carrying an Open Sonarr action."
+seoTitle: "Sonarr events on your Mac | Tempo"
+description: "Send Sonarr events to your Mac. Grabs, imports, and download failures land on one timeline with a one-click action to open the queue."
 providerIdentifier: "com.sonarr"
 color: "#35C5F0"
 version: "1.0.0"

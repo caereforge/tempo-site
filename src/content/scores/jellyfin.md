@@ -1,6 +1,7 @@
 ---
 title: "Jellyfin"
-description: "Jellyfin media server events on the Tempo timeline: new media, playback start and stop, login failures, and scheduled task results. Read-only, with actions that open the web UI, the item, or the admin dashboard."
+seoTitle: "Jellyfin events on your Mac | Tempo"
+description: "Send Jellyfin events to your Mac. Playback, library scans, and server status land on one timeline with a one-click action to open the dashboard."
 providerIdentifier: "org.jellyfin"
 color: "#95A400"
 version: "1.0.0"

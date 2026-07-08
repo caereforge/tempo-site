@@ -1,6 +1,7 @@
 ---
 title: "Fastmail"
-description: "An experimental, read-only CalDAV bridge that pulls today's Fastmail calendar events into your Tempo agenda. Basic by design: manual configuration, display-only events, no write-back."
+seoTitle: "Fastmail calendar on your Mac timeline | Tempo"
+description: "Put your Fastmail (CalDAV) calendar on your Mac timeline, next to your homelab events. Experimental."
 providerIdentifier: "com.caldav.fastmail"
 color: "#FF0000"
 version: "1.0.0"

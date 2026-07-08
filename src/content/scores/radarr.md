@@ -1,6 +1,7 @@
 ---
 title: "Radarr"
-description: "Radarr grabs, imports, and health events on the Tempo timeline, stacked per movie, with an Open Radarr action resolved to the sender's address."
+seoTitle: "Radarr events on your Mac | Tempo"
+description: "Send Radarr events to your Mac. Grabs, imports, and download failures land on one timeline with a one-click action to open the queue."
 providerIdentifier: "com.radarr"
 color: "#FFC230"
 version: "1.0.0"

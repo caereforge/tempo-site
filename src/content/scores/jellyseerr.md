@@ -1,6 +1,7 @@
 ---
 title: "Jellyseerr"
-description: "Jellyseerr media requests and issue reports on the Tempo timeline, grouped by title, with a severity that tracks each request from pending approval through available."
+seoTitle: "Jellyseerr requests on your Mac | Tempo"
+description: "Send Jellyseerr events to your Mac. New requests and approvals land on one timeline with a one-click action to open the request."
 providerIdentifier: "com.jellyseerr"
 color: "#6366F1"
 version: "1.0.0"

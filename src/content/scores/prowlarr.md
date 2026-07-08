@@ -1,6 +1,7 @@
 ---
 title: "Prowlarr"
-description: "Prowlarr health and update events on the Tempo timeline: health issues as warnings, recoveries as resolved, application updates as info, each with an Open Prowlarr action."
+seoTitle: "Prowlarr events on your Mac | Tempo"
+description: "Send Prowlarr events to your Mac. Indexer health and sync errors land on one timeline, so a dead indexer surfaces before it breaks your grabs."
 providerIdentifier: "com.prowlarr"
 color: "#E66000"
 version: "1.0.0"

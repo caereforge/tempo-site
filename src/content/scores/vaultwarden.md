@@ -1,6 +1,7 @@
 ---
 title: "Vaultwarden"
-description: "Vaultwarden authentication activity (logins, admin access, vault exports, a brute-force signal) plus server reachability, on the Tempo timeline through a log watcher."
+seoTitle: "Vaultwarden events on your Mac | Tempo"
+description: "Send Vaultwarden events to your Mac. Logins, admin actions, and org changes land on one timeline, so you can watch your password vault at a glance."
 providerIdentifier: "com.vaultwarden"
 color: "#065ADC"
 version: "1.0.0"

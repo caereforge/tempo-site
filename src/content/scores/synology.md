@@ -1,6 +1,7 @@
 ---
 title: "Synology"
-description: "DSM notifications on the Tempo timeline, with one-click actions for Storage Manager, Log Center, Security Advisor, and SSH. Built-in, nothing to install."
+seoTitle: "Synology NAS alerts on your Mac | Tempo"
+description: "Get Synology DSM alerts on your Mac. Storage, backups, and system events land on one timeline, with a one-click action to open DSM."
 providerIdentifier: "com.synology"
 color: "#0070D1"
 version: "1.0.0"

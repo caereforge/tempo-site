@@ -1,6 +1,7 @@
 ---
 title: "Hazel"
-description: "Bring Hazel rule fires into your Tempo timeline. Each firing becomes an event with one-click actions to open the file, jump to a folder, or copy the path."
+seoTitle: "Hazel automation events on your Mac | Tempo"
+description: "Watch your Hazel rules on your Mac. Each file Hazel moves, renames, or sorts lands on your Tempo timeline, so your automations are visible, not silent."
 providerIdentifier: "com.noodlesoft.hazel"
 color: "#C9A35C"
 version: "1.0.0"

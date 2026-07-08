@@ -1,6 +1,7 @@
 ---
 title: "Todoist"
-description: "Today's and overdue Todoist tasks on the Tempo timeline, grouped by project, with priority-driven severity and buttons to open the task or the Todoist app."
+seoTitle: "Todoist tasks on your Mac timeline | Tempo"
+description: "Bring Todoist onto your Mac timeline. Due and completed tasks land next to your homelab events: one place for everything that needs attention."
 providerIdentifier: "com.todoist"
 color: "#E44232"
 version: "1.0.0"

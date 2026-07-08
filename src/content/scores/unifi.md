@@ -1,6 +1,7 @@
 ---
 title: "UniFi"
-description: "Setup and reference for the two built-in UniFi sources: UniFi Network controller alarms and UniFi Protect camera detections."
+seoTitle: "UniFi Network & Protect alerts on your Mac | Tempo"
+description: "Get UniFi Network and Protect events on your Mac. Your controller's alarms land on one timeline, with one-click actions to open the controller or a camera."
 providerIdentifier: "com.ubiquiti.unifi"
 color: "#0559C9"
 version: "1.0.0"

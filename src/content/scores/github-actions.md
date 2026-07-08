@@ -1,6 +1,7 @@
 ---
 title: "GitHub Actions"
-description: "GitHub repository and Actions events (workflow runs, pull requests, issues, releases, security alerts) on the Tempo timeline, delivered through a small webhook relay."
+seoTitle: "GitHub Actions runs on your Mac | Tempo"
+description: "Send GitHub Actions results to your Mac. Every workflow run lands on your timeline as pass or fail, with a one-click action to open the run."
 providerIdentifier: "com.github.actions"
 color: "#1F6FEB"
 version: "1.0.0"
