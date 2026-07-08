@@ -200,6 +200,10 @@
           "type": "boolean",
           "description": "When true, the action ships with the score but is off by default — hidden until the user turns it on. Lets a score offer an optional action without cluttering the panel."
         },
+        "hideWhenUnresolved": {
+          "type": "boolean",
+          "description": "When true, the action is hidden (not shown disabled) whenever a ${metadata.xxx} placeholder in its trigger stays unresolved. Lets a score offer actions that apply to only some events (e.g. port actions on port monitors) without cluttering the panel for the rest."
+        },
         "trigger": {
           "type": "object",
           "oneOf": [
@@ -230,6 +234,16 @@
                 "copyToClipboard": {
                   "type": "string",
                   "description": "Text to copy. Supports ${metadata.xxx} interpolation."
+                }
+              }
+            },
+            {
+              "required": ["runAppleScript"],
+              "additionalProperties": false,
+              "properties": {
+                "runAppleScript": {
+                  "type": "string",
+                  "description": "AppleScript source to run silently (no Terminal window). Same trust class as openTerminalWith: NOT allowed in the reviewed catalog, local drop-in or authored scores only."
                 }
               }
             }

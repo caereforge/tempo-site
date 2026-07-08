@@ -43,10 +43,11 @@ SCHEMA: dict[str, Any] = {
     "$id": "https://tempoapp.app/schema/score.schema.json",
     "title": "Tempo Provider Score",
     "type": "object",
-    "required": ["providerIdentifier", "displayName"],
+    "required": ["providerIdentifier", "defaultActions"],
     "additionalProperties": False,
     "properties": {
         "_bundledVersion": {"type": "integer", "minimum": 1},
+        "_comment": {"type": "string"},
         "providerIdentifier": {
             "type": "string",
             "pattern": "^[a-z0-9]+([._-][a-z0-9]+)*$",
@@ -109,7 +110,11 @@ SCHEMA: dict[str, Any] = {
         },
         "groupingWindow": {
             "type": "string",
-            "enum": ["", "15m", "30m", "1h", "6h", "1d", "1w"],
+            # Match the engine's ProviderScoreStore.parseDuration exactly:
+            # any <number><unit> with unit in s/m/h/d/w (e.g. "2h", "45m",
+            # "10s"), or empty string to disable. The old fixed enum rejected
+            # perfectly valid windows the engine honors.
+            "pattern": "^([0-9]+[smhdw])?$",
         },
         "eventPattern": {
             "type": "string",
@@ -163,6 +168,7 @@ SCHEMA: dict[str, Any] = {
                 "label": {"type": "string", "minLength": 1},
                 "systemIcon": {"type": "string", "minLength": 1},
                 "_disabled": {"type": "boolean"},
+                "hideWhenUnresolved": {"type": "boolean"},
                 "trigger": {
                     "type": "object",
                     "oneOf": [
@@ -180,6 +186,11 @@ SCHEMA: dict[str, Any] = {
                             "required": ["copyToClipboard"],
                             "additionalProperties": False,
                             "properties": {"copyToClipboard": {"type": "string"}},
+                        },
+                        {
+                            "required": ["runAppleScript"],
+                            "additionalProperties": False,
+                            "properties": {"runAppleScript": {"type": "string"}},
                         },
                     ],
                 },
